@@ -1,0 +1,10 @@
+{
+  "claim": "len es palabra reservada",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let a: [i32; 2] = [1, 2]; let b: [i32; 2] = [1, 2]; emit a == b; b[0] = 5; emit a == b; }

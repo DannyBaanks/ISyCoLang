@@ -1,0 +1,12 @@
+{
+  "claim": "S5: str<32> se ensancha; la concatenación toma la capacidad del let (64)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "11"
+    ],
+    "return": "Hola, Danny"
+  }
+}

@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() -> dec<6,2> { let s: str<8> = "2.50"; let d: dec<6,2> = s as dec<6,2>; return d * 2.00; }

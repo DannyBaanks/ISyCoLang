@@ -1,0 +1,10 @@
+{
+  "claim": "literal de 4 bytes en str<3>",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "LITERAL_OUT_OF_RANGE",
+    "emits": [],
+    "return": null
+  }
+}

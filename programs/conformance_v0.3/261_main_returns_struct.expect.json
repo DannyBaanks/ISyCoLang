@@ -1,0 +1,10 @@
+{
+  "claim": "main puede retornar un struct (E9 no aplica)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "{\"x\":\"3\",\"y\":\"4\"}"
+  }
+}

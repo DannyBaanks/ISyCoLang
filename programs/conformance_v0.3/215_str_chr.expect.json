@@ -1,0 +1,12 @@
+{
+  "claim": "chr arma strings byte a byte",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "Hi"
+    ],
+    "return": null
+  }
+}

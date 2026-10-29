@@ -1,0 +1,8 @@
+isyco 0.3
+struct Persona { nombre: str<16>, edad: u8, notas: [i32; 3] }
+fn main() !emit {
+    let p: Persona = Persona { nombre: "Ana", edad: 30, notas: [9, 8, 10] };
+    p.notas[1] = 7;
+    emit p;
+    emit p.nombre;
+}

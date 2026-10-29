@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let a: str<3> = "abc"; let b: str<10> = "abc"; emit a == b; }

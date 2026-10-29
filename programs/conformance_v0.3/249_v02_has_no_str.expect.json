@@ -1,0 +1,10 @@
+{
+  "claim": "isyco 0.2 no conoce str",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

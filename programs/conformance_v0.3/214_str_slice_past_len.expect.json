@@ -1,0 +1,10 @@
+{
+  "claim": "slice con b > len aunque b <= capacidad",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "INDEX_OUT_OF_BOUNDS",
+    "emits": [],
+    "return": null
+  }
+}

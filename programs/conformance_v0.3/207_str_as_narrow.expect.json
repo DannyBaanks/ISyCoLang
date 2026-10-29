@@ -1,0 +1,12 @@
+{
+  "claim": "as str<M> achica si cabe; si no, OVERFLOW",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [
+      "abc"
+    ],
+    "return": null
+  }
+}

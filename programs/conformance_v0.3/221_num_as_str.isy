@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let n: i32 = -42; let d: dec<6,2> = 3.50; emit "n=" + (n as str<8>) + " d=" + (d as str<8>) + " " + (true as str<5>); }

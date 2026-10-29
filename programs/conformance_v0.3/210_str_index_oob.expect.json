@@ -1,0 +1,12 @@
+{
+  "claim": "índice >= len es INDEX_OUT_OF_BOUNDS aunque quepa en la capacidad",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "INDEX_OUT_OF_BOUNDS",
+    "emits": [
+      "122"
+    ],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "arreglo de structs",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "3.85"
+  }
+}

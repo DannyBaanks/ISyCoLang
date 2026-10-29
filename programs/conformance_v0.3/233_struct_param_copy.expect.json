@@ -1,0 +1,13 @@
+{
+  "claim": "pasar un struct copia",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1",
+      "11"
+    ],
+    "return": null
+  }
+}

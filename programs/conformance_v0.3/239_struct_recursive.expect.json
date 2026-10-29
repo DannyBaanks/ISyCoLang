@@ -1,0 +1,10 @@
+{
+  "claim": "un struct que se contiene vía arreglo",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "RECURSIVE_TYPE",
+    "emits": [],
+    "return": null
+  }
+}

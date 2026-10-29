@@ -1,0 +1,12 @@
+{
+  "claim": "chr de un byte no permitido",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "BAD_CHAR",
+    "emits": [
+      "~"
+    ],
+    "return": null
+  }
+}

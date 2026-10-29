@@ -1,0 +1,12 @@
+{
+  "claim": "literal de struct en condición, entre paréntesis",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1"
+    ],
+    "return": null
+  }
+}

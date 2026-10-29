@@ -1,0 +1,13 @@
+{
+  "claim": "S1: literal, emit y len",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "hola",
+      "4"
+    ],
+    "return": null
+  }
+}

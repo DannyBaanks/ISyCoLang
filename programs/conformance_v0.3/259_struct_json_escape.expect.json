@@ -1,0 +1,13 @@
+{
+  "claim": "un str dentro de un struct se escapa en JSON",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "{\"n\":\"a\\\"b\"}",
+      "a\"b"
+    ],
+    "return": null
+  }
+}

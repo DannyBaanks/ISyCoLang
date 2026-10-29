@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let t: str<8> = "true"; let f: str<8> = "false"; emit (t as bool) and not (f as bool); let y: str<8> = "yes"; emit y as bool; }

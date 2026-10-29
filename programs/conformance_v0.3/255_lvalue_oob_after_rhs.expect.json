@@ -1,0 +1,13 @@
+{
+  "claim": "E8 generalizado: el rango se revisa al guardar, después del lado derecho",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "INDEX_OUT_OF_BOUNDS",
+    "emits": [
+      "5",
+      "7"
+    ],
+    "return": null
+  }
+}

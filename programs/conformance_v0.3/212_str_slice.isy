@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let s: str<16> = "Hola mundo"; emit slice(s, 5, 10); emit slice(s, 0, 0); emit len(slice(s, 2, 4)); }

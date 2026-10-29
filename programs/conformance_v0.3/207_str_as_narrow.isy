@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let a: str<8> = "abc"; let b: str<4> = a as str<4>; emit b; let c: str<2> = a as str<2>; emit c; }

@@ -1,0 +1,13 @@
+{
+  "claim": "escapes \\\" \\\\ \\t cuentan 1 byte cada uno",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "di \"hola\"\\\t",
+      "11"
+    ],
+    "return": null
+  }
+}

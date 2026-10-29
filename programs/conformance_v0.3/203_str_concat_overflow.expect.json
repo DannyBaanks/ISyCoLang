@@ -1,0 +1,12 @@
+{
+  "claim": "S3: 5 bytes en str<4> es OVERFLOW, con salida previa",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [
+      "ab"
+    ],
+    "return": null
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "claim": "emit de un arreglo = JSON",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "[\"1\",\"-2\",\"3\"]"
+    ],
+    "return": null
+  }
+}

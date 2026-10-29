@@ -1,0 +1,10 @@
+{
+  "claim": "sin paréntesis, Punto { abre el bloque",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

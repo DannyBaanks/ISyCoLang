@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let s: str<4> = "05"; emit s as i32; }

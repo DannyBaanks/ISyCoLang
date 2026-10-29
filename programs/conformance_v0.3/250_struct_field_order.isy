@@ -1,0 +1,4 @@
+isyco 0.3
+struct Punto { x: i32, y: i32 }
+fn f(v: i32) -> i32 !emit { emit v; return v; }
+fn main() !emit { let p: Punto = Punto { y: f(2), x: f(1) }; emit p; }

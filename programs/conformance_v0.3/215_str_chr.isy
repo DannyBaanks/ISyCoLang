@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { emit chr(72) + chr(105); }

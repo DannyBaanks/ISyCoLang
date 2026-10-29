@@ -1,0 +1,4 @@
+isyco 0.3
+struct Punto { x: i32, y: i32 }
+fn mover(p: Punto) -> Punto { p.x = p.x + 10; return p; }
+fn main() !emit { let a: Punto = Punto { x: 1, y: 2 }; let b: Punto = mover(a); emit a.x; emit b.x; }

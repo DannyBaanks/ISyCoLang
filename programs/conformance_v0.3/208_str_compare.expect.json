@@ -1,0 +1,17 @@
+{
+  "claim": "orden lexicográfico por bytes; un prefijo es menor",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "true",
+      "true",
+      "true",
+      "true",
+      "false",
+      "true"
+    ],
+    "return": null
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "claim": "el valor parseado pasa por la regla ovf del destino",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [
+      "44",
+      "255"
+    ],
+    "return": null
+  }
+}

@@ -1,0 +1,7 @@
+isyco 0.3
+fn main() -> str<64> !emit {
+    let nombre: str<32> = "Danny";
+    let saludo: str<64> = "Hola, " + nombre;
+    emit len(saludo);
+    return saludo;
+}

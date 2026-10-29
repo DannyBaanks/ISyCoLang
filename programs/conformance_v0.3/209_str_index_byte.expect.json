@@ -1,0 +1,13 @@
+{
+  "claim": "s[i] es el byte como u8",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "65",
+      "122"
+    ],
+    "return": null
+  }
+}

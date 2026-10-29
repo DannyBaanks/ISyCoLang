@@ -1,0 +1,12 @@
+{
+  "claim": "S7: forma canónica de int, dec y bool",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "n=-42 d=3.50 true"
+    ],
+    "return": null
+  }
+}

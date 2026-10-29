@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { emit "abc" == "abc"; emit "abc" < "abd"; emit "ab" < "abc"; emit "b" > "abc"; emit "abc" != "abc"; emit "B" < "a"; }

@@ -1,0 +1,10 @@
+{
+  "claim": "literal sin todos los campos",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "BAD_FIELDS",
+    "emits": [],
+    "return": null
+  }
+}

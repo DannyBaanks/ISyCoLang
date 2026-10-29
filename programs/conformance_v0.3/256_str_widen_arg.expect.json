@@ -1,0 +1,10 @@
+{
+  "claim": "S5 en un argumento",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "3"
+  }
+}

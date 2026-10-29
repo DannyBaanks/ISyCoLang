@@ -1,0 +1,14 @@
+{
+  "claim": "S4: == campo por campo",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "true",
+      "false",
+      "true"
+    ],
+    "return": null
+  }
+}

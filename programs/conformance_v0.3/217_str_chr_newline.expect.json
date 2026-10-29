@@ -1,0 +1,13 @@
+{
+  "claim": "salto de línea permitido; emit lo conserva",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "a\nb",
+      "3"
+    ],
+    "return": null
+  }
+}

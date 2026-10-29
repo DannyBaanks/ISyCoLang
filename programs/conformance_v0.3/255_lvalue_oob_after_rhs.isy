@@ -1,0 +1,4 @@
+isyco 0.3
+struct P { x: i32 }
+fn f(v: i64) -> i64 !emit { emit v; return v; }
+fn main() !emit { let a: [P; 2] = [P { x: 0 }, P { x: 0 }]; a[f(5)].x = f(7) as i32; }

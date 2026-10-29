@@ -1,0 +1,15 @@
+{
+  "claim": "objeto de entrada sin un campo",
+  "input": [
+    {
+      "x": "1"
+    },
+    "D"
+  ],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "BAD_INPUT",
+    "emits": [],
+    "return": null
+  }
+}

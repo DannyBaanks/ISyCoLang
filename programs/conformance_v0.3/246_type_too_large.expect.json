@@ -1,0 +1,10 @@
+{
+  "claim": "[str<65536>; 32] pasa de 1 MiB",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_TOO_LARGE",
+    "emits": [],
+    "return": null
+  }
+}

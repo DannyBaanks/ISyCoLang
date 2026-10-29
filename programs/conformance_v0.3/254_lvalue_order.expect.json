@@ -1,0 +1,14 @@
+{
+  "claim": "índice del lvalue y luego el lado derecho",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1",
+      "7",
+      "[{\"x\":\"0\"},{\"x\":\"7\"}]"
+    ],
+    "return": null
+  }
+}

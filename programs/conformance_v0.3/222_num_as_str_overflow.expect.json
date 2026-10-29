@@ -1,0 +1,12 @@
+{
+  "claim": "la forma canónica no cabe",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [
+      "12345"
+    ],
+    "return": null
+  }
+}

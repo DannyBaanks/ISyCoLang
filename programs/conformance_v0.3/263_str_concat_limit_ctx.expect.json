@@ -1,0 +1,12 @@
+{
+  "claim": "la capacidad del contexto manda aunque los operandos sean más grandes",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "abcd"
+    ],
+    "return": null
+  }
+}

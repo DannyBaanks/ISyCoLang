@@ -1,0 +1,10 @@
+{
+  "claim": "texto canónico de dec<6,2>",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "5.00"
+  }
+}

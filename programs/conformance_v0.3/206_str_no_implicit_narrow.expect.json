@@ -1,0 +1,10 @@
+{
+  "claim": "S5: achicar sin as es TYPE_MISMATCH",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,8 @@
+isyco 0.3
+struct Punto { x: i32, y: i32 }
+fn main() -> i32 {
+    let p: Punto = Punto { x: 1, y: 2 };
+    let q: Punto = p;
+    q.x = 9;
+    return p.x;
+}

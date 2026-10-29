@@ -1,0 +1,16 @@
+{
+  "claim": "9 bytes en str<8>",
+  "input": [
+    {
+      "x": "1",
+      "y": "2"
+    },
+    "Danielito"
+  ],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "BAD_INPUT",
+    "emits": [],
+    "return": null
+  }
+}

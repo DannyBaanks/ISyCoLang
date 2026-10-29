@@ -1,0 +1,12 @@
+{
+  "claim": "== ignora la capacidad",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "true"
+    ],
+    "return": null
+  }
+}

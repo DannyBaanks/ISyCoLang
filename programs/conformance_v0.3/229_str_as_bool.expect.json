@@ -1,0 +1,12 @@
+{
+  "claim": "true/false; otra cosa es BAD_FORMAT",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "BAD_FORMAT",
+    "emits": [
+      "true"
+    ],
+    "return": null
+  }
+}

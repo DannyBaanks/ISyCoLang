@@ -1,0 +1,3 @@
+isyco 0.3
+struct N { n: str<8> }
+fn main() !emit { let v: N = N { n: "a\"b" }; emit v; emit v.n; }

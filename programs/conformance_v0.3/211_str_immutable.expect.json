@@ -1,0 +1,10 @@
+{
+  "claim": "s[i] = ... no se puede",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "NOT_ASSIGNABLE",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() { let a: str<8> = "ab"; let b: str<4> = a; }

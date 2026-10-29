@@ -1,0 +1,10 @@
+{
+  "claim": "05 no es forma canónica",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "BAD_FORMAT",
+    "emits": [],
+    "return": null
+  }
+}

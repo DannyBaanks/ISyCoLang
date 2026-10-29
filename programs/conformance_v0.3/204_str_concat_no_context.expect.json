@@ -1,0 +1,13 @@
+{
+  "claim": "sin contexto la capacidad es N_a + N_b",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "abcde",
+      "5"
+    ],
+    "return": null
+  }
+}

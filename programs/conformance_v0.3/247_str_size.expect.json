@@ -1,0 +1,10 @@
+{
+  "claim": "str<0>",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "STR_SIZE",
+    "emits": [],
+    "return": null
+  }
+}

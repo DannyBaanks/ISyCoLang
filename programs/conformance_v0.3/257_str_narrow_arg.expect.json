@@ -1,0 +1,10 @@
+{
+  "claim": "achicar en un argumento",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

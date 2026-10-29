@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let a: str<2> = "ab"; let b: str<3> = "cde"; emit a + b; emit len(a + b); }

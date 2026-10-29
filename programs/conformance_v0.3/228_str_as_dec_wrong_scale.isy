@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let s: str<8> = "2.5"; emit s as dec<6,2>; }

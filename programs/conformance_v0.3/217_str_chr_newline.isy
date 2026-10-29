@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let s: str<4> = "a" + chr(10) + "b"; emit s; emit len(s); }

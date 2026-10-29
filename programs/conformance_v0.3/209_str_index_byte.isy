@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let s: str<4> = "Az"; emit s[0]; emit s[1]; }

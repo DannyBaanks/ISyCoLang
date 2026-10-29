@@ -1,0 +1,10 @@
+{
+  "claim": "un literal entero donde se espera str",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

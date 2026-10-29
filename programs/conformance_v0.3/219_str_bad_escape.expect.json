@@ -1,0 +1,10 @@
+{
+  "claim": "escape desconocido",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

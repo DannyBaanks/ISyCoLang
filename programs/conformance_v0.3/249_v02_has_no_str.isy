@@ -1,0 +1,2 @@
+isyco 0.2
+fn main() { let s: str<4> = "a"; }

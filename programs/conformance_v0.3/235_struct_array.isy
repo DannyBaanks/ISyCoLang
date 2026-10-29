@@ -1,0 +1,9 @@
+isyco 0.3
+struct Item { nombre: str<8>, precio: dec<8,2> }
+fn main() -> dec<8,2> {
+    let xs: [Item; 3] = [Item { nombre: "a", precio: 1.50 }, Item { nombre: "b", precio: 2.25 }, Item { nombre: "c", precio: 0.10 }];
+    let total: dec<8,2> = 0.00;
+    let i: i64 = 0;
+    while i < 3 { total = total + xs[i].precio; i = i + 1; }
+    return total;
+}

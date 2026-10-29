@@ -1,0 +1,14 @@
+{
+  "claim": "slice [a, b), vacío permitido",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "mundo",
+      "",
+      "2"
+    ],
+    "return": null
+  }
+}

@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() -> i32 { let s: str<8> = "-17"; let n: i32 = s as i32; return n + 1; }

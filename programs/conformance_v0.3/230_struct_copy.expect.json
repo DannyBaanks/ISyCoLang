@@ -1,0 +1,10 @@
+{
+  "claim": "S4: asignar copia",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "1"
+  }
+}

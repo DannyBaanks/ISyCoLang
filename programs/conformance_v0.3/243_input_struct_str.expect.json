@@ -1,0 +1,18 @@
+{
+  "claim": "S8: entrada JSON (claves en cualquier orden) y return str",
+  "input": [
+    {
+      "y": "2",
+      "x": "1"
+    },
+    "Danny"
+  ],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "{\"x\":\"1\",\"y\":\"2\"}"
+    ],
+    "return": "Danny!"
+  }
+}

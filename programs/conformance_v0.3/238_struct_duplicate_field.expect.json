@@ -1,0 +1,10 @@
+{
+  "claim": "campo repetido en la declaración",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "DUPLICATE_NAME",
+    "emits": [],
+    "return": null
+  }
+}

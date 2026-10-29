@@ -1,0 +1,13 @@
+{
+  "claim": "S8: emit de un struct = JSON en orden de declaración",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "{\"x\":\"1\",\"y\":\"-2\"}",
+      "-1"
+    ],
+    "return": null
+  }
+}

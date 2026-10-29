@@ -1,0 +1,4 @@
+isyco 0.3
+struct f { x: i32 }
+fn f() { }
+fn main() { }

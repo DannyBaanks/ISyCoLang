@@ -1,0 +1,12 @@
+{
+  "claim": "slice con a > b",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "INDEX_OUT_OF_BOUNDS",
+    "emits": [
+      "Hola"
+    ],
+    "return": null
+  }
+}

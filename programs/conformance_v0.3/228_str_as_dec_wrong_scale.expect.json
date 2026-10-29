@@ -1,0 +1,10 @@
+{
+  "claim": "2.5 no es la forma canónica de dec<6,2>",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "BAD_FORMAT",
+    "emits": [],
+    "return": null
+  }
+}

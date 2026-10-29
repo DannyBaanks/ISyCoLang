@@ -1,0 +1,2 @@
+isyco 0.3
+fn main() !emit { let s: str<8> = "300"; emit s as int<8,unsigned,wrap>; emit s as int<8,unsigned,sat>; let n: u8 = s as u8; emit n; }

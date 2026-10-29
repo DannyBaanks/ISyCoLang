@@ -1,0 +1,13 @@
+{
+  "claim": "== entre arreglos",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "true",
+      "false"
+    ],
+    "return": null
+  }
+}

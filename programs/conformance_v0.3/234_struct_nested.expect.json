@@ -1,0 +1,13 @@
+{
+  "claim": "struct con str y arreglo; lvalue p.notas[1]",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "{\"nombre\":\"Ana\",\"edad\":\"30\",\"notas\":[\"9\",\"7\",\"10\"]}",
+      "Ana"
+    ],
+    "return": null
+  }
+}

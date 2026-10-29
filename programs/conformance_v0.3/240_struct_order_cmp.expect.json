@@ -1,0 +1,10 @@
+{
+  "claim": "< entre structs",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

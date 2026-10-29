@@ -1,0 +1,10 @@
+{
+  "claim": "texto canónico a entero",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "-16"
+  }
+}
