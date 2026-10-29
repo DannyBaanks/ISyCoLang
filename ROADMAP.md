@@ -73,7 +73,7 @@ gate. Sin estimaciones de tiempo: las fuentes de complejidad se nombran.
 **Gate F0:** `sha256sum -c docs/origin/SHA256SUMS.txt` pasa; el inventario se
 regenera con `python3 tools/inventory_assembly.py`.
 
-### F1 — Semántica del core v0.1  `[DRAFT: spec/CORE.md; falta la revisión de Danny]`
+### F1 — Semántica del core v0.1  `[PASS 2026-10-28: spec/CORE.md FROZEN v0.1]`
 
 Definir en `spec/CORE.md`, antes de escribir el parser:
 

@@ -1,8 +1,8 @@
 # ISyCoLang — Semántica del core v0.1
 
-**Estado:** `DRAFT` (fase F1). Pasa a `FROZEN v0.1` cuando Danny revise las
-decisiones abiertas de §13. Después de congelada, cualquier cambio es un
-documento `CORE_v0.2.md`, nunca una edición silenciosa.
+**Estado:** `FROZEN v0.1` (2026-10-28, decisiones D1–D7 aprobadas por Danny).
+Cualquier cambio va en un documento nuevo `CORE_v0.2.md`, nunca como edición
+silenciosa. La identidad de esta versión es el SHA-256 en `spec/SHA256SUMS.txt`.
 
 Esta spec es **normativa** para el intérprete de referencia (F2) y para todo
 backend. Si un backend y esta spec no coinciden, el backend está mal. Si la spec
@@ -315,9 +315,11 @@ Una línea JSON canónica por evento, en orden:
 | 9 | ¿Qué garantiza la composición? | funciones por valor con efectos declarados; las puras se pueden reordenar (§6) |
 | 10 | ¿Qué pasa si cambia el backend? | nada observable: la equivalencia está definida en §10.2 y la spec manda sobre todos los backends |
 
-## 13. Decisiones abiertas (requieren a Danny)
+## 13. Decisiones (resueltas por Danny el 2026-10-28)
 
-| id | decisión | propuesta | alternativa |
+Se adoptó la columna «propuesta» en las siete.
+
+| id | decisión | adoptada | descartada |
 |---|---|---|---|
 | D1 | palabras reservadas | inglés ASCII, neutral para herramientas y backends | español (estilo PITÓN) o capa de alias encima |
 | D2 | división entera | truncar hacia cero (C, Rust, Zig, Go, Java, COBOL) | piso (Python) |

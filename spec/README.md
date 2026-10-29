@@ -1,3 +1,3 @@
 # spec/
 
-- `CORE.md`: semántica del core v0.1 (F1, DRAFT hasta la revisión de Danny de §13).
+- `CORE.md`: semántica del core v0.1 (F1, FROZEN v0.1; hash en `SHA256SUMS.txt`).
