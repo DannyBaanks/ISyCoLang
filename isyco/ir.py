@@ -1,11 +1,15 @@
-"""ISY-IR v0.1: lowering desde el AST chequeado y serialización canónica (spec/IR.md).
+"""ISY-IR v0.1 / v0.2: lowering desde el AST chequeado y serialización canónica (spec/IR.md).
 
 La IR es estructurada (sin CFG ni SSA), completamente tipada y explícita:
 - toda expresión lleva su tipo (`ty`) y su posición de fuente (`at`);
 - los literales ya no son polimórficos: son `const` con valor en forma canónica;
 - las variables son índices en la tabla `locals` de la función (sin nombres
   ambiguos aunque dos bloques hermanos reusen un nombre);
-- las conversiones son nodos `cast` explícitos.
+- las conversiones son nodos `cast` explícitos (y en v0.2 el ensanchamiento de
+  str es un nodo `widen`: ninguna conversión escondida).
+
+Un programa `isyco 0.1`/`0.2` produce `isy-ir/0.1` exactamente como antes; uno
+`isyco 0.3` produce `isy-ir/0.2` (str, structs; spec/IR.md §9).
 """
 from __future__ import annotations
 
@@ -13,9 +17,11 @@ import hashlib
 import json
 
 from . import ast as A
-from .types import ArrT, BoolT, DecT, IntT, canonical
+from .types import ArrT, BoolT, DecT, IntT, StrT, StructT, canonical
 
 SCHEMA = "isy-ir/0.1"
+SCHEMA_V2 = "isy-ir/0.2"
+SCHEMAS = (SCHEMA, SCHEMA_V2)
 BIN_OPS = {"+": "add", "-": "sub", "*": "mul", "/": "div", "%": "rem"}
 CMP_OPS = {"==": "eq", "!=": "ne", "<": "lt", "<=": "le", ">": "gt", ">=": "ge"}
 
@@ -33,6 +39,11 @@ def ty_to_json(t):
         return {"t": "dec", "p": t.p, "s": t.s, "rnd": t.rnd}
     if isinstance(t, ArrT):
         return {"t": "arr", "elem": ty_to_json(t.elem), "n": t.n}
+    if isinstance(t, StrT):
+        return {"t": "str", "n": t.n}
+    if isinstance(t, StructT):
+        return {"t": "struct", "name": t.name,
+                "fields": [{"name": name, "ty": ty_to_json(ft)} for name, ft in t.fields]}
     raise AssertionError(t)
 
 
@@ -41,7 +52,9 @@ class IRTypeError(ValueError):
 
 
 def ty_from_json(j):
-    """Lee un tipo de la IR; lanza IRTypeError si no es un tipo v0.1 bien formado."""
+    """Lee un tipo de la IR; lanza IRTypeError si no es un tipo bien formado.
+
+    `str` y `struct` solo son válidos en `isy-ir/0.2`; el validador lo revisa."""
     if j is None:
         return None
     if not isinstance(j, dict):
@@ -62,14 +75,25 @@ def ty_from_json(j):
         elem = ty_from_json(j["elem"])
         if not isinstance(elem, ArrT) and isinstance(j["n"], int) and 1 <= j["n"] <= 65536:
             return ArrT(elem, j["n"])
+    if kind == "str" and set(j) == {"t", "n"}:
+        if isinstance(j["n"], int) and not isinstance(j["n"], bool) and 1 <= j["n"] <= 65536:
+            return StrT(j["n"])
+    if kind == "struct" and set(j) == {"t", "name", "fields"}:
+        fields = j["fields"]
+        if isinstance(j["name"], str) and isinstance(fields, list) and fields \
+                and all(isinstance(f, dict) and set(f) == {"name", "ty"} and isinstance(f["name"], str)
+                        for f in fields) \
+                and len({f["name"] for f in fields}) == len(fields):
+            return StructT(j["name"], tuple((f["name"], ty_from_json(f["ty"])) for f in fields))
     raise IRTypeError(f"tipo inválido: {j!r}")
 
 
 # --- lowering ----------------------------------------------------------------------
 
 class _FnLowering:
-    def __init__(self, fn: A.Fn):
+    def __init__(self, fn: A.Fn, program: A.Program):
         self.fn = fn
+        self.program = program
         self.locals: list[dict] = []
         self.scopes: list[dict] = [{}]
 
@@ -101,14 +125,19 @@ class _FnLowering:
     def stmt(self, s) -> dict:
         at = s.at
         if isinstance(s, A.Let):
-            value = self.expr(s.expr)
+            value = self.expr_as(s.expr, s.type)
             return {"s": "let", "at": at, "local": self.new_local(s.name, s.type), "value": value}
         if isinstance(s, A.Assign):
             local = self.lookup(s.name)
             if s.index is None:
-                return {"s": "set", "at": at, "local": local, "value": self.expr(s.expr)}
+                return {"s": "set", "at": at, "local": local, "value": self.expr_as(s.expr, s.target_ty)}
             return {"s": "set_index", "at": at, "local": local,
-                    "index": self.expr(s.index), "value": self.expr(s.expr)}
+                    "index": self.expr(s.index), "value": self.expr_as(s.expr, s.target_ty)}
+        if isinstance(s, A.AssignPath):
+            path = [{"index": self.expr(item)} if kind == "index" else {"field": item}
+                    for kind, item in s.path]
+            return {"s": "set_path", "at": at, "local": self.lookup(s.name), "path": path,
+                    "value": self.expr_as(s.expr, s.target_ty)}
         if isinstance(s, A.If):
             if s.els is None:
                 els = None
@@ -126,25 +155,49 @@ class _FnLowering:
             return {"s": "continue", "at": at}
         if isinstance(s, A.Return):
             return {"s": "return", "at": at,
-                    "value": None if s.expr is None else self.expr(s.expr)}
+                    "value": None if s.expr is None else self.expr_as(s.expr, self.fn.ret)}
         if isinstance(s, A.Emit):
             return {"s": "emit", "at": at, "value": self.expr(s.expr)}
         if isinstance(s, A.ExprStmt):
             call = s.call
             return {"s": "call", "at": at, "call_at": call.at, "fn": call.name,
-                    "args": [self.expr(a) for a in call.args]}
+                    "args": self.args(call)}
         raise AssertionError(s)
+
+    def args(self, call: A.Call) -> list:
+        params = self.program.fns[call.name].params
+        return [self.expr_as(a, ty) for a, (_, ty, _) in zip(call.args, params)]
+
+    def expr_as(self, e, ty) -> dict:
+        """Expresión en un contexto que espera `ty`: el ensanchamiento de str se hace explícito."""
+        node = self.expr(e)
+        if isinstance(ty, StrT) and e.ty != ty:
+            return {"at": e.at, "ty": ty_to_json(ty), "k": "widen", "e": node}
+        return node
 
     def expr(self, e) -> dict:
         node = {"at": e.at, "ty": ty_to_json(e.ty)}
         if isinstance(e, (A.IntLit, A.DecLit)):
             node.update(k="const", v=canonical(e.val, e.ty))
+        elif isinstance(e, A.StrLit):
+            node.update(k="const", v=e.value)
+        elif isinstance(e, A.Field):
+            node.update(k="field", base=self.expr(e.base), name=e.name)
+        elif isinstance(e, A.StructLit):
+            node.update(k="struct", fields=[{"name": name, "value": self.expr_as(x, e.ty.field(name))}
+                                            for name, x, _ in e.fields])
+        elif isinstance(e, A.Len):
+            node.update(k="len", e=self.expr(e.expr))
+        elif isinstance(e, A.Slice):
+            node.update(k="slice", e=self.expr(e.expr), lo=self.expr(e.lo), hi=self.expr(e.hi))
+        elif isinstance(e, A.Chr):
+            node.update(k="chr", e=self.expr(e.expr))
         elif isinstance(e, A.BoolLit):
             node.update(k="const", v="true" if e.value else "false")
         elif isinstance(e, A.Name):
             node.update(k="local", id=self.lookup(e.name))
         elif isinstance(e, A.Call):
-            node.update(k="call", fn=e.name, args=[self.expr(a) for a in e.args])
+            node.update(k="call", fn=e.name, args=self.args(e))
         elif isinstance(e, A.Index):
             node.update(k="index", base=self.expr(e.base), index=self.expr(e.index))
         elif isinstance(e, A.Cast):
@@ -157,12 +210,14 @@ class _FnLowering:
                 node.update(k=e.op, a=a, b=b)
             elif e.op in CMP_OPS:
                 node.update(k="cmp", op=CMP_OPS[e.op], a=a, b=b)
+            elif isinstance(e.ty, StrT):
+                node.update(k="concat", a=a, b=b)
             else:
                 node.update(k="bin", op=BIN_OPS[e.op], a=a, b=b)
         elif isinstance(e, A.ArrLit):
-            node.update(k="array", elems=[self.expr(x) for x in e.elems])
+            node.update(k="array", elems=[self.expr_as(x, e.ty.elem) for x in e.elems])
         elif isinstance(e, A.ArrRep):
-            node.update(k="repeat", elem=self.expr(e.elem))
+            node.update(k="repeat", elem=self.expr_as(e.elem, e.ty.elem))
         else:
             raise AssertionError(e)
         return node
@@ -170,8 +225,9 @@ class _FnLowering:
 
 def lower(program: A.Program, source_sha256: str) -> dict:
     """Programa ya chequeado -> módulo ISY-IR (dict JSON)."""
-    return {"schema": SCHEMA, "source_sha256": source_sha256,
-            "functions": [_FnLowering(fn).lower() for fn in program.fns.values()]}
+    schema = SCHEMA_V2 if program.version == "0.3" else SCHEMA
+    return {"schema": schema, "source_sha256": source_sha256,
+            "functions": [_FnLowering(fn, program).lower() for fn in program.fns.values()]}
 
 
 # --- identidad -----------------------------------------------------------------------

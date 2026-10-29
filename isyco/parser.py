@@ -4,12 +4,12 @@ from __future__ import annotations
 from . import ast as A
 from .errors import InvalidProgram
 from .lexer import Token
-from .types import INT_ALIASES, ArrT, BoolT, DecT, IntT
+from .types import INT_ALIASES, MAX_STR, ArrT, BoolT, DecT, IntT, NamedT, StrT
 
 CMP_OPS = {"==", "!=", "<", "<=", ">", ">="}
 ROUND_MODES = {"half_even", "half_up", "down", "exact"}
 MAX_ARRAY = 65536
-SUPPORTED_VERSIONS = {"0.1", "0.2"}
+SUPPORTED_VERSIONS = {"0.1", "0.2", "0.3"}
 
 
 class Parser:
@@ -17,6 +17,11 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
         self.version = "0.1"
+        self.no_struct_lit = False   # en condiciones de if/while (CORE v0.3 §3.2, P4)
+
+    @property
+    def v03(self) -> bool:
+        return self.version == "0.3"
 
     # --- utilidades -----------------------------------------------------------
     @property
@@ -66,12 +71,36 @@ class Parser:
         self.version = self.peek().text
         self.pos += 2
         fns: dict[str, A.Fn] = {}
+        structs: dict[str, A.StructDecl] = {}
         while self.tok.kind != "EOF":
+            if self.v03 and self.is_("struct"):
+                decl = self.struct_decl()
+                if decl.name in structs or decl.name in fns:
+                    raise InvalidProgram("DUPLICATE_NAME", decl.at, decl.name)
+                structs[decl.name] = decl
+                continue
             fn = self.fn_decl()
-            if fn.name in fns:
+            if fn.name in fns or fn.name in structs:
                 raise InvalidProgram("DUPLICATE_NAME", fn.at, fn.name)
             fns[fn.name] = fn
-        return A.Program(fns, self.version)
+        return A.Program(fns, self.version, structs)
+
+    def struct_decl(self) -> A.StructDecl:
+        at = self.expect("struct").at
+        name = self.ident().text
+        self.expect("{")
+        fields, seen = [], set()
+        while True:
+            ftok = self.ident()
+            self.expect(":")
+            if ftok.text in seen:
+                raise InvalidProgram("DUPLICATE_NAME", ftok.at, ftok.text)
+            seen.add(ftok.text)
+            fields.append((ftok.text, self.type_(), ftok.at))
+            if not self.accept(",") or self.is_("}"):
+                break
+        self.expect("}")
+        return A.StructDecl(at, name, fields)
 
     def fn_decl(self) -> A.Fn:
         at = self.expect("fn").at
@@ -130,10 +159,20 @@ class Parser:
             if not (1 <= p <= 18 and 0 <= s <= p):
                 raise InvalidProgram("DEC_PARAMS", token.at, f"dec<{p},{s}>")
             return DecT(p, s, rnd)
+        if self.v03 and self.accept("str"):
+            self.expect("<")
+            n = self.nat()
+            self.expect(">")
+            if not 1 <= n <= MAX_STR:
+                raise InvalidProgram("STR_SIZE", token.at, str(n))
+            return StrT(n)
+        if self.v03 and token.kind == "IDENT":
+            self.pos += 1
+            return NamedT(token.text, token.at)
         if self.accept("["):
             elem = self.type_()
             if isinstance(elem, ArrT):
-                raise InvalidProgram("SYNTAX", token.at, "los arreglos solo contienen escalares")
+                raise InvalidProgram("SYNTAX", token.at, "los arreglos no contienen arreglos")
             self.expect(";")
             n = self.nat()
             self.expect("]")
@@ -166,7 +205,7 @@ class Parser:
         if self.is_("if"):
             return self.if_stmt()
         if self.accept("while"):
-            cond = self.expr()
+            cond = self.cond()
             return A.While(at, cond, self.block())
         if self.accept("break"):
             self.expect(";")
@@ -188,19 +227,26 @@ class Parser:
             return A.ExprStmt(at, call)
         if self.tok.kind == "IDENT":
             name = self.take().text
-            index = None
-            if self.accept("["):
-                index = self.expr()
-                self.expect("]")
+            path = []
+            while True:
+                if self.accept("["):
+                    path.append(("index", self.expr()))
+                    self.expect("]")
+                elif self.v03 and self.accept("."):
+                    path.append(("field", self.ident().text))
+                else:
+                    break
             self.expect("=")
             expr = self.expr()
             self.expect(";")
-            return A.Assign(at, name, index, expr)
+            if len(path) > 1 or any(kind == "field" for kind, _ in path):
+                return A.AssignPath(at, name, path, expr)
+            return A.Assign(at, name, path[0][1] if path else None, expr)
         self.fail("se esperaba una sentencia")
 
     def if_stmt(self) -> A.If:
         at = self.expect("if").at
-        cond = self.expr()
+        cond = self.cond()
         then = self.block()
         els = None
         if self.accept("else"):
@@ -208,6 +254,13 @@ class Parser:
         return A.If(at, cond, then, els)
 
     # --- expresiones ----------------------------------------------------------
+    def cond(self):
+        saved, self.no_struct_lit = self.no_struct_lit, True
+        try:
+            return self.expr()
+        finally:
+            self.no_struct_lit = saved
+
     def expr(self):
         return self.or_expr()
 
@@ -282,6 +335,9 @@ class Parser:
             elif self.is_("as"):
                 at = self.take().at
                 node = A.Cast(at, node, self.type_())
+            elif self.v03 and self.is_("."):
+                at = self.take().at
+                node = A.Field(at, node, self.ident().text)
             else:
                 return node
 
@@ -306,6 +362,24 @@ class Parser:
             self.pos += 1
             whole, frac = token.text.split(".")
             return A.DecLit(token.at, int(whole + frac), len(frac))
+        if token.kind == "STR":
+            self.pos += 1
+            return A.StrLit(token.at, token.text)
+        if self.v03 and token.kind == "KW" and token.text in ("len", "slice", "chr"):
+            self.pos += 1
+            self.expect("(")
+            args = [self.expr()]
+            while self.accept(","):
+                args.append(self.expr())
+            self.expect(")")
+            arity = {"len": 1, "slice": 3, "chr": 1}[token.text]
+            if len(args) != arity:
+                raise InvalidProgram("SYNTAX", token.at, f"{token.text} recibe {arity} argumentos")
+            if token.text == "len":
+                return A.Len(token.at, args[0])
+            if token.text == "chr":
+                return A.Chr(token.at, args[0])
+            return A.Slice(token.at, *args)
         if self.accept("true"):
             return A.BoolLit(token.at, True)
         if self.accept("false"):
@@ -313,10 +387,17 @@ class Parser:
         if token.kind == "IDENT":
             if self.peek().kind == "OP" and self.peek().text == "(":
                 return self.call()
+            if (self.v03 and not self.no_struct_lit and self.peek().kind == "OP"
+                    and self.peek().text == "{"):
+                return self.struct_lit()
             self.pos += 1
             return A.Name(token.at, token.text)
         if self.accept("("):
-            inner = self.expr()
+            saved, self.no_struct_lit = self.no_struct_lit, False
+            try:
+                inner = self.expr()
+            finally:
+                self.no_struct_lit = saved
             self.expect(")")
             return inner
         if self.accept("["):
@@ -331,6 +412,20 @@ class Parser:
             self.expect("]")
             return A.ArrLit(token.at, elems)
         self.fail("se esperaba una expresión")
+
+
+    def struct_lit(self) -> A.StructLit:
+        token = self.ident()
+        self.expect("{")
+        fields = []
+        while not self.is_("}"):
+            ftok = self.ident()
+            self.expect(":")
+            fields.append((ftok.text, self.expr(), ftok.at))
+            if not self.accept(","):
+                break
+        self.expect("}")
+        return A.StructLit(token.at, token.text, fields)
 
 
 def parse(tokens: list[Token]) -> A.Program:

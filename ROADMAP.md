@@ -108,7 +108,7 @@ Tres reglas de frontend aprobadas por Danny (índices literales `i64`, literales
 negativos, `ARRAY_SIZE`), atadas a la cabecera `isyco 0.2`. El caso v0.1 `003` queda
 superado de forma explícita en `programs/conformance/SUPERSEDED.json`.
 
-#### F2.2 — Core v0.3: strings y structs  `[SPEC FROZEN 2026-10-29: spec/CORE_v0.3.md; corpus de 64 casos escrito a mano; implementación en curso]`
+#### F2.2 — Core v0.3: strings y structs  `[PASS 2026-10-29: referencia 64/64 (142/142 los tres corpus), IR isy-ir/0.2 284/284; backends nativos: UNSUPPORTED declarado, sin cubrir]`
 
 Decisiones S1–S8 de Danny: `str<N>` acotado y ASCII, `OVERFLOW` al no caber,
 ensanchamiento implícito `str<N>` → `str<M>` (N ≤ M), `len`/`s[i]`/`slice`/`chr`,
@@ -263,6 +263,11 @@ Correcciones al V0 que este carril adopta:
 | Contrato `ISY_BACKEND/1` con driver común (validación, capacidades, caché, límites, protocolo E/R/X) | DEMONSTRATED (2026-10-29) | `spec/BACKEND.md`, `isyco/backends/base.py`, `tests/test_backends.py` |
 | Backends Rust y Zig: binario nativo == referencia en ambos corpus y en el diferencial por tipo | DEMONSTRATED: 78/78 y 8 484 corridas sin diferencias cada uno | `evidence/backends/gate_2026-10-29T022957Z.json` |
 | Un backend que no declara una capacidad responde `UNSUPPORTED` y no ejecuta el programa | DEMONSTRATED (backend de prueba sin decimales) | `tests/test_backends.py::Unsupported` |
+| Core v0.3 (str<N>, structs): la referencia cumple 64 casos con expected escritos a mano antes de implementar | DEMONSTRATED (2026-10-29), 142/142 sumando v0.1/v0.2 | `evidence/conformance/run_2026-10-29T081147Z.json` |
+| v0.3 no cambia ningún programa v0.1/v0.2 | DEMONSTRATED: 78/78 y mismo `semantic_hash` de IR en los 54 programas válidos (salvo el caso 119, superado explícitamente) | `programs/conformance_v0.2/SUPERSEDED.json`, `evidence/ir/` |
+| ISY-IR v0.2 preserva la semántica de v0.3 (resultado y traza) | DEMONSTRATED: 284/284 comparaciones, 99 programas | `evidence/ir/gate_2026-10-29T081148Z.json` |
+| El corpus v0.3 detecta semánticas saboteadas (structs por referencia, str que trunca) | DEMONSTRATED (2 mutaciones) | `tests/test_reference.py::Sabotage` |
+| Backends nativos (C, Rust, Zig) ejecutan str y structs | NOT_DEMONSTRATED: declaran `ir0.2 str struct` como no soportado y responden UNSUPPORTED (43 casos, 0 fallas) | `evidence/backends/gate_2026-10-29T082145Z.json` |
 | La suite detecta un backend C saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
 | La suite detecta un backend Rust o Zig saboteado | DEMONSTRATED (2026-10-29): los mismos 2 sabotajes que C; cada uno falla corpus (3 y 2 casos) y diferencial (12 y 53 diferencias), igual en los tres backends | `evidence/backends/gate_2026-10-29T055122Z.json`, `tests/test_backends.py` |
 | Backends de las olas 2–6 de F5 (COBOL, Fortran, Prolog/z3, Go/Java/…, esolangs) | NOT_DEMONSTRATED (no implementados) | — |

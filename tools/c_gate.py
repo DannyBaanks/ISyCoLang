@@ -27,6 +27,7 @@ sys.path.insert(0, str(ROOT))
 from isyco import run  # noqa: E402
 from isyco.backends import c as C  # noqa: E402
 from isyco.conformance import COMPARED, load_all  # noqa: E402
+from isyco.backends.base import missing_features  # noqa: E402
 from isyco.difftest import compare  # noqa: E402
 
 SANITIZE = ("-fsanitize=undefined,address", "-fno-sanitize-recover=all")
@@ -38,16 +39,20 @@ def version(cc: str) -> str:
 
 
 def corpus_three_way(cases, **kw) -> dict:
-    rows = []
+    rows, unsupported = [], []
     for case in cases:
         ref, _ = run(case["program"], case["input"], case.get("limits"))
         got, _ = C.run_c(case["program"], case["input"], case.get("limits"), **kw)
+        if got.get("status") == "UNSUPPORTED" and got["code"] == ",".join(
+                missing_features(C.BACKEND, case["program"])):
+            unsupported.append({"name": case["name"], "missing": got["code"]})   # no cubierto
+            continue
         expected_ok = {k: ref[k] for k in COMPARED} == case["expected"]
         backend_ok = ({k: ref[k] for k in KEYS} == {k: got.get(k) for k in KEYS}
                       and not got.get("backend_stderr"))
         rows.append({"name": case["name"], "expected_vs_reference": expected_ok,
                      "reference_vs_backend": backend_ok})
-    return {"cases": len(rows),
+    return {"cases": len(rows), "unsupported": unsupported,
             "expected_vs_reference_ok": sum(r["expected_vs_reference"] for r in rows),
             "reference_vs_backend_ok": sum(r["reference_vs_backend"] for r in rows),
             "failures": [r for r in rows if not (r["expected_vs_reference"] and r["reference_vs_backend"])]}

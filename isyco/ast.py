@@ -75,6 +75,42 @@ class ArrRep(Expr):
     n: int = 0
 
 
+# --- CORE v0.3 -----------------------------------------------------------------
+
+@dataclass
+class StrLit(Expr):
+    value: str = ""
+
+
+@dataclass
+class Field(Expr):
+    base: Expr = None
+    name: str = ""
+
+
+@dataclass
+class StructLit(Expr):
+    name: str = ""
+    fields: list = field(default_factory=list)   # [(nombre, expr, at)] en orden escrito
+
+
+@dataclass
+class Len(Expr):
+    expr: Expr = None
+
+
+@dataclass
+class Slice(Expr):
+    expr: Expr = None
+    lo: Expr = None
+    hi: Expr = None
+
+
+@dataclass
+class Chr(Expr):
+    expr: Expr = None
+
+
 @dataclass
 class Stmt:
     at: str
@@ -98,6 +134,16 @@ class Assign(Stmt):
     index: Expr | None = None
     expr: Expr = None
     target_ty: object = field(default=None, init=False)
+
+
+@dataclass
+class AssignPath(Stmt):
+    """CORE v0.3 §3.3: `x.f = e`, `a[i].f = e`, `p.xs[i] = e`…"""
+    name: str = ""
+    path: list = field(default_factory=list)   # [("index", expr) | ("field", nombre)]
+    expr: Expr = None
+    target_ty: object = field(default=None, init=False)
+    steps_ty: list = field(default_factory=list, init=False)  # tipo antes de cada paso
 
 
 @dataclass
@@ -149,6 +195,14 @@ class Fn:
 
 
 @dataclass
+class StructDecl:
+    at: str
+    name: str
+    fields: list          # [(nombre, tipo, at)]
+
+
+@dataclass
 class Program:
     fns: dict             # nombre -> Fn, en orden de aparición
-    version: str = "0.1"  # de la cabecera; decide reglas de CORE v0.2
+    version: str = "0.1"  # de la cabecera; decide reglas de CORE v0.2/v0.3
+    structs: dict = field(default_factory=dict)   # nombre -> StructDecl (v0.3)

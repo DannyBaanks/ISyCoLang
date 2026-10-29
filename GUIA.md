@@ -26,13 +26,14 @@ fn main(precio: dec<12,2>, piezas: i32) -> dec<12,2> !emit {
 }
 ```
 
-- La primera línea elige las reglas: `isyco 0.2` (recomendada) o `isyco 0.1`.
+- La primera línea elige las reglas: `isyco 0.3` (la más nueva), `isyco 0.2` o `isyco 0.1`.
 - Tipos: `bool`, enteros `i8`…`i64` / `u8`…`u64` (desborde = error), o
   `int<N,signed|unsigned,trap|wrap|sat>` para elegir qué pasa al desbordar;
   decimales `dec<p,s>` (redondeo `half_even` por defecto) o
   `dec<p,s,half_up|down|exact>`; arreglos `[T; N]` (se copian al pasarlos).
 - Una función que usa `emit` lo declara con `!emit`.
-- No hay strings, structs, módulos ni lectura de archivos (todavía).
+- Strings y structs existen desde `isyco 0.3` (§2b). No hay módulos ni lectura
+  de archivos (todavía).
 
 ## 2. Correrlo
 
@@ -51,6 +52,43 @@ Salida (JSON):
 ```
 
 `19.99 × 1.16 = 23.1884` se redondea **una vez** a `23.19`.
+
+## 2b. Strings y structs (`isyco 0.3`)
+
+```text
+isyco 0.3
+struct Item { nombre: str<16>, precio: dec<10,2>, piezas: i32 }
+
+fn linea(it: Item) -> str<48> {
+    let total: dec<10,2> = it.precio * (it.piezas as dec<10,2>);
+    return it.nombre + " x" + (it.piezas as str<6>) + " = " + (total as str<14>);
+}
+
+fn main(cliente: str<20>, it: Item) -> Item !emit {
+    emit "Cliente: " + cliente;
+    emit linea(it);
+    it.piezas = it.piezas + 1;
+    return it;
+}
+```
+
+```bash
+python3 -m isyco run ticket.isy --input '["Danny", {"nombre":"Mezcal","precio":"350.00","piezas":"2"}]'
+# emits: "Cliente: Danny", "Mezcal x2 = 700.00"
+# return: {"nombre":"Mezcal","precio":"350.00","piezas":"3"}
+```
+
+- `str<N>`: hasta N bytes ASCII; si algo no cabe es `ERROR(OVERFLOW)`, nunca se corta.
+  Un `str<16>` cabe donde se pide un `str<48>`; al revés hay que usar `as`.
+- `+` concatena, `len(s)`, `s[i]` (byte como `u8`), `slice(s, a, b)`, `chr(n)`.
+- `x as str<N>` escribe un número en forma canónica; `s as i32` lo lee
+  (`"05"` o `"2.5"` en un `dec<…,2>` dan `ERROR(BAD_FORMAT)`).
+- Los structs se copian al asignarlos o pasarlos, y se comparan con `==`.
+  En la condición de un `if`/`while`, un literal de struct va entre paréntesis.
+- En la entrada, un struct es un objeto JSON; `emit` de un struct o arreglo
+  saca JSON en una línea.
+- Hoy solo `ast` e `ir` ejecutan v0.3; `c`, `rust` y `zig` responden
+  `UNSUPPORTED` (`code: ir0.2,str,struct`), nunca un resultado aproximado.
 
 ## 3. Elegir quién lo ejecuta (`--via`)
 
@@ -76,9 +114,10 @@ python3 -m isyco ir  precio.isy          # ver la IR canónica
 |---|---|---|
 | `HALTED` | 0 | terminó bien |
 | `INVALID_PROGRAM` | 2 | error de tipos, o entrada mala: `"19.999"` en un `dec<12,2>` da `code: BAD_INPUT` |
-| `ERROR` | 3 | `OVERFLOW`, `DIV_ZERO`, `INEXACT` (con `exact`), índice fuera de rango |
+| `ERROR` | 3 | `OVERFLOW`, `DIV_ZERO`, `INEXACT` (con `exact`), índice fuera de rango, `BAD_FORMAT`/`BAD_CHAR` (v0.3) |
 | `LIMIT_REACHED` | 4 | `code: max_steps` / `max_emits` / `max_call_depth` |
 | `TIMEOUT` | 5 | pasó `--timeout-ms` (lo decide el reloj, no la semántica) |
+| `UNSUPPORTED` | 1 | el backend nativo no implementa algo que el programa usa; `code` dice qué |
 | — | 1 | error de uso, archivo, o toolchain no instalado |
 
 Los `emits` hechos antes del error **sí** aparecen en la salida.

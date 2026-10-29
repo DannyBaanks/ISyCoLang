@@ -86,3 +86,43 @@ Las funciones van en orden de fuente; el punto de entrada es la que se llama `ma
 `isyco/ir_validate.py` vuelve a comprobar todo sin confiar en el frontend.
 Códigos: `IR_SCHEMA`, `IR_NODE`, `IR_TYPE`, `IR_LOCAL`, `IR_CALL`, `IR_EFFECT`,
 `IR_CONTROL`, `IR_RETURN`, con la ruta JSON del nodo (`functions[1].body[3].value.a`).
+
+## 9. ISY-IR v0.2 (`isy-ir/0.2`, CORE v0.3)
+
+Un programa `isyco 0.3` produce `isy-ir/0.2`; uno `isyco 0.1`/`0.2` sigue
+produciendo `isy-ir/0.1` sin cambios (mismo `semantic_hash` que en F3,
+comprobado sobre los 54 programas válidos de esos corpus). Todo lo de abajo es
+inválido bajo `isy-ir/0.1`.
+
+**Tipos nuevos** (los structs van completos en línea; no hay tabla aparte):
+
+```json
+{"t":"str","n":1..65536}
+{"t":"struct","name":"P","fields":[{"name":"x","ty":<tipo>}, …]}
+{"t":"arr","elem":<escalar | str | struct>,"n":…}
+```
+
+**Expresiones nuevas:**
+
+| `k` | campos | regla |
+|---|---|---|
+| `const` | `v` | también `str`: `v` es el texto (≤ n bytes permitidos) |
+| `index` | `base`, `index` | si `base` es `str`, `ty` = `u8` |
+| `concat` | `a`, `b` | ambos `str` (capacidades libres); `ty` = `str<M>`; si no cabe ⇒ `ERROR(OVERFLOW)` |
+| `widen` | `e` | `e` es `str<N>`, `ty` es `str<M>` con N ≤ M; el ensanchamiento implícito de la fuente queda explícito |
+| `len` | `e` | `e` str; `ty` = `i64` |
+| `slice` | `e`, `lo`, `hi` | `e` str, `lo`/`hi` enteros; `ty` = tipo de `e` |
+| `chr` | `e` | `e` entero; `ty` = `str<1>` |
+| `field` | `base`, `name` | `base` struct con ese campo; `ty` = tipo del campo |
+| `struct` | `fields`: `[{"name","value"}]` | cada campo exactamente una vez, **en el orden escrito** (es el orden de evaluación) |
+| `cast` | `e` | además: `str`↔`str`, escalar→`str`, `str`→escalar (CORE v0.3 §2.5) |
+| `cmp` | `op`, `a`, `b` | `str` con cualquier capacidad y todos los `op`; `eq`/`ne` entre structs o arreglos iguales |
+
+**Sentencia nueva:** `set_path` con `local`, `path` = `[{"index": expr} | {"field": nombre}]`
+y `value`. Los índices se evalúan en orden, luego `value`, y los rangos se
+revisan al guardar (E8 generalizado). Un paso `index` sobre `str` es inválido.
+
+**Otros cambios bajo v0.2:** `emit` acepta cualquier tipo y `main` puede
+retornar cualquier tipo (forma canónica de CORE v0.3 §6).
+
+Capacidades de backend nuevas (ISY_BACKEND/1 §2): `ir0.2`, `str`, `struct`.

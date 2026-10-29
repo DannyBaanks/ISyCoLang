@@ -17,8 +17,9 @@ from .checker import check
 from .errors import HostTimeout, InvalidProgram, IsyError, LimitReached, RuntimeFault
 from .lexer import decode, tokenize
 from .parser import parse
-from .types import (ArrT, BoolT, DecT, IntT, canonical, cast, dec_fit, int_fit,
-                    int_trunc_div, parse_canonical, round_scaled)
+from .types import (ArrT, BoolT, DecT, IntT, StrT, StructT, allowed_char, canonical,
+                    canonical_text, cast, dec_fit, int_fit, int_trunc_div, parse_canonical,
+                    round_scaled)
 
 DEFAULT_LIMITS = {"max_steps": 1_000_000, "max_call_depth": 256, "max_emits": 100_000}
 TRACE_LEVELS = ("none", "stmt", "full")
@@ -42,7 +43,12 @@ class _Return(Exception):
 
 
 def _copy(value):
-    return list(value) if isinstance(value, list) else value
+    """Copia por valor: arreglos y structs (v0.3) pueden anidarse, así que es profunda."""
+    if isinstance(value, list):
+        return [_copy(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _copy(v) for k, v in value.items()}
+    return value
 
 
 @dataclass
@@ -148,6 +154,21 @@ class Interpreter:
                 array[index] = value
                 self.event("assign", s.at, name=s.name, index=str(index),
                            value=canonical(value, s.target_ty))
+        elif isinstance(s, A.AssignPath):
+            # CORE v0.3 §3.3: índices de izquierda a derecha, luego el valor; los rangos
+            # se revisan al guardar (E8 generalizado).
+            keys = [self.eval(item) if kind == "index" else item for kind, item in s.path]
+            value = _copy(self.eval(s.expr))
+            container = frame.get(s.name)
+            for i, ((kind, _), key) in enumerate(zip(s.path, keys)):
+                if kind == "index" and not 0 <= key < len(container):
+                    raise RuntimeFault("INDEX_OUT_OF_BOUNDS", s.at, str(key))
+                if i == len(keys) - 1:
+                    container[key] = value
+                else:
+                    container = container[key]
+            path = "".join(f"[{k}]" if kind == "index" else f".{k}" for (kind, _), k in zip(s.path, keys))
+            self.event("assign", s.at, name=s.name, path=path, value=canonical(value, s.target_ty))
         elif isinstance(s, A.If):
             taken = self.eval(s.cond)
             self.event("branch", s.at, taken="then" if taken else "else")
@@ -180,7 +201,7 @@ class Interpreter:
             value = self.eval(s.expr)
             if len(self.emits) >= self.limits["max_emits"]:
                 raise LimitReached("max_emits", s.at)
-            text = canonical(value, s.expr.ty)
+            text = canonical_text(value, s.expr.ty)
             self.emits.append(text)
             self.event("emit", s.at, value=text)
         elif isinstance(s, A.ExprStmt):
@@ -204,7 +225,30 @@ class Interpreter:
             index = self.eval(e.index)
             if not 0 <= index < len(array):
                 raise RuntimeFault("INDEX_OUT_OF_BOUNDS", e.at, str(index))
+            if isinstance(e.base.ty, StrT):
+                return ord(array[index])
             return array[index]
+        if isinstance(e, A.StrLit):
+            return e.value
+        if isinstance(e, A.Field):
+            return self.eval(e.base)[e.name]
+        if isinstance(e, A.StructLit):
+            values = {name: _copy(self.eval(expr)) for name, expr, _ in e.fields}  # orden escrito
+            return {name: values[name] for name, _ in e.ty.fields}               # orden declarado
+        if isinstance(e, A.Len):
+            return len(self.eval(e.expr))
+        if isinstance(e, A.Slice):
+            text = self.eval(e.expr)
+            lo = self.eval(e.lo)
+            hi = self.eval(e.hi)
+            if not 0 <= lo <= hi <= len(text):
+                raise RuntimeFault("INDEX_OUT_OF_BOUNDS", e.at, f"[{lo}, {hi})")
+            return text[lo:hi]
+        if isinstance(e, A.Chr):
+            code = self.eval(e.expr)
+            if not (0 <= code < 128 and allowed_char(chr(code))):
+                raise RuntimeFault("BAD_CHAR", e.at, str(code))
+            return chr(code)
         if isinstance(e, A.Cast):
             return cast(self.eval(e.expr), e.expr.ty, e.target, e.at)
         if isinstance(e, A.Unary):
@@ -231,6 +275,11 @@ class Interpreter:
         a = self.eval(e.left)
         b = self.eval(e.right)
         op = e.op
+        if op == "+" and isinstance(e.ty, StrT):
+            text = a + b
+            if len(text) > e.ty.n:
+                raise RuntimeFault("OVERFLOW", e.at, f"{len(text)} bytes en {e.ty}")
+            return text
         if op == "==":
             return a == b
         if op == "!=":
@@ -314,7 +363,7 @@ def run(data: bytes, inputs: list, limits: dict | None = None, trace: str = "non
         finally:
             sys.setrecursionlimit(old_limit)
         if main.ret is not None:
-            result["return"] = canonical(value, main.ret)
+            result["return"] = canonical_text(value, main.ret)
     except IsyError as err:
         result["status"] = err.status
         result["code"] = None if isinstance(err, HostTimeout) else err.code

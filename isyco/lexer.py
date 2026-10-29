@@ -1,4 +1,4 @@
-"""Lexer de v0.1 (spec §2)."""
+"""Lexer de v0.1 (spec §2), con strings y palabras nuevas de CORE v0.3."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -12,15 +12,18 @@ KEYWORDS = {
     "exact", "i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64",
 }
 
+KEYWORDS_V03 = {"str", "struct", "len", "slice", "chr"}
+ESCAPES = {'"': '"', "\\": "\\", "n": "\n", "t": "\t"}
+
 # Más largos primero para que "->" gane a "-".
 OPERATORS = ["->", "==", "!=", "<=", ">=", "<", ">", "+", "-", "*", "/", "%",
-             "(", ")", "{", "}", "[", "]", ",", ";", ":", "!", "="]
+             "(", ")", "{", "}", "[", "]", ",", ";", ":", "!", "=", "."]
 
 
 @dataclass(frozen=True)
 class Token:
-    kind: str   # INT | DEC | IDENT | KW | OP | EOF
-    text: str
+    kind: str   # INT | DEC | STR | IDENT | KW | OP | EOF
+    text: str   # en STR, el valor ya sin comillas ni escapes
     at: str     # "línea:columna"
 
 
@@ -33,7 +36,30 @@ def decode(data: bytes) -> str:
         raise InvalidProgram("ENCODING", None, str(exc)) from None
 
 
+def header_version(source: str) -> str | None:
+    """Versión de la cabecera, leída antes de tokenizar: las reglas léxicas de v0.3
+    (strings y palabras nuevas) solo valen con `isyco 0.3`, así ningún programa
+    v0.1/v0.2 cambia de significado."""
+    words: list[str] = []
+    i, n = 0, len(source)
+    while i < n and len(words) < 2:
+        if source[i] in " \t\n":
+            i += 1
+        elif source[i] == "#":
+            while i < n and source[i] != "\n":
+                i += 1
+        else:
+            j = i
+            while j < n and source[j] not in " \t\n#":
+                j += 1
+            words.append(source[i:j])
+            i = j
+    return words[1] if len(words) == 2 and words[0] == "isyco" else None
+
+
 def tokenize(source: str) -> list[Token]:
+    v03 = header_version(source) == "0.3"
+    keywords = KEYWORDS | KEYWORDS_V03 if v03 else KEYWORDS
     tokens: list[Token] = []
     i, line, col = 0, 1, 1
     n = len(source)
@@ -80,8 +106,28 @@ def tokenize(source: str) -> list[Token]:
             while j < n and source[j].isascii() and (source[j].isalnum() or source[j] == "_"):
                 j += 1
             word = source[i:j]
-            tokens.append(Token("KW" if word in KEYWORDS else "IDENT", word, at))
+            tokens.append(Token("KW" if word in keywords else "IDENT", word, at))
             advance(j - i)
+        elif ch == '"' and v03:
+            j, chars = i + 1, []
+            while True:
+                if j >= n or source[j] == "\n":
+                    raise InvalidProgram("SYNTAX", at, "string sin cerrar")
+                c = source[j]
+                if c == '"':
+                    break
+                if c == "\\":
+                    if j + 1 >= n or source[j + 1] not in ESCAPES:
+                        raise InvalidProgram("SYNTAX", at, "escape desconocido")
+                    chars.append(ESCAPES[source[j + 1]])
+                    j += 2
+                    continue
+                if not (c == "\t" or " " <= c <= "~"):
+                    raise InvalidProgram("ENCODING", at, f"byte no permitido en un string: {c!r}")
+                chars.append(c)
+                j += 1
+            tokens.append(Token("STR", "".join(chars), at))
+            advance(j + 1 - i)
         else:
             for op in OPERATORS:
                 if source.startswith(op, i):

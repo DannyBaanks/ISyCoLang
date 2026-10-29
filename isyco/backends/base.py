@@ -25,9 +25,9 @@ from pathlib import Path
 from ..errors import InvalidProgram
 from ..interp import DEFAULT_LIMITS, canonical_json
 from ..interp import run as run_reference
-from ..ir import ty_from_json
+from ..ir import SCHEMA_V2, ty_from_json
 from ..ir_interp import compile_ir
-from ..types import ArrT, BoolT, DecT, IntT, parse_canonical
+from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 
 BUILD_ROOT = Path(__file__).resolve().parents[2] / "build"
 GNU_TIME = "/usr/bin/time" if Path("/usr/bin/time").exists() else None   # GNU time: pico de memoria
@@ -35,7 +35,10 @@ GNU_TIME = "/usr/bin/time" if Path("/usr/bin/time").exists() else None   # GNU t
 ALL_FEATURES = frozenset(
     {f"int{bits}" for bits in (8, 16, 32, 64)}
     | {"unsigned", "ovf:trap", "ovf:wrap", "ovf:sat", "dec", "dec:half_even", "dec:half_up",
-       "dec:down", "dec:exact", "bool", "arrays", "calls", "recursion", "while", "emit"})
+       "dec:down", "dec:exact", "bool", "arrays", "calls", "recursion", "while", "emit",
+       "ir0.2", "str", "struct"})
+# Lo que trae isy-ir/0.2 (CORE v0.3): ningún backend nativo lo implementa todavía.
+V2_FEATURES = frozenset({"ir0.2", "str", "struct"})
 
 
 # --- capacidades -------------------------------------------------------------------
@@ -63,11 +66,19 @@ def _type_features(t, out: set) -> None:
     elif isinstance(t, ArrT):
         out.add("arrays")
         _type_features(t.elem, out)
+    elif isinstance(t, StrT):
+        out.add("str")
+    elif isinstance(t, StructT):
+        out.add("struct")
+        for _, ft in t.fields:
+            _type_features(ft, out)
 
 
 def features_of(module: dict) -> set[str]:
     """Capacidades que un módulo ISY-IR necesita de un backend."""
     out: set[str] = set()
+    if module.get("schema") == SCHEMA_V2:
+        out.add("ir0.2")
     calls: dict[str, set[str]] = {}
     for fn in module["functions"]:
         calls[fn["name"]] = set()
@@ -99,7 +110,7 @@ def features_of(module: dict) -> set[str]:
 class Backend:
     name = "abstract"
     extension = ".txt"
-    features: frozenset = ALL_FEATURES
+    features: frozenset = ALL_FEATURES - V2_FEATURES
     sabotages: tuple = ()
 
     def toolchain(self) -> str | None:
@@ -152,8 +163,7 @@ class Backend:
             module = compile_ir(data)
         except InvalidProgram:
             return run_reference(data, inputs, limits)   # frontend compartido
-        args = raw_args(module, inputs)
-        if args is None:
+        if not inputs_valid(module, inputs):
             return run_reference(data, inputs, limits)   # BAD_INPUT lo decide el frontend
         result = {
             "schema": "isyco.result/0.1",
@@ -166,6 +176,7 @@ class Backend:
             result.update(status="UNSUPPORTED", code=",".join(missing), emits=[], steps=None)
             result["return"] = None
             return result, []
+        args = raw_args(module, inputs)
         binary, compile_ms = self.build(self.emit(module, sabotage), extra_flags)
         argv = [str(binary), str(lim["max_steps"]), str(lim["max_call_depth"]),
                 str(lim["max_emits"]), *args]
@@ -254,6 +265,22 @@ def _raise_stack_limit() -> None:
     target = hard if hard != resource.RLIM_INFINITY else 1 << 30
     if soft != resource.RLIM_INFINITY and soft < target:
         resource.setrlimit(resource.RLIMIT_STACK, (target, hard))
+
+
+def missing_features(backend, data: bytes) -> list[str]:
+    """Capacidades que `data` necesita y `backend` no declara ([] si es inválido)."""
+    try:
+        module = compile_ir(data)
+    except InvalidProgram:
+        return []
+    return sorted(features_of(module) - set(backend.features))
+
+
+def inputs_valid(module: dict, inputs: list) -> bool:
+    main = next(f for f in module["functions"] if f["name"] == "main")
+    types = [ty_from_json(main["locals"][p]["ty"]) for p in main["params"]]
+    return isinstance(inputs, list) and len(inputs) == len(types) \
+        and all(parse_canonical(text, t) is not None for text, t in zip(inputs, types))
 
 
 def raw_args(module: dict, inputs: list) -> list[str] | None:

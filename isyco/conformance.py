@@ -9,7 +9,7 @@ from .interp import run
 COMPARED = ("status", "code", "emits", "return")
 
 
-CORPORA = ("conformance", "conformance_v0.2")
+CORPORA = ("conformance", "conformance_v0.2", "conformance_v0.3")
 
 
 def load_corpus(directory: Path) -> list[dict]:

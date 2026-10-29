@@ -1,4 +1,4 @@
-"""Intérprete de ISY-IR v0.1.
+"""Intérprete de ISY-IR v0.1 / v0.2.
 
 Ejecuta el JSON de la IR, no el AST. El gate de F3 exige que su resultado y su
 traza sean idénticos byte a byte a los del intérprete de referencia en todo el
@@ -16,8 +16,8 @@ from .errors import HostTimeout, InvalidProgram, IsyError, LimitReached, Runtime
 from .interp import DEFAULT_LIMITS, TRACE_LEVELS, canonical_json, load
 from .ir import ir_hash, lower, ty_from_json
 from .ir_validate import validate
-from .types import (IntT, canonical, cast, dec_fit, int_fit, int_trunc_div,
-                    parse_canonical, round_scaled)
+from .types import (IntT, StrT, allowed_char, canonical, canonical_text, cast, dec_fit, int_fit,
+                    int_trunc_div, parse_canonical, round_scaled)
 
 
 class _Break(Exception):
@@ -34,7 +34,11 @@ class _Return(Exception):
 
 
 def _copy(value):
-    return list(value) if isinstance(value, list) else value
+    if isinstance(value, list):
+        return [_copy(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _copy(v) for k, v in value.items()}
+    return value
 
 
 class _Fn:
@@ -149,6 +153,26 @@ class IRInterpreter:
             array[index] = value
             self.event("assign", at, name=frame.fn.local_names[local], index=str(index),
                        value=canonical(value, frame.fn.local_types[local].elem))
+        elif kind == "set_path":
+            local = s["local"]
+            keys = [self.eval(step["index"]) if "index" in step else step["field"] for step in s["path"]]
+            value = _copy(self.eval(s["value"]))
+            container = frame.values[local]
+            ty = frame.fn.local_types[local]
+            for i, (step, key) in enumerate(zip(s["path"], keys)):
+                if "index" in step:
+                    if not 0 <= key < len(container):
+                        raise RuntimeFault("INDEX_OUT_OF_BOUNDS", at, str(key))
+                    ty = ty.elem
+                else:
+                    ty = ty.field(key)
+                if i == len(keys) - 1:
+                    container[key] = value
+                else:
+                    container = container[key]
+            text = "".join(f"[{k}]" if "index" in step else f".{k}" for step, k in zip(s["path"], keys))
+            self.event("assign", at, name=frame.fn.local_names[local], path=text,
+                       value=canonical(value, ty))
         elif kind == "if":
             taken = self.eval(s["cond"])
             self.event("branch", at, taken="then" if taken else "else")
@@ -179,7 +203,7 @@ class IRInterpreter:
             value = self.eval(s["value"])
             if len(self.emits) >= self.limits["max_emits"]:
                 raise LimitReached("max_emits", at)
-            text = canonical(value, self.ty(s["value"]))
+            text = canonical_text(value, self.ty(s["value"]))
             self.emits.append(text)
             self.event("emit", at, value=text)
         elif kind == "call":
@@ -204,7 +228,35 @@ class IRInterpreter:
             index = self.eval(e["index"])
             if not 0 <= index < len(array):
                 raise RuntimeFault("INDEX_OUT_OF_BOUNDS", at, str(index))
+            if isinstance(array, str):
+                return ord(array[index])
             return array[index]
+        if kind == "concat":
+            text = self.eval(e["a"]) + self.eval(e["b"])
+            if len(text) > self.ty(e).n:
+                raise RuntimeFault("OVERFLOW", at)
+            return text
+        if kind == "widen":
+            return self.eval(e["e"])
+        if kind == "len":
+            return len(self.eval(e["e"]))
+        if kind == "slice":
+            text = self.eval(e["e"])
+            lo = self.eval(e["lo"])
+            hi = self.eval(e["hi"])
+            if not 0 <= lo <= hi <= len(text):
+                raise RuntimeFault("INDEX_OUT_OF_BOUNDS", at)
+            return text[lo:hi]
+        if kind == "chr":
+            code = self.eval(e["e"])
+            if not (0 <= code < 128 and allowed_char(chr(code))):
+                raise RuntimeFault("BAD_CHAR", at)
+            return chr(code)
+        if kind == "field":
+            return self.eval(e["base"])[e["name"]]
+        if kind == "struct":
+            values = {f["name"]: _copy(self.eval(f["value"])) for f in e["fields"]}
+            return {name: values[name] for name, _ in self.ty(e).fields}
         if kind == "cast":
             return cast(self.eval(e["e"]), self.ty(e["e"]), self.ty(e), at)
         if kind == "not":
@@ -220,8 +272,9 @@ class IRInterpreter:
         if kind == "cmp":
             a, b = self.eval(e["a"]), self.eval(e["b"])
             op = e["op"]
-            return {"eq": a == b, "ne": a != b, "lt": a < b,
-                    "le": a <= b, "gt": a > b, "ge": a >= b}[op]
+            # Solo la comparación pedida: eq/ne valen sobre structs, el orden no existe ahí.
+            return {"eq": lambda: a == b, "ne": lambda: a != b, "lt": lambda: a < b,
+                    "le": lambda: a <= b, "gt": lambda: a > b, "ge": lambda: a >= b}[op]()
         if kind == "bin":
             return self.arith(e["op"], self.eval(e["a"]), self.eval(e["b"]), self.ty(e), at)
         if kind == "array":
@@ -295,7 +348,7 @@ def run_ir(module: dict, program_sha256: str, inputs: list, limits: dict | None 
         finally:
             sys.setrecursionlimit(old_limit)
         if main.ret is not None:
-            result["return"] = canonical(value, main.ret)
+            result["return"] = canonical_text(value, main.ret)
     except IsyError as err:
         result["status"] = err.status
         result["code"] = None if isinstance(err, HostTimeout) else err.code

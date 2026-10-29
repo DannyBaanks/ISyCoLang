@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 from isyco import run  # noqa: E402
 from isyco.backends import available, registry  # noqa: E402
-from isyco.backends.base import ALL_FEATURES, GNU_TIME, features_of  # noqa: E402
+from isyco.backends.base import ALL_FEATURES, GNU_TIME, features_of, missing_features  # noqa: E402
 from isyco.backends.c import CBackend  # noqa: E402
 from isyco.conformance import COMPARED, load_all  # noqa: E402
 from isyco.difftest import DEC_TYPES, INT_TYPES, compare  # noqa: E402
@@ -40,6 +40,9 @@ class Features(unittest.TestCase):
         self.assertIn("recursion", features_of(compile_ir(by_name("036_recursion_fact")["program"])))
         self.assertIn("arrays", features_of(compile_ir(by_name("033_array_copy")["program"])))
         self.assertIn("unsigned", features_of(compile_ir(by_name("012_u8_wrap_neg")["program"])))
+        v03 = features_of(compile_ir(by_name("234_struct_nested")["program"]))
+        self.assertTrue({"ir0.2", "str", "struct", "arrays", "int8", "unsigned"} <= v03)
+        self.assertNotIn("ir0.2", features_of(compile_ir(by_name("027_interes")["program"])))
 
     def test_every_valid_program_needs_only_known_features(self):
         for case in CORPUS:
@@ -51,9 +54,9 @@ class Features(unittest.TestCase):
 
 
 class NoDecimalC(CBackend):
-    """Backend de prueba que declara no saber decimales."""
+    """Backend de prueba que declara no saber decimales (además de lo que C no sabe)."""
     name = "c_nodec"
-    features = ALL_FEATURES - {"dec", "dec:half_even", "dec:half_up", "dec:down", "dec:exact"}
+    features = CBackend.features - {"dec", "dec:half_even", "dec:half_up", "dec:down", "dec:exact"}
 
 
 @unittest.skipUnless("c" in AVAILABLE, "no hay compilador de C")
@@ -64,20 +67,18 @@ class Unsupported(unittest.TestCase):
         for case in CORPUS:
             ref, _ = run(case["program"], case["input"], case.get("limits"))
             got, _ = backend.run(case["program"], case["input"], case.get("limits"))
-            try:
-                needs_dec = "dec" in features_of(compile_ir(case["program"]))
-            except InvalidProgram:
-                needs_dec = False
-            if needs_dec and ref["status"] == "INVALID_PROGRAM":
+            missing = missing_features(backend, case["program"])
+            if missing and ref["status"] == "INVALID_PROGRAM":
                 # El frontend decide INVALID_PROGRAM/BAD_INPUT antes que el backend
                 # (spec/BACKEND.md §1): la capacidad declarada no interviene.
                 self.assertEqual({k: ref[k] for k in KEYS},
                                  {k: got.get(k) for k in KEYS}, case["name"])
-            elif needs_dec:
+            elif missing:
                 self.assertEqual(got["status"], "UNSUPPORTED", case["name"])
-                self.assertIn("dec", got["code"])
+                self.assertEqual(got["code"], ",".join(missing), case["name"])
                 self.assertEqual(got["emits"], [])
-                seen_unsupported += 1
+                if "dec" in missing:
+                    seen_unsupported += 1
             else:
                 self.assertEqual({k: ref[k] for k in KEYS}, {k: got.get(k) for k in KEYS}, case["name"])
                 seen_pass += 1
@@ -120,7 +121,12 @@ def _make_conformance(name):
             for case in CORPUS:
                 ref, _ = run(case["program"], case["input"], case.get("limits"))
                 got, _ = self.backend.run(case["program"], case["input"], case.get("limits"))
-                if {k: ref[k] for k in KEYS} != {k: got.get(k) for k in KEYS} or got.get("backend_stderr"):
+                missing = missing_features(self.backend, case["program"])
+                if missing and ref["status"] != "INVALID_PROGRAM":
+                    # Fuera de capacidades: UNSUPPORTED exacto, nunca una aproximación.
+                    if got["status"] != "UNSUPPORTED" or got["code"] != ",".join(missing):
+                        bad.append((case["name"], got.get("status"), got.get("code")))
+                elif {k: ref[k] for k in KEYS} != {k: got.get(k) for k in KEYS} or got.get("backend_stderr"):
                     bad.append((case["name"], got.get("status"), got.get("backend_stderr")))
             self.assertEqual(bad, [])
 
@@ -147,7 +153,7 @@ def _make_conformance(name):
                     {k: run(c["program"], c["input"], c.get("limits"))[0][k] for k in KEYS}
                     != {k: self.backend.run(c["program"], c["input"], c.get("limits"),
                                             sabotage=sabotage)[0].get(k) for k in KEYS}
-                    for c in CORPUS)
+                    for c in CORPUS if not missing_features(self.backend, c["program"]))
                 self.assertTrue(caught, sabotage)
 
         def test_cost_is_measured_and_not_compared(self):

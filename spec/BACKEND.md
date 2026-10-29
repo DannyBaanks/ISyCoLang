@@ -24,6 +24,7 @@ Cada backend declara qué partes de la IR implementa (`features`):
 int8 int16 int32 int64 unsigned ovf:trap ovf:wrap ovf:sat
 dec dec:half_even dec:half_up dec:down dec:exact
 bool arrays calls recursion while emit
+ir0.2 str struct                        (isy-ir/0.2, CORE v0.3)
 ```
 
 `features_of(módulo)` calcula lo que un programa necesita (recursión = ciclo
@@ -113,6 +114,6 @@ y guarda la evidencia en `evidence/backends/`.
 
 | backend | toolchain | capacidades | notas |
 |---|---|---|---|
-| `c` | gcc / clang (GNU C11) | todas | `__int128`, builtins de overflow; 2 sabotajes de prueba |
-| `rust` | rustc (ed. 2021) | todas | `-C overflow-checks=on -C panic=abort`; 2 sabotajes de prueba |
-| `zig` | zig 0.16 | todas | `-O ReleaseSafe`; 2 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |
+| `c` | gcc / clang (GNU C11) | todas menos `ir0.2 str struct` | `__int128`, builtins de overflow; 2 sabotajes de prueba |
+| `rust` | rustc (ed. 2021) | todas menos `ir0.2 str struct` | `-C overflow-checks=on -C panic=abort`; 2 sabotajes de prueba |
+| `zig` | zig 0.16 | todas menos `ir0.2 str struct` | `-O ReleaseSafe`; 2 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |

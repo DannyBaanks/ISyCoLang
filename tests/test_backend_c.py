@@ -23,6 +23,8 @@ from isyco.backends.c import emit_c, run_c  # noqa: E402
 from isyco.conformance import COMPARED, load_all  # noqa: E402
 from isyco.difftest import compare  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
+from isyco.backends.base import missing_features  # noqa: E402
+from isyco.backends.c import BACKEND as C_BACKEND  # noqa: E402
 
 CORPUS = load_all(ROOT)
 KEYS = COMPARED + ("steps",)
@@ -30,10 +32,17 @@ HAS_CC = any(shutil.which(cc) for cc in ("gcc", "clang", "cc"))
 
 
 def backend_failures(**kw) -> list[str]:
+    """Casos donde C difiere de la referencia. Los que piden capacidades que C no
+    declara (str/struct de v0.3) deben dar UNSUPPORTED y no cuentan como cubiertos."""
     bad = []
     for case in CORPUS:
         ref, _ = run(case["program"], case["input"], case.get("limits"))
         got, _ = run_c(case["program"], case["input"], case.get("limits"), **kw)
+        missing = missing_features(C_BACKEND, case["program"])
+        if missing and ref["status"] != "INVALID_PROGRAM":
+            if got["status"] != "UNSUPPORTED" or got["code"] != ",".join(missing):
+                bad.append(case["name"])
+            continue
         if {k: ref[k] for k in KEYS} != {k: got.get(k) for k in KEYS} or got.get("backend_stderr"):
             bad.append(case["name"])
     return bad

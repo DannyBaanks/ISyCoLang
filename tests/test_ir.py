@@ -197,6 +197,66 @@ class ValidatorRejects(unittest.TestCase):
         self.assertRejects(bad, "IR_TYPE")
 
 
+V2_PROGRAM = """isyco 0.3
+struct P { n: str<8>, xs: [i32; 2] }
+fn main(a: str<4>) -> str<16> !emit {
+    let p: P = P { n: a, xs: [1, 2] };
+    p.xs[1] = 5;
+    emit p;
+    return p.n + "!";
+}
+"""
+
+
+class ValidatorRejectsV2(unittest.TestCase):
+    """isy-ir/0.2 (CORE v0.3): mismas reglas de mundo cerrado para str y structs."""
+
+    def module(self):
+        module = compile_ir(V2_PROGRAM.encode())
+        self.assertEqual(module["schema"], "isy-ir/0.2")
+        validate(module)
+        return module
+
+    def assertRejects(self, mutate, code):
+        broken = self.module()
+        mutate(broken)
+        with self.assertRaises(IRInvalid) as ctx:
+            validate(broken)
+        self.assertIn(code, [d.code for d in ctx.exception.diagnostics])
+
+    def test_explicit_widen_node(self):
+        widen = _find(self.module(), lambda n: n.get("k") == "widen")
+        self.assertEqual((widen["e"]["ty"], widen["ty"]), ({"t": "str", "n": 4}, {"t": "str", "n": 8}))
+
+    def test_v2_types_rejected_under_v01_schema(self):
+        self.assertRejects(lambda m: m.update(schema="isy-ir/0.1"), "IR_TYPE")
+
+    def test_widen_that_narrows(self):
+        self.assertRejects(lambda m: _find(m, lambda n: n.get("k") == "widen")["ty"].update(n=2), "IR_TYPE")
+
+    def test_struct_literal_missing_field(self):
+        def drop(m):
+            node = _find(m, lambda n: n.get("k") == "struct")
+            node["fields"] = node["fields"][:1]
+        self.assertRejects(drop, "IR_TYPE")
+
+    def test_unknown_field(self):
+        self.assertRejects(lambda m: _find(m, lambda n: n.get("k") == "field").update(name="z"), "IR_TYPE")
+
+    def test_set_path_index_on_struct(self):
+        def bad(m):
+            node = _find(m, lambda n: n.get("s") == "set_path")
+            node["path"] = [node["path"][1]] + node["path"]   # [i] sobre P antes de .xs
+        self.assertRejects(bad, "IR_TYPE")
+
+    def test_concat_of_number(self):
+        def bad(m):
+            node = _find(m, lambda n: n.get("k") == "concat")
+            node["b"] = {"k": "const", "at": "1:1", "ty": {"t": "int", "bits": 32, "signed": True,
+                                                           "ovf": "trap"}, "v": "1"}
+        self.assertRejects(bad, "IR_TYPE")
+
+
 class Cli(unittest.TestCase):
     def test_ir_command_prints_canonical_ir(self):
         import subprocess

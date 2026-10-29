@@ -8,7 +8,8 @@ from __future__ import annotations
 
 from . import ast as A
 from .errors import InvalidProgram
-from .types import INT_ALIASES, ArrT, BoolT, DecT, IntT, is_numeric, is_scalar
+from .types import (INT_ALIASES, MAX_STR, MAX_VALUE_SIZE, U8, ArrT, BoolT, DecT, IntT, NamedT,
+                    StrT, StructT, is_numeric, is_scalar, type_size)
 
 ARITH = {"+", "-", "*", "/", "%"}
 ORDER = {"<", "<=", ">", ">="}
@@ -32,15 +33,81 @@ class Checker:
         self.scopes: list[dict] = []
         self.loop_depth = 0
         self.emits = False
+        self.v03 = program.version == "0.3"
+        self.struct_types: dict[str, StructT] = {}
 
     def check(self) -> None:
+        if self.v03:
+            self.check_structs()
         if "main" not in self.program.fns:
             raise InvalidProgram("NO_MAIN", "1:1")
         main = self.program.fns["main"]
-        if main.ret is not None and not is_scalar(main.ret):
+        if self.v03:
+            # Firmas resueltas antes de los cuerpos: una llamada puede preceder a la función.
+            for fn in self.program.fns.values():
+                fn.params = [(name, self.resolve(ty), at) for name, ty, at in fn.params]
+                fn.ret = self.resolve(fn.ret)
+        elif main.ret is not None and not is_scalar(main.ret):
             raise InvalidProgram("TYPE_MISMATCH", main.at, "main debe retornar un escalar")
         for fn in self.program.fns.values():
             self.check_fn(fn)
+
+    # --- structs y tipos con nombre (CORE v0.3 §3, §5, §7.1) -------------------
+    def check_structs(self) -> None:
+        decls = self.program.structs
+
+        def names_in(t):
+            if isinstance(t, NamedT):
+                yield t
+            elif isinstance(t, ArrT):
+                yield from names_in(t.elem)
+
+        for decl in decls.values():
+            for _, ty, _ in decl.fields:
+                for named in names_in(ty):
+                    if named.name not in decls:
+                        raise InvalidProgram("UNKNOWN_NAME", named.at, named.name)
+        deps = {name: {n.name for _, ty, _ in d.fields for n in names_in(ty)} for name, d in decls.items()}
+
+        def reaches(start, target, seen):
+            for nxt in deps[start]:
+                if nxt == target or (nxt not in seen and reaches(nxt, target, seen | {nxt})):
+                    return True
+            return False
+
+        for name, decl in decls.items():
+            if reaches(name, name, {name}):
+                raise InvalidProgram("RECURSIVE_TYPE", decl.at, name)
+        for name, decl in decls.items():
+            if type_size(self.struct_type(name)) > MAX_VALUE_SIZE:
+                raise InvalidProgram("TYPE_TOO_LARGE", decl.at, name)
+
+    def struct_type(self, name: str) -> StructT:
+        if name not in self.struct_types:
+            decl = self.program.structs[name]
+            self.struct_types[name] = StructT(
+                name, tuple((fname, self.resolve(ty, check_size=False)) for fname, ty, _ in decl.fields))
+        return self.struct_types[name]
+
+    def resolve(self, t, check_size: bool = True):
+        """Tipo escrito en el fuente -> tipo resuelto (structs por nombre)."""
+        if isinstance(t, NamedT):
+            if t.name not in self.program.structs:
+                raise InvalidProgram("UNKNOWN_NAME", t.at, t.name)
+            out = self.struct_type(t.name)
+            at = t.at
+        elif isinstance(t, ArrT):
+            out = ArrT(self.resolve(t.elem, check_size=False), t.n)
+            at = None
+        else:
+            return t
+        if check_size and type_size(out) > MAX_VALUE_SIZE:
+            raise InvalidProgram("TYPE_TOO_LARGE", at, str(out))
+        return out
+
+    def size_ok(self, t, at) -> None:
+        if self.v03 and type_size(t) > MAX_VALUE_SIZE:
+            raise InvalidProgram("TYPE_TOO_LARGE", at, str(t))
 
     # --- funciones ------------------------------------------------------------
     def check_fn(self, fn: A.Fn) -> None:
@@ -85,11 +152,36 @@ class Checker:
 
     def stmt(self, s) -> None:
         if isinstance(s, A.Let):
+            if self.v03:
+                s.type = self.resolve(s.type)
+                self.size_ok(s.type, s.at)
             self.expect(s.expr, s.type)
             self.declare(s.name, s.type, s.at)
+        elif isinstance(s, A.AssignPath):
+            ty = self.lookup(s.name, s.at)
+            s.steps_ty = []
+            for kind, item in s.path:
+                s.steps_ty.append(ty)
+                if kind == "index":
+                    if isinstance(ty, StrT):
+                        raise InvalidProgram("NOT_ASSIGNABLE", s.at, "los str son inmutables")
+                    if not isinstance(ty, ArrT):
+                        raise InvalidProgram("TYPE_MISMATCH", s.at, "indexar algo que no es arreglo")
+                    self.index_type(item)
+                    ty = ty.elem
+                else:
+                    if not isinstance(ty, StructT):
+                        raise InvalidProgram("TYPE_MISMATCH", s.at, f".{item} sobre {ty}")
+                    if ty.field(item) is None:
+                        raise InvalidProgram("UNKNOWN_NAME", s.at, item)
+                    ty = ty.field(item)
+            s.target_ty = ty
+            self.expect(s.expr, ty)
         elif isinstance(s, A.Assign):
             ty = self.lookup(s.name, s.at)
             if s.index is not None:
+                if isinstance(ty, StrT):
+                    raise InvalidProgram("NOT_ASSIGNABLE", s.at, "los str son inmutables")
                 if not isinstance(ty, ArrT):
                     raise InvalidProgram("TYPE_MISMATCH", s.at, "indexar algo que no es arreglo")
                 self.index_type(s.index)
@@ -121,7 +213,7 @@ class Checker:
                 self.expect(s.expr, self.fn.ret)
         elif isinstance(s, A.Emit):
             ty = self.typeof(s.expr, None)
-            if not is_scalar(ty):
+            if not self.v03 and not is_scalar(ty):
                 raise InvalidProgram("TYPE_MISMATCH", s.at, "emit solo acepta escalares")
             self.emits = True
         elif isinstance(s, A.ExprStmt):
@@ -132,7 +224,9 @@ class Checker:
     # --- expresiones ----------------------------------------------------------
     def expect(self, e, ty) -> None:
         got = self.typeof(e, ty)
-        if got != ty:
+        # CORE v0.3 S5: str<N> se ensancha a str<M> si N <= M (única conversión implícita).
+        widen = isinstance(got, StrT) and isinstance(ty, StrT) and got.n <= ty.n
+        if got != ty and not widen:
             raise InvalidProgram("TYPE_MISMATCH", e.at, f"se esperaba {ty}, llegó {got}")
 
     def index_type(self, e) -> None:
@@ -158,8 +252,38 @@ class Checker:
             return self.lookup(e.name, e.at)
         if isinstance(e, A.Call):
             return self.call(e, allow_void=False)
+        if isinstance(e, A.StrLit):
+            if isinstance(expected, StrT) and len(e.value) > expected.n:
+                raise InvalidProgram("LITERAL_OUT_OF_RANGE", e.at, f"{len(e.value)} bytes en {expected}")
+            return StrT(max(len(e.value), 1))
+        if isinstance(e, A.Field):
+            base = self.typeof(e.base, None)
+            if not isinstance(base, StructT):
+                raise InvalidProgram("TYPE_MISMATCH", e.at, f".{e.name} sobre {base}")
+            if base.field(e.name) is None:
+                raise InvalidProgram("UNKNOWN_NAME", e.at, e.name)
+            return base.field(e.name)
+        if isinstance(e, A.StructLit):
+            return self.struct_literal(e)
+        if isinstance(e, A.Len):
+            if not isinstance(self.typeof(e.expr, None), StrT):
+                raise InvalidProgram("TYPE_MISMATCH", e.at, "len requiere un str")
+            return INT_ALIASES["i64"]
+        if isinstance(e, A.Slice):
+            ty = self.typeof(e.expr, None)
+            if not isinstance(ty, StrT):
+                raise InvalidProgram("TYPE_MISMATCH", e.at, "slice requiere un str")
+            self.index_type(e.lo)
+            self.index_type(e.hi)
+            return ty
+        if isinstance(e, A.Chr):
+            self.index_type(e.expr)
+            return StrT(1)
         if isinstance(e, A.Index):
             base = self.typeof(e.base, None)
+            if isinstance(base, StrT):
+                self.index_type(e.index)
+                return U8
             if not isinstance(base, ArrT):
                 raise InvalidProgram("TYPE_MISMATCH", e.at, "indexar algo que no es arreglo")
             self.index_type(e.index)
@@ -218,6 +342,8 @@ class Checker:
         operand_hint = None if is_cmp else expected
         if not is_poly(e.left):
             lt = self.typeof(e.left, None)
+            if isinstance(lt, StrT):
+                return self.str_binary(e, lt, expected)
             rt = self.typeof(e.right, lt)
         elif not is_poly(e.right):
             rt = self.typeof(e.right, None)
@@ -230,16 +356,55 @@ class Checker:
         if lt != rt:
             raise InvalidProgram("TYPE_MISMATCH", e.at, f"{lt} {e.op} {rt}")
         if is_cmp:
-            if isinstance(lt, ArrT) or (e.op in ORDER and isinstance(lt, BoolT)):
+            # v0.3 (S4, P5): == y != también entre structs y entre arreglos; el orden no.
+            composite = isinstance(lt, (ArrT, StructT))
+            if (composite and (not self.v03 or e.op in ORDER)) \
+                    or (e.op in ORDER and isinstance(lt, BoolT)):
                 raise InvalidProgram("TYPE_MISMATCH", e.at, f"no se puede comparar {lt}")
             return BoolT()
         if not is_numeric(lt) or (e.op == "%" and isinstance(lt, DecT)):
             raise InvalidProgram("TYPE_MISMATCH", e.at, f"'{e.op}' no aplica a {lt}")
         return lt
 
+    def str_binary(self, e: A.Binary, lt: StrT, expected):
+        """CORE v0.3 §2.4: concatenación y comparación de strings (capacidades libres)."""
+        rt = self.typeof(e.right, None)
+        if not isinstance(rt, StrT):
+            raise InvalidProgram("TYPE_MISMATCH", e.at, f"{lt} {e.op} {rt}")
+        if e.op in ARITH:
+            if e.op != "+":
+                raise InvalidProgram("TYPE_MISMATCH", e.at, f"'{e.op}' no aplica a str")
+            if isinstance(expected, StrT):
+                return expected
+            return StrT(min(lt.n + rt.n, MAX_STR))
+        return BoolT()
+
+    def struct_literal(self, e: A.StructLit):
+        if e.name not in self.program.structs:
+            raise InvalidProgram("UNKNOWN_NAME", e.at, e.name)
+        ty = self.struct_type(e.name)
+        written = [name for name, _, _ in e.fields]
+        if sorted(written) != sorted(name for name, _ in ty.fields) or len(set(written)) != len(written):
+            raise InvalidProgram("BAD_FIELDS", e.at, f"{e.name}: {written}")
+        for name, expr, _ in e.fields:
+            self.expect(expr, ty.field(name))
+        return ty
+
     def cast(self, e: A.Cast):
-        target = e.target
-        src = self.typeof(e.expr, target if is_poly(e.expr) else None)
+        if self.v03:
+            e.target = self.resolve(e.target)
+            target = e.target
+            if isinstance(target, StrT):
+                src = self.typeof(e.expr, target)
+            else:
+                src = self.typeof(e.expr, target if is_poly(e.expr) else None)
+            scalar = (BoolT, IntT, DecT)
+            if (isinstance(src, StrT) and isinstance(target, (StrT,) + scalar)) \
+                    or (isinstance(src, scalar) and isinstance(target, StrT)):
+                return target
+        else:
+            target = e.target
+            src = self.typeof(e.expr, target if is_poly(e.expr) else None)
         if not (is_numeric(src) and is_numeric(target)):
             raise InvalidProgram("BAD_CAST", e.at, f"{src} as {target}")
         return target

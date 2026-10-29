@@ -35,7 +35,7 @@ def failing(executor=run) -> list[str]:
 
 class Conformance(unittest.TestCase):
     def test_corpus_frozen(self):
-        for corpus in ("conformance", "conformance_v0.2"):
+        for corpus in ("conformance", "conformance_v0.2", "conformance_v0.3"):
             sums = (ROOT / "programs" / corpus / "SHA256SUMS.txt").read_text().split("\n")
             for line in filter(None, sums):
                 digest, name = line.split()
@@ -43,13 +43,13 @@ class Conformance(unittest.TestCase):
                 self.assertEqual(hashlib.sha256(data).hexdigest(), digest, f"{corpus}/{name}")
 
     def test_corpus_passes(self):
-        self.assertGreaterEqual(len(CORPUS), 78)
+        self.assertGreaterEqual(len(CORPUS), 142)
         self.assertEqual(failing(), [])
 
     def test_superseded_cases_are_explicit(self):
         """Solo los casos listados en SUPERSEDED.json cambian de expected, y lo dicen."""
         superseded = {c["name"] for c in CORPUS if "superseded" in c}
-        self.assertEqual(superseded, {"003_header_wrong_version"})
+        self.assertEqual(superseded, {"003_header_wrong_version", "119_header_v03"})
 
     def test_determinism(self):
         for case in CORPUS:
@@ -90,6 +90,24 @@ class Sabotage(unittest.TestCase):
             if self.steps >= self.limits["max_steps"]:
                 raise LimitReached("max_steps", at)
         self.assertTrue(self.mutated("tick", interp.Interpreter, tick_ge))
+
+    # --- CORE v0.3 -----------------------------------------------------------
+    def test_structs_shared_instead_of_copied(self):
+        """Aliasing: si asignar un struct no copiara, el corpus v0.3 debe notarlo."""
+        orig = interp._copy
+        fails = self.mutated("_copy", interp,
+                             lambda v: v if isinstance(v, dict) else orig(v))
+        self.assertIn("230_struct_copy", fails)
+
+    def test_str_overflow_truncates(self):
+        """S3: truncar en silencio en vez de OVERFLOW."""
+        orig = interp.Interpreter.binary
+
+        def truncating(self, e):
+            if e.op == "+" and isinstance(e.ty, interp.StrT):
+                return (self.eval(e.left) + self.eval(e.right))[:e.ty.n]
+            return orig(self, e)
+        self.assertIn("203_str_concat_overflow", self.mutated("binary", interp.Interpreter, truncating))
 
 
 class RoundingOracle(unittest.TestCase):

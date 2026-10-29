@@ -17,7 +17,7 @@ from pathlib import Path
 
 from ..ir import ty_from_json
 from ..types import ArrT, BoolT, DecT, IntT, parse_canonical
-from .base import ALL_FEATURES, Backend
+from .base import ALL_FEATURES, V2_FEATURES, Backend
 
 ROUND_CODE = {"half_even": 0, "half_up": 1, "down": 2, "exact": 3}
 OVF_CODE = {"trap": 0, "wrap": 1, "sat": 2}
@@ -395,7 +395,7 @@ class RustEmitter:
 class RustBackend(Backend):
     name = "rust"
     extension = ".rs"
-    features = ALL_FEATURES
+    features = ALL_FEATURES - V2_FEATURES
     sabotages = SABOTAGES
 
     def toolchain(self) -> str | None:
