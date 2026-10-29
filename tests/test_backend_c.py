@@ -21,7 +21,7 @@ sys.path.insert(0, str(ROOT))
 from isyco import run  # noqa: E402
 from isyco.backends.c import emit_c, run_c  # noqa: E402
 from isyco.conformance import COMPARED, load_all  # noqa: E402
-from isyco.difftest import compare  # noqa: E402
+from isyco.difftest import compare, compare_str  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
 from isyco.backends.base import missing_features  # noqa: E402
 from isyco.backends.c import BACKEND as C_BACKEND  # noqa: E402
@@ -74,6 +74,12 @@ class Sabotage(unittest.TestCase):
 
     def test_floor_division_sabotage_detected(self):
         self.assertTrue(backend_failures(sabotage="div_floor"))
+
+    def test_str_truncation_sabotage_detected(self):
+        """CORE v0.3 S3: un C que corta en vez de OVERFLOW falla el corpus y el diferencial."""
+        self.assertIn("203_str_concat_overflow", backend_failures(sabotage="str_concat_truncates"))
+        report = compare_str(partial(run_c, sabotage="str_concat_truncates"), per_op=4)
+        self.assertTrue(report["diffs"])
 
     def test_difftest_detects_sabotage(self):
         report = compare(partial(run_c, sabotage="half_even_as_half_up"), pairs=0)

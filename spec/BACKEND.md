@@ -43,6 +43,8 @@ backend, y en conformidad cuenta como **no cubierto**, nunca como PASS.
 
 - `ARG`: valores crudos validados por el frontend. Entero en base 10, decimal
   como entero escalado `m`, bool `1`/`0`, arreglo aplanado elemento por elemento.
+  Desde `isy-ir/0.2`: un `str` va como un argumento con su texto tal cual, y un
+  struct se aplana campo por campo en orden de declaración (recursivo).
 - stdout, una línea por evento:
 
 ```text
@@ -50,6 +52,12 @@ E <forma canónica>               cada emit, en orden
 R <forma canónica>               retorno de main (si tiene tipo)
 X <status> <code|-> <steps>      siempre la última línea
 ```
+
+- En la carga de `E` y `R`, una barra invertida se escribe `\\` y un salto de
+  línea `\n` (2026-10-29: un `str` puede contener saltos de línea). Los
+  números nunca contienen ninguno de los dos, así que la salida de v0.1/v0.2 no
+  cambia. Un `str` se emite como su texto; un arreglo o struct, como JSON
+  canónico (CORE v0.3 §6).
 
 - Si el binario termina sin línea `X`, con código de salida ≠ 0 o escribe en
   stderr, el resultado es `BACKEND_CRASH`: es un bug del backend, nunca un
@@ -114,6 +122,6 @@ y guarda la evidencia en `evidence/backends/`.
 
 | backend | toolchain | capacidades | notas |
 |---|---|---|---|
-| `c` | gcc / clang (GNU C11) | todas menos `ir0.2 str struct` | `__int128`, builtins de overflow; 2 sabotajes de prueba |
+| `c` | gcc / clang (GNU C11) | todas (desde 2026-10-29 también `ir0.2 str struct`) | `__int128`, builtins de overflow; 3 sabotajes de prueba (2 numéricos, 1 de str) |
 | `rust` | rustc (ed. 2021) | todas menos `ir0.2 str struct` | `-C overflow-checks=on -C panic=abort`; 2 sabotajes de prueba |
 | `zig` | zig 0.16 | todas menos `ir0.2 str struct` | `-O ReleaseSafe`; 2 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |

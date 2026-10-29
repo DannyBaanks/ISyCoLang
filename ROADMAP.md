@@ -108,7 +108,7 @@ Tres reglas de frontend aprobadas por Danny (índices literales `i64`, literales
 negativos, `ARRAY_SIZE`), atadas a la cabecera `isyco 0.2`. El caso v0.1 `003` queda
 superado de forma explícita en `programs/conformance/SUPERSEDED.json`.
 
-#### F2.2 — Core v0.3: strings y structs  `[PASS 2026-10-29: referencia 64/64 (142/142 los tres corpus), IR isy-ir/0.2 284/284; backends nativos: UNSUPPORTED declarado, sin cubrir]`
+#### F2.2 — Core v0.3: strings y structs  `[PASS 2026-10-29: referencia 64/64 (142/142 los tres corpus), IR isy-ir/0.2 284/284; C 142/142; Rust y Zig: UNSUPPORTED declarado, sin cubrir]`
 
 Decisiones S1–S8 de Danny: `str<N>` acotado y ASCII, `OVERFLOW` al no caber,
 ensanchamiento implícito `str<N>` → `str<M>` (N ≤ M), `len`/`s[i]`/`slice`/`chr`,
@@ -267,7 +267,10 @@ Correcciones al V0 que este carril adopta:
 | v0.3 no cambia ningún programa v0.1/v0.2 | DEMONSTRATED: 78/78 y mismo `semantic_hash` de IR en los 54 programas válidos (salvo el caso 119, superado explícitamente) | `programs/conformance_v0.2/SUPERSEDED.json`, `evidence/ir/` |
 | ISY-IR v0.2 preserva la semántica de v0.3 (resultado y traza) | DEMONSTRATED: 284/284 comparaciones, 99 programas | `evidence/ir/gate_2026-10-29T081148Z.json` |
 | El corpus v0.3 detecta semánticas saboteadas (structs por referencia, str que trunca) | DEMONSTRATED (2 mutaciones) | `tests/test_reference.py::Sabotage` |
-| Backends nativos (C, Rust, Zig) ejecutan str y structs | NOT_DEMONSTRATED: declaran `ir0.2 str struct` como no soportado y responden UNSUPPORTED (43 casos, 0 fallas) | `evidence/backends/gate_2026-10-29T082145Z.json` |
+| Backend C ejecuta str y structs (isy-ir/0.2) igual que la referencia | DEMONSTRATED (2026-10-29): 142/142, diferencial de strings 1 214 corridas sin diferencias (concatenación, comparación, len/índice/slice/chr, casts con dígitos gigantes) | `evidence/backends/gate_2026-10-29T100103Z.json` |
+| Backend C v0.3 sin comportamiento indefinido | DEMONSTRATED con UBSan+ASan en gcc 13.3 y clang 18.1: 64/64 y 974 corridas de strings sin diferencias | `evidence/c/sanitize_v03_2026-10-29T100117Z.txt` |
+| La suite detecta un C que trunca strings en vez de OVERFLOW | DEMONSTRATED (sabotaje `str_concat_truncates`: corpus y diferencial) | `evidence/backends/gate_2026-10-29T100103Z.json` |
+| Backends Rust y Zig ejecutan str y structs | NOT_DEMONSTRATED: declaran `ir0.2 str struct` como no soportado y responden UNSUPPORTED (43 casos, 0 fallas) | `evidence/backends/gate_2026-10-29T100103Z.json` |
 | La suite detecta un backend C saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
 | La suite detecta un backend Rust o Zig saboteado | DEMONSTRATED (2026-10-29): los mismos 2 sabotajes que C; cada uno falla corpus (3 y 2 casos) y diferencial (12 y 53 diferencias), igual en los tres backends | `evidence/backends/gate_2026-10-29T055122Z.json`, `tests/test_backends.py` |
 | Backends de las olas 2–6 de F5 (COBOL, Fortran, Prolog/z3, Go/Java/…, esolangs) | NOT_DEMONSTRATED (no implementados) | — |

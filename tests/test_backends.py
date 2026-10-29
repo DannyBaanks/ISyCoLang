@@ -19,7 +19,7 @@ from isyco.backends import available, registry  # noqa: E402
 from isyco.backends.base import ALL_FEATURES, GNU_TIME, features_of, missing_features  # noqa: E402
 from isyco.backends.c import CBackend  # noqa: E402
 from isyco.conformance import COMPARED, load_all  # noqa: E402
-from isyco.difftest import DEC_TYPES, INT_TYPES, compare  # noqa: E402
+from isyco.difftest import DEC_TYPES, INT_TYPES, compare, compare_str  # noqa: E402
 from isyco.errors import InvalidProgram  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
 
@@ -135,6 +135,8 @@ def _make_conformance(name):
             types = INT_TYPES[::5] + DEC_TYPES[::2]
             report = compare(self.backend.run, pairs=1, types=types)
             self.assertEqual(report["diffs"], [])
+            if "str" in self.backend.features:
+                self.assertEqual(compare_str(self.backend.run, per_op=2)["diffs"], [])
 
         def test_engine_does_the_work(self):
             case = by_name("027_interes")
@@ -147,7 +149,7 @@ def _make_conformance(name):
         def test_sabotages_detected(self):
             # Cada sabotaje declarado debe hacer fallar el corpus: si no, la suite no
             # distinguiría este backend de uno roto (spec/BACKEND.md §5).
-            self.assertEqual(set(self.backend.sabotages), {"half_even_as_half_up", "div_floor"})
+            self.assertLessEqual({"half_even_as_half_up", "div_floor"}, set(self.backend.sabotages))
             for sabotage in self.backend.sabotages:
                 caught = any(
                     {k: run(c["program"], c["input"], c.get("limits"))[0][k] for k in KEYS}

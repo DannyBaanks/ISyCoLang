@@ -294,18 +294,41 @@ def raw_args(module: dict, inputs: list) -> list[str] | None:
         value = parse_canonical(text, t)
         if value is None:
             return None
-        for v in (value if isinstance(t, ArrT) else [value]):
-            out.append(str(int(v)))
+        out.extend(_flatten(value, t))
     return out
+
+
+def _flatten(value, t) -> list[str]:
+    """Valor -> argumentos crudos (§3): arreglos y structs aplanados en orden, str tal cual."""
+    if isinstance(t, ArrT):
+        return [a for v in value for a in _flatten(v, t.elem)]
+    if isinstance(t, StructT):
+        return [a for fname, ft in t.fields for a in _flatten(value[fname], ft)]
+    if isinstance(t, StrT):
+        return [value]
+    return [str(int(value))]
+
+
+def _unescape(payload: str) -> str:
+    """Carga de una línea E/R: `\\\\` es una barra invertida y `\\n` un salto de línea."""
+    out, i = [], 0
+    while i < len(payload):
+        if payload[i] == "\\" and i + 1 < len(payload):
+            out.append("\n" if payload[i + 1] == "n" else payload[i + 1])
+            i += 2
+        else:
+            out.append(payload[i])
+            i += 1
+    return "".join(out)
 
 
 def parse_output(stdout: str) -> dict:
     emits, ret, status, code, steps = [], None, None, None, None
     for line in stdout.split("\n"):
         if line.startswith("E "):
-            emits.append(line[2:])
+            emits.append(_unescape(line[2:]))
         elif line.startswith("R "):
-            ret = line[2:]
+            ret = _unescape(line[2:])
         elif line.startswith("X "):
             _, status, code, steps = line.split(" ")
             code = None if code == "-" else code

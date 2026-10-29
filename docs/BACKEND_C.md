@@ -1,6 +1,6 @@
 # Backend C (F4)
 
-`isyco/backends/c.py` traduce ISY-IR v0.1 validada a C (GNU C11) y la compila
+`isyco/backends/c.py` traduce ISY-IR v0.1 y v0.2 validada a C (GNU C11) y la compila
 con gcc o clang. Es el primer backend nativo del proyecto.
 
 ```bash
@@ -19,6 +19,9 @@ ISYCO_CC=clang python3 -m isyco run programa.isy --via c     # elegir compilador
 | arreglos por copia (§3.4) | cada tipo arreglo es un `struct`, que C copia por valor |
 | pasos, profundidad y emits (§8) | el binario los cuenta como la referencia, así que `steps` también se compara |
 | salida parcial al fallar (§9, D5) | cada `emit` se imprime al momento; el error termina con `X ERROR <code> <steps>` |
+| `str<N>` (CORE v0.3) | `struct { uint32_t len; char v[N]; }`: valor por copia, sin heap; concatenar, `slice`, `as str` revisan la capacidad y dan `OVERFLOW` |
+| structs (CORE v0.3) | un `struct` de C por tipo, campos `f_<nombre>`; `==` y la salida JSON con funciones generadas por tipo (nunca `memcmp` sobre el struct: hay relleno y bytes después de `len`) |
+| `str` → número (CORE v0.3 §2.5) | forma canónica revisada byte a byte; el valor se acumula en `unsigned __int128`, que guarda el exacto módulo 2¹²⁸: `wrap` toma los bits bajos aunque el texto tenga 45 dígitos, `trap`/`sat` solo necesitan saber que no cabe |
 
 ## Protocolo del binario
 

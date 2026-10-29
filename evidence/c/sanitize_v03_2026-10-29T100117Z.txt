@@ -1,0 +1,7 @@
+# jue 29 oct 2026 10:01:17 UTC Linux 7.0.0-38-generic x86_64
+$ python3 tools/c_sanitize_v03.py gcc
+gcc corpus v0.3 64 / 64 | str difftest 974 runs, 0 diffs
+exit=0
+$ python3 tools/c_sanitize_v03.py clang
+clang corpus v0.3 64 / 64 | str difftest 974 runs, 0 diffs
+exit=0

@@ -8,7 +8,8 @@ Por backend (spec/BACKEND.md §5):
 3. diferencial por tipo numérico (isyco/difftest.py) contra la referencia;
 4. el engine hace el trabajo: el fuente generado no contiene las salidas
    esperadas y otra entrada da otra salida;
-5. cada sabotaje declarado por el backend es detectado (corpus o diferencial);
+5. cada sabotaje declarado por el backend es detectado (corpus y diferencial);
+   si el backend declara `str`, también corre el diferencial de strings;
 6. costo medido (spec/BACKEND.md §3.1): resumen por backend, informativo.
 Escribe evidence/backends/gate_<UTC>.json (nunca sobrescribe).
 """
@@ -28,7 +29,7 @@ sys.path.insert(0, str(ROOT))
 from isyco import run  # noqa: E402
 from isyco.backends import available, registry  # noqa: E402
 from isyco.conformance import COMPARED, load_all  # noqa: E402
-from isyco.difftest import compare  # noqa: E402
+from isyco.difftest import compare, compare_str  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
 
 KEYS = COMPARED + ("steps",)
@@ -69,8 +70,11 @@ def sabotages(backend, cases, pairs: int) -> dict:
     for sabotage in backend.sabotages:
         res = corpus(backend, cases, sabotage=sabotage)
         diff = compare(partial(backend.run, sabotage=sabotage), pairs=pairs)
-        out[sabotage] = {"corpus_failures": len(res["failures"]), "difftest_diffs": len(diff["diffs"]),
-                         "detected": bool(res["failures"]) and bool(diff["diffs"])}
+        diffs = len(diff["diffs"])
+        if "str" in backend.features:
+            diffs += len(compare_str(partial(backend.run, sabotage=sabotage), per_op=4)["diffs"])
+        out[sabotage] = {"corpus_failures": len(res["failures"]), "difftest_diffs": diffs,
+                         "detected": bool(res["failures"]) and bool(diffs)}
     return out
 
 
@@ -105,6 +109,11 @@ def main() -> int:
         entry["difftest"] = {"runs": diff["runs"], "seed": diff["seed"], "diff_count": len(diff["diffs"]),
                              "diffs": diff["diffs"][:30]}
         print(f"  difftest: {diff['runs']} corridas, {len(diff['diffs'])} diferencias", flush=True)
+        if "str" in backend.features:
+            sdiff = compare_str(backend.run)
+            entry["difftest_str"] = {"runs": sdiff["runs"], "seed": sdiff["seed"],
+                                     "diff_count": len(sdiff["diffs"]), "diffs": sdiff["diffs"][:30]}
+            print(f"  difftest str: {sdiff['runs']} corridas, {len(sdiff['diffs'])} diferencias", flush=True)
         entry["does_the_work"] = does_the_work(backend, cases)
         print(f"  engine hace el trabajo: {entry['does_the_work']['ok']}", flush=True)
         entry["sabotage"] = sabotages(backend, cases, pairs=min(args.pairs, 4))
@@ -112,6 +121,7 @@ def main() -> int:
             print(f"  sabotaje {sab}: detectado={res['detected']} "
                   f"(corpus {res['corpus_failures']}, diferencial {res['difftest_diffs']})", flush=True)
         entry["conformant"] = (not entry["corpus"]["failures"] and not diff["diffs"]
+                               and not entry.get("difftest_str", {}).get("diff_count")
                                and entry["does_the_work"]["ok"]
                                and all(r["detected"] for r in entry["sabotage"].values()))
         ok &= entry["conformant"]

@@ -87,7 +87,7 @@ python3 -m isyco run ticket.isy --input '["Danny", {"nombre":"Mezcal","precio":"
   En la condición de un `if`/`while`, un literal de struct va entre paréntesis.
 - En la entrada, un struct es un objeto JSON; `emit` de un struct o arreglo
   saca JSON en una línea.
-- Hoy solo `ast` e `ir` ejecutan v0.3; `c`, `rust` y `zig` responden
+- v0.3 corre con `ast`, `ir` y `c`; `rust` y `zig` responden todavía
   `UNSUPPORTED` (`code: ir0.2,str,struct`), nunca un resultado aproximado.
 
 ## 3. Elegir quién lo ejecuta (`--via`)

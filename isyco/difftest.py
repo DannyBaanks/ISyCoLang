@@ -116,3 +116,75 @@ def compare(executor, pairs: int = 40, seed: int = 20261028, types=None) -> dict
         report["types"].append({"type": str(t), "runs": count})
         report["runs"] += count
     return report
+
+
+# --- strings (CORE v0.3) -----------------------------------------------------------
+
+STR_CAST_TARGETS = ["int<8, signed, wrap>", "int<8, unsigned, sat>", "u8", "i64", "u64",
+                    "int<64, signed, wrap>", "int<64, unsigned, wrap>", "int<16, signed, sat>",
+                    "dec<6,2>", "dec<18,0>", "dec<18,18>", "dec<3,1,exact>", "bool"]
+STR_OPS = ["a + b", "CTX", "a < b", "a == b", "a >= b", "len(a)", "a[i]", "slice(a, i, j)",
+           "chr(i)", "i as str<3>", "d as str<5>", "(i < j) as str<4>", "a as str<3>"] \
+    + [f"a as {target}" for target in STR_CAST_TARGETS]
+BIG = "123456789012345678901234567890123456789012345"
+STR_POOL = ["", "0", "-0", "05", "7", "-7", "-128", "127", "128", "255", "256", "-129", "300",
+            "-300", "32767", "32768", "-32769", "18446744073709551615", "18446744073709551616",
+            "-9223372036854775808", "9223372036854775807", "9223372036854775808",
+            "-9223372036854775809", "340282366920938463463374607431768211457", BIG, "-" + BIG,
+            "1.5", "2.50", "-2.50", "-0.00", "0.05", "0.00", "12.5", "99.9", "-99.9", "100.0",
+            "9999.99", "-9999.99", "10000.00", "0." + "1" * 18, "-0." + "9" * 18, "1." + "0" * 18,
+            "999999999999999999", "1000000000000000000", "true", "false", "True", "abc", "ab",
+            "abd", "a\nb", "a\"b\\", "a\tb", "Z", "zz", "~" * 12, " ", "- 5", "+5", "5 ", "1e3"]
+
+
+def str_program() -> bytes:
+    branches = []
+    for k, expr in enumerate(STR_OPS):
+        head = "if" if k == 0 else "} else if"
+        if expr == "CTX":   # concatenación con contexto: revisa contra str<16> (S3)
+            branches.append(f"{head} op == {k} {{ let c: str<16> = a + b; emit c;")
+        else:
+            branches.append(f"{head} op == {k} {{ emit {expr};")
+    body = "\n    ".join(branches)
+    return (f"isyco 0.3\nfn main(op: i32, a: str<64>, b: str<8>, i: i64, j: i64, d: dec<6,2>) !emit {{\n"
+            f"    {body}\n    }}\n}}\n").encode()
+
+
+def str_cases(per_op: int, seed: int):
+    rng = random.Random(f"{seed}:str")
+    short = [x for x in STR_POOL if len(x) <= 8]
+    ints = [-2, -1, 0, 1, 2, 3, 5, 7, 9, 10, 31, 32, 64, 65, 126, 127, 128, 255, 1000, -1000]
+    decs = ["0.00", "-0.05", "12.50", "-9999.99", "9999.99", "100.00", "-100.00", "1.00"]
+    out = []
+    for op in range(len(STR_OPS)):
+        chosen = set()
+        if op >= STR_OPS.index("a as str<3>"):           # casts desde str: todo el pool
+            chosen |= {(a, "", 0, 0, "0.00") for a in STR_POOL}
+        positional = STR_OPS[op] in ("a[i]", "slice(a, i, j)")
+        while len(chosen) < per_op * (3 if positional else 1) \
+                + (len(STR_POOL) if op >= STR_OPS.index("a as str<3>") else 0):
+            a = rng.choice(STR_POOL)
+            if positional:   # índices alrededor de len(a): dentro, en el borde y fuera
+                i, j = rng.randint(-1, len(a) + 1), rng.randint(-1, len(a) + 1)
+            else:
+                i, j = rng.choice(ints), rng.choice(ints)
+            chosen.add((a, rng.choice(short), i, j, rng.choice(decs)))
+        out += [(op, *c) for c in sorted(chosen)]
+    return out
+
+
+def compare_str(executor, per_op: int = 12, seed: int = 20261029) -> dict:
+    """Diferencial de strings: concatenación, comparación, len/índice/slice/chr y casts."""
+    program = str_program()
+    report = {"seed": seed, "per_op": per_op, "runs": 0, "diffs": []}
+    for op, a, b, i, j, d in str_cases(per_op, seed):
+        inputs = [str(op), a, b, str(i), str(j), d]
+        ref, _ = run(program, inputs)
+        got, _ = executor(program, inputs)
+        report["runs"] += 1
+        want = {k: ref[k] for k in COMPARED}
+        have = {k: got.get(k) for k in COMPARED}
+        if want != have or got.get("backend_stderr"):
+            report["diffs"].append({"op": STR_OPS[op], "input": inputs, "reference": want,
+                                    "backend": have, "stderr": got.get("backend_stderr")})
+    return report
