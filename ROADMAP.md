@@ -126,7 +126,7 @@ superado de forma explícita en `programs/conformance/SUPERSEDED.json`.
 **Gate F4:** 100 % del corpus `EQUIVALENT_WITHIN_DECLARED_DOMAIN`; el sabotaje
 falla la suite. Primera afirmación `DEMONSTRATED` del proyecto.
 
-### F5 — Contrato de backend `ISY_BACKEND/1` y adapters  `[PASS 2026-10-29: spec/BACKEND.md; evidence/backends/gate_2026-10-29T022957Z.json]`
+### F5 — Contrato de backend `ISY_BACKEND/1` y adapters  `[EN CURSO — ola 1 (C, Rust, Zig) PASS 2026-10-29: spec/BACKEND.md; evidence/backends/gate_2026-10-29T022957Z.json · olas 2–6 pendientes · costo medido NOT_DEMONSTRATED]`
 
 Los engines de `workspace/assembly` hoy implementan E=(I,X,O,S): **ejecutan su
 propio bootstrap**, no programas externos. Para ser backends hace falta un
@@ -252,7 +252,10 @@ Correcciones al V0 que este carril adopta:
 | Contrato `ISY_BACKEND/1` con driver común (validación, capacidades, caché, límites, protocolo E/R/X) | DEMONSTRATED (2026-10-29) | `spec/BACKEND.md`, `isyco/backends/base.py`, `tests/test_backends.py` |
 | Backends Rust y Zig: binario nativo == referencia en ambos corpus y en el diferencial por tipo | DEMONSTRATED: 78/78 y 8 484 corridas sin diferencias cada uno | `evidence/backends/gate_2026-10-29T022957Z.json` |
 | Un backend que no declara una capacidad responde `UNSUPPORTED` y no ejecuta el programa | DEMONSTRATED (backend de prueba sin decimales) | `tests/test_backends.py::Unsupported` |
-| La suite detecta un backend saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
+| La suite detecta un backend C saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
+| La suite detecta un backend Rust o Zig saboteado | NOT_DEMONSTRATED (sin sabotajes propios; solo el stub `test_engine_does_the_work`) | — |
+| Backends de las olas 2–6 de F5 (COBOL, Fortran, Prolog/z3, Go/Java/…, esolangs) | NOT_DEMONSTRATED (no implementados) | — |
+| El contrato de backend reporta costo medido | NOT_DEMONSTRATED (en el contrato de F5, no en `ISY_BACKEND/1`) | — |
 | Aritmética de ISyCoLang implementada dos veces de forma independiente (Python exacto y C con `__int128`) con el mismo resultado | VERIFIED dentro del dominio probado | `evidence/c/` |
 | El validador de IR rechaza IR malformada | DEMONSTRATED (11 mutaciones, cada una con su código) | `tests/test_ir.py::ValidatorRejects` |
 | Inventario de candidatos a backend en `workspace/assembly` | DEMONSTRATED (2026-10-28) | `evidence/inventory/` |
