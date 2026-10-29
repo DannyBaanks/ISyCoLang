@@ -1,0 +1,13 @@
+{
+  "claim": "multiplicacion redondea una sola vez",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1.56",
+      "0.00"
+    ],
+    "return": null
+  }
+}

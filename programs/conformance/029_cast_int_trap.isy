@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> u8 { let x: i32 = 300; return x as u8; }

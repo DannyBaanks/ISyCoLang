@@ -1,0 +1,10 @@
+{
+  "claim": "recursion",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "3628800"
+  }
+}

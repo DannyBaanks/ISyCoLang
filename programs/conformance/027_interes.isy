@@ -1,0 +1,13 @@
+isyco 0.1
+fn interes(capital: dec<12,2>, tasa: dec<6,4>, dias: i32) -> dec<12,2> {
+    let anual: dec<12,2> = capital * (tasa as dec<12,2>);
+    return anual * (dias as dec<12,2>) / 365.00;
+}
+
+fn main(capital: dec<12,2>, tasa: dec<6,4>) !emit {
+    let d: i32 = 30;
+    while d <= 90 {
+        emit interes(capital, tasa, d);
+        d = d + 30;
+    }
+}

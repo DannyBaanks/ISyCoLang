@@ -1,0 +1,10 @@
+{
+  "claim": "recursion sin fin choca con max_call_depth",
+  "input": [],
+  "expected": {
+    "status": "LIMIT_REACHED",
+    "code": "max_call_depth",
+    "emits": [],
+    "return": null
+  }
+}

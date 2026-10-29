@@ -1,0 +1,12 @@
+{
+  "claim": "indice fuera de rango conserva salida parcial",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "INDEX_OUT_OF_BOUNDS",
+    "emits": [
+      "5"
+    ],
+    "return": null
+  }
+}

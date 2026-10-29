@@ -1,0 +1,13 @@
+{
+  "claim": "con 2 pasos se corta antes del emit",
+  "input": [],
+  "expected": {
+    "status": "LIMIT_REACHED",
+    "code": "max_steps",
+    "emits": [],
+    "return": null
+  },
+  "limits": {
+    "max_steps": 2
+  }
+}

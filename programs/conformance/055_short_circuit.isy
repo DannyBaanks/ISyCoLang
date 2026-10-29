@@ -1,0 +1,3 @@
+isyco 0.1
+fn boom() -> bool !emit { emit true; return true; }
+fn main() !emit { if false and boom() { emit false; } if true or boom() { emit true; } }

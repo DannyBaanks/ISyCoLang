@@ -1,0 +1,10 @@
+{
+  "claim": "mas de p digitos atrapa",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

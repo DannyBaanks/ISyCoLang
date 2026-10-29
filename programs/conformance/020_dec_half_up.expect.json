@@ -1,0 +1,13 @@
+{
+  "claim": "half_up: empate lejos de cero",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "3",
+      "-3"
+    ],
+    "return": null
+  }
+}

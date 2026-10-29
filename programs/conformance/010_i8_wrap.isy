@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> int<8, signed, wrap> { let x: int<8, signed, wrap> = 127; return x + 1; }

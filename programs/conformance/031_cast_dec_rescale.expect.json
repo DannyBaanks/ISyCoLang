@@ -1,0 +1,13 @@
+{
+  "claim": "dec a dec reescala con el redondeo del destino",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "0.12",
+      "0.14"
+    ],
+    "return": null
+  }
+}

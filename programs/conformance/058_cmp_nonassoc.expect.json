@@ -1,0 +1,10 @@
+{
+  "claim": "las comparaciones no se encadenan",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

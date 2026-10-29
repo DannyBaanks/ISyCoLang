@@ -1,0 +1,10 @@
+{
+  "claim": "cabecera valida y retorno entero",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "7"
+  }
+}

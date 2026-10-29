@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() !emit { let x: int<8, signed, sat> = 127; emit x + 1; let y: int<8, signed, sat> = -127 - 1; emit y - 1; }

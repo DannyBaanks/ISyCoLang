@@ -1,0 +1,10 @@
+{
+  "claim": "MIN / -1 en wrap = MIN",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "-128"
+  }
+}

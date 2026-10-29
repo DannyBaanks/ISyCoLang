@@ -1,0 +1,10 @@
+{
+  "claim": "while con break y continue",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "16"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "version distinta de 0.1 es SYNTAX",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "claim": "suma i32 con entrada",
+  "input": [
+    "40",
+    "2"
+  ],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "42"
+  }
+}

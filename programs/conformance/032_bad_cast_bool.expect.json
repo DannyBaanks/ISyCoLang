@@ -1,0 +1,10 @@
+{
+  "claim": "bool no se convierte",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "BAD_CAST",
+    "emits": [],
+    "return": null
+  }
+}

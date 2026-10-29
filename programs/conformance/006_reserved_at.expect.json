@@ -1,0 +1,10 @@
+{
+  "claim": "@ esta reservado en v0.1",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "RESERVED",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "claim": "exact: redondear es INEXACT",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "INEXACT",
+    "emits": [
+      "0.25"
+    ],
+    "return": null
+  }
+}

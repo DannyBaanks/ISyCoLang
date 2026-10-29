@@ -1,0 +1,10 @@
+{
+  "claim": "int a int fuera de rango usa ovf del destino (wrap)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "44"
+  }
+}

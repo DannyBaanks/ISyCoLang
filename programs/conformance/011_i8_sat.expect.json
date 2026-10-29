@@ -1,0 +1,13 @@
+{
+  "claim": "sat se pega a los extremos",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "127",
+      "-128"
+    ],
+    "return": null
+  }
+}

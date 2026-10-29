@@ -1,0 +1,10 @@
+{
+  "claim": "una funcion sin retorno no da valor",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

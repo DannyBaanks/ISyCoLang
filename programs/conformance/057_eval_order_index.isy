@@ -1,0 +1,3 @@
+isyco 0.1
+fn t(x: i32) -> i32 !emit { emit x; return x; }
+fn main() !emit { let a: [i32; 2] = [0; 2]; a[t(1)] = t(7); emit a[1 as i32]; }

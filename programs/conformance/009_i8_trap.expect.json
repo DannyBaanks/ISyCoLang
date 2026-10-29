@@ -1,0 +1,10 @@
+{
+  "claim": "i8 127+1 atrapa",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "sin main es NO_MAIN",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "NO_MAIN",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "claim": "forma canonica de decimales",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "0.00",
+      "-1.50",
+      "0.00",
+      "12"
+    ],
+    "return": null
+  }
+}

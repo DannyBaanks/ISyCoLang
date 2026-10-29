@@ -1,0 +1,10 @@
+{
+  "claim": "wrap 127+1 = -128",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "-128"
+  }
+}

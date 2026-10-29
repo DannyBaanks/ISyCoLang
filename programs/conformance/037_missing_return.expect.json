@@ -1,0 +1,10 @@
+{
+  "claim": "falta retorno en algun camino",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "MISSING_RETURN",
+    "emits": [],
+    "return": null
+  }
+}

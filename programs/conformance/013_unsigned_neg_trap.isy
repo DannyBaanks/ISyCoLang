@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> u8 { let x: u8 = 1; return -x; }

@@ -1,0 +1,15 @@
+{
+  "claim": "3 pasos: llamada a main + let + emit",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1"
+    ],
+    "return": null
+  },
+  "limits": {
+    "max_steps": 3
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "claim": "entrada no canonica",
+  "input": [
+    "3.5"
+  ],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "BAD_INPUT",
+    "emits": [],
+    "return": null
+  }
+}

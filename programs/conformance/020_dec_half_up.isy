@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() !emit { let a: dec<5,0,half_up> = 5; let b: dec<5,0,half_up> = 2; emit a / b; emit -a / b; }

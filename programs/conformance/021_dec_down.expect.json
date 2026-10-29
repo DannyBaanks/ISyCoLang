@@ -1,0 +1,13 @@
+{
+  "claim": "down: trunca hacia cero",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "2",
+      "-2"
+    ],
+    "return": null
+  }
+}

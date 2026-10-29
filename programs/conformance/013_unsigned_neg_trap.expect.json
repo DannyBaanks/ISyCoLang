@@ -1,0 +1,10 @@
+{
+  "claim": "negar un sin signo distinto de 0 atrapa",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

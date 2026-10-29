@@ -1,0 +1,10 @@
+{
+  "claim": "numero de argumentos incorrecto",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "BAD_INPUT",
+    "emits": [],
+    "return": null
+  }
+}

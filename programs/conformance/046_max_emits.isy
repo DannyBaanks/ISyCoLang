@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() !emit { let i: i32 = 0; while i < 5 { emit i; i = i + 1; } }

@@ -1,0 +1,10 @@
+{
+  "claim": "literal sin contexto",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "AMBIGUOUS_LITERAL",
+    "emits": [],
+    "return": null
+  }
+}

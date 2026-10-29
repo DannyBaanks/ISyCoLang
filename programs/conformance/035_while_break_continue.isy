@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> i32 { let i: i32 = 0; let s: i32 = 0; while true { i = i + 1; if i > 7 { break; } if i % 2 == 0 { continue; } s = s + i; } return s; }

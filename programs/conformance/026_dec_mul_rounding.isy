@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() !emit { let a: dec<6,2> = 1.25; let b: dec<6,2> = 0.05; emit a * a; emit b * b; }

@@ -1,0 +1,14 @@
+{
+  "claim": "half_even: empate al par",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "2",
+      "4",
+      "-2"
+    ],
+    "return": null
+  }
+}

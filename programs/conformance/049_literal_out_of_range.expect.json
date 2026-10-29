@@ -1,0 +1,10 @@
+{
+  "claim": "literal que no cabe",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "LITERAL_OUT_OF_RANGE",
+    "emits": [],
+    "return": null
+  }
+}

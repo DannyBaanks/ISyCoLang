@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> bool { let a: i32 = 1; return a < 2 < 3; }

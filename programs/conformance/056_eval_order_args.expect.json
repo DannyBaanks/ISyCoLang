@@ -1,0 +1,14 @@
+{
+  "claim": "argumentos de izquierda a derecha",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1",
+      "2",
+      "3"
+    ],
+    "return": null
+  }
+}

@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> dec<6,2> { let x: dec<6,2> = 1.234; return x; }

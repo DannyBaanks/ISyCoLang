@@ -1,0 +1,12 @@
+{
+  "claim": "and/or cortocircuitan",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "true"
+    ],
+    "return": null
+  }
+}

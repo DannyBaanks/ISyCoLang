@@ -1,0 +1,10 @@
+{
+  "claim": "llamar a una funcion que emite exige !emit",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "UNDECLARED_EFFECT",
+    "emits": [],
+    "return": null
+  }
+}

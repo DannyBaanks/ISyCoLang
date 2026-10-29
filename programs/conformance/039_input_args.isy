@@ -1,0 +1,2 @@
+isyco 0.1
+fn main(a: dec<6,2>, flag: bool, xs: [i32; 3]) !emit { if flag { emit a; } emit xs[2 as i32]; }

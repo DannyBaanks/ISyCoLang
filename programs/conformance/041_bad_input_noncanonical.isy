@@ -1,0 +1,2 @@
+isyco 0.1
+fn main(a: dec<6,2>) -> dec<6,2> { return a; }

@@ -1,0 +1,2 @@
+isyco 0.1
+fn f() -> i32 { return 1; }

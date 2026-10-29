@@ -1,0 +1,17 @@
+{
+  "claim": "ejemplo de spec 14: la tasa se redondea al convertir",
+  "input": [
+    "1000.00",
+    "0.0525"
+  ],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "4.11",
+      "8.22",
+      "12.33"
+    ],
+    "return": null
+  }
+}

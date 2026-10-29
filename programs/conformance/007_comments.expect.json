@@ -1,0 +1,10 @@
+{
+  "claim": "comentarios y lineas vacias se ignoran",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "1000"
+  }
+}

@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> dec<4,2> { let a: dec<4,2> = 99.99; return a + 0.01; }

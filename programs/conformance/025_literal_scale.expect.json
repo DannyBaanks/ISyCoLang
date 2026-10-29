@@ -1,0 +1,10 @@
+{
+  "claim": "un literal con mas decimales que s es invalido",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "LITERAL_SCALE",
+    "emits": [],
+    "return": null
+  }
+}

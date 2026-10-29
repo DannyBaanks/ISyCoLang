@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> int<8, signed, wrap> { let m: int<8, signed, wrap> = -127 - 1; let n: int<8, signed, wrap> = -1; return m / n; }

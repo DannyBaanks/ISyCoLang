@@ -1,0 +1,10 @@
+{
+  "claim": "nombre no declarado",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "UNKNOWN_NAME",
+    "emits": [],
+    "return": null
+  }
+}

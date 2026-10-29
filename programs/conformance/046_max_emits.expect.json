@@ -1,0 +1,17 @@
+{
+  "claim": "max_emits conserva la salida previa",
+  "input": [],
+  "expected": {
+    "status": "LIMIT_REACHED",
+    "code": "max_emits",
+    "emits": [
+      "0",
+      "1",
+      "2"
+    ],
+    "return": null
+  },
+  "limits": {
+    "max_emits": 3
+  }
+}

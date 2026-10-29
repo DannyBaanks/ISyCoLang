@@ -1,0 +1,10 @@
+{
+  "claim": "break fuera de while",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "BAD_LOOP_CONTROL",
+    "emits": [],
+    "return": null
+  }
+}

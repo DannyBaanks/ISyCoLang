@@ -1,0 +1,7 @@
+# antes de la cabecera
+
+isyco 0.1 # cabecera
+# comentario
+fn main() -> i32 { # aqui
+  return 1_000; # literal con _
+}

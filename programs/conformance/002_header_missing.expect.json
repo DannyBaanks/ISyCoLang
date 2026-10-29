@@ -1,0 +1,10 @@
+{
+  "claim": "sin cabecera es SYNTAX",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

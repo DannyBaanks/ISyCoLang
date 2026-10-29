@@ -1,0 +1,10 @@
+{
+  "claim": "int a int fuera de rango usa ovf del destino (trap)",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "MIN / -1 atrapa en trap",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "claim": "entrada con decimal, bool y arreglo",
+  "input": [
+    "3.50",
+    "true",
+    [
+      "1",
+      "2",
+      "3"
+    ]
+  ],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "3.50",
+      "3"
+    ],
+    "return": null
+  }
+}

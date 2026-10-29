@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> int<8, unsigned, wrap> { let x: i32 = 300; return x as int<8, unsigned, wrap>; }

@@ -1,0 +1,12 @@
+{
+  "claim": "division entre cero conserva salida parcial",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "DIV_ZERO",
+    "emits": [
+      "5"
+    ],
+    "return": null
+  }
+}

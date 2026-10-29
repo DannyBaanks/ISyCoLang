@@ -1,0 +1,10 @@
+{
+  "claim": "CRLF es ENCODING",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "ENCODING",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() -> i32 { let d: dec<4,2> = -2.70; return d as i32; }

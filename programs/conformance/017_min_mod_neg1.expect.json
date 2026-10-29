@@ -1,0 +1,10 @@
+{
+  "claim": "MIN % -1 = 0",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "0"
+  }
+}

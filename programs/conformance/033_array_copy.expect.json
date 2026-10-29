@@ -1,0 +1,13 @@
+{
+  "claim": "los arreglos se pasan por copia",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "99",
+      "1"
+    ],
+    "return": null
+  }
+}

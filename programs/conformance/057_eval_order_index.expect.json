@@ -1,0 +1,14 @@
+{
+  "claim": "en a[i] = e se evalua i antes que e",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1",
+      "7",
+      "7"
+    ],
+    "return": null
+  }
+}

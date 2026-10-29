@@ -1,0 +1,2 @@
+isyco 0.2
+fn main() -> i32 { return 7; }

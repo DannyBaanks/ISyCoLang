@@ -1,0 +1,2 @@
+isyco 0.1
+fn main() !emit { let x: i32 = 1; emit x; }

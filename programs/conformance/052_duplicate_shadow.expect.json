@@ -1,0 +1,10 @@
+{
+  "claim": "no hay shadowing",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "DUPLICATE_NAME",
+    "emits": [],
+    "return": null
+  }
+}

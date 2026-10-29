@@ -1,0 +1,13 @@
+{
+  "claim": "un bucle infinito es LIMIT_REACHED, nunca HALTED",
+  "input": [],
+  "expected": {
+    "status": "LIMIT_REACHED",
+    "code": "max_steps",
+    "emits": [],
+    "return": null
+  },
+  "limits": {
+    "max_steps": 1000
+  }
+}
