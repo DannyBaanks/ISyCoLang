@@ -50,6 +50,7 @@ tools/ir_gate.py                   compara IR vs referencia y guarda evidencia
 tools/c_gate.py                    gate F4 (tres vías, gcc/clang, sanitizers, sabotaje)
 tools/c_sanitize_v03.py            backend C con UBSan+ASan sobre v0.3 (corpus + strings)
 tools/backend_gate.py              gate F5 (corpus, capacidades, diferencial, stub) por backend
+tools/warm_build_cache.py          precompila en paralelo los binarios del corpus y diferenciales
 ```
 
 ## Reproducir lo que existe
@@ -57,7 +58,7 @@ tools/backend_gate.py              gate F5 (corpus, capacidades, diferencial, st
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 70 tests
+python3 -m unittest discover -s tests -v       # 71 tests (~1.5 min con build/ llena; ver tests/README.md)
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)

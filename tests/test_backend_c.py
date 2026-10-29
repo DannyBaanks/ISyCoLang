@@ -21,7 +21,7 @@ sys.path.insert(0, str(ROOT))
 from isyco import run  # noqa: E402
 from isyco.backends.c import emit_c, run_c  # noqa: E402
 from isyco.conformance import COMPARED, load_all  # noqa: E402
-from isyco.difftest import compare, compare_str  # noqa: E402
+from isyco.difftest import DEC_TYPES, compare, compare_str  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
 from isyco.backends.base import missing_features  # noqa: E402
 from isyco.backends.c import BACKEND as C_BACKEND  # noqa: E402
@@ -82,7 +82,8 @@ class Sabotage(unittest.TestCase):
         self.assertTrue(report["diffs"])
 
     def test_difftest_detects_sabotage(self):
-        report = compare(partial(run_c, sabotage="half_even_as_half_up"), pairs=0)
+        # El sabotaje es de redondeo half_even: solo los tipos decimales pueden mostrarlo.
+        report = compare(partial(run_c, sabotage="half_even_as_half_up"), pairs=0, types=DEC_TYPES)
         self.assertTrue(report["diffs"])
 
 

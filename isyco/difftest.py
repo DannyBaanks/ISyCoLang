@@ -20,6 +20,16 @@ DEC_TYPES = [DecT(18, 0, "half_even"), DecT(18, 2, "half_even"), DecT(18, 2, "ha
 CAST_TARGETS = ["int<8, signed, wrap>", "int<16, unsigned, sat>", "i64", "u32",
                 "dec<18,4>", "dec<6,2,half_up>", "dec<3,0,exact>", "dec<10,1,down>"]
 COMPARED = ("status", "code", "emits", "return", "steps")
+_REFERENCE: dict = {}
+
+
+def reference(program: bytes, inputs: list) -> dict:
+    """Resultado de la referencia, calculado una vez por (programa, entrada): la suite
+    compara varios backends contra las mismas corridas. Es determinista (CORE §10.2)."""
+    key = (program, tuple(inputs))
+    if key not in _REFERENCE:
+        _REFERENCE[key] = {k: run(program, inputs)[0][k] for k in COMPARED}
+    return _REFERENCE[key]
 
 
 def src_type(t) -> str:
@@ -104,10 +114,9 @@ def compare(executor, pairs: int = 40, seed: int = 20261028, types=None) -> dict
         count = 0
         for op, a, b in cases_for(t, pairs, seed):
             inputs = [str(op), a, b]
-            ref, _ = run(program, inputs)
+            want = reference(program, inputs)
             got, _ = executor(program, inputs)
             count += 1
-            want = {k: ref[k] for k in COMPARED}
             have = {k: got.get(k) for k in COMPARED}
             if want != have or got.get("backend_stderr"):
                 report["diffs"].append({"type": str(t), "op": ops_for(t)[op], "input": inputs,
@@ -160,6 +169,9 @@ def str_cases(per_op: int, seed: int):
         chosen = set()
         if op >= STR_OPS.index("a as str<3>"):           # casts desde str: todo el pool
             chosen |= {(a, "", 0, 0, "0.00") for a in STR_POOL}
+        if STR_OPS[op] in ("a + b", "CTX"):
+            # Frontera de capacidad: |a| + |b| alrededor de 16 (str<16> del contexto).
+            chosen |= {("x" * k, "y" * m, 0, 0, "0.00") for k in range(8, 18) for m in (0, 1, 2, 8)}
         positional = STR_OPS[op] in ("a[i]", "slice(a, i, j)")
         while len(chosen) < per_op * (3 if positional else 1) \
                 + (len(STR_POOL) if op >= STR_OPS.index("a as str<3>") else 0):
@@ -179,10 +191,9 @@ def compare_str(executor, per_op: int = 12, seed: int = 20261029) -> dict:
     report = {"seed": seed, "per_op": per_op, "runs": 0, "diffs": []}
     for op, a, b, i, j, d in str_cases(per_op, seed):
         inputs = [str(op), a, b, str(i), str(j), d]
-        ref, _ = run(program, inputs)
+        want = reference(program, inputs)
         got, _ = executor(program, inputs)
         report["runs"] += 1
-        want = {k: ref[k] for k in COMPARED}
         have = {k: got.get(k) for k in COMPARED}
         if want != have or got.get("backend_stderr"):
             report["diffs"].append({"op": STR_OPS[op], "input": inputs, "reference": want,

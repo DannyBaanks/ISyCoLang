@@ -137,9 +137,15 @@ class Backend:
         if binary.exists():
             return binary, None
         directory.mkdir(parents=True, exist_ok=True)
+        # Seguro con varios procesos y varios hilos a la vez: cada escritor usa nombres
+        # propios (pid + hilo) y publica con os.replace, que es atómico. Dos que compilan
+        # la misma clave producen el mismo binario; gana cualquiera.
+        writer = f"{os.getpid()}_{threading.get_ident()}"
         src = directory / f"{key}{self.extension}"
-        src.write_text(source, encoding="utf-8")
-        tmp = directory / f"{key}.tmp{os.getpid()}"
+        src_tmp = directory / f"{key}.src{writer}{self.extension}"
+        src_tmp.write_text(source, encoding="utf-8")
+        src_tmp.replace(src)
+        tmp = directory / f"{key}.tmp{writer}"
         start = time.perf_counter()
         proc = subprocess.run(self.compile_cmd(src, tmp, extra_flags), capture_output=True,
                               text=True, cwd=directory)
@@ -147,6 +153,42 @@ class Backend:
         if proc.returncode != 0:
             raise RuntimeError(f"{self.name}: el compilador falló:\n{(proc.stderr or proc.stdout)[:4000]}")
         tmp.replace(binary)
+        return binary, compile_ms
+
+    # --- memoria por programa -------------------------------------------------
+    # El diferencial ejecuta el mismo programa miles de veces con otras entradas: el
+    # frontend, el código generado y su hash se calculan una sola vez por programa.
+    # Las claves incluyen el toolchain (cambiar ISYCO_CC no reutiliza otro binario).
+    def _memo(self) -> dict:
+        if "_memo_store" not in self.__dict__:
+            self._memo_store = {}
+        return self._memo_store
+
+    def _module(self, data: bytes):
+        key = ("module", data)
+        memo = self._memo()
+        if key not in memo:
+            try:
+                memo[key] = compile_ir(data)
+            except InvalidProgram:
+                memo[key] = None
+        return memo[key]
+
+    def _features(self, data: bytes, module: dict) -> set:
+        key = ("features", data)
+        memo = self._memo()
+        if key not in memo:
+            memo[key] = features_of(module)
+        return memo[key]
+
+    def _binary(self, data: bytes, module: dict, sabotage, extra_flags: tuple):
+        version = getattr(self, "_toolchain_version", None)
+        key = ("binary", data, sabotage, extra_flags, version)
+        memo = self._memo()
+        if key in memo and memo[key].exists():
+            return memo[key], None
+        binary, compile_ms = self.build(self.emit(module, sabotage), extra_flags)
+        memo[("binary", data, sabotage, extra_flags, self._toolchain_version)] = binary
         return binary, compile_ms
 
     # --- ejecución ------------------------------------------------------------
@@ -159,9 +201,8 @@ class Backend:
         en conformidad."""
         lim = dict(DEFAULT_LIMITS)
         lim.update(limits or {})
-        try:
-            module = compile_ir(data)
-        except InvalidProgram:
+        module = self._module(data)
+        if module is None:
             return run_reference(data, inputs, limits)   # frontend compartido
         if not inputs_valid(module, inputs):
             return run_reference(data, inputs, limits)   # BAD_INPUT lo decide el frontend
@@ -171,13 +212,13 @@ class Backend:
             "input_sha256": hashlib.sha256(canonical_json(inputs).encode("utf-8")).hexdigest(),
             "limits": lim, "backend": self.name,
         }
-        missing = sorted(features_of(module) - set(self.features))
+        missing = sorted(self._features(data, module) - set(self.features))
         if missing:
             result.update(status="UNSUPPORTED", code=",".join(missing), emits=[], steps=None)
             result["return"] = None
             return result, []
         args = raw_args(module, inputs)
-        binary, compile_ms = self.build(self.emit(module, sabotage), extra_flags)
+        binary, compile_ms = self._binary(data, module, sabotage, extra_flags)
         argv = [str(binary), str(lim["max_steps"]), str(lim["max_call_depth"]),
                 str(lim["max_emits"]), *args]
         returncode, stdout, stderr, cost = run_measured(

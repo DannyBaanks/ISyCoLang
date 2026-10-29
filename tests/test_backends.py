@@ -6,6 +6,7 @@ diferencial por tipo. El gate completo con evidencia es tools/backend_gate.py.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import unittest
@@ -26,6 +27,18 @@ from isyco.ir_interp import compile_ir  # noqa: E402
 CORPUS = load_all(ROOT)
 KEYS = COMPARED + ("steps",)
 AVAILABLE = available()
+# ISYCO_TEST_BACKENDS=c,rust limita qué backends nativos prueba esta suite (p. ej. para
+# no esperar a Zig en frío). Sin la variable se prueban todos los instalados.
+if os.environ.get("ISYCO_TEST_BACKENDS"):
+    AVAILABLE = {k: v for k, v in AVAILABLE.items()
+                 if k in os.environ["ISYCO_TEST_BACKENDS"].split(",")}
+# Casos del corpus que hacen fallar cada sabotaje (medido con el barrido completo del
+# gate, evidence/backends/). Cambiar el corpus puede exigir actualizar esta tabla.
+SABOTAGE_WITNESSES = {
+    "half_even_as_half_up": ("019_dec_half_even", "031_cast_dec_rescale"),
+    "div_floor": ("014_div_trunc",),
+    "str_concat_truncates": ("203_str_concat_overflow",),
+}
 
 
 def by_name(name):
@@ -87,6 +100,11 @@ class Unsupported(unittest.TestCase):
 
 
 class Registry(unittest.TestCase):
+    def test_every_sabotage_has_witnesses(self):
+        for backend in registry().values():
+            for sabotage in backend.sabotages:
+                self.assertIn(sabotage, SABOTAGE_WITNESSES, f"{backend.name}: {sabotage}")
+
     def test_wave_one_registered(self):
         self.assertEqual(set(registry()), {"c", "rust", "zig"})
 
@@ -147,15 +165,17 @@ def _make_conformance(name):
             self.assertEqual(other["emits"], ["8.22", "16.44", "24.66"])
 
         def test_sabotages_detected(self):
-            # Cada sabotaje declarado debe hacer fallar el corpus: si no, la suite no
-            # distinguiría este backend de uno roto (spec/BACKEND.md §5).
+            # Cada sabotaje declarado debe hacer fallar sus casos testigo del corpus: si no,
+            # la suite no distinguiría este backend de uno roto (spec/BACKEND.md §5). Solo
+            # los testigos, para no recompilar el corpus entero saboteado en cada corrida;
+            # el barrido completo (corpus + diferenciales) lo hace tools/backend_gate.py.
             self.assertLessEqual({"half_even_as_half_up", "div_floor"}, set(self.backend.sabotages))
             for sabotage in self.backend.sabotages:
-                caught = any(
-                    {k: run(c["program"], c["input"], c.get("limits"))[0][k] for k in KEYS}
-                    != {k: self.backend.run(c["program"], c["input"], c.get("limits"),
-                                            sabotage=sabotage)[0].get(k) for k in KEYS}
-                    for c in CORPUS if not missing_features(self.backend, c["program"]))
+                witnesses = [by_name(name) for name in SABOTAGE_WITNESSES[sabotage]]
+                caught = [c["name"] for c in witnesses
+                          if {k: run(c["program"], c["input"], c.get("limits"))[0][k] for k in KEYS}
+                          != {k: self.backend.run(c["program"], c["input"], c.get("limits"),
+                                                  sabotage=sabotage)[0].get(k) for k in KEYS}]
                 self.assertTrue(caught, sabotage)
 
         def test_cost_is_measured_and_not_compared(self):

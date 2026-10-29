@@ -130,9 +130,12 @@ Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 ## 5. Comprobar que todo sigue bien
 
 ```bash
-python3 -m unittest discover -s tests          # suite completa (varios minutos: compila C, Rust y Zig)
+python3 tools/warm_build_cache.py              # opcional: precompila en paralelo (la primera vez tarda)
+python3 -m unittest discover -s tests          # suite completa (~1.5 min con la caché llena)
 python3 tools/backend_gate.py                  # gate de backends: escribe evidence/backends/gate_<UTC>.json
 ```
+
+Si no quieres esperar a Zig: `ISYCO_TEST_BACKENDS=c,rust python3 -m unittest discover -s tests`.
 
 Si agregas evidencia nueva, agrega su hash a `SHA256SUMS.txt` de esa carpeta.
 Nunca edites un caso del corpus ni un archivo de evidencia existente: el
