@@ -1,8 +1,7 @@
 # ISyCoLang — Semántica del core v0.3
 
-**Estado:** `DRAFT v0.3` (2026-10-29). Decisiones S1–S8 tomadas por Danny el
-2026-10-29; los detalles marcados **[P]** son propuestas pendientes de su
-revisión antes de congelar.
+**Estado:** `FROZEN v0.3` (2026-10-29). Decisiones S1–S8 tomadas por Danny el
+2026-10-29; los detalles marcados **[P]** (P1–P7) los aprobó el mismo día.
 **Base:** `CORE.md` (v0.1) + `CORE_v0.2.md`. Este documento solo lista lo que
 cambia; todo lo demás es idéntico a v0.2.
 
