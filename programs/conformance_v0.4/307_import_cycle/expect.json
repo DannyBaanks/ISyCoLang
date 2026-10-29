@@ -1,0 +1,10 @@
+{
+  "claim": "M3: a importa b, b importa a",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "IMPORT_CYCLE",
+    "emits": [],
+    "return": null
+  }
+}

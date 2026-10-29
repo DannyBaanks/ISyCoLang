@@ -1,0 +1,10 @@
+{
+  "claim": "P1/P2: import geo.punto -> geo/punto.isy, nombre local punto",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "25"
+  }
+}

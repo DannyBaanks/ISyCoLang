@@ -1,0 +1,10 @@
+{
+  "claim": "algo que no existe en el módulo",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "UNKNOWN_NAME",
+    "emits": [],
+    "return": null
+  }
+}

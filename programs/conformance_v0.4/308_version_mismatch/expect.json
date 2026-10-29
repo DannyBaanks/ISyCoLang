@@ -1,0 +1,10 @@
+{
+  "claim": "M4: un módulo con cabecera 0.3",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "VERSION_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

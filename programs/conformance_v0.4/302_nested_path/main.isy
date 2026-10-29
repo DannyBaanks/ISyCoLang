@@ -1,0 +1,3 @@
+isyco 0.4
+import geo.punto;
+fn main() -> i32 { let p: punto.P = punto.P { x: 3, y: 4 }; return punto.dist2(p); }

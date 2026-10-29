@@ -1,0 +1,10 @@
+{
+  "claim": "recursión dentro de un módulo",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "3628800"
+  }
+}

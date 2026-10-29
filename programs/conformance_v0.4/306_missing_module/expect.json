@@ -1,0 +1,10 @@
+{
+  "claim": "el archivo del import no existe",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "UNKNOWN_MODULE",
+    "emits": [],
+    "return": null
+  }
+}

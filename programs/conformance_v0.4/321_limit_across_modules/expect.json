@@ -1,0 +1,16 @@
+{
+  "claim": "una llamada a otro módulo cuenta pasos y profundidad igual",
+  "input": [],
+  "expected": {
+    "status": "LIMIT_REACHED",
+    "code": "max_steps",
+    "emits": [
+      "0",
+      "2"
+    ],
+    "return": null
+  },
+  "limits": {
+    "max_steps": 14
+  }
+}

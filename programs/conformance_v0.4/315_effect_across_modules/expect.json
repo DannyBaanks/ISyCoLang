@@ -1,0 +1,10 @@
+{
+  "claim": "una función pub que emite exige !emit en quien la llama",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "UNDECLARED_EFFECT",
+    "emits": [],
+    "return": null
+  }
+}

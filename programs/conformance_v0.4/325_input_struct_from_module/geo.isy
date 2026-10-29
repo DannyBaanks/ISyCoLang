@@ -1,0 +1,4 @@
+isyco 0.4
+pub struct Punto { x: i32, y: i32 }
+struct Oculto { v: i32 }
+pub fn origen() -> Punto { return Punto { x: 0, y: 0 }; }

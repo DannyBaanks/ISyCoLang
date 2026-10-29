@@ -1,0 +1,3 @@
+isyco 0.4
+import util;
+fn main() !emit { emit util.dividir(10, 2); emit util.dividir(1, 0); }

@@ -1,0 +1,10 @@
+{
+  "claim": "una función pub usa una privada de su propio módulo",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "10"
+  }
+}

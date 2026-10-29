@@ -1,0 +1,3 @@
+isyco 0.4
+import log;
+fn main() !emit { log.di(7); log.di(8); }

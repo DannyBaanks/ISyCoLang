@@ -1,0 +1,10 @@
+{
+  "claim": "en isyco 0.3 import no existe",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "pub en el archivo principal no cambia nada",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "1"
+  }
+}

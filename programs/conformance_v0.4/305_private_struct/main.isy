@@ -1,0 +1,3 @@
+isyco 0.4
+import geo;
+fn main() { let o: geo.Oculto = geo.Oculto { v: 1 }; }

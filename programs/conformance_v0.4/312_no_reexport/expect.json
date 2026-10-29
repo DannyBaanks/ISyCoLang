@@ -1,0 +1,10 @@
+{
+  "claim": "importar no reexporta: main no ve c aunque a lo importe",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "UNKNOWN_NAME",
+    "emits": [],
+    "return": null
+  }
+}

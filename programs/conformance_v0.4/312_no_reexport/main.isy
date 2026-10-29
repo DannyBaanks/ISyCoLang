@@ -1,0 +1,3 @@
+isyco 0.4
+import a;
+fn main() -> i32 { return c.f(); }

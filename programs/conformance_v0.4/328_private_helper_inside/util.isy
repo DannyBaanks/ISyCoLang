@@ -1,0 +1,3 @@
+isyco 0.4
+fn interno() -> i32 { return 9; }
+pub fn envuelve() -> i32 { return interno() + 1; }

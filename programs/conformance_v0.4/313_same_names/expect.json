@@ -1,0 +1,14 @@
+{
+  "claim": "el mismo nombre en tres módulos son tres funciones distintas",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1",
+      "2",
+      "3"
+    ],
+    "return": null
+  }
+}

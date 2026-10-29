@@ -1,0 +1,10 @@
+{
+  "claim": "M2: struct no pub",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "NOT_PUBLIC",
+    "emits": [],
+    "return": null
+  }
+}

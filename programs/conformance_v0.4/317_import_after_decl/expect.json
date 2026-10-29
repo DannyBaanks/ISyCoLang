@@ -1,0 +1,10 @@
+{
+  "claim": "los import van antes de toda declaración",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

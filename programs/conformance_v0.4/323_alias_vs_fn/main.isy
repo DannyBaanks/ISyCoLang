@@ -1,0 +1,4 @@
+isyco 0.4
+import util;
+fn util() { }
+fn main() { }

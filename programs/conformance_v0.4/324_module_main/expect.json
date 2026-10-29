@@ -1,0 +1,10 @@
+{
+  "claim": "el main de un módulo es una función más",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "42"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "claim": "un módulo importado por dos se carga una vez: el struct es el mismo tipo",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "50"
+    ],
+    "return": null
+  }
+}

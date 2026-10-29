@@ -1,0 +1,3 @@
+isyco 0.4
+import log;
+fn main() { log.di(1); }

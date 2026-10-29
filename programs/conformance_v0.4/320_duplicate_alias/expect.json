@@ -1,0 +1,10 @@
+{
+  "claim": "P2: dos imports con el mismo nombre local",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "DUPLICATE_NAME",
+    "emits": [],
+    "return": null
+  }
+}

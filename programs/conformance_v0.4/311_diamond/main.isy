@@ -1,0 +1,4 @@
+isyco 0.4
+import a;
+import b;
+fn main() !emit { emit b.mide(a.crea(5)); }

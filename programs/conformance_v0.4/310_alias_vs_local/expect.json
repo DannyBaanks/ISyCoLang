@@ -1,0 +1,10 @@
+{
+  "claim": "P3: una variable con el nombre de un módulo",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "DUPLICATE_NAME",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,5 @@
+isyco 0.4
+import a;
+import b;
+fn f() -> i32 { return 1; }
+fn main() !emit { emit f(); emit a.f(); emit b.f(); }

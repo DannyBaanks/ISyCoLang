@@ -1,0 +1,10 @@
+{
+  "claim": "solo existen 0.1 a 0.4 (hereda la afirmación de 264 en v0.3)",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

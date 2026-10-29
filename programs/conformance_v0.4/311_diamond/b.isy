@@ -1,0 +1,3 @@
+isyco 0.4
+import c;
+pub fn mide(k: c.Caja) -> i32 { return k.v * 10; }

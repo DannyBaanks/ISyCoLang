@@ -1,0 +1,2 @@
+isyco 0.4
+pub fn di(x: i32) !emit { emit x; }

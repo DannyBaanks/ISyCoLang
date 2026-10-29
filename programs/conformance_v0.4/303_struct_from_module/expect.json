@@ -1,0 +1,14 @@
+{
+  "claim": "un struct pub de otro módulo se construye, se emite y se compara",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "{\"x\":\"1\",\"y\":\"2\"}",
+      "false",
+      "true"
+    ],
+    "return": null
+  }
+}

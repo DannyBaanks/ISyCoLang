@@ -1,0 +1,10 @@
+{
+  "claim": "M1: import util; util.doble()",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "42"
+  }
+}

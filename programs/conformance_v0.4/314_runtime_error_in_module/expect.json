@@ -1,0 +1,12 @@
+{
+  "claim": "un error en ejecución dentro de un módulo conserva la salida previa",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "DIV_ZERO",
+    "emits": [
+      "5"
+    ],
+    "return": null
+  }
+}

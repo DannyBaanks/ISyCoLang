@@ -1,0 +1,2 @@
+isyco 0.4
+pub fn mala() -> i32 { let b: bool = 5; return 1; }

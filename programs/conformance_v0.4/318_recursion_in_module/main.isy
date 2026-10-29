@@ -1,0 +1,3 @@
+isyco 0.4
+import mate;
+fn main() -> i64 { return mate.fact(10); }

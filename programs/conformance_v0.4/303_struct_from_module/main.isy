@@ -1,0 +1,10 @@
+isyco 0.4
+import geo;
+fn main() !emit {
+    let p: geo.Punto = geo.Punto { x: 1, y: 2 };
+    emit p;
+    emit p == geo.origen();
+    p.x = 0;
+    p.y = 0;
+    emit p == geo.origen();
+}

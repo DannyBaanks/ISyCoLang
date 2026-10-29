@@ -1,0 +1,13 @@
+{
+  "claim": "una llamada calificada como sentencia",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "7",
+      "8"
+    ],
+    "return": null
+  }
+}

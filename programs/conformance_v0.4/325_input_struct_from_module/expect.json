@@ -1,0 +1,15 @@
+{
+  "claim": "main recibe un struct de un módulo por la entrada",
+  "input": [
+    {
+      "x": "10",
+      "y": "4"
+    }
+  ],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "6"
+  }
+}
