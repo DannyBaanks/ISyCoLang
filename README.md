@@ -1,5 +1,7 @@
 # ISyCoLang
 
+**Repo PRIVADO** (decisión de Danny, 2026-10-28): sin licencia ni remoto público.
+
 **Estado: `IDEA`.** No hay engine, parser ni compilador todavía. Este repo
 contiene el roadmap, el estudio de viabilidad y el inventario de backends
 candidatos. Todo lo demás está marcado `NOT_DEMONSTRATED`.

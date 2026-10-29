@@ -11,4 +11,6 @@
    `workspace/assembly`.
 7. Evidencia nueva → `evidence/<tema>/` con archivo nuevo por corrida (nunca
    sobrescribir) y su SHA-256.
-8. Sin remoto todavía: no hacer push.
+8. Repo **privado** (decisión de Danny, 2026-10-28). Sin remoto todavía: no
+   hacer push, y nunca crear un remoto público ni publicar contenido sin que
+   Danny lo pida.

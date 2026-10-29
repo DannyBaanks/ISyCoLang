@@ -228,7 +228,9 @@ Correcciones al V0 que este carril adopta:
 - Self-hosting del compilador.
 - LLVM directo (no hay `llc` en el host; C/Rust/Zig cubren el nativo inicial).
 - Afirmaciones de Turing-completitud de cualquier pack.
-- Publicación pública (licencia y separación público/privado: decisión de Danny).
+- Publicación pública. **Decisión de Danny (2026-10-28): el repo es PRIVADO por
+  ahora.** Sin licencia ni remoto público; si se publica más adelante, se
+  revisa la separación público/privado (estándar §21).
 
 ## 6. Claim table
 
