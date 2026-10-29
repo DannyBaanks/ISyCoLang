@@ -33,7 +33,7 @@ class Checker:
         self.scopes: list[dict] = []
         self.loop_depth = 0
         self.emits = False
-        self.v03 = program.version == "0.3"
+        self.v03 = program.version in ("0.3", "0.4")   # v0.4 = v0.3 + módulos
         self.struct_types: dict[str, StructT] = {}
 
     def check(self) -> None:

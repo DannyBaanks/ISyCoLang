@@ -87,6 +87,14 @@ compile_ms   ms de compilación, o null si el binario venía de la caché
 - En `TIMEOUT` el costo es parcial: el grupo de procesos se mata antes de
   que GNU time reporte, y `max_rss_kb` queda `null`.
 
+### 3.2 Nombres
+
+Un nombre de función o struct de la IR no es necesariamente un identificador
+válido: desde CORE v0.4 puede llevar puntos (`geo.punto.f`). Los backends
+nativos usan `fn_ident` (`isyco/backends/base.py`): `f_<nombre>` para nombres
+simples (igual que antes) y `m_` + cada segmento con su longitud para los
+calificados (`m_3geo5punto1f`), una codificación inyectiva.
+
 ## 4. Obligaciones semánticas (todas las de CORE, en particular)
 
 | obligación | por qué es fácil equivocarse |

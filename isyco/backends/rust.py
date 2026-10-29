@@ -23,7 +23,7 @@ from pathlib import Path
 
 from ..ir import ty_from_json
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
-from .base import ALL_FEATURES, Backend
+from .base import ALL_FEATURES, Backend, fn_ident, type_ident
 
 ROUND_CODE = {"half_even": 0, "half_up": 1, "down": 2, "exact": 3}
 OVF_CODE = {"trap": 0, "wrap": 1, "sat": 2}
@@ -245,7 +245,7 @@ class RustEmitter:
         if isinstance(t, StructT):
             key = repr(t)
             if key not in self.structs:
-                name = f"S{len(self.structs)}_{t.name}"
+                name = f"S{len(self.structs)}_{type_ident(t.name)}"
                 self.structs[key] = name
                 fields = ", ".join(f"f_{fn}: {self.rtype(ft)}" for fn, ft in t.fields)
                 self.struct_defs.append(f"#[derive(Clone, Copy, PartialEq)]\nstruct {name} {{ {fields} }}")
@@ -298,7 +298,7 @@ class RustEmitter:
         types = [ty_from_json(loc["ty"]) for loc in fn["locals"]]
         params = "".join(f", mut l{p}: {self.rtype(types[p])}" for p in fn["params"])
         ret = ty_from_json(fn["ret"])
-        return f"fn f_{fn['name']}(c: &mut Ctx{params}){'' if ret is None else ' -> ' + self.rtype(ret)}"
+        return f"fn {fn_ident(fn['name'])}(c: &mut Ctx{params}){'' if ret is None else ' -> ' + self.rtype(ret)}"
 
     def function(self, fn: dict) -> str:
         self.lines, self.indent, self.tmp = [], 1, 0
@@ -477,7 +477,7 @@ class RustEmitter:
             self.put("c.out.push(b'\\n');")
         elif kind == "call":
             args = [self.expr(a) for a in s["args"]]
-            self.put(f"f_{s['fn']}(c{''.join(', ' + a for a in args)});")
+            self.put(f"{fn_ident(s['fn'])}(c{''.join(', ' + a for a in args)});")
         else:
             raise AssertionError(kind)
 
@@ -496,7 +496,7 @@ class RustEmitter:
             return f"l{e['id']}"
         if kind == "call":
             args = [self.expr(a) for a in e["args"]]
-            return self.temp(t, f"f_{e['fn']}(c{''.join(', ' + a for a in args)})")
+            return self.temp(t, f"{fn_ident(e['fn'])}(c{''.join(', ' + a for a in args)})")
         if kind == "index" and isinstance(ty_from_json(e["base"]["ty"]), StrT):
             base = self.expr(e["base"])
             index = self.expr(e["index"])

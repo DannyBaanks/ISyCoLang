@@ -19,6 +19,8 @@ from .errors import InvalidProgram
 from .interp import DEFAULT_LIMITS, TRACE_LEVELS, canonical_json, run
 from .ir import canonical_bytes
 from .ir_interp import compile_ir, run_via_ir
+from .lexer import header_version
+from .source import Bundle
 
 EXIT = {"HALTED": 0, "INVALID_PROGRAM": 2, "ERROR": 3, "LIMIT_REACHED": 4, "TIMEOUT": 5}
 
@@ -42,6 +44,9 @@ def main(argv=None) -> int:
 
     try:
         data = args.program.read_bytes()
+        if header_version(data.decode("utf-8", "replace")) == "0.4":
+            # CORE v0.4 P1: los módulos se buscan desde la carpeta del archivo principal.
+            data = Bundle.from_path(args.program)
         inputs = json.loads(args.input) if args.cmd == "run" else None
     except (OSError, json.JSONDecodeError) as exc:
         print(f"isyco: {exc}", file=sys.stderr)

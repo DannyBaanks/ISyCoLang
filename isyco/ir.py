@@ -225,7 +225,7 @@ class _FnLowering:
 
 def lower(program: A.Program, source_sha256: str) -> dict:
     """Programa ya chequeado -> módulo ISY-IR (dict JSON)."""
-    schema = SCHEMA_V2 if program.version == "0.3" else SCHEMA
+    schema = SCHEMA_V2 if program.version in ("0.3", "0.4") else SCHEMA   # v0.4 no cambia la IR
     return {"schema": schema, "source_sha256": source_sha256,
             "functions": [_FnLowering(fn, program).lower() for fn in program.fns.values()]}
 

@@ -119,7 +119,7 @@ canónico. Detalles **[P]** (P1–P7) aprobados por Danny el 2026-10-29.
 sin cambiar ningún resultado de v0.1/v0.2; IR `isy-ir/0.2` validada; cada backend
 nativo pasa el corpus v0.3 o declara `str`/`struct` como `UNSUPPORTED`.
 
-#### F2.3 — Core v0.4: módulos  `[SPEC FROZEN 2026-10-29: spec/CORE_v0.4.md; corpus de 28 casos escrito a mano; implementación en curso]`
+#### F2.3 — Core v0.4: módulos  `[PASS 2026-10-29: referencia 28/28 (170/170 los cuatro corpus); IR 340/340; C, Rust y Zig 170/170]`
 
 Decisiones M1–M4 de Danny: `import util;` con uso calificado `util.f()`, solo lo
 `pub` se exporta, sin imports circulares, todos los módulos `isyco 0.4`. Se
@@ -282,6 +282,10 @@ Correcciones al V0 que este carril adopta:
 | Backend C v0.3 sin comportamiento indefinido | DEMONSTRATED con UBSan+ASan en gcc 13.3 y clang 18.1: 64/64 y 974 corridas de strings sin diferencias | `evidence/c/sanitize_v03_2026-10-29T100117Z.txt` |
 | La suite detecta un backend (C, Rust o Zig) que trunca strings en vez de OVERFLOW | DEMONSTRATED (sabotaje `str_concat_truncates`: 1 caso del corpus y 15 diferencias del diferencial de strings en cada backend) | `evidence/backends/gate_2026-10-29T172039Z.json` |
 | Backends Rust y Zig ejecutan str y structs igual que la referencia | DEMONSTRATED (2026-10-29), implementaciones independientes de C: 142/142 y 1 214 corridas de strings sin diferencias cada uno; los 3 sabotajes detectados | `evidence/backends/gate_2026-10-29T143318Z.json` |
+| Core v0.4 (módulos): la referencia cumple 28 casos con expected escritos a mano antes de implementar | DEMONSTRATED (2026-10-29), 170/170 con v0.1–v0.3 | `evidence/conformance/run_2026-10-29T202242Z.json` |
+| v0.4 no cambia ningún programa anterior | DEMONSTRATED: 142/142 (salvo v0.3/264, superado explícitamente); los nombres simples generan el mismo código nativo | `programs/conformance_v0.3/SUPERSEDED.json`, `tests/test_modules.py` |
+| Los módulos se resuelven en el frontend: la IR no cambia y los backends solo codifican nombres calificados | DEMONSTRATED: IR 340/340 (resultado y traza); C, Rust y Zig 170/170 con el mismo `modules` | `evidence/ir/gate_2026-10-29T202243Z.json`, `evidence/backends/gate_2026-10-29T203306Z.json` |
+| El corpus detecta un enlazador que ignora `pub` | DEMONSTRATED (mutación: 304 y 305 fallan) | `tests/test_modules.py::Sabotage` |
 | La suite detecta un backend C saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
 | La suite detecta un backend Rust o Zig saboteado | DEMONSTRATED (2026-10-29): los mismos 2 sabotajes que C; cada uno falla corpus (3 y 2 casos) y diferencial (12 y 53 diferencias), igual en los tres backends | `evidence/backends/gate_2026-10-29T055122Z.json`, `tests/test_backends.py` |
 | Backends de las olas 2–6 de F5 (COBOL, Fortran, Prolog/z3, Go/Java/…, esolangs) | NOT_DEMONSTRATED (no implementados) | — |

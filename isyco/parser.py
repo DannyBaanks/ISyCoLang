@@ -9,7 +9,7 @@ from .types import INT_ALIASES, MAX_STR, ArrT, BoolT, DecT, IntT, NamedT, StrT
 CMP_OPS = {"==", "!=", "<", "<=", ">", ">="}
 ROUND_MODES = {"half_even", "half_up", "down", "exact"}
 MAX_ARRAY = 65536
-SUPPORTED_VERSIONS = {"0.1", "0.2", "0.3"}
+SUPPORTED_VERSIONS = {"0.1", "0.2", "0.3", "0.4"}
 
 
 class Parser:
@@ -21,7 +21,21 @@ class Parser:
 
     @property
     def v03(self) -> bool:
-        return self.version == "0.3"
+        return self.version in ("0.3", "0.4")
+
+    @property
+    def v04(self) -> bool:
+        return self.version == "0.4"
+
+    def is_qualified(self) -> bool:
+        """CORE v0.4: `x.f(`, `x.S {` o `x.S` en un tipo son nombres calificados."""
+        return (self.v04 and self.tok.kind == "IDENT" and self.peek().kind == "OP"
+                and self.peek().text == "." and self.peek(2).kind == "IDENT")
+
+    def qname(self) -> str:
+        module = self.take().text
+        self.expect(".")
+        return f"{module}.{self.ident().text}"
 
     # --- utilidades -----------------------------------------------------------
     @property
@@ -72,18 +86,36 @@ class Parser:
         self.pos += 2
         fns: dict[str, A.Fn] = {}
         structs: dict[str, A.StructDecl] = {}
+        imports: list[A.Import] = []
+        public: set[str] = set()
+        while self.v04 and self.is_("import"):
+            at = self.take().at
+            path = [self.ident().text]
+            while self.accept("."):
+                path.append(self.ident().text)
+            self.expect(";")
+            imports.append(A.Import(at, tuple(path)))
         while self.tok.kind != "EOF":
+            is_pub = self.v04 and self.accept("pub")
+            if is_pub and not (self.is_("fn") or self.is_("struct")):
+                self.fail("pub solo antecede a fn o struct")
+            if self.v04 and self.is_("import"):
+                self.fail("los import van antes de toda declaración")
             if self.v03 and self.is_("struct"):
                 decl = self.struct_decl()
                 if decl.name in structs or decl.name in fns:
                     raise InvalidProgram("DUPLICATE_NAME", decl.at, decl.name)
                 structs[decl.name] = decl
+                if is_pub:
+                    public.add(decl.name)
                 continue
             fn = self.fn_decl()
             if fn.name in fns or fn.name in structs:
                 raise InvalidProgram("DUPLICATE_NAME", fn.at, fn.name)
             fns[fn.name] = fn
-        return A.Program(fns, self.version, structs)
+            if is_pub:
+                public.add(fn.name)
+        return A.Program(fns, self.version, structs, imports, public)
 
     def struct_decl(self) -> A.StructDecl:
         at = self.expect("struct").at
@@ -166,6 +198,8 @@ class Parser:
             if not 1 <= n <= MAX_STR:
                 raise InvalidProgram("STR_SIZE", token.at, str(n))
             return StrT(n)
+        if self.is_qualified():
+            return NamedT(self.qname(), token.at)
         if self.v03 and token.kind == "IDENT":
             self.pos += 1
             return NamedT(token.text, token.at)
@@ -221,7 +255,8 @@ class Parser:
             expr = self.expr()
             self.expect(";")
             return A.Emit(at, expr)
-        if self.tok.kind == "IDENT" and self.peek().kind == "OP" and self.peek().text == "(":
+        if (self.tok.kind == "IDENT" and self.peek().kind == "OP" and self.peek().text == "(") \
+                or (self.is_qualified() and self.peek(3).kind == "OP" and self.peek(3).text == "("):
             call = self.call()
             self.expect(";")
             return A.ExprStmt(at, call)
@@ -342,7 +377,8 @@ class Parser:
                 return node
 
     def call(self) -> A.Call:
-        token = self.ident()
+        token = self.tok
+        name = self.qname() if self.is_qualified() else self.ident().text
         self.expect("(")
         args = []
         if not self.is_(")"):
@@ -351,7 +387,7 @@ class Parser:
                 if not self.accept(","):
                     break
         self.expect(")")
-        return A.Call(token.at, token.text, args)
+        return A.Call(token.at, name, args)
 
     def primary(self):
         token = self.tok
@@ -384,6 +420,11 @@ class Parser:
             return A.BoolLit(token.at, True)
         if self.accept("false"):
             return A.BoolLit(token.at, False)
+        if self.is_qualified() and self.peek(3).kind == "OP" and self.peek(3).text in ("(", "{"):
+            if self.peek(3).text == "(":
+                return self.call()
+            if not self.no_struct_lit:
+                return self.struct_lit()
         if token.kind == "IDENT":
             if self.peek().kind == "OP" and self.peek().text == "(":
                 return self.call()
@@ -415,7 +456,8 @@ class Parser:
 
 
     def struct_lit(self) -> A.StructLit:
-        token = self.ident()
+        token = self.tok
+        name = self.qname() if self.is_qualified() else self.ident().text
         self.expect("{")
         fields = []
         while not self.is_("}"):
@@ -425,7 +467,7 @@ class Parser:
             if not self.accept(","):
                 break
         self.expect("}")
-        return A.StructLit(token.at, token.text, fields)
+        return A.StructLit(token.at, name, fields)
 
 
 def parse(tokens: list[Token]) -> A.Program:

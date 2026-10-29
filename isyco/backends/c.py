@@ -37,7 +37,7 @@ from pathlib import Path
 
 from ..ir import ty_from_json
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
-from .base import ALL_FEATURES, Backend
+from .base import ALL_FEATURES, Backend, fn_ident, type_ident
 
 ROUND_CODE = {"half_even": 0, "half_up": 1, "down": 2, "exact": 3}
 OVF_CODE = {"trap": 0, "wrap": 1, "sat": 2}
@@ -315,7 +315,7 @@ class CEmitter:
             key = repr(t)
             if key not in self.arrays:
                 fields = " ".join(f"{self.ctype(ft)} f_{fname};" for fname, ft in t.fields)
-                name = f"isy_st{len(self.arrays)}_{t.name}"
+                name = f"isy_st{len(self.arrays)}_{type_ident(t.name)}"
                 self.arrays[key] = name
                 self.typedefs.append(f"typedef struct {{ {fields} }} {name};")
             return self.arrays[key]
@@ -412,7 +412,7 @@ class CEmitter:
         types = [ty_from_json(loc["ty"]) for loc in fn["locals"]]
         ret = ty_from_json(fn["ret"])
         params = ", ".join(f"{self.ctype(types[p])} l{p}" for p in fn["params"]) or "void"
-        return f"static {'void' if ret is None else self.ctype(ret)} f_{fn['name']}({params})"
+        return f"static {'void' if ret is None else self.ctype(ret)} {fn_ident(fn['name'])}({params})"
 
     def function(self, fn: dict) -> str:
         self.fn, self.tmp, self.lines, self.indent = fn, 0, [], 1
@@ -571,7 +571,7 @@ class CEmitter:
             self.put(f"fputs(\"E \", stdout); {self.put_top(t, value)}")
         elif kind == "call":
             args = [self.expr(a) for a in s["args"]]
-            self.put(f"f_{s['fn']}({', '.join(args)});")
+            self.put(f"{fn_ident(s['fn'])}({', '.join(args)});")
         else:
             raise AssertionError(kind)
 
@@ -593,7 +593,7 @@ class CEmitter:
             return f"l{e['id']}"
         if kind == "call":
             args = [self.expr(a) for a in e["args"]]
-            return self.temp(t, f"f_{e['fn']}({', '.join(args)})")
+            return self.temp(t, f"{fn_ident(e['fn'])}({', '.join(args)})")
         if kind == "index" and isinstance(ty_from_json(e["base"]["ty"]), StrT):
             base = self.expr(e["base"])
             index = self.expr(e["index"])

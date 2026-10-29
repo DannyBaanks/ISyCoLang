@@ -26,7 +26,7 @@ from pathlib import Path
 
 from ..ir import ty_from_json
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
-from .base import ALL_FEATURES, Backend
+from .base import ALL_FEATURES, Backend, fn_ident, type_ident
 
 ROUND_CODE = {"half_even": 0, "half_up": 1, "down": 2, "exact": 3}
 OVF_CODE = {"trap": 0, "wrap": 1, "sat": 2}
@@ -453,7 +453,7 @@ class ZigEmitter:
         if isinstance(t, StructT):
             key = repr(t)
             if key not in self.structs:
-                name = f"S{len(self.structs)}_{t.name}"
+                name = f"S{len(self.structs)}_{type_ident(t.name)}"
                 self.structs[key] = name
                 fields = " ".join(f"f_{fn}: {self.ztype(ft)}," for fn, ft in t.fields)
                 self.struct_defs.append(f"const {name} = struct {{ {fields} }};")
@@ -524,7 +524,7 @@ class ZigEmitter:
             self.put("isy_depth -= 1;")
         # Con valor de retorno no hace falta nada: el validador garantiza que todo camino
         # retorna, y Zig lo comprueba por su cuenta.
-        header = f"fn f_{fn['name']}({params}) {'void' if ret is None else self.ztype(ret)}"
+        header = f"fn {fn_ident(fn['name'])}({params}) {'void' if ret is None else self.ztype(ret)}"
         return f"{header} {{\n" + "\n".join(self.lines) + "\n}\n"
 
     def zig_main(self, fn: dict) -> str:
@@ -699,7 +699,7 @@ class ZigEmitter:
             self.put('isy_out("\\n");')
         elif kind == "call":
             args = [self.expr(a) for a in s["args"]]
-            call = f"f_{s['fn']}({', '.join(args)})"
+            call = f"{fn_ident(s['fn'])}({', '.join(args)})"
             self.put(f"{call};" if self.rets[s["fn"]] is None else f"_ = {call};")
         else:
             raise AssertionError(kind)
@@ -719,7 +719,7 @@ class ZigEmitter:
             return f"l{e['id']}"
         if kind == "call":
             args = [self.expr(a) for a in e["args"]]
-            return self.temp(t, f"f_{e['fn']}({', '.join(args)})")
+            return self.temp(t, f"{fn_ident(e['fn'])}({', '.join(args)})")
         if kind == "index" and isinstance(ty_from_json(e["base"]["ty"]), StrT):
             base = self.expr(e["base"])
             index = self.expr(e["index"])

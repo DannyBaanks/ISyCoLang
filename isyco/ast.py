@@ -202,7 +202,24 @@ class StructDecl:
 
 
 @dataclass
+class Import:
+    at: str
+    path: tuple           # ("geo", "punto") -> geo/punto.isy (CORE v0.4 P1)
+
+    @property
+    def alias(self) -> str:   # P2: el último segmento
+        return self.path[-1]
+
+    @property
+    def file(self) -> str:
+        return "/".join(self.path) + ".isy"
+
+
+@dataclass
 class Program:
     fns: dict             # nombre -> Fn, en orden de aparición
-    version: str = "0.1"  # de la cabecera; decide reglas de CORE v0.2/v0.3
+    version: str = "0.1"  # de la cabecera; decide reglas de CORE v0.2/v0.3/v0.4
     structs: dict = field(default_factory=dict)   # nombre -> StructDecl (v0.3)
+    imports: list = field(default_factory=list)   # [Import] (v0.4)
+    public: set = field(default_factory=set)      # nombres declarados `pub` (v0.4)
+    modules: dict = field(default_factory=dict)   # ruta -> sha256 de los módulos usados (v0.4 P6)

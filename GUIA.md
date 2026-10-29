@@ -26,14 +26,14 @@ fn main(precio: dec<12,2>, piezas: i32) -> dec<12,2> !emit {
 }
 ```
 
-- La primera línea elige las reglas: `isyco 0.3` (la más nueva), `isyco 0.2` o `isyco 0.1`.
+- La primera línea elige las reglas: `isyco 0.4` (la más nueva), `0.3`, `0.2` o `0.1`.
 - Tipos: `bool`, enteros `i8`…`i64` / `u8`…`u64` (desborde = error), o
   `int<N,signed|unsigned,trap|wrap|sat>` para elegir qué pasa al desbordar;
   decimales `dec<p,s>` (redondeo `half_even` por defecto) o
   `dec<p,s,half_up|down|exact>`; arreglos `[T; N]` (se copian al pasarlos).
 - Una función que usa `emit` lo declara con `!emit`.
-- Strings y structs existen desde `isyco 0.3` (§2b). No hay módulos ni lectura
-  de archivos (todavía).
+- Strings y structs existen desde `isyco 0.3` (§2b) y los módulos desde
+  `isyco 0.4` (§2c). No hay lectura de archivos (todavía).
 
 ## 2. Correrlo
 
@@ -88,6 +88,31 @@ python3 -m isyco run ticket.isy --input '["Danny", {"nombre":"Mezcal","precio":"
 - En la entrada, un struct es un objeto JSON; `emit` de un struct o arreglo
   saca JSON en una línea.
 - v0.3 corre con los cinco ejecutores: `ast`, `ir`, `c`, `rust` y `zig`.
+
+## 2c. Módulos (`isyco 0.4`)
+
+```text
+proyecto/
+├── main.isy          isyco 0.4
+│                     import util;
+│                     import geo.punto;
+│                     fn main() -> i32 { return util.doble(punto.x0()); }
+├── util.isy          isyco 0.4
+│                     pub fn doble(x: i32) -> i32 { return x * 2; }
+└── geo/punto.isy     isyco 0.4
+                      pub fn x0() -> i32 { return 21; }
+```
+
+```bash
+python3 -m isyco run proyecto/main.isy          # return "42"; el resultado lista "modules"
+```
+
+- `import a.b;` busca `a/b.isy` desde la carpeta de `main.isy`, y se usa como `b.f()`.
+- Solo lo marcado `pub` se puede usar desde otro archivo; lo demás da `NOT_PUBLIC`.
+- Sin imports circulares (`IMPORT_CYCLE`); todos los archivos deben ser `isyco 0.4`.
+- Ninguna variable o función puede llamarse como un módulo importado.
+- Un error dentro de un módulo dice el archivo: `at: "util.isy:2:38"`.
+- Los cinco ejecutores (`ast`, `ir`, `c`, `rust`, `zig`) corren programas con módulos.
 
 ## 3. Elegir quién lo ejecuta (`--via`)
 

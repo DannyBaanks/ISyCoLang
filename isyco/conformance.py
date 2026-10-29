@@ -5,11 +5,12 @@ import json
 from pathlib import Path
 
 from .interp import run
+from .source import Bundle
 
 COMPARED = ("status", "code", "emits", "return")
 
 
-CORPORA = ("conformance", "conformance_v0.2", "conformance_v0.3")
+CORPORA = ("conformance", "conformance_v0.2", "conformance_v0.3", "conformance_v0.4")
 
 
 def load_corpus(directory: Path) -> list[dict]:
@@ -28,11 +29,19 @@ def load_corpus(directory: Path) -> list[dict]:
             case["expected"] = superseded[name]["expected"]
             case["superseded"] = superseded[name]["superseded_by"]
         cases.append(case)
+    # CORE v0.4: un caso con módulos es una carpeta con main.isy, sus módulos y expect.json.
+    for case_dir in sorted(d for d in directory.iterdir() if (d / "expect.json").is_file()):
+        spec = json.loads((case_dir / "expect.json").read_text(encoding="utf-8"))
+        case = {"name": case_dir.name, "program": Bundle.from_path(case_dir / "main.isy"), **spec}
+        if case_dir.name in superseded:
+            case["expected"] = superseded[case_dir.name]["expected"]
+            case["superseded"] = superseded[case_dir.name]["superseded_by"]
+        cases.append(case)
     return cases
 
 
 def load_all(root: Path) -> list[dict]:
-    """Todos los corpus de programs/ (v0.1 y v0.2)."""
+    """Todos los corpus de programs/ (v0.1 a v0.4)."""
     return [case for name in CORPORA for case in load_corpus(root / "programs" / name)]
 
 

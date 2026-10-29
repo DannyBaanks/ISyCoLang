@@ -5,6 +5,7 @@ Tests: `python3 -m unittest discover -s tests -v`
 | `test_reference.py` | intérprete de referencia contra los tres corpus, hashes congelados, sabotajes de la semántica (F2, v0.2, v0.3) |
 | `test_ir.py` | ISY-IR v0.1/v0.2: resultado y traza iguales a la referencia, validador de mundo cerrado (F3) |
 | `test_backend_c.py` | backend C: tres vías, diferencial numérico, sabotajes (F4) |
+| `test_modules.py` | módulos (v0.4): identificadores seguros en backends, CLI con módulos, sabotaje del enlazador |
 | `test_backends.py` | contrato ISY_BACKEND/1 en C, Rust y Zig: corpus, UNSUPPORTED, diferenciales, sabotajes por testigos, costo (F5) |
 
 Tiempos (12 núcleos, 2026-10-29): ~1.5 min con la caché `build/` llena. En frío

@@ -13,6 +13,7 @@ KEYWORDS = {
 }
 
 KEYWORDS_V03 = {"str", "struct", "len", "slice", "chr"}
+KEYWORDS_V04 = {"import", "pub"}
 ESCAPES = {'"': '"', "\\": "\\", "n": "\n", "t": "\t"}
 
 # Más largos primero para que "->" gane a "-".
@@ -57,9 +58,13 @@ def header_version(source: str) -> str | None:
     return words[1] if len(words) == 2 and words[0] == "isyco" else None
 
 
-def tokenize(source: str) -> list[Token]:
-    v03 = header_version(source) == "0.3"
+def tokenize(source: str, prefix: str = "") -> list[Token]:
+    """prefix: `ruta.isy:` para un módulo importado (CORE v0.4 P5)."""
+    version = header_version(source)
+    v03 = version in ("0.3", "0.4")
     keywords = KEYWORDS | KEYWORDS_V03 if v03 else KEYWORDS
+    if version == "0.4":
+        keywords = keywords | KEYWORDS_V04
     tokens: list[Token] = []
     i, line, col = 0, 1, 1
     n = len(source)
@@ -75,7 +80,7 @@ def tokenize(source: str) -> list[Token]:
 
     while i < n:
         ch = source[i]
-        at = f"{line}:{col}"
+        at = f"{prefix}{line}:{col}"
         if ch in " \t\n":
             advance(1)
         elif ch == "#":
@@ -136,5 +141,5 @@ def tokenize(source: str) -> list[Token]:
                     break
             else:
                 raise InvalidProgram("SYNTAX", at, f"carácter inesperado {ch!r}")
-    tokens.append(Token("EOF", "", f"{line}:{col}"))
+    tokens.append(Token("EOF", "", f"{prefix}{line}:{col}"))
     return tokens

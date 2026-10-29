@@ -13,7 +13,8 @@ import time
 from fractions import Fraction
 
 from .errors import HostTimeout, InvalidProgram, IsyError, LimitReached, RuntimeFault
-from .interp import DEFAULT_LIMITS, TRACE_LEVELS, canonical_json, load
+from .interp import DEFAULT_LIMITS, TRACE_LEVELS, canonical_json, load, source_modules
+from .source import program_sha256
 from .ir import ir_hash, lower, ty_from_json
 from .ir_validate import validate
 from .types import (IntT, StrT, allowed_char, canonical, canonical_text, cast, dec_fit, int_fit,
@@ -309,7 +310,7 @@ class IRInterpreter:
 
 def compile_ir(data: bytes) -> dict:
     """Fuente .isy -> módulo ISY-IR validado (lanza InvalidProgram o IRInvalid)."""
-    module = lower(load(data), hashlib.sha256(data).hexdigest())
+    module = lower(load(data), program_sha256(data))
     validate(module)
     return module
 
@@ -367,7 +368,7 @@ def run_via_ir(data: bytes, inputs: list, limits: dict | None = None, trace: str
     """Fuente -> IR -> JSON -> IR (ida y vuelta) -> ejecución. Mismo contrato que interp.run."""
     import json
 
-    program_sha256 = hashlib.sha256(data).hexdigest()
+    sha = program_sha256(data)
     try:
         module = compile_ir(data)
     except InvalidProgram:
@@ -376,4 +377,7 @@ def run_via_ir(data: bytes, inputs: list, limits: dict | None = None, trace: str
     module = json.loads(json.dumps(module))  # nada que no sea JSON sobrevive
     validate(module)
     assert ir_hash(module)  # identidad calculable
-    return run_ir(module, program_sha256, inputs, limits, trace, timeout_ms)
+    result, trace_rows = run_ir(module, sha, inputs, limits, trace, timeout_ms)
+    if source_modules(data):
+        result["modules"] = source_modules(data)
+    return result, trace_rows

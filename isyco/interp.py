@@ -15,8 +15,8 @@ from fractions import Fraction
 from . import ast as A
 from .checker import check
 from .errors import HostTimeout, InvalidProgram, IsyError, LimitReached, RuntimeFault
-from .lexer import decode, tokenize
-from .parser import parse
+from .modules import load_program
+from .source import Bundle, program_sha256
 from .types import (ArrT, BoolT, DecT, IntT, StrT, StructT, allowed_char, canonical,
                     canonical_text, cast, dec_fit, int_fit, int_trunc_div, parse_canonical,
                     round_scaled)
@@ -322,14 +322,26 @@ class Interpreter:
 
 # --- API -------------------------------------------------------------------------
 
-def load(data: bytes) -> A.Program:
-    """Lee, parsea y chequea; lanza InvalidProgram si algo falla."""
-    program = parse(tokenize(decode(data)))
+def load(data) -> A.Program:
+    """Lee, parsea, enlaza módulos (v0.4) y chequea; lanza InvalidProgram si algo falla.
+
+    `data`: bytes de un archivo, o un Bundle (isyco/source.py) con sus módulos."""
+    program = load_program(data)
     check(program)
     return program
 
 
-def run(data: bytes, inputs: list, limits: dict | None = None, trace: str = "none",
+def source_modules(data) -> dict:
+    """CORE v0.4 P6: {ruta: sha256} de los módulos que usa el programa ({} si ninguno)."""
+    if not isinstance(data, Bundle):
+        return {}
+    try:
+        return load_program(data).modules
+    except InvalidProgram:
+        return {}
+
+
+def run(data, inputs: list, limits: dict | None = None, trace: str = "none",
         timeout_ms: int | None = None) -> tuple[dict, list[dict]]:
     """Ejecuta un programa y devuelve (documento de resultado, eventos de traza)."""
     if trace not in TRACE_LEVELS:
@@ -338,7 +350,7 @@ def run(data: bytes, inputs: list, limits: dict | None = None, trace: str = "non
     lim.update(limits or {})
     result = {
         "schema": "isyco.result/0.1",
-        "program_sha256": hashlib.sha256(data).hexdigest(),
+        "program_sha256": program_sha256(data),
         "input_sha256": hashlib.sha256(canonical_json(inputs).encode("utf-8")).hexdigest(),
         "limits": lim,
         "status": "HALTED", "code": None, "emits": [], "return": None, "steps": 0,
@@ -346,6 +358,8 @@ def run(data: bytes, inputs: list, limits: dict | None = None, trace: str = "non
     interp = None
     try:
         program = load(data)
+        if program.modules:
+            result["modules"] = program.modules
         main = program.fns["main"]
         if not isinstance(inputs, list) or len(inputs) != len(main.params):
             raise InvalidProgram("BAD_INPUT", main.at, "número de argumentos")

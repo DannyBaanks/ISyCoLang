@@ -23,7 +23,8 @@ import time
 from pathlib import Path
 
 from ..errors import InvalidProgram
-from ..interp import DEFAULT_LIMITS, canonical_json
+from ..interp import DEFAULT_LIMITS, canonical_json, source_modules
+from ..source import program_sha256
 from ..interp import run as run_reference
 from ..ir import SCHEMA_V2, ty_from_json
 from ..ir_interp import compile_ir
@@ -39,6 +40,24 @@ ALL_FEATURES = frozenset(
        "ir0.2", "str", "struct"})
 # Lo que trae isy-ir/0.2 (CORE v0.3): ningún backend nativo lo implementa todavía.
 V2_FEATURES = frozenset({"ir0.2", "str", "struct"})
+
+
+# --- identificadores ----------------------------------------------------------------
+
+def fn_ident(name: str) -> str:
+    """Nombre de función de la IR -> identificador seguro en C, Rust y Zig.
+
+    Un nombre simple queda `f_<nombre>` (igual que antes de v0.4). Uno calificado
+    (CORE v0.4 P7, `geo.punto.f`) se codifica con la longitud de cada segmento,
+    `m_3geo5punto1f`: es inyectivo y no choca con los simples (otro prefijo)."""
+    if "." not in name:
+        return f"f_{name}"
+    return "m_" + "".join(f"{len(part)}{part}" for part in name.split("."))
+
+
+def type_ident(name: str) -> str:
+    """Parte legible del identificador de un struct (la unicidad la da un índice)."""
+    return name.replace(".", "_")
 
 
 # --- capacidades -------------------------------------------------------------------
@@ -174,6 +193,13 @@ class Backend:
                 memo[key] = None
         return memo[key]
 
+    def _source_modules(self, data) -> dict:
+        key = ("modules", data)
+        memo = self._memo()
+        if key not in memo:
+            memo[key] = source_modules(data)
+        return memo[key]
+
     def _features(self, data: bytes, module: dict) -> set:
         key = ("features", data)
         memo = self._memo()
@@ -208,10 +234,13 @@ class Backend:
             return run_reference(data, inputs, limits)   # BAD_INPUT lo decide el frontend
         result = {
             "schema": "isyco.result/0.1",
-            "program_sha256": hashlib.sha256(data).hexdigest(),
+            "program_sha256": program_sha256(data),
             "input_sha256": hashlib.sha256(canonical_json(inputs).encode("utf-8")).hexdigest(),
             "limits": lim, "backend": self.name,
         }
+        modules = self._source_modules(data)
+        if modules:
+            result["modules"] = modules        # CORE v0.4 P6
         missing = sorted(self._features(data, module) - set(self.features))
         if missing:
             result.update(status="UNSUPPORTED", code=",".join(missing), emits=[], steps=None)

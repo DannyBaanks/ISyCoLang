@@ -126,3 +126,10 @@ revisan al guardar (E8 generalizado). Un paso `index` sobre `str` es inválido.
 retornar cualquier tipo (forma canónica de CORE v0.3 §6).
 
 Capacidades de backend nuevas (ISY_BACKEND/1 §2): `ir0.2`, `str`, `struct`.
+
+## 10. Módulos (CORE v0.4)
+
+Un programa `isyco 0.4` también produce `isy-ir/0.2`: los imports se resuelven
+en el frontend y la IR es un solo módulo. Lo único nuevo es que los nombres de
+funciones y structs de un módulo importado van calificados con su ruta
+(`geo.punto.dist2`); el validador ya aceptaba cualquier string como nombre.
