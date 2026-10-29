@@ -1,10 +1,10 @@
 """CLI de ISyCoLang.
 
-    python3 -m isyco run PROGRAMA.isy [--input JSON] [--via ast|ir|c] [--trace stmt --trace-out F]
+    python3 -m isyco run PROGRAMA.isy [--input JSON] [--via ast|ir|c|rust|zig] [--trace stmt --trace-out F]
     python3 -m isyco ir  PROGRAMA.isy        # imprime la ISY-IR canónica
 
 `run` imprime el documento de resultado (JSON canónico, spec §10.2); con
-`--via c` compila a C nativo y no produce traza. Código de salida:
+`--via c|rust|zig` compila a un binario nativo y no produce traza. Código de salida:
 0 HALTED · 2 INVALID_PROGRAM · 3 ERROR · 4 LIMIT_REACHED · 5 TIMEOUT · 1 uso/IO o fallo del backend.
 `ir` sale con 0 si el programa es válido y 2 si no.
 """
@@ -32,8 +32,8 @@ def main(argv=None) -> int:
     for name, default in DEFAULT_LIMITS.items():
         run_p.add_argument("--" + name.replace("_", "-"), type=int, default=default)
     run_p.add_argument("--timeout-ms", type=int, default=60_000)
-    run_p.add_argument("--via", choices=("ast", "ir", "c"), default="ast",
-                       help="ast = referencia; ir = intérprete de ISY-IR; c = binario nativo")
+    run_p.add_argument("--via", choices=("ast", "ir", "c", "rust", "zig"), default="ast",
+                       help="ast = referencia; ir = intérprete de ISY-IR; c/rust/zig = binario nativo")
     run_p.add_argument("--trace", choices=TRACE_LEVELS, default="none")
     run_p.add_argument("--trace-out", type=Path)
     ir_p = sub.add_parser("ir", help="imprimir la ISY-IR canónica de un programa")
@@ -57,9 +57,13 @@ def main(argv=None) -> int:
         return 0
 
     limits = {name: getattr(args, name) for name in DEFAULT_LIMITS}
-    if args.via == "c":
-        from .backends.c import run_c
-        runner = run_c
+    if args.via in ("c", "rust", "zig"):
+        from .backends import registry
+        backend = registry().get(args.via)
+        if backend is None or not backend.toolchain():
+            print(f"isyco: toolchain de {args.via} no instalado", file=sys.stderr)
+            return 1
+        runner = backend.run
     else:
         runner = run_via_ir if args.via == "ir" else run
     result, trace = runner(data, inputs, limits, args.trace, args.timeout_ms)

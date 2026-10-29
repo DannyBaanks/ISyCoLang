@@ -13,7 +13,7 @@ la referencia bajo el contrato `ISY_BACKEND/1`.
 | ¿Qué es? | Un lenguaje pequeño con semántica propia y un compilador que usa muchos lenguajes como backends por contrato. |
 | ¿Qué lo hace distinto? | La semántica es de ISyCoLang; C, Rust, COBOL, Prolog, esolangs… compiten por implementarla y la evidencia elige. Un carril aparte (3OPS Lab) investiga bases de tres operaciones. |
 | ¿Formato? | `.isy`; spec congelada en `spec/CORE.md` (v0.1) + `spec/CORE_v0.2.md`; la cabecera `isyco 0.1`/`isyco 0.2` elige. |
-| ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c` para nativo) |
+| ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c`, `--via rust` o `--via zig` para nativo) |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia en Python, semántica normativa). |
 | ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1 y v0.2 (78/78), IR que preserva la semántica, backends C, Rust y Zig iguales a la referencia (78/78 y 8 484 corridas diferenciales cada uno; C además con gcc/clang y sanitizers). Ver claim table. |
 | ¿Qué NO está demostrado? | Todo lo demás; ver la claim table en `ROADMAP.md` §6. |
@@ -54,7 +54,7 @@ tools/backend_gate.py              gate F5 (corpus, capacidades, diferencial, st
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 53 tests
+python3 -m unittest discover -s tests -v       # 54 tests
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)

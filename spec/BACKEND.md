@@ -91,4 +91,4 @@ y guarda la evidencia en `evidence/backends/`.
 |---|---|---|---|
 | `c` | gcc / clang (GNU C11) | todas | `__int128`, builtins de overflow; sabotajes de prueba |
 | `rust` | rustc (ed. 2021) | todas | `-C overflow-checks=on -C panic=abort` |
-| `zig` | zig 0.16 | todas | `-O ReleaseSafe`; solo Linux (syscall `write`) |
+| `zig` | zig 0.16 | todas | `-O ReleaseSafe`; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |

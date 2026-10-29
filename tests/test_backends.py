@@ -5,6 +5,8 @@ diferencial por tipo. El gate completo con evidencia es tools/backend_gate.py.
 """
 from __future__ import annotations
 
+import json
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -86,6 +88,26 @@ class Unsupported(unittest.TestCase):
 class Registry(unittest.TestCase):
     def test_wave_one_registered(self):
         self.assertEqual(set(registry()), {"c", "rust", "zig"})
+
+
+@unittest.skipUnless(AVAILABLE, "no hay toolchain nativo instalado")
+class Cli(unittest.TestCase):
+    def test_native_via_matches_reference(self):
+        program = ROOT / "programs" / "conformance" / "027_interes.isy"
+        ref, _ = run(program.read_bytes(), ["1000.00", "0.0525"])
+        want = {k: ref[k] for k in KEYS}
+        seen = []
+        for via in ("c", "rust", "zig"):
+            if via not in AVAILABLE:
+                continue
+            proc = subprocess.run(
+                [sys.executable, "-m", "isyco", "run", str(program),
+                 "--input", '["1000.00","0.0525"]', "--via", via],
+                cwd=ROOT, capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertEqual({k: json.loads(proc.stdout)[k] for k in KEYS}, want, via)
+            seen.append(via)
+        self.assertTrue(seen)
 
 
 def _make_conformance(name):
