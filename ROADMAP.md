@@ -64,7 +64,7 @@ fuente .isy ─► AST ─► tipos/efectos ─► IR canónica ─► backend(s
 Cada fase tiene **gate**. Una fase no empieza hasta que su dependencia pasó su
 gate. Sin estimaciones de tiempo: las fuentes de complejidad se nombran.
 
-### F0 — Fundación  `[esta versión]`
+### F0 — Fundación  `[PASS 2026-10-28]`
 
 - Repo, estándar y roadmap V0 preservados con SHA-256.
 - Estudio de viabilidad.
@@ -73,7 +73,7 @@ gate. Sin estimaciones de tiempo: las fuentes de complejidad se nombran.
 **Gate F0:** `sha256sum -c docs/origin/SHA256SUMS.txt` pasa; el inventario se
 regenera con `python3 tools/inventory_assembly.py`.
 
-### F1 — Semántica del core v0.1
+### F1 — Semántica del core v0.1  `[DRAFT: spec/CORE.md; falta la revisión de Danny]`
 
 Definir en `spec/CORE.md`, antes de escribir el parser:
 
