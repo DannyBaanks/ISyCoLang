@@ -90,7 +90,7 @@ Definir en `spec/CORE.md`, antes de escribir el parser:
 **Gate F1:** la spec responde las 10 preguntas del core del estudio (§C) sin
 "TBD"; revisión de Danny.
 
-### F2 — Intérprete de referencia + corpus de conformidad
+### F2 — Intérprete de referencia + corpus de conformidad  `[PASS 2026-10-28: 58/58, 12 tests; erratas en spec/ERRATA_v0.1.md]`
 
 - Parser + AST + chequeo de tipos/efectos.
 - Intérprete de referencia (Python, legible antes que rápido) con trazas.
@@ -236,7 +236,10 @@ Correcciones al V0 que este carril adopta:
 
 | Claim | Status | Evidence |
 |---|---|---|
-| Existe un engine de ISyCoLang | NOT_DEMONSTRATED (ABSENT) | — |
+| Existe un engine de ISyCoLang (intérprete de referencia) | DEMONSTRATED (2026-10-28) | `evidence/conformance/`, `tests/test_reference.py` |
+| El intérprete cumple el corpus v0.1 (58 casos, expected previos al intérprete) | DEMONSTRATED | `evidence/conformance/` |
+| El redondeo decimal coincide con una implementación independiente (`decimal` de Python) | VERIFIED (20 000 casos aleatorios × 3 modos) | `tests/test_reference.py::RoundingOracle` |
+| El corpus detecta semánticas saboteadas | DEMONSTRATED (4 mutaciones) | `tests/test_reference.py::Sabotage` |
 | Inventario de candidatos a backend en `workspace/assembly` | DEMONSTRATED (2026-10-28) | `evidence/inventory/` |
 | Toolchains del host para olas 1–5 presentes | DEMONSTRATED (2026-10-28) | `evidence/inventory/toolchains_2026-10-28.txt` |
 | La arquitectura V1 es viable | INFERRED | `docs/FEASIBILITY_2026-10-28.md` |
