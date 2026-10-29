@@ -119,12 +119,12 @@ canónico. Detalles **[P]** (P1–P7) aprobados por Danny el 2026-10-29.
 sin cambiar ningún resultado de v0.1/v0.2; IR `isy-ir/0.2` validada; cada backend
 nativo pasa el corpus v0.3 o declara `str`/`struct` como `UNSUPPORTED`.
 
-#### F2.3 — Core v0.4: módulos  `[DRAFT 2026-10-29: spec/CORE_v0.4.md; corpus de 28 casos escrito a mano, sin implementar]`
+#### F2.3 — Core v0.4: módulos  `[SPEC FROZEN 2026-10-29: spec/CORE_v0.4.md; corpus de 28 casos escrito a mano; implementación en curso]`
 
 Decisiones M1–M4 de Danny: `import util;` con uso calificado `util.f()`, solo lo
 `pub` se exporta, sin imports circulares, todos los módulos `isyco 0.4`. Se
-resuelve en el frontend: la IR (`isy-ir/0.2`) no cambia. Detalles **[P]**
-pendientes de revisión antes de congelar.
+resuelve en el frontend: la IR (`isy-ir/0.2`) no cambia. Detalles **[P]** (P1–P7)
+aprobados por Danny el 2026-10-29.
 
 **Gate F2.3:** spec congelada; referencia 28/28 en `programs/conformance_v0.4/`
 sin cambiar ningún resultado anterior; IR y los tres backends nativos iguales a

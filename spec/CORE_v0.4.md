@@ -1,8 +1,7 @@
 # ISyCoLang — Semántica del core v0.4: módulos
 
-**Estado:** `DRAFT v0.4` (2026-10-29). Decisiones M1–M4 tomadas por Danny el
-2026-10-29; los detalles marcados **[P]** son propuestas pendientes de su
-revisión antes de congelar.
+**Estado:** `FROZEN v0.4` (2026-10-29). Decisiones M1–M4 tomadas por Danny el
+2026-10-29; los detalles marcados **[P]** (P1–P7) los aprobó el mismo día.
 **Base:** `CORE.md` + `CORE_v0.2.md` + `CORE_v0.3.md`. Todo lo de v0.3 vale en
 v0.4; este documento solo lista lo que cambia.
 
