@@ -1,0 +1,10 @@
+{
+  "claim": "C2: -128 cabe en i8",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "-128"
+  }
+}

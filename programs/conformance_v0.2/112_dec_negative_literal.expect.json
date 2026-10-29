@@ -1,0 +1,14 @@
+{
+  "claim": "C2: literales decimales negativos",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "-0.50",
+      "0.00",
+      "0.25"
+    ],
+    "return": null
+  }
+}

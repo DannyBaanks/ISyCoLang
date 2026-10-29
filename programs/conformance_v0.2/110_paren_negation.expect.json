@@ -1,0 +1,10 @@
+{
+  "claim": "C2: -(128) sigue siendo negacion de 128",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "LITERAL_OUT_OF_RANGE",
+    "emits": [],
+    "return": null
+  }
+}

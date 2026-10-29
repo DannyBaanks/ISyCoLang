@@ -1,0 +1,10 @@
+{
+  "claim": "C3: [T; 0] es ARRAY_SIZE",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "ARRAY_SIZE",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,2 @@
+isyco 0.2
+fn main() -> i32 { let a: [i32; 3] = [4, 5, 6]; let i: u8 = 1; return a[i + 1]; }

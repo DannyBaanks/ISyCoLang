@@ -1,0 +1,10 @@
+{
+  "claim": "v0.1 conserva su regla: -1 en u8 wrap es 255",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "255"
+  }
+}

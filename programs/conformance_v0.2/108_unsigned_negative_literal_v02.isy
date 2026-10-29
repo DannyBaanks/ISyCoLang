@@ -1,0 +1,2 @@
+isyco 0.2
+fn main() -> int<8, unsigned, wrap> { let x: int<8, unsigned, wrap> = -1; return x; }

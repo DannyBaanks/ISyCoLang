@@ -1,0 +1,14 @@
+{
+  "claim": "C1: a[0] y a[1 + 1] son indices i64",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "10",
+      "30",
+      "99"
+    ],
+    "return": null
+  }
+}

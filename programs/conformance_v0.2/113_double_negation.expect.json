@@ -1,0 +1,10 @@
+{
+  "claim": "C2: - -5 es negacion del literal -5",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "5"
+  }
+}

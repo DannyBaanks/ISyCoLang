@@ -1,0 +1,10 @@
+{
+  "claim": "v0.1 conserva su regla: a[0] es ambiguo",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "AMBIGUOUS_LITERAL",
+    "emits": [],
+    "return": null
+  }
+}

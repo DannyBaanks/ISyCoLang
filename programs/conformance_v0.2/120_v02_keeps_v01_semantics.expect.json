@@ -1,0 +1,14 @@
+{
+  "claim": "v0.2 conserva el resto de v0.1",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "2",
+      "-3",
+      "-1"
+    ],
+    "return": null
+  }
+}

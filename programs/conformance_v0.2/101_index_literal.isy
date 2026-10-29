@@ -1,0 +1,2 @@
+isyco 0.2
+fn main() !emit { let a: [i32; 3] = [10, 20, 30]; emit a[0]; emit a[1 + 1]; a[1] = 99; emit a[1]; }

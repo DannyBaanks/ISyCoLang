@@ -1,0 +1,10 @@
+{
+  "claim": "C1 no cambia indices con tipo propio",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "6"
+  }
+}

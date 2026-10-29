@@ -1,0 +1,10 @@
+{
+  "claim": "solo existen 0.1 y 0.2",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

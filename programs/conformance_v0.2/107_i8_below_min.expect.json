@@ -1,0 +1,10 @@
+{
+  "claim": "C2: -129 no cabe en i8",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "LITERAL_OUT_OF_RANGE",
+    "emits": [],
+    "return": null
+  }
+}

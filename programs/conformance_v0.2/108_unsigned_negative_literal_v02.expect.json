@@ -1,0 +1,10 @@
+{
+  "claim": "C2: -1 no cabe en u8 wrap",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "LITERAL_OUT_OF_RANGE",
+    "emits": [],
+    "return": null
+  }
+}

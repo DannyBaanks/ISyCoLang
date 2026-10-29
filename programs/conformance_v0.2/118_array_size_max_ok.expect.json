@@ -1,0 +1,10 @@
+{
+  "claim": "C3: [T; 65536] es valido",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "7"
+  }
+}

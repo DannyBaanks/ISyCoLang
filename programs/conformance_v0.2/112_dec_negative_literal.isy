@@ -1,0 +1,2 @@
+isyco 0.2
+fn main() !emit { let a: dec<2,2> = -0.50; let z: dec<3,2> = -0.00; emit a; emit z; emit - -0.25 as dec<2,2>; }

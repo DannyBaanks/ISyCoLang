@@ -1,0 +1,10 @@
+{
+  "claim": "C2 no afecta la resta binaria: x -100 es x - 100",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

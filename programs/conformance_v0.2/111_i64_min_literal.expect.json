@@ -1,0 +1,10 @@
+{
+  "claim": "C2: el minimo de i64 se escribe literal",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "-9223372036854775808"
+  }
+}

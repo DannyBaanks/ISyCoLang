@@ -1,0 +1,12 @@
+{
+  "claim": "C1: un indice literal fuera de rango falla en ejecucion",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "INDEX_OUT_OF_BOUNDS",
+    "emits": [
+      "1"
+    ],
+    "return": null
+  }
+}

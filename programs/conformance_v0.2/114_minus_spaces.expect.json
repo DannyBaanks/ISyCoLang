@@ -1,0 +1,10 @@
+{
+  "claim": "C2: espacios entre - y el literal",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "-128"
+  }
+}

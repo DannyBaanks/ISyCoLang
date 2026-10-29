@@ -1,0 +1,2 @@
+isyco 0.2
+fn main() { let a: [bool; 65537] = [true; 65537]; }

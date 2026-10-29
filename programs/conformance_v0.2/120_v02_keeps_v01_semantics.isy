@@ -1,0 +1,2 @@
+isyco 0.2
+fn main() !emit { let a: dec<5,0> = 5; let b: dec<5,0> = 2; let c: i32 = -7; let d: i32 = 2; emit a / b; emit c / d; emit c % d; }
