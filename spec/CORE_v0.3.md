@@ -195,6 +195,13 @@ campos) → structs en orden de fuente (`UNKNOWN_NAME` de tipos, luego
 Sin cambios: los structs, strings y las operaciones `len`/`slice`/`chr` no
 agregan pasos. `max_steps`, `max_call_depth` y `max_emits` cuentan igual.
 
+## 8.1 Caso superado al congelar
+
+`programs/conformance_v0.2/119_header_v03` afirma que `isyco 0.3` es `SYNTAX`.
+Al congelar v0.3 se supera de forma explícita en
+`programs/conformance_v0.2/SUPERSEDED.json` (pasa a `HALTED`, sin salida), como
+se hizo con el caso v0.1 `003`; la afirmación vigente la toma `264_header_v04`.
+
 ## 9. Lo que v0.3 NO incluye
 
 Strings dinámicos, UTF-8, formato con plantillas, arreglos de arreglos,
@@ -203,5 +210,5 @@ versión futura con su propia decisión.
 
 ## 10. Corpus
 
-`programs/conformance_v0.3/` (63 casos, 201–263) con `expected` escritos a
+`programs/conformance_v0.3/` (64 casos, 201–264) con `expected` escritos a
 mano **antes** de implementar. Los corpus v0.1 y v0.2 no se modifican.

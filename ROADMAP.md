@@ -108,14 +108,14 @@ Tres reglas de frontend aprobadas por Danny (índices literales `i64`, literales
 negativos, `ARRAY_SIZE`), atadas a la cabecera `isyco 0.2`. El caso v0.1 `003` queda
 superado de forma explícita en `programs/conformance/SUPERSEDED.json`.
 
-#### F2.2 — Core v0.3: strings y structs  `[DRAFT 2026-10-29: spec/CORE_v0.3.md; corpus de 63 casos escrito a mano, sin implementar]`
+#### F2.2 — Core v0.3: strings y structs  `[DRAFT 2026-10-29: spec/CORE_v0.3.md; corpus de 64 casos escrito a mano, sin implementar]`
 
 Decisiones S1–S8 de Danny: `str<N>` acotado y ASCII, `OVERFLOW` al no caber,
 ensanchamiento implícito `str<N>` → `str<M>` (N ≤ M), `len`/`s[i]`/`slice`/`chr`,
 conversiones con `as` en forma canónica, structs por valor con `==`, E/S en JSON
 canónico. Detalles **[P]** pendientes de revisión antes de congelar.
 
-**Gate F2.2:** spec congelada; referencia 63/63 en `programs/conformance_v0.3/`
+**Gate F2.2:** spec congelada; referencia 64/64 en `programs/conformance_v0.3/`
 sin cambiar ningún resultado de v0.1/v0.2; IR `isy-ir/0.2` validada; cada backend
 nativo pasa el corpus v0.3 o declara `str`/`struct` como `UNSUPPORTED`.
 
