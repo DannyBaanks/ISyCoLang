@@ -20,19 +20,14 @@ Garantías de la traducción (spec/CORE.md):
 """
 from __future__ import annotations
 
-import hashlib
-import json
 import os
 import shutil
 import subprocess
 from pathlib import Path
 
-from ..interp import DEFAULT_LIMITS, canonical_json
 from ..ir import ty_from_json
-from ..ir_interp import compile_ir
-from ..errors import InvalidProgram
-from ..interp import run as run_reference
 from ..types import ArrT, BoolT, DecT, IntT, parse_canonical
+from .base import ALL_FEATURES, Backend
 
 ROUND_CODE = {"half_even": 0, "half_up": 1, "down": 2, "exact": 3}
 OVF_CODE = {"trap": 0, "wrap": 1, "sat": 2}
@@ -430,7 +425,10 @@ def emit_c(module: dict, sabotage: str | None = None) -> str:
     return CEmitter(module, sabotage).emit()
 
 
-# --- compilación y ejecución ---------------------------------------------------------
+# --- backend ISY_BACKEND/1 ------------------------------------------------------------
+
+CFLAGS = ["-std=gnu11", "-O2", "-w"]
+
 
 def find_cc() -> str:
     for cc in (os.environ.get("ISYCO_CC"), "gcc", "clang", "cc"):
@@ -439,94 +437,32 @@ def find_cc() -> str:
     raise RuntimeError("no hay compilador de C (gcc/clang)")
 
 
-CFLAGS = ["-std=gnu11", "-O2", "-w"]
-BUILD_DIR = Path(__file__).resolve().parents[2] / "build" / "c"
+class CBackend(Backend):
+    name = "c"
+    extension = ".c"
+    features = ALL_FEATURES
+    sabotages = ("half_even_as_half_up", "div_floor")
 
-
-def build(source: str, cc: str | None = None, extra_flags: tuple = ()) -> Path:
-    """Compila (con caché por hash del fuente + flags) y devuelve la ruta del binario."""
-    cc = cc or find_cc()
-    key = hashlib.sha256((cc + "\0" + " ".join(CFLAGS + list(extra_flags)) + "\0" + source)
-                         .encode()).hexdigest()[:24]
-    binary = BUILD_DIR / key
-    if binary.exists():
-        return binary
-    BUILD_DIR.mkdir(parents=True, exist_ok=True)
-    c_file = BUILD_DIR / f"{key}.c"
-    c_file.write_text(source, encoding="utf-8")
-    tmp = BUILD_DIR / f"{key}.tmp{os.getpid()}"
-    proc = subprocess.run([cc, *CFLAGS, *extra_flags, "-o", str(tmp), str(c_file)],
-                          capture_output=True, text=True)
-    if proc.returncode != 0:
-        raise RuntimeError(f"{cc} falló:\n{proc.stderr[:4000]}")
-    tmp.replace(binary)
-    return binary
-
-
-def raw_args(module: dict, inputs: list) -> list[str] | None:
-    """Valida la entrada canónica (como la referencia) y la convierte a valores crudos."""
-    main = next(f for f in module["functions"] if f["name"] == "main")
-    types = [ty_from_json(main["locals"][p]["ty"]) for p in main["params"]]
-    if not isinstance(inputs, list) or len(inputs) != len(types):
-        return None
-    out = []
-    for text, t in zip(inputs, types):
-        value = parse_canonical(text, t)
-        if value is None:
+    def toolchain(self) -> str | None:
+        try:
+            cc = find_cc()
+        except RuntimeError:
             return None
-        for v in (value if isinstance(t, ArrT) else [value]):
-            out.append(str(int(v)))
-    return out
+        first = subprocess.run([cc, "--version"], capture_output=True, text=True).stdout.split("\n")[0]
+        return f"{cc}: {first}"
+
+    def emit(self, module: dict, sabotage: str | None = None) -> str:
+        return emit_c(module, sabotage)
+
+    def compile_cmd(self, source: Path, binary: Path, extra_flags: tuple) -> list[str]:
+        return [find_cc(), *CFLAGS, *extra_flags, "-o", str(binary), str(source)]
 
 
-def parse_output(stdout: str) -> dict:
-    emits, ret, status, code, steps = [], None, None, None, None
-    for line in stdout.split("\n"):
-        if line.startswith("E "):
-            emits.append(line[2:])
-        elif line.startswith("R "):
-            ret = line[2:]
-        elif line.startswith("X "):
-            _, status, code, steps = line.split(" ")
-            code = None if code == "-" else code
-            steps = int(steps)
-    if status is None:
-        return {"status": "BACKEND_CRASH", "code": None, "emits": emits, "return": ret, "steps": None}
-    return {"status": status, "code": code, "emits": emits, "return": ret, "steps": steps}
+BACKEND = CBackend()
 
 
 def run_c(data: bytes, inputs: list, limits: dict | None = None, trace: str = "none",
           timeout_ms: int | None = 60_000, sabotage: str | None = None,
           extra_flags: tuple = ()) -> tuple[dict, list]:
     """Mismo contrato que interp.run, ejecutando un binario nativo. No produce traza."""
-    lim = dict(DEFAULT_LIMITS)
-    lim.update(limits or {})
-    try:
-        module = compile_ir(data)
-    except InvalidProgram:
-        return run_reference(data, inputs, limits)  # el frontend es compartido
-    args = raw_args(module, inputs)
-    if args is None:
-        return run_reference(data, inputs, limits)  # BAD_INPUT: lo decide el frontend
-    binary = build(emit_c(module, sabotage), extra_flags=extra_flags)
-    result = {
-        "schema": "isyco.result/0.1",
-        "program_sha256": hashlib.sha256(data).hexdigest(),
-        "input_sha256": hashlib.sha256(canonical_json(inputs).encode("utf-8")).hexdigest(),
-        "limits": lim,
-    }
-    try:
-        proc = subprocess.run([str(binary), str(lim["max_steps"]), str(lim["max_call_depth"]),
-                               str(lim["max_emits"]), *args], capture_output=True, text=True,
-                              timeout=None if timeout_ms is None else timeout_ms / 1000)
-    except subprocess.TimeoutExpired:
-        result.update(status="TIMEOUT", code=None, emits=[], steps=None)
-        result["return"] = None
-        return result, []
-    result.update(parse_output(proc.stdout))
-    if proc.returncode != 0 or proc.stderr:
-        result["backend_stderr"] = proc.stderr[:2000]
-        result["backend_exit"] = proc.returncode
-        if proc.returncode != 0:
-            result["status"] = "BACKEND_CRASH"
-    return result, []
+    return BACKEND.run(data, inputs, limits, trace, timeout_ms, sabotage, extra_flags)

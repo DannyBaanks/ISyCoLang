@@ -126,7 +126,7 @@ superado de forma explícita en `programs/conformance/SUPERSEDED.json`.
 **Gate F4:** 100 % del corpus `EQUIVALENT_WITHIN_DECLARED_DOMAIN`; el sabotaje
 falla la suite. Primera afirmación `DEMONSTRATED` del proyecto.
 
-### F5 — Contrato de backend `ISY_BACKEND/1` y adapters
+### F5 — Contrato de backend `ISY_BACKEND/1` y adapters  `[PASS 2026-10-29: spec/BACKEND.md; evidence/backends/gate_2026-10-29T022957Z.json]`
 
 Los engines de `workspace/assembly` hoy implementan E=(I,X,O,S): **ejecutan su
 propio bootstrap**, no programas externos. Para ser backends hace falta un
@@ -249,6 +249,9 @@ Correcciones al V0 que este carril adopta:
 | ISY-IR preserva la semántica: resultado y traza idénticos a la referencia | DEMONSTRATED (corpus × trazas stmt/full + 4 programas de IR con límites ajustados) | `evidence/ir/`, `tests/test_ir.py` |
 | Backend C: binario nativo == referencia en el corpus (status, code, emits, return, steps) | DEMONSTRATED con gcc 13.3 y clang 18.1, con y sin UBSan+ASan (58/58 en las 4 configuraciones) | `evidence/c/` |
 | Backend C: diferencial por tipo numérico (24 enteros + 8 decimales × 15 operaciones, fronteras y empates) | DEMONSTRATED: 24 612 corridas sin diferencias (+6 468 con sanitizers) | `evidence/c/`, `isyco/difftest.py` |
+| Contrato `ISY_BACKEND/1` con driver común (validación, capacidades, caché, límites, protocolo E/R/X) | DEMONSTRATED (2026-10-29) | `spec/BACKEND.md`, `isyco/backends/base.py`, `tests/test_backends.py` |
+| Backends Rust y Zig: binario nativo == referencia en ambos corpus y en el diferencial por tipo | DEMONSTRATED: 78/78 y 8 484 corridas sin diferencias cada uno | `evidence/backends/gate_2026-10-29T022957Z.json` |
+| Un backend que no declara una capacidad responde `UNSUPPORTED` y no ejecuta el programa | DEMONSTRATED (backend de prueba sin decimales) | `tests/test_backends.py::Unsupported` |
 | La suite detecta un backend saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
 | Aritmética de ISyCoLang implementada dos veces de forma independiente (Python exacto y C con `__int128`) con el mismo resultado | VERIFIED dentro del dominio probado | `evidence/c/` |
 | El validador de IR rechaza IR malformada | DEMONSTRATED (11 mutaciones, cada una con su código) | `tests/test_ir.py::ValidatorRejects` |
