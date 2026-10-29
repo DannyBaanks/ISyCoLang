@@ -1,0 +1,8 @@
+{
+  "003_header_wrong_version": {
+    "superseded_by": "spec/CORE_v0.2.md §0 (aprobado por Danny el 2026-10-28)",
+    "reason": "El caso afirmaba que la cabecera 'isyco 0.2' es SYNTAX. Era cierto cuando solo existía v0.1; desde v0.2 esa cabecera es válida y el programa retorna 7. La afirmación que sigue vigente (una versión desconocida es SYNTAX) la cubre programs/conformance_v0.2/119_header_v03.",
+    "original_expected": {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null},
+    "expected": {"status": "HALTED", "code": null, "emits": [], "return": "7"}
+  }
+}

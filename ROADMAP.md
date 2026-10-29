@@ -102,6 +102,12 @@ Definir en `spec/CORE.md`, antes de escribir el parser:
 byte a byte); casos adversariales (overflow, división por cero, límite de
 pasos) dan el estado correcto, nunca `HALTED` por `LIMIT_REACHED`.
 
+#### F2.1 — Core v0.2  `[PASS 2026-10-28: spec/CORE_v0.2.md; 20 casos nuevos, 78/78 en referencia, IR y C]`
+
+Tres reglas de frontend aprobadas por Danny (índices literales `i64`, literales
+negativos, `ARRAY_SIZE`), atadas a la cabecera `isyco 0.2`. El caso v0.1 `003` queda
+superado de forma explícita en `programs/conformance/SUPERSEDED.json`.
+
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).

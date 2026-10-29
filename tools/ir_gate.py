@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from isyco import canonical_json, run  # noqa: E402
-from isyco.conformance import load_corpus  # noqa: E402
+from isyco.conformance import load_all  # noqa: E402
 from isyco.errors import InvalidProgram  # noqa: E402
 from isyco.ir import semantic_hash  # noqa: E402
 from isyco.ir_interp import compile_ir, run_via_ir  # noqa: E402
@@ -29,7 +29,7 @@ def sha(obj) -> str:
 
 def main() -> int:
     rows = []
-    for case in load_corpus(ROOT / "programs" / "conformance"):
+    for case in load_all(ROOT):
         try:
             ir_sem = semantic_hash(compile_ir(case["program"]))
         except InvalidProgram:

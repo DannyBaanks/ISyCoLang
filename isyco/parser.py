@@ -9,12 +9,14 @@ from .types import INT_ALIASES, ArrT, BoolT, DecT, IntT
 CMP_OPS = {"==", "!=", "<", "<=", ">", ">="}
 ROUND_MODES = {"half_even", "half_up", "down", "exact"}
 MAX_ARRAY = 65536
+SUPPORTED_VERSIONS = {"0.1", "0.2"}
 
 
 class Parser:
     def __init__(self, tokens: list[Token]):
         self.tokens = tokens
         self.pos = 0
+        self.version = "0.1"
 
     # --- utilidades -----------------------------------------------------------
     @property
@@ -58,8 +60,10 @@ class Parser:
 
     # --- archivo --------------------------------------------------------------
     def program(self) -> A.Program:
-        if not (self.is_("isyco") and self.peek().kind == "DEC" and self.peek().text == "0.1"):
-            self.fail("la cabecera debe ser 'isyco 0.1'")
+        if not (self.is_("isyco") and self.peek().kind == "DEC"
+                and self.peek().text in SUPPORTED_VERSIONS):
+            self.fail(f"la cabecera debe ser 'isyco' + una de {sorted(SUPPORTED_VERSIONS)}")
+        self.version = self.peek().text
         self.pos += 2
         fns: dict[str, A.Fn] = {}
         while self.tok.kind != "EOF":
@@ -67,7 +71,7 @@ class Parser:
             if fn.name in fns:
                 raise InvalidProgram("DUPLICATE_NAME", fn.at, fn.name)
             fns[fn.name] = fn
-        return A.Program(fns)
+        return A.Program(fns, self.version)
 
     def fn_decl(self) -> A.Fn:
         at = self.expect("fn").at
@@ -252,12 +256,23 @@ class Parser:
 
     def unary(self):
         if self.tok.kind == "OP" and self.tok.text == "-":
+            if self.version != "0.1" and self.peek().kind in ("INT", "DEC"):
+                # CORE v0.2 C2: '-' seguido de un literal es un solo literal negativo (primario).
+                at = self.take().at
+                literal = self.primary()
+                if isinstance(literal, A.IntLit):
+                    literal.value = -literal.value
+                else:
+                    literal.digits = -literal.digits
+                literal.at = at
+                return self.postfix(literal)
             at = self.take().at
             return A.Unary(at, "-", self.unary())
         return self.postfix()
 
-    def postfix(self):
-        node = self.primary()
+    def postfix(self, node=None):
+        if node is None:
+            node = self.primary()
         while True:
             if self.is_("["):
                 at = self.take().at

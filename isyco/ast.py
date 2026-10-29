@@ -151,3 +151,4 @@ class Fn:
 @dataclass
 class Program:
     fns: dict             # nombre -> Fn, en orden de aparición
+    version: str = "0.1"  # de la cabecera; decide reglas de CORE v0.2

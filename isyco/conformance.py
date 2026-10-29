@@ -9,13 +9,31 @@ from .interp import run
 COMPARED = ("status", "code", "emits", "return")
 
 
+CORPORA = ("conformance", "conformance_v0.2")
+
+
 def load_corpus(directory: Path) -> list[dict]:
+    """Carga un corpus. Los archivos congelados no se editan nunca: si un cambio de
+    spec aprobado vuelve obsoleto un expected, SUPERSEDED.json lo reemplaza de forma
+    explícita y el caso queda marcado como `superseded`."""
+    superseded_path = directory / "SUPERSEDED.json"
+    superseded = (json.loads(superseded_path.read_text(encoding="utf-8"))
+                  if superseded_path.exists() else {})
     cases = []
     for expect_path in sorted(directory.glob("*.expect.json")):
         name = expect_path.name[: -len(".expect.json")]
         spec = json.loads(expect_path.read_text(encoding="utf-8"))
-        cases.append({"name": name, "program": (directory / f"{name}.isy").read_bytes(), **spec})
+        case = {"name": name, "program": (directory / f"{name}.isy").read_bytes(), **spec}
+        if name in superseded:
+            case["expected"] = superseded[name]["expected"]
+            case["superseded"] = superseded[name]["superseded_by"]
+        cases.append(case)
     return cases
+
+
+def load_all(root: Path) -> list[dict]:
+    """Todos los corpus de programs/ (v0.1 y v0.2)."""
+    return [case for name in CORPORA for case in load_corpus(root / "programs" / name)]
 
 
 def run_corpus(cases: list[dict], executor=run) -> list[dict]:
@@ -32,5 +50,6 @@ def run_corpus(cases: list[dict], executor=run) -> list[dict]:
             "observed": observed,
             "steps": result["steps"],
             "verdict": "PASS" if observed == case["expected"] else "FAIL",
+            **({"superseded_by": case["superseded"]} if "superseded" in case else {}),
         })
     return rows

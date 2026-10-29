@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from . import ast as A
 from .errors import InvalidProgram
-from .types import ArrT, BoolT, DecT, IntT, is_numeric, is_scalar
+from .types import INT_ALIASES, ArrT, BoolT, DecT, IntT, is_numeric, is_scalar
 
 ARITH = {"+", "-", "*", "/", "%"}
 ORDER = {"<", "<=", ">", ">="}
@@ -136,7 +136,9 @@ class Checker:
             raise InvalidProgram("TYPE_MISMATCH", e.at, f"se esperaba {ty}, llegó {got}")
 
     def index_type(self, e) -> None:
-        ty = self.typeof(e, None)
+        # CORE v0.2 C1: un índice sin tipo propio (literales) toma i64.
+        hint = INT_ALIASES["i64"] if self.program.version != "0.1" and is_poly(e) else None
+        ty = self.typeof(e, hint)
         if not isinstance(ty, IntT):
             raise InvalidProgram("TYPE_MISMATCH", e.at, "el índice debe ser entero")
 
@@ -188,7 +190,7 @@ class Checker:
             return expected
         if isinstance(expected, DecT):
             m = e.value * 10 ** expected.s
-            if m > expected.max_m:
+            if abs(m) > expected.max_m:
                 raise InvalidProgram("LITERAL_OUT_OF_RANGE", e.at, f"{e.value} en {expected}")
             e.val = m
             return expected
@@ -202,7 +204,7 @@ class Checker:
         if e.scale > expected.s:
             raise InvalidProgram("LITERAL_SCALE", e.at, f"{e.scale} decimales en {expected}")
         m = e.digits * 10 ** (expected.s - e.scale)
-        if m > expected.max_m:
+        if abs(m) > expected.max_m:
             raise InvalidProgram("LITERAL_OUT_OF_RANGE", e.at, str(expected))
         e.val = m
         return expected

@@ -22,11 +22,11 @@ sys.path.insert(0, str(ROOT))
 
 import isyco.interp as interp  # noqa: E402
 from isyco import canonical_json, run  # noqa: E402
-from isyco.conformance import load_corpus, run_corpus  # noqa: E402
+from isyco.conformance import load_all, run_corpus  # noqa: E402
 from isyco.errors import LimitReached, RuntimeFault  # noqa: E402
 from isyco.types import IntT, int_fit, round_scaled  # noqa: E402
 
-CORPUS = load_corpus(ROOT / "programs" / "conformance")
+CORPUS = load_all(ROOT)
 
 
 def failing(executor=run) -> list[str]:
@@ -35,15 +35,21 @@ def failing(executor=run) -> list[str]:
 
 class Conformance(unittest.TestCase):
     def test_corpus_frozen(self):
-        sums = (ROOT / "programs" / "conformance" / "SHA256SUMS.txt").read_text().split("\n")
-        for line in filter(None, sums):
-            digest, name = line.split()
-            data = (ROOT / "programs" / "conformance" / name).read_bytes()
-            self.assertEqual(hashlib.sha256(data).hexdigest(), digest, name)
+        for corpus in ("conformance", "conformance_v0.2"):
+            sums = (ROOT / "programs" / corpus / "SHA256SUMS.txt").read_text().split("\n")
+            for line in filter(None, sums):
+                digest, name = line.split()
+                data = (ROOT / "programs" / corpus / name).read_bytes()
+                self.assertEqual(hashlib.sha256(data).hexdigest(), digest, f"{corpus}/{name}")
 
     def test_corpus_passes(self):
-        self.assertGreaterEqual(len(CORPUS), 58)
+        self.assertGreaterEqual(len(CORPUS), 78)
         self.assertEqual(failing(), [])
+
+    def test_superseded_cases_are_explicit(self):
+        """Solo los casos listados en SUPERSEDED.json cambian de expected, y lo dicen."""
+        superseded = {c["name"] for c in CORPUS if "superseded" in c}
+        self.assertEqual(superseded, {"003_header_wrong_version"})
 
     def test_determinism(self):
         for case in CORPUS:

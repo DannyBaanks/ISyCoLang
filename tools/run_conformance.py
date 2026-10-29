@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from isyco.conformance import load_corpus, run_corpus  # noqa: E402
+from isyco.conformance import load_all, run_corpus  # noqa: E402
 
 
 def git_head() -> str:
@@ -29,7 +29,7 @@ def git_head() -> str:
 
 
 def main() -> int:
-    rows = run_corpus(load_corpus(ROOT / "programs" / "conformance"))
+    rows = run_corpus(load_all(ROOT))
     passed = sum(row["verdict"] == "PASS" for row in rows)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
     report = {

@@ -26,7 +26,7 @@ sys.path.insert(0, str(ROOT))
 
 from isyco import run  # noqa: E402
 from isyco.backends import c as C  # noqa: E402
-from isyco.conformance import COMPARED, load_corpus  # noqa: E402
+from isyco.conformance import COMPARED, load_all  # noqa: E402
 from isyco.difftest import compare  # noqa: E402
 
 SANITIZE = ("-fsanitize=undefined,address", "-fno-sanitize-recover=all")
@@ -57,7 +57,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--pairs", type=int, default=40)
     args = parser.parse_args()
-    cases = load_corpus(ROOT / "programs" / "conformance")
+    cases = load_all(ROOT)
     compilers = [cc for cc in ("gcc", "clang") if shutil.which(cc)]
     report = {"schema": "isycolang.c_gate/1", "compilers": {cc: version(cc) for cc in compilers},
               "cflags": C.CFLAGS, "sanitize_flags": list(SANITIZE), "corpus": {}, "difftest": {},

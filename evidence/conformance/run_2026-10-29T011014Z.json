@@ -1,0 +1,1645 @@
+{
+  "schema": "isycolang.conformance_run/1",
+  "generated_utc": "2026-10-29T011014Z",
+  "engine": "isyco reference interpreter (Python)",
+  "git_head": "a32228c495c39f038c896ea78c15862b2bb68d8e",
+  "python": "3.12.3",
+  "spec_sha256": "322b6cba7cf5ae9dae2d090e3903f7e1e34bf081c7f6d2deb79c82201d22e741",
+  "total": 78,
+  "passed": 78,
+  "rows": [
+    {
+      "name": "001_header_ok",
+      "claim": "cabecera valida y retorno entero",
+      "program_sha256": "cd4012ba20da20833b9ddcd5fc61b88287fb52860f4b61d76b627f98f060d3ff",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "7"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "7"
+      },
+      "steps": 2,
+      "verdict": "PASS"
+    },
+    {
+      "name": "002_header_missing",
+      "claim": "sin cabecera es SYNTAX",
+      "program_sha256": "ece1000ae50574836e63e9a133901822799aeb1af49b2e94bdde64126fdf6b97",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "003_header_wrong_version",
+      "claim": "version distinta de 0.1 es SYNTAX",
+      "program_sha256": "ea564cbf295bdd08f7f5564f004553ece2c9f5700e88d6a90679c9afc15a5486",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "7"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "7"
+      },
+      "steps": 2,
+      "verdict": "PASS",
+      "superseded_by": "spec/CORE_v0.2.md §0 (aprobado por Danny el 2026-10-28)"
+    },
+    {
+      "name": "004_crlf",
+      "claim": "CRLF es ENCODING",
+      "program_sha256": "4b7fd1da8722298a8b210b151fb2419eea5573c160f7cba3fd9b60857eddc500",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "ENCODING",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "ENCODING",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "005_no_main",
+      "claim": "sin main es NO_MAIN",
+      "program_sha256": "f4aff1064b6bf5b66dd92ce00ec9d0a6cbedcf683ef9e8a5b561bf258fc7940b",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "NO_MAIN",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "NO_MAIN",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "006_reserved_at",
+      "claim": "@ esta reservado en v0.1",
+      "program_sha256": "77ec71cf463e8bb83840062632792c7ac39957613beb51b0e827bf245dc06e48",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "RESERVED",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "RESERVED",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "007_comments",
+      "claim": "comentarios y lineas vacias se ignoran",
+      "program_sha256": "4b862ba112367d658fb1b0dff7ab7ce875807ec5489a84d7fd80a7a3b4b4aa31",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "1000"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "1000"
+      },
+      "steps": 2,
+      "verdict": "PASS"
+    },
+    {
+      "name": "008_int_add",
+      "claim": "suma i32 con entrada",
+      "program_sha256": "7671bf71b472147427732796268f6200e1f2f67d8762a4d7818f35efb82d505c",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "42"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "42"
+      },
+      "steps": 2,
+      "verdict": "PASS"
+    },
+    {
+      "name": "009_i8_trap",
+      "claim": "i8 127+1 atrapa",
+      "program_sha256": "8821e6e5497e1a6b0ba9273eeddb1bf7bed77f3a33af3a5b37fbc23b34463ab7",
+      "expected": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "010_i8_wrap",
+      "claim": "wrap 127+1 = -128",
+      "program_sha256": "00b7cb377c6e2095fd5e0936482754008858c978ff8506a4d460d08c9fc928d6",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-128"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-128"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "011_i8_sat",
+      "claim": "sat se pega a los extremos",
+      "program_sha256": "3c6df6429dbde3a3b2e8a8f0d4af7628098e665b61bc4598c1a27857f445776c",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "127",
+          "-128"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "127",
+          "-128"
+        ],
+        "return": null
+      },
+      "steps": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "012_u8_wrap_neg",
+      "claim": "u8 wrap 0-1 = 255",
+      "program_sha256": "64bfb16b4b27ece943e20a1586a6f3e62395778aa09576b82709cbee2eceb91a",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "255"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "255"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "013_unsigned_neg_trap",
+      "claim": "negar un sin signo distinto de 0 atrapa",
+      "program_sha256": "f15365a38f9449996d4e62589de3ac74ad1bf61222e84db67e2add853bcc3489",
+      "expected": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "014_div_trunc",
+      "claim": "division trunca hacia cero; % con signo del dividendo",
+      "program_sha256": "429dc9d4fa516caa075dc3774116552de8340118cae67975a09bc691ed877dd8",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "-3",
+          "-1",
+          "-3",
+          "1"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "-3",
+          "-1",
+          "-3",
+          "1"
+        ],
+        "return": null
+      },
+      "steps": 9,
+      "verdict": "PASS"
+    },
+    {
+      "name": "015_div_zero",
+      "claim": "division entre cero conserva salida parcial",
+      "program_sha256": "540f0d5e82ad5f23283118011d9c5e80b4a207fa056a30aa594dcc1646a250d5",
+      "expected": {
+        "status": "ERROR",
+        "code": "DIV_ZERO",
+        "emits": [
+          "5"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "DIV_ZERO",
+        "emits": [
+          "5"
+        ],
+        "return": null
+      },
+      "steps": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "016_min_div_neg1_trap",
+      "claim": "MIN / -1 atrapa en trap",
+      "program_sha256": "e987fbf424b5c5b9bb6a7166c7e520666712def3d71f60ca831de1af687b485f",
+      "expected": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "steps": 4,
+      "verdict": "PASS"
+    },
+    {
+      "name": "017_min_mod_neg1",
+      "claim": "MIN % -1 = 0",
+      "program_sha256": "26cef0ef824e95da33c477efc71ba1d1af4316a2a2758e2dd1f5ced568260488",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "0"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "0"
+      },
+      "steps": 4,
+      "verdict": "PASS"
+    },
+    {
+      "name": "018_min_div_wrap",
+      "claim": "MIN / -1 en wrap = MIN",
+      "program_sha256": "d5899d0fae5c6ab1d6d8ab62708f961cc0752a16a2b49690d9a78a7f29b34f00",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-128"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-128"
+      },
+      "steps": 4,
+      "verdict": "PASS"
+    },
+    {
+      "name": "019_dec_half_even",
+      "claim": "half_even: empate al par",
+      "program_sha256": "6d38db8461bf295cb7c1782bd7fc31b952e4637ef04e6a211897e84b81cedc20",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "2",
+          "4",
+          "-2"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "2",
+          "4",
+          "-2"
+        ],
+        "return": null
+      },
+      "steps": 7,
+      "verdict": "PASS"
+    },
+    {
+      "name": "020_dec_half_up",
+      "claim": "half_up: empate lejos de cero",
+      "program_sha256": "e5e650372b8df7f3304928ceacb97b92ca7ab6dbf7499b88622ab59e5078b4f4",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "3",
+          "-3"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "3",
+          "-3"
+        ],
+        "return": null
+      },
+      "steps": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "021_dec_down",
+      "claim": "down: trunca hacia cero",
+      "program_sha256": "ed22d911d4a957be0ecf223edd15b497fa2b3c1a271a14635c5930bf1d334748",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "2",
+          "-2"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "2",
+          "-2"
+        ],
+        "return": null
+      },
+      "steps": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "022_dec_exact",
+      "claim": "exact: redondear es INEXACT",
+      "program_sha256": "91ab0b4625909b599490c5296db92b6ee2ac0565c22d16be1f7e2b8c824fc100",
+      "expected": {
+        "status": "ERROR",
+        "code": "INEXACT",
+        "emits": [
+          "0.25"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "INEXACT",
+        "emits": [
+          "0.25"
+        ],
+        "return": null
+      },
+      "steps": 6,
+      "verdict": "PASS"
+    },
+    {
+      "name": "023_dec_overflow",
+      "claim": "mas de p digitos atrapa",
+      "program_sha256": "fd5f42c8829294847f16bc6633dc5e3fe743d0a4695f17d623ef7a35c71bf011",
+      "expected": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "024_dec_canonical",
+      "claim": "forma canonica de decimales",
+      "program_sha256": "4a9c2a0ae7d0194c02d3911048bf2983337576491edfc7f83592f93b6dfb3ea5",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "0.00",
+          "-1.50",
+          "0.00",
+          "12"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "0.00",
+          "-1.50",
+          "0.00",
+          "12"
+        ],
+        "return": null
+      },
+      "steps": 8,
+      "verdict": "PASS"
+    },
+    {
+      "name": "025_literal_scale",
+      "claim": "un literal con mas decimales que s es invalido",
+      "program_sha256": "02789ebb2538ea9e6e1e265ac3e1a5d60e547ad238bed174d7e01642573eea15",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_SCALE",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_SCALE",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "026_dec_mul_rounding",
+      "claim": "multiplicacion redondea una sola vez",
+      "program_sha256": "f91d454e9e6229f17e8b96df418341f961fea60e0969e7c24aa6851b2acdc5ef",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "1.56",
+          "0.00"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "1.56",
+          "0.00"
+        ],
+        "return": null
+      },
+      "steps": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "027_interes",
+      "claim": "ejemplo de spec 14: la tasa se redondea al convertir",
+      "program_sha256": "fa26d5740112fabfa55ed1ba71614905647362d9103b13cb39063afd5ef3f26b",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "4.11",
+          "8.22",
+          "12.33"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "4.11",
+          "8.22",
+          "12.33"
+        ],
+        "return": null
+      },
+      "steps": 22,
+      "verdict": "PASS"
+    },
+    {
+      "name": "028_cast_int_wrap",
+      "claim": "int a int fuera de rango usa ovf del destino (wrap)",
+      "program_sha256": "21375935c2ee471756feffb85e7145d684a82fbe94baf1ceab6b026c6b0a7504",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "44"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "44"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "029_cast_int_trap",
+      "claim": "int a int fuera de rango usa ovf del destino (trap)",
+      "program_sha256": "5121d361b16e27085ca6446aed62e6056eb2e8dac20e563a4e33ef686803282c",
+      "expected": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "030_cast_dec_to_int",
+      "claim": "dec a int trunca hacia cero",
+      "program_sha256": "202ef79dd4a720595c716c739b1344a8c665317304bacbb66d8baba554eb376a",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-2"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-2"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "031_cast_dec_rescale",
+      "claim": "dec a dec reescala con el redondeo del destino",
+      "program_sha256": "5e7c3583df50991f7e8761cf21017fb8462e6bc7ae06e3def77b44361be0d26a",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "0.12",
+          "0.14"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "0.12",
+          "0.14"
+        ],
+        "return": null
+      },
+      "steps": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "032_bad_cast_bool",
+      "claim": "bool no se convierte",
+      "program_sha256": "9173c9d7da33d2797f12e277337195c2c3a597a764eea58bf7b6dd92316992d7",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "BAD_CAST",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "BAD_CAST",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "033_array_copy",
+      "claim": "los arreglos se pasan por copia",
+      "program_sha256": "f5af70f87301af33db743b136e9a6cc71d2a2792f95962b12fa844818226d4b0",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "99",
+          "1"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "99",
+          "1"
+        ],
+        "return": null
+      },
+      "steps": 7,
+      "verdict": "PASS"
+    },
+    {
+      "name": "034_array_oob",
+      "claim": "indice fuera de rango conserva salida parcial",
+      "program_sha256": "cb24173986b54f1c77b1d6c483aceadbbabb23e526cbfe40ce8983966b99744f",
+      "expected": {
+        "status": "ERROR",
+        "code": "INDEX_OUT_OF_BOUNDS",
+        "emits": [
+          "5"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "INDEX_OUT_OF_BOUNDS",
+        "emits": [
+          "5"
+        ],
+        "return": null
+      },
+      "steps": 5,
+      "verdict": "PASS"
+    },
+    {
+      "name": "035_while_break_continue",
+      "claim": "while con break y continue",
+      "program_sha256": "677846e800277a4c1049c694936789036d65177e8459c5783fbb06a9cccb9ead",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "16"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "16"
+      },
+      "steps": 44,
+      "verdict": "PASS"
+    },
+    {
+      "name": "036_recursion_fact",
+      "claim": "recursion",
+      "program_sha256": "4389c00a1c933e28a020b62c69b79535d040578314a559ac9cb24961587c4606",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "3628800"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "3628800"
+      },
+      "steps": 32,
+      "verdict": "PASS"
+    },
+    {
+      "name": "037_missing_return",
+      "claim": "falta retorno en algun camino",
+      "program_sha256": "11bd0b364f6f28f4ec8950b17c5e6a421155aa01333972182d892d0935fcbe77",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "MISSING_RETURN",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "MISSING_RETURN",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "038_break_outside",
+      "claim": "break fuera de while",
+      "program_sha256": "6639e590c4360eca0e6da0c3997810085ebac468a7a23867bfc52bed08ead4c2",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "BAD_LOOP_CONTROL",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "BAD_LOOP_CONTROL",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "039_input_args",
+      "claim": "entrada con decimal, bool y arreglo",
+      "program_sha256": "faa931c6d7f5c4375a73a27196e7bf6e8750a36bc624588b68aca8cba1bdbdd6",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "3.50",
+          "3"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "3.50",
+          "3"
+        ],
+        "return": null
+      },
+      "steps": 4,
+      "verdict": "PASS"
+    },
+    {
+      "name": "040_bad_input_count",
+      "claim": "numero de argumentos incorrecto",
+      "program_sha256": "12d21b89011d879c3d6026047bd8721700b9268e81dd2fe9c285e51a31255c88",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "BAD_INPUT",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "BAD_INPUT",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "041_bad_input_noncanonical",
+      "claim": "entrada no canonica",
+      "program_sha256": "58ec5f5c12831956a755afa22205f8ebde5896e19063a88f3400e8cd8085aa8d",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "BAD_INPUT",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "BAD_INPUT",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "042_steps_exact",
+      "claim": "3 pasos: llamada a main + let + emit",
+      "program_sha256": "4b821633ae1d32e435201147bb79dbb6122f117d3d3199ef3fdd4968cbde3e1d",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "1"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "1"
+        ],
+        "return": null
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "043_steps_short",
+      "claim": "con 2 pasos se corta antes del emit",
+      "program_sha256": "4b821633ae1d32e435201147bb79dbb6122f117d3d3199ef3fdd4968cbde3e1d",
+      "expected": {
+        "status": "LIMIT_REACHED",
+        "code": "max_steps",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "LIMIT_REACHED",
+        "code": "max_steps",
+        "emits": [],
+        "return": null
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "044_infinite_loop",
+      "claim": "un bucle infinito es LIMIT_REACHED, nunca HALTED",
+      "program_sha256": "591a2658a8bba640670ce2446cb861ccd1f8044a6eaf2c885ba7c779334adb32",
+      "expected": {
+        "status": "LIMIT_REACHED",
+        "code": "max_steps",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "LIMIT_REACHED",
+        "code": "max_steps",
+        "emits": [],
+        "return": null
+      },
+      "steps": 1001,
+      "verdict": "PASS"
+    },
+    {
+      "name": "045_call_depth",
+      "claim": "recursion sin fin choca con max_call_depth",
+      "program_sha256": "82b5830e63368e847f0ca9b3ff0f2382db775d05f4ef6efaad5700033ff7eef1",
+      "expected": {
+        "status": "LIMIT_REACHED",
+        "code": "max_call_depth",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "LIMIT_REACHED",
+        "code": "max_call_depth",
+        "emits": [],
+        "return": null
+      },
+      "steps": 513,
+      "verdict": "PASS"
+    },
+    {
+      "name": "046_max_emits",
+      "claim": "max_emits conserva la salida previa",
+      "program_sha256": "3ef66fd2f6e79cefc8b03a6dfd9d90679389ffa68e0d5bc048f0e8df555b8688",
+      "expected": {
+        "status": "LIMIT_REACHED",
+        "code": "max_emits",
+        "emits": [
+          "0",
+          "1",
+          "2"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "LIMIT_REACHED",
+        "code": "max_emits",
+        "emits": [
+          "0",
+          "1",
+          "2"
+        ],
+        "return": null
+      },
+      "steps": 14,
+      "verdict": "PASS"
+    },
+    {
+      "name": "047_type_mismatch",
+      "claim": "operandos de tipos distintos",
+      "program_sha256": "fe46d562ce896276fee0573e08ed5868437131a47bf0d1d923ff4dc42ed0972e",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "048_ambiguous_literal",
+      "claim": "literal sin contexto",
+      "program_sha256": "d9a68c05560c9a453470c2741813879f1f92138bb528393aadc866514f482995",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "AMBIGUOUS_LITERAL",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "AMBIGUOUS_LITERAL",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "049_literal_out_of_range",
+      "claim": "literal que no cabe",
+      "program_sha256": "0786e64213e348ea19c433dbb34848d9f7e9b0330672a0b8fd8e06a98a141c71",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_OUT_OF_RANGE",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_OUT_OF_RANGE",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "050_undeclared_effect",
+      "claim": "emit sin !emit",
+      "program_sha256": "a9cde940beb7c68de62ff289b289669d355cedcea2fe9fa387e77341d97db774",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "UNDECLARED_EFFECT",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "UNDECLARED_EFFECT",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "051_effect_propagation",
+      "claim": "llamar a una funcion que emite exige !emit",
+      "program_sha256": "a6321d969c4a3f6e727de82a8708bbbb6862fbcaad8718178031c7310984260e",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "UNDECLARED_EFFECT",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "UNDECLARED_EFFECT",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "052_duplicate_shadow",
+      "claim": "no hay shadowing",
+      "program_sha256": "75d90f53384fb7b2605172f605a61b896a28c5fde647cfc8ed202479188fa181",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "DUPLICATE_NAME",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "DUPLICATE_NAME",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "053_unknown_name",
+      "claim": "nombre no declarado",
+      "program_sha256": "65f5a8df34782eb796550d79fb18b781026e0ecd63530ffb1017c035ff2bdc7b",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "UNKNOWN_NAME",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "UNKNOWN_NAME",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "055_short_circuit",
+      "claim": "and/or cortocircuitan",
+      "program_sha256": "d45b9ddb87b6ddb908f2eb6857df2c00a3a9e552aadad23cddcc3799728a4998",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "true"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "true"
+        ],
+        "return": null
+      },
+      "steps": 4,
+      "verdict": "PASS"
+    },
+    {
+      "name": "056_eval_order_args",
+      "claim": "argumentos de izquierda a derecha",
+      "program_sha256": "9b7b8e0f6df6065926a1ba4f39266aaf4d66368568578a7f06d4029d01e014f8",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "1",
+          "2",
+          "3"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "1",
+          "2",
+          "3"
+        ],
+        "return": null
+      },
+      "steps": 10,
+      "verdict": "PASS"
+    },
+    {
+      "name": "057_eval_order_index",
+      "claim": "en a[i] = e se evalua i antes que e",
+      "program_sha256": "4583e555ecd46338bd22ffcf447bd982e633bcfe009690803d8d04f1f83565ff",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "1",
+          "7",
+          "7"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "1",
+          "7",
+          "7"
+        ],
+        "return": null
+      },
+      "steps": 10,
+      "verdict": "PASS"
+    },
+    {
+      "name": "058_cmp_nonassoc",
+      "claim": "las comparaciones no se encadenan",
+      "program_sha256": "6d86d9d4e80dfe1ee8bd2cdd6dde3757f672c020cac743d6d3e90da378005481",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "059_void_in_expr",
+      "claim": "una funcion sin retorno no da valor",
+      "program_sha256": "e3c58e07fef1c1e9aa14cc7e923c83c503e27979914403c480e03b7f6bec48ab",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "101_index_literal",
+      "claim": "C1: a[0] y a[1 + 1] son indices i64",
+      "program_sha256": "e69c70f71a2565641086cddfec18a1ea0024bb49a8b3ef143be2aa46e5d81e04",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "10",
+          "30",
+          "99"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "10",
+          "30",
+          "99"
+        ],
+        "return": null
+      },
+      "steps": 6,
+      "verdict": "PASS"
+    },
+    {
+      "name": "102_index_literal_oob",
+      "claim": "C1: un indice literal fuera de rango falla en ejecucion",
+      "program_sha256": "95e8f44fe1c533d30846b4194bb5d2d984ad473ee606a44562a876eddf0a6568",
+      "expected": {
+        "status": "ERROR",
+        "code": "INDEX_OUT_OF_BOUNDS",
+        "emits": [
+          "1"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "INDEX_OUT_OF_BOUNDS",
+        "emits": [
+          "1"
+        ],
+        "return": null
+      },
+      "steps": 4,
+      "verdict": "PASS"
+    },
+    {
+      "name": "103_index_negative_literal",
+      "claim": "C1+C2: a[-1] compila y falla en ejecucion",
+      "program_sha256": "07ffb7536a1d9dda850402f660ad7a6cc290a77032fd2bfefa1b71cb16edbdc7",
+      "expected": {
+        "status": "ERROR",
+        "code": "INDEX_OUT_OF_BOUNDS",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "INDEX_OUT_OF_BOUNDS",
+        "emits": [],
+        "return": null
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "104_index_typed_expr",
+      "claim": "C1 no cambia indices con tipo propio",
+      "program_sha256": "e4a9cc9c26dba42af4daf5e81d60dda7039e29ecfec4cf77d569f2f77f9d9709",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "6"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "6"
+      },
+      "steps": 4,
+      "verdict": "PASS"
+    },
+    {
+      "name": "105_v01_index_literal_still_ambiguous",
+      "claim": "v0.1 conserva su regla: a[0] es ambiguo",
+      "program_sha256": "1f602db3bfd22e6465abaad498e3fb643ca4db8ef08efebd6375296b859dfb13",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "AMBIGUOUS_LITERAL",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "AMBIGUOUS_LITERAL",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "106_i8_min_literal",
+      "claim": "C2: -128 cabe en i8",
+      "program_sha256": "db7973fc7090973aafe66884ce4e9a138d3204a0716843d949433b8e3f3db929",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-128"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-128"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "107_i8_below_min",
+      "claim": "C2: -129 no cabe en i8",
+      "program_sha256": "2aa2a075ef5aa8656fca27456a59ddfc8176064cb265d50cdd5f3f2fd8cb7736",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_OUT_OF_RANGE",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_OUT_OF_RANGE",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "108_unsigned_negative_literal_v02",
+      "claim": "C2: -1 no cabe en u8 wrap",
+      "program_sha256": "fc33e833af82907135a3b421ced0d11f8c3ecf9712ee523a2b6fe90cf3322364",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_OUT_OF_RANGE",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_OUT_OF_RANGE",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "109_unsigned_negative_literal_v01",
+      "claim": "v0.1 conserva su regla: -1 en u8 wrap es 255",
+      "program_sha256": "a860f392349a144778729313a8e128a1c74cef8ed1bd6f671bf0de819bf944ca",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "255"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "255"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "110_paren_negation",
+      "claim": "C2: -(128) sigue siendo negacion de 128",
+      "program_sha256": "6c0d334f4b5b84d7de64e7a99609c178bce644a36125ec453e681ffbb46856f4",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_OUT_OF_RANGE",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "LITERAL_OUT_OF_RANGE",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "111_i64_min_literal",
+      "claim": "C2: el minimo de i64 se escribe literal",
+      "program_sha256": "475c3fa95b46a34973b88d285eb74754db7640d4a9f8760e16a945ff29166d2d",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-9223372036854775808"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-9223372036854775808"
+      },
+      "steps": 2,
+      "verdict": "PASS"
+    },
+    {
+      "name": "112_dec_negative_literal",
+      "claim": "C2: literales decimales negativos",
+      "program_sha256": "5c2abb1146f374592a7cafd0422b620f8bfb6c94c3845474a90dbad5b46b6807",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "-0.50",
+          "0.00",
+          "0.25"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "-0.50",
+          "0.00",
+          "0.25"
+        ],
+        "return": null
+      },
+      "steps": 6,
+      "verdict": "PASS"
+    },
+    {
+      "name": "113_double_negation",
+      "claim": "C2: - -5 es negacion del literal -5",
+      "program_sha256": "a1cad5baea0e93d39967ead7323de3b3ba0e16d591f5d07713b0a62e4ccf5eb6",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "5"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "5"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "114_minus_spaces",
+      "claim": "C2: espacios entre - y el literal",
+      "program_sha256": "4dccffc64c484924f654b8bdb2de5a1af99355f32b59c9713bb21730570270f6",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-128"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "-128"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "115_binary_minus_unchanged",
+      "claim": "C2 no afecta la resta binaria: x -100 es x - 100",
+      "program_sha256": "6657dad07e6dc9f460f8f32ad5c1d1659192b5b0130e995ffc035aa963dee898",
+      "expected": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "ERROR",
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "116_array_size_zero",
+      "claim": "C3: [T; 0] es ARRAY_SIZE",
+      "program_sha256": "5b7e86e3ca366421077378a1f545be8d1e2ebc854dfaf52a43ac04bf85cb1b6d",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "ARRAY_SIZE",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "ARRAY_SIZE",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "117_array_size_too_big",
+      "claim": "C3: [T; 65537] es ARRAY_SIZE",
+      "program_sha256": "87a80f71e9ed635ad2c2b724dc78ab620acbe8f976f374e477767a5e66f126af",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "ARRAY_SIZE",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "ARRAY_SIZE",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "118_array_size_max_ok",
+      "claim": "C3: [T; 65536] es valido",
+      "program_sha256": "d0911ea1ea377b57a2c6244c03d9fde8ee8f00e6148e86937138dfadc8332fbb",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "7"
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [],
+        "return": "7"
+      },
+      "steps": 3,
+      "verdict": "PASS"
+    },
+    {
+      "name": "119_header_v03",
+      "claim": "solo existen 0.1 y 0.2",
+      "program_sha256": "69a96a990355a73c55047d35eabb799a78d679a5a5d6543b91334b76c4e6c67b",
+      "expected": {
+        "status": "INVALID_PROGRAM",
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null
+      },
+      "observed": {
+        "status": "INVALID_PROGRAM",
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null
+      },
+      "steps": 0,
+      "verdict": "PASS"
+    },
+    {
+      "name": "120_v02_keeps_v01_semantics",
+      "claim": "v0.2 conserva el resto de v0.1",
+      "program_sha256": "e2c0f7a7f98a9570dc32fea0160a70af309e0f1a366489dd5184d4b7deb8de0b",
+      "expected": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "2",
+          "-3",
+          "-1"
+        ],
+        "return": null
+      },
+      "observed": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "2",
+          "-3",
+          "-1"
+        ],
+        "return": null
+      },
+      "steps": 8,
+      "verdict": "PASS"
+    }
+  ]
+}

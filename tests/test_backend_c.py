@@ -20,11 +20,11 @@ sys.path.insert(0, str(ROOT))
 
 from isyco import run  # noqa: E402
 from isyco.backends.c import emit_c, run_c  # noqa: E402
-from isyco.conformance import COMPARED, load_corpus  # noqa: E402
+from isyco.conformance import COMPARED, load_all  # noqa: E402
 from isyco.difftest import compare  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
 
-CORPUS = load_corpus(ROOT / "programs" / "conformance")
+CORPUS = load_all(ROOT)
 KEYS = COMPARED + ("steps",)
 HAS_CC = any(shutil.which(cc) for cc in ("gcc", "clang", "cc"))
 

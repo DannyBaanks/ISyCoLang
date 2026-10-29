@@ -12,10 +12,10 @@ verificado contra la referencia.
 |---|---|
 | ¿Qué es? | Un lenguaje pequeño con semántica propia y un compilador que usa muchos lenguajes como backends por contrato. |
 | ¿Qué lo hace distinto? | La semántica es de ISyCoLang; C, Rust, COBOL, Prolog, esolangs… compiten por implementarla y la evidencia elige. Un carril aparte (3OPS Lab) investiga bases de tres operaciones. |
-| ¿Formato? | `.isy`, spec congelada en `spec/CORE.md` (v0.1). |
+| ¿Formato? | `.isy`; spec congelada en `spec/CORE.md` (v0.1) + `spec/CORE_v0.2.md`; la cabecera `isyco 0.1`/`isyco 0.2` elige. |
 | ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c` para nativo) |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia en Python, semántica normativa). |
-| ¿Qué está demostrado? | Intérprete conforme al corpus (58/58), IR que preserva la semántica, backend C igual a la referencia (corpus + 24 612 corridas diferenciales, gcc y clang, sin UB bajo sanitizers). Ver claim table. |
+| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1 y v0.2 (78/78), IR que preserva la semántica, backend C igual a la referencia (corpus + 24 612 corridas diferenciales, gcc y clang, sin UB bajo sanitizers). Ver claim table. |
 | ¿Qué NO está demostrado? | Todo lo demás; ver la claim table en `ROADMAP.md` §6. |
 | ¿Tests? | `python3 -m unittest discover -s tests -v` |
 | ¿Evidencia? | `evidence/` |
@@ -36,7 +36,8 @@ docs/BACKEND_C.md                  backend C: garantías, protocolo, límites
 isyco/backends/c.py                ISY-IR -> C -> binario nativo
 isyco/difftest.py                  diferencial por tipo numérico en valores frontera
 isyco/                             intérprete de referencia y CLI
-programs/conformance/              corpus v0.1 (expected previos al intérprete)
+programs/conformance/              corpus v0.1 (expected previos al intérprete; SUPERSEDED.json)
+programs/conformance_v0.2/         corpus v0.2 (expected previos a implementar v0.2)
 tests/                             conformidad, determinismo, sabotaje, oráculo
 tools/run_conformance.py           corre el corpus y guarda evidencia nueva
 tools/ir_gate.py                   compara IR vs referencia y guarda evidencia
@@ -48,7 +49,7 @@ tools/c_gate.py                    gate F4 (tres vías, gcc/clang, sanitizers, s
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 39 tests
+python3 -m unittest discover -s tests -v       # 40 tests
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
