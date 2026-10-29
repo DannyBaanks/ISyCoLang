@@ -10,6 +10,12 @@ Implementación independiente de C y Rust (mismo protocolo ISY_BACKEND/1):
 - la salida va a un búfer global que se vacía con la syscall write de Linux
   (la API de E/S de la stdlib cambió en 0.15/0.16; la syscall no).
 Solo Linux: usa `std.os.linux.write`.
+
+isy-ir/0.2 (CORE v0.3), sin compartir código con C ni Rust:
+- str<N> es `IsyStr(N)` (struct genérico en comptime, por valor);
+- cada struct es un `struct` de Zig; `==` lo resuelve `isy_eq`, que recorre el
+  tipo con `@typeInfo` en comptime (un str compara solo sus `len` bytes);
+- texto -> número con `u128` y `*%`/`+%` explícitos (ReleaseSafe atrapa el resto).
 """
 from __future__ import annotations
 
@@ -19,8 +25,8 @@ import subprocess
 from pathlib import Path
 
 from ..ir import ty_from_json
-from ..types import ArrT, BoolT, DecT, IntT, parse_canonical
-from .base import ALL_FEATURES, V2_FEATURES, Backend
+from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
+from .base import ALL_FEATURES, Backend
 
 ROUND_CODE = {"half_even": 0, "half_up": 1, "down": 2, "exact": 3}
 OVF_CODE = {"trap": 0, "wrap": 1, "sat": 2}
@@ -174,6 +180,227 @@ fn isy_repeat(comptime T: type, comptime n: usize, v: T) [n]T {
     for (&a) |*x| x.* = v;
     return a;
 }
+// ---- isy-ir/0.2 (CORE v0.3): str<N> por valor, salida escapada, texto <-> número ----
+fn IsyStr(comptime N: usize) type {
+    return struct {
+        len: u32,
+        v: [N]u8,
+        pub const isy_str = true;
+        fn s(self: *const @This()) []const u8 {
+            return self.v[0..self.len];
+        }
+    };
+}
+fn isy_str(comptime N: usize, b: []const u8) IsyStr(N) {
+    if (b.len > N) isy_fail("OVERFLOW");
+    var r: IsyStr(N) = undefined;
+    r.len = @intCast(b.len);
+    @memcpy(r.v[0..b.len], b);
+    return r;
+}
+fn isy_cat(comptime N: usize, a: []const u8, b: []const u8) IsyStr(N) {
+    if (a.len + b.len > N) isy_fail("OVERFLOW");
+    var r: IsyStr(N) = undefined;
+    r.len = @intCast(a.len + b.len);
+    @memcpy(r.v[0..a.len], a);
+    @memcpy(r.v[a.len .. a.len + b.len], b);
+    return r;
+}
+// Sabotaje de prueba: corta en silencio en vez de OVERFLOW (viola S3).
+fn isy_cat_trunc(comptime N: usize, a: []const u8, b: []const u8) IsyStr(N) {
+    var r: IsyStr(N) = undefined;
+    const n1 = @min(a.len, N);
+    const n2 = @min(b.len, N - n1);
+    @memcpy(r.v[0..n1], a[0..n1]);
+    @memcpy(r.v[n1 .. n1 + n2], b[0..n2]);
+    r.len = @intCast(n1 + n2);
+    return r;
+}
+// Igualdad por valor (S4, P5): recorre el tipo en comptime; un str compara solo `len` bytes.
+fn isy_eq(comptime T: type, a: *const T, b: *const T) bool {
+    switch (@typeInfo(T)) {
+        .@"struct" => |info| {
+            if (@hasDecl(T, "isy_str")) return std.mem.eql(u8, a.v[0..a.len], b.v[0..b.len]);
+            inline for (info.fields) |f| {
+                if (!isy_eq(f.type, &@field(a.*, f.name), &@field(b.*, f.name))) return false;
+            }
+            return true;
+        },
+        .array => |info| {
+            for (a, b) |*x, *y| {
+                if (!isy_eq(info.child, x, y)) return false;
+            }
+            return true;
+        },
+        else => return a.* == b.*,
+    }
+}
+// Carga de una línea E/R: barra invertida y salto de línea escapados (BACKEND §3).
+fn isy_out_byte(b: u8) void {
+    if (b == '\\') {
+        isy_out("\\\\");
+    } else if (b == '\n') {
+        isy_out("\\n");
+    } else {
+        isy_out(&[_]u8{b});
+    }
+}
+fn isy_put_text(t: []const u8) void {
+    for (t) |b| isy_out_byte(b);
+}
+fn isy_put_json_text(t: []const u8) void {
+    isy_out_byte('"');
+    for (t) |b| {
+        switch (b) {
+            '"' => {
+                isy_out_byte('\\');
+                isy_out_byte('"');
+            },
+            '\\' => {
+                isy_out_byte('\\');
+                isy_out_byte('\\');
+            },
+            '\n' => {
+                isy_out_byte('\\');
+                isy_out_byte('n');
+            },
+            '\t' => {
+                isy_out_byte('\\');
+                isy_out_byte('t');
+            },
+            else => isy_out_byte(b),
+        }
+    }
+    isy_out_byte('"');
+}
+fn isy_allowed(x: i128) bool {
+    return x == 9 or x == 10 or (x >= 32 and x <= 126);
+}
+fn isy_fmt_i128(buf: *[64]u8, v: i128) usize {
+    var tmp: [64]u8 = undefined;
+    var n: usize = 0;
+    var u: u128 = if (v < 0) @as(u128, @intCast(-(v + 1))) + 1 else @as(u128, @intCast(v));
+    while (true) {
+        tmp[n] = @as(u8, @intCast(u % 10)) + '0';
+        n += 1;
+        u /= 10;
+        if (u == 0) break;
+    }
+    var k: usize = 0;
+    if (v < 0) {
+        buf[k] = '-';
+        k += 1;
+    }
+    while (n > 0) {
+        n -= 1;
+        buf[k] = tmp[n];
+        k += 1;
+    }
+    return k;
+}
+fn isy_fmt_dec(buf: *[64]u8, m: i128, s: usize) usize {
+    if (s == 0) return isy_fmt_i128(buf, m);
+    var tmp: [64]u8 = undefined;
+    var n: usize = 0;
+    var u: u128 = @as(u128, @intCast(if (m < 0) -m else m));
+    while (true) {
+        tmp[n] = @as(u8, @intCast(u % 10)) + '0';
+        n += 1;
+        u /= 10;
+        if (u == 0) break;
+    }
+    while (n < s + 1) {
+        tmp[n] = '0';
+        n += 1;
+    }
+    var k: usize = 0;
+    if (m < 0) {
+        buf[k] = '-';
+        k += 1;
+    }
+    while (n > s) {
+        n -= 1;
+        buf[k] = tmp[n];
+        k += 1;
+    }
+    buf[k] = '.';
+    k += 1;
+    while (n > 0) {
+        n -= 1;
+        buf[k] = tmp[n];
+        k += 1;
+    }
+    return k;
+}
+// Magnitud de una tira de dígitos. big = el valor real es >= 2^123 (no cabe en ningún
+// tipo); mag sigue siendo el exacto módulo 2^128 (operaciones *% y +%), lo que wrap necesita.
+const IsyMag = struct { mag: u128, big: bool };
+fn isy_digits(d: []const u8) IsyMag {
+    var mag: u128 = 0;
+    var big = false;
+    for (d) |b| {
+        if (mag >= (@as(u128, 1) << 123)) big = true;
+        mag = mag *% 10 +% @as(u128, b - '0');
+    }
+    if (mag >= (@as(u128, 1) << 123)) big = true;
+    return .{ .mag = mag, .big = big };
+}
+fn isy_is_digits(d: []const u8) bool {
+    for (d) |b| {
+        if (b < '0' or b > '9') return false;
+    }
+    return true;
+}
+fn isy_parse_int(t: []const u8, lo: i128, hi: i128, bits: u7, ovf: u8) i128 {
+    const neg = t.len > 0 and t[0] == '-';
+    const d = if (neg) t[1..] else t;
+    if (d.len == 0 or !isy_is_digits(d) or (d[0] == '0' and d.len > 1) or (neg and d.len == 1 and d[0] == '0'))
+        isy_fail("BAD_FORMAT");
+    const r = isy_digits(d);
+    if (!r.big) {
+        const v: i128 = @intCast(r.mag);
+        return isy_fit(if (neg) -v else v, lo, hi, bits, ovf);
+    }
+    if (ovf == 0) isy_fail("OVERFLOW");
+    if (ovf == 2) return if (neg) lo else hi;
+    const u: u128 = if (neg) @as(u128, 0) -% r.mag else r.mag;
+    const w: u128 = @as(u128, 1) << bits;
+    const x: i128 = @intCast(u & (w - 1));
+    return if (x > hi) x - @as(i128, @intCast(w)) else x;
+}
+fn isy_parse_dec(t: []const u8, scale: usize, max: i128) i64 {
+    const neg = t.len > 0 and t[0] == '-';
+    const d = if (neg) t[1..] else t;
+    var int_len: usize = 0;
+    while (int_len < d.len and d[int_len] >= '0' and d[int_len] <= '9') int_len += 1;
+    if (int_len == 0 or (d[0] == '0' and int_len > 1)) isy_fail("BAD_FORMAT");
+    var frac: []const u8 = d[0..0];
+    if (scale == 0) {
+        if (int_len != d.len) isy_fail("BAD_FORMAT");
+    } else {
+        if (d.len != int_len + 1 + scale or d[int_len] != '.' or !isy_is_digits(d[int_len + 1 ..]))
+            isy_fail("BAD_FORMAT");
+        frac = d[int_len + 1 ..];
+    }
+    var zero = true;
+    for (d) |b| {
+        if (b >= '1' and b <= '9') zero = false;
+    }
+    if (neg and zero) isy_fail("BAD_FORMAT");
+    const whole = isy_digits(d[0..int_len]);
+    if (whole.big or whole.mag > @as(u128, @intCast(max))) isy_fail("OVERFLOW");
+    var pow: u128 = 1;
+    for (0..scale) |_| pow *= 10;
+    const mag = whole.mag * pow + isy_digits(frac).mag;
+    if (mag > @as(u128, @intCast(max))) isy_fail("OVERFLOW");
+    const m: i64 = @intCast(mag);
+    return if (neg) -m else m;
+}
+fn isy_parse_bool(t: []const u8) bool {
+    if (std.mem.eql(u8, t, "true")) return true;
+    if (std.mem.eql(u8, t, "false")) return false;
+    isy_fail("BAD_FORMAT");
+}
 fn isy_arg(s: [*:0]const u8) i128 {
     var i: usize = 0;
     var neg = false;
@@ -202,7 +429,7 @@ HALF_EVEN_TIE = {
     # Sabotaje deliberado: half_even se comporta como half_up en los empates.
     "half_even_as_half_up": "return q + sign;",
 }
-SABOTAGES = ("half_even_as_half_up", "div_floor")
+SABOTAGES = ("half_even_as_half_up", "div_floor", "str_concat_truncates")
 
 
 class ZigEmitter:
@@ -216,9 +443,21 @@ class ZigEmitter:
         self.tmp = 0
         self.local_types: list = []
         self.rets = {fn["name"]: ty_from_json(fn["ret"]) for fn in module["functions"]}
+        self.structs: dict[str, str] = {}      # repr(StructT) -> nombre del struct de Zig
+        self.struct_defs: list[str] = []
 
     # --- tipos ----------------------------------------------------------------
     def ztype(self, t) -> str:
+        if isinstance(t, StrT):
+            return f"IsyStr({t.n})"
+        if isinstance(t, StructT):
+            key = repr(t)
+            if key not in self.structs:
+                name = f"S{len(self.structs)}_{t.name}"
+                self.structs[key] = name
+                fields = " ".join(f"f_{fn}: {self.ztype(ft)}," for fn, ft in t.fields)
+                self.struct_defs.append(f"const {name} = struct {{ {fields} }};")
+            return self.structs[key]
         if isinstance(t, BoolT):
             return "bool"
         if isinstance(t, IntT):
@@ -230,9 +469,19 @@ class ZigEmitter:
     def zero(self, t) -> str:
         if isinstance(t, BoolT):
             return "false"
+        if self.v2_type(t):
+            # Todo local se escribe con su `let` antes de leerse (lo exige el validador);
+            # `undefined` evita que Zig construya en comptime arreglos de 64 KB.
+            return "undefined"
         if isinstance(t, ArrT):
             return f"[_]{self.ztype(t.elem)}{{{self.zero(t.elem)}}} ** {t.n}"
         return "0"
+
+    @staticmethod
+    def v2_type(t) -> bool:
+        if isinstance(t, (StrT, StructT)):
+            return True
+        return isinstance(t, ArrT) and isinstance(t.elem, (StrT, StructT))
 
     @staticmethod
     def fit_args(t: IntT) -> str:
@@ -255,9 +504,10 @@ class ZigEmitter:
     def emit(self) -> str:
         bodies = [self.function(fn) for fn in self.module["functions"]]
         main = next(f for f in self.module["functions"] if f["name"] == "main")
+        main_src = self.zig_main(main)
         return "\n".join([f"// generado por isyco.backends.zig desde ISY-IR {self.module['source_sha256']}",
                           RUNTIME.replace("ISY_HALF_EVEN_TIE", HALF_EVEN_TIE.get(self.sabotage, HALF_EVEN_TIE[None])),
-                          *bodies, self.zig_main(main), ""])
+                          *self.struct_defs, *bodies, main_src, ""])
 
     def function(self, fn: dict) -> str:
         self.lines, self.indent, self.tmp = [], 1, 0
@@ -280,7 +530,7 @@ class ZigEmitter:
     def zig_main(self, fn: dict) -> str:
         types = [ty_from_json(loc["ty"]) for loc in fn["locals"]]
         ret = ty_from_json(fn["ret"])
-        count = sum(types[p].n if isinstance(types[p], ArrT) else 1 for p in fn["params"])
+        count = sum(self.leaf_count(types[p]) for p in fn["params"])
         lines = ["pub fn main(init: std.process.Init.Minimal) void {",
                  "    const argv = init.args.vector;",
                  f"    if (argv.len != {4 + count}) std.process.exit(2);",
@@ -292,11 +542,9 @@ class ZigEmitter:
         for p in fn["params"]:
             t = types[p]
             names.append(f"a{p}")
-            if isinstance(t, ArrT):
+            if isinstance(t, (ArrT, StrT, StructT)):
                 lines.append(f"    var a{p}: {self.ztype(t)} = undefined;")
-                for k in range(t.n):
-                    lines.append(f"    a{p}[{k}] = {self.arg(t.elem, argi)};")
-                    argi += 1
+                argi = self.read_args(t, f"a{p}", argi, lines)
             else:
                 lines.append(f"    const a{p}: {self.ztype(t)} = {self.arg(t, argi)};")
                 argi += 1
@@ -306,10 +554,59 @@ class ZigEmitter:
         else:
             lines.append(f"    const r: {self.ztype(ret)} = {call};")
             lines.append('    isy_out("R ");')
-            lines.append(f"    {self.put_call(ret, 'r')};")
+            lines += ["    " + x for x in self.put_top(ret, "r")]
             lines.append('    isy_out("\\n");')
         lines += ['    isy_end("HALTED", "-");', "}"]
         return "\n".join(lines)
+
+    def leaf_count(self, t) -> int:
+        if isinstance(t, ArrT):
+            return t.n * self.leaf_count(t.elem)
+        if isinstance(t, StructT):
+            return sum(self.leaf_count(ft) for _, ft in t.fields)
+        return 1
+
+    def read_args(self, t, target: str, argi: int, lines: list) -> int:
+        """Argumentos aplanados (ISY_BACKEND/1 §3) -> target; devuelve el siguiente índice."""
+        if isinstance(t, ArrT):
+            for k in range(t.n):
+                argi = self.read_args(t.elem, f"{target}[{k}]", argi, lines)
+            return argi
+        if isinstance(t, StructT):
+            for fname, ft in t.fields:
+                argi = self.read_args(ft, f"{target}.f_{fname}", argi, lines)
+            return argi
+        if isinstance(t, StrT):
+            lines.append(f"    {target} = isy_str({t.n}, std.mem.span(argv[{argi}]));")
+        else:
+            lines.append(f"    {target} = {self.arg(t, argi)};")
+        return argi + 1
+
+    def put_top(self, t, value: str) -> list[str]:
+        """Carga de E/R: escalar canónico, str tal cual, arreglo/struct como JSON."""
+        if isinstance(t, StrT):
+            return [f"isy_put_text({value}.s());"]
+        if isinstance(t, (ArrT, StructT)):
+            return self.json(t, value, 0)
+        return [f"{self.put_call(t, value)};"]
+
+    def json(self, t, x: str, depth: int) -> list[str]:
+        """Sentencias que escriben x como JSON canónico (escalares entre comillas)."""
+        if isinstance(t, StrT):
+            return [f"isy_put_json_text({x}.s());"]
+        if isinstance(t, ArrT):
+            i = f"j{depth}"   # `i0` sería el tipo primitivo entero de 0 bits en Zig
+            return ['isy_out("[");', f"for (0..{t.n}) |{i}| {{",
+                    f'    if ({i} > 0) isy_out(",");',
+                    *["    " + line for line in self.json(t.elem, f"{x}[{i}]", depth + 1)],
+                    "}", 'isy_out("]");']
+        if isinstance(t, StructT):
+            out = ['isy_out("{");']
+            for k, (fname, ft) in enumerate(t.fields):
+                out.append(f'isy_out("{"," if k else ""}\\"{fname}\\":");')
+                out += self.json(ft, f"{x}.f_{fname}", depth)
+            return out + ['isy_out("}");']
+        return ['isy_out("\\"");', f"{self.put_call(t, x)};", 'isy_out("\\"");']
 
     def arg(self, t, i: int) -> str:
         if isinstance(t, BoolT):
@@ -355,6 +652,17 @@ class ZigEmitter:
             value = self.expr(s["value"])
             self.index_check(index, self.local_types[s["local"]].n)
             self.put(f"l{s['local']}[@as(usize, @intCast({index}))] = {value};")
+        elif kind == "set_path":
+            keys = [self.expr(step["index"]) if "index" in step else None for step in s["path"]]
+            value = self.expr(s["value"])
+            target, t = f"l{s['local']}", self.local_types[s["local"]]
+            for step, key in zip(s["path"], keys):     # rangos al guardar, en orden (E8)
+                if "index" in step:
+                    self.index_check(key, t.n)
+                    target, t = f"{target}[@as(usize, @intCast({key}))]", t.elem
+                else:
+                    target, t = f"{target}.f_{step['field']}", t.field(step["field"])
+            self.put(f"{target} = {value};")
         elif kind == "if":
             cond = self.expr(s["cond"])
             self.nested(f"if ({cond}) {{", s["then"])
@@ -386,7 +694,8 @@ class ZigEmitter:
             t = ty_from_json(s["value"]["ty"])
             self.put("isy_emit_check();")
             self.put('isy_out("E ");')
-            self.put(f"{self.put_call(t, value)};")
+            for line in self.put_top(t, value):
+                self.put(line)
             self.put('isy_out("\\n");')
         elif kind == "call":
             args = [self.expr(a) for a in s["args"]]
@@ -401,6 +710,8 @@ class ZigEmitter:
         t = ty_from_json(e["ty"])
         if kind == "const":
             value = parse_canonical(e["v"], t)
+            if isinstance(t, StrT):
+                return self.temp(t, f"isy_str({t.n}, {zig_string(value)})")
             if isinstance(t, BoolT):
                 return f"isy_k(bool, {'true' if value else 'false'})"
             return f"isy_k({self.ztype(t)}, {value})"
@@ -409,6 +720,12 @@ class ZigEmitter:
         if kind == "call":
             args = [self.expr(a) for a in e["args"]]
             return self.temp(t, f"f_{e['fn']}({', '.join(args)})")
+        if kind == "index" and isinstance(ty_from_json(e["base"]["ty"]), StrT):
+            base = self.expr(e["base"])
+            index = self.expr(e["index"])
+            self.put(f"if (@as(i128, {index}) < 0 or @as(i128, {index}) >= @as(i128, {base}.len)) "
+                     f"isy_fail(\"INDEX_OUT_OF_BOUNDS\");")
+            return self.temp(t, f"{base}.v[@as(usize, @intCast({index}))]")
         if kind == "index":
             base = self.expr(e["base"])
             index = self.expr(e["index"])
@@ -437,6 +754,16 @@ class ZigEmitter:
         if kind == "cmp":
             a = self.expr(e["a"])
             b = self.expr(e["b"])
+            at = ty_from_json(e["a"]["ty"])
+            if isinstance(at, StrT):
+                op = e["op"]
+                if op in ("eq", "ne"):
+                    return f"({'' if op == 'eq' else '!'}std.mem.eql(u8, {a}.s(), {b}.s()))"
+                order = {"lt": "== .lt", "le": "!= .gt", "gt": "== .gt", "ge": "!= .lt"}[op]
+                return f"(std.mem.order(u8, {a}.s(), {b}.s()) {order})"
+            if isinstance(at, (ArrT, StructT)):
+                ta, tb = self.temp(at, a), self.temp(at, b)
+                return f"({'' if e['op'] == 'eq' else '!'}isy_eq({self.ztype(at)}, &{ta}, &{tb}))"
             return f"({a} {CMP[e['op']]} {b})"
         if kind == "bin":
             return self.binary(e, t)
@@ -450,6 +777,40 @@ class ZigEmitter:
         if kind == "repeat":
             value = self.expr(e["elem"])
             return self.temp(t, f"isy_repeat({self.ztype(t.elem)}, {t.n}, {value})")
+        return self.expr_v2(kind, e, t)
+
+    def expr_v2(self, kind: str, e: dict, t) -> str:
+        """Nodos de isy-ir/0.2 (CORE v0.3)."""
+        if kind == "concat":
+            a = self.expr(e["a"])
+            b = self.expr(e["b"])
+            fn = "isy_cat_trunc" if self.sabotage == "str_concat_truncates" else "isy_cat"
+            return self.temp(t, f"{fn}({t.n}, {a}.s(), {b}.s())")
+        if kind == "widen":
+            return self.temp(t, f"isy_str({t.n}, {self.expr(e['e'])}.s())")
+        if kind == "len":
+            return f"@as(i64, {self.expr(e['e'])}.len)"
+        if kind == "slice":
+            x = self.expr(e["e"])
+            lo = self.expr(e["lo"])
+            hi = self.expr(e["hi"])
+            self.put(f"if (@as(i128, {lo}) < 0 or @as(i128, {lo}) > @as(i128, {hi}) or "
+                     f"@as(i128, {hi}) > @as(i128, {x}.len)) isy_fail(\"INDEX_OUT_OF_BOUNDS\");")
+            return self.temp(t, f"isy_str({t.n}, {x}.v[@as(usize, @intCast({lo}))..@as(usize, @intCast({hi}))])")
+        if kind == "chr":
+            code = self.expr(e["e"])
+            self.put(f"if (!isy_allowed(@as(i128, {code}))) isy_fail(\"BAD_CHAR\");")
+            return self.temp(t, f"isy_str(1, &[_]u8{{@as(u8, @intCast({code}))}})")
+        if kind == "field":
+            return f"{self.expr(e['base'])}.f_{e['name']}"
+        if kind == "struct":
+            self.tmp += 1
+            name = f"t{self.tmp}"
+            self.put(f"var {name}: {self.ztype(t)} = undefined;")
+            for item in e["fields"]:          # en el orden escrito: es el orden de evaluación
+                value = self.expr(item["value"])
+                self.put(f"{name}.f_{item['name']} = {value};")
+            return name
         raise AssertionError(kind)
 
     def binary(self, e: dict, t) -> str:
@@ -482,6 +843,25 @@ class ZigEmitter:
     def cast(self, e: dict, dst) -> str:
         x = self.expr(e["e"])
         src = ty_from_json(e["e"]["ty"])
+        if isinstance(dst, StrT):
+            if isinstance(src, StrT):
+                return self.temp(dst, f"isy_str({dst.n}, {x}.s())")
+            if isinstance(src, BoolT):
+                return self.temp(dst, f'isy_str({dst.n}, if ({x}) "true" else "false")')
+            self.tmp += 1
+            buf = f"b{self.tmp}"
+            self.put(f"var {buf}: [64]u8 = undefined;")
+            if isinstance(src, IntT):
+                self.put(f"const {buf}n = isy_fmt_i128(&{buf}, @as(i128, {x}));")
+            else:
+                self.put(f"const {buf}n = isy_fmt_dec(&{buf}, @as(i128, {x}), {src.s});")
+            return self.temp(dst, f"isy_str({dst.n}, {buf}[0..{buf}n])")
+        if isinstance(src, StrT):
+            if isinstance(dst, BoolT):
+                return self.temp(dst, f"isy_parse_bool({x}.s())")
+            if isinstance(dst, IntT):
+                return self.temp(dst, self.narrow(dst, f"isy_parse_int({x}.s(), {self.fit_args(dst)})"))
+            return self.temp(dst, f"isy_parse_dec({x}.s(), {dst.s}, {dst.max_m})")
         if isinstance(src, IntT) and isinstance(dst, IntT):
             return self.temp(dst, self.narrow(dst, f"isy_fit(@as(i128, {x}), {self.fit_args(dst)})"))
         if isinstance(src, IntT):
@@ -493,10 +873,16 @@ class ZigEmitter:
                                                f"{10 ** src.s}, {ROUND_CODE[dst.rnd]}), {dst.max_m})"))
 
 
+def zig_string(text: str) -> str:
+    """Literal de string de Zig con exactamente esos bytes (ASCII permitido, P1)."""
+    escapes = {"\\": "\\\\", '"': '\\"', "\n": "\\n", "\t": "\\t"}
+    return '"' + "".join(escapes.get(ch, ch) for ch in text) + '"'
+
+
 class ZigBackend(Backend):
     name = "zig"
     extension = ".zig"
-    features = ALL_FEATURES - V2_FEATURES
+    features = ALL_FEATURES
     sabotages = SABOTAGES
 
     def toolchain(self) -> str | None:

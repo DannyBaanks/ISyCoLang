@@ -112,8 +112,9 @@ Un backend es **conforme** cuando, sobre los corpus `programs/conformance*`:
 4. **el engine hace el trabajo**: el código generado no contiene las salidas
    esperadas y cambiar la entrada cambia la salida (estándar §9);
 5. **la suite lo distingue de un backend roto**: cada sabotaje que el backend
-   declara (`sabotages`: hoy `half_even_as_half_up` y `div_floor`) hace
-   fallar el corpus y el diferencial.
+   declara (`sabotages`: hoy `half_even_as_half_up`, `div_floor` y, en los
+   backends con `str`, `str_concat_truncates`) hace fallar el corpus y el
+   diferencial (numérico, y también el de strings si el backend declara `str`).
 
 `tools/backend_gate.py` comprueba los cinco puntos y resume el costo medido para cada backend instalado
 y guarda la evidencia en `evidence/backends/`.
@@ -123,5 +124,5 @@ y guarda la evidencia en `evidence/backends/`.
 | backend | toolchain | capacidades | notas |
 |---|---|---|---|
 | `c` | gcc / clang (GNU C11) | todas (desde 2026-10-29 también `ir0.2 str struct`) | `__int128`, builtins de overflow; 3 sabotajes de prueba (2 numéricos, 1 de str) |
-| `rust` | rustc (ed. 2021) | todas menos `ir0.2 str struct` | `-C overflow-checks=on -C panic=abort`; 2 sabotajes de prueba |
-| `zig` | zig 0.16 | todas menos `ir0.2 str struct` | `-O ReleaseSafe`; 2 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |
+| `rust` | rustc (ed. 2021) | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-C overflow-checks=on -C panic=abort`; 3 sabotajes de prueba |
+| `zig` | zig 0.16 | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-O ReleaseSafe`; 3 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |
