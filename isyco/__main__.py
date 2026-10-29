@@ -1,10 +1,11 @@
 """CLI de ISyCoLang.
 
-    python3 -m isyco run PROGRAMA.isy [--input JSON] [--via ast|ir] [--trace stmt --trace-out F]
+    python3 -m isyco run PROGRAMA.isy [--input JSON] [--via ast|ir|c] [--trace stmt --trace-out F]
     python3 -m isyco ir  PROGRAMA.isy        # imprime la ISY-IR canónica
 
-`run` imprime el documento de resultado (JSON canónico, spec §10.2). Código de
-salida: 0 HALTED · 2 INVALID_PROGRAM · 3 ERROR · 4 LIMIT_REACHED · 5 TIMEOUT · 1 uso/IO.
+`run` imprime el documento de resultado (JSON canónico, spec §10.2); con
+`--via c` compila a C nativo y no produce traza. Código de salida:
+0 HALTED · 2 INVALID_PROGRAM · 3 ERROR · 4 LIMIT_REACHED · 5 TIMEOUT · 1 uso/IO o fallo del backend.
 `ir` sale con 0 si el programa es válido y 2 si no.
 """
 from __future__ import annotations
@@ -31,8 +32,8 @@ def main(argv=None) -> int:
     for name, default in DEFAULT_LIMITS.items():
         run_p.add_argument("--" + name.replace("_", "-"), type=int, default=default)
     run_p.add_argument("--timeout-ms", type=int, default=60_000)
-    run_p.add_argument("--via", choices=("ast", "ir"), default="ast",
-                       help="ast = intérprete de referencia; ir = intérprete de ISY-IR")
+    run_p.add_argument("--via", choices=("ast", "ir", "c"), default="ast",
+                       help="ast = referencia; ir = intérprete de ISY-IR; c = binario nativo")
     run_p.add_argument("--trace", choices=TRACE_LEVELS, default="none")
     run_p.add_argument("--trace-out", type=Path)
     ir_p = sub.add_parser("ir", help="imprimir la ISY-IR canónica de un programa")
@@ -56,13 +57,17 @@ def main(argv=None) -> int:
         return 0
 
     limits = {name: getattr(args, name) for name in DEFAULT_LIMITS}
-    runner = run_via_ir if args.via == "ir" else run
+    if args.via == "c":
+        from .backends.c import run_c
+        runner = run_c
+    else:
+        runner = run_via_ir if args.via == "ir" else run
     result, trace = runner(data, inputs, limits, args.trace, args.timeout_ms)
     if args.trace_out is not None:
         args.trace_out.write_text("".join(canonical_json(row) + "\n" for row in trace),
                                   encoding="utf-8")
     print(canonical_json(result))
-    return EXIT[result["status"]]
+    return EXIT.get(result["status"], 1)
 
 
 if __name__ == "__main__":

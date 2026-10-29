@@ -111,7 +111,7 @@ pasos) dan el estado correcto, nunca `HALTED` por `LIMIT_REACHED`.
 
 **Gate F3:** intérprete sobre IR == intérprete sobre AST en todo el corpus.
 
-### F4 — Primer backend nativo: C
+### F4 — Primer backend nativo: C  `[PASS 2026-10-28: docs/BACKEND_C.md; evidence/c/gate_2026-10-29T005211Z.json]`
 
 - Lowering IR → C, compilado con `gcc`/`clang` (presentes en el host).
 - Diferencial de tres vías: `expected` ↔ referencia ↔ binario.
@@ -241,6 +241,10 @@ Correcciones al V0 que este carril adopta:
 | El redondeo decimal coincide con una implementación independiente (`decimal` de Python) | VERIFIED (20 000 casos aleatorios × 3 modos) | `tests/test_reference.py::RoundingOracle` |
 | El corpus detecta semánticas saboteadas | DEMONSTRATED (4 mutaciones) | `tests/test_reference.py::Sabotage` |
 | ISY-IR preserva la semántica: resultado y traza idénticos a la referencia | DEMONSTRATED (corpus × trazas stmt/full + 4 programas de IR con límites ajustados) | `evidence/ir/`, `tests/test_ir.py` |
+| Backend C: binario nativo == referencia en el corpus (status, code, emits, return, steps) | DEMONSTRATED con gcc 13.3 y clang 18.1, con y sin UBSan+ASan (58/58 en las 4 configuraciones) | `evidence/c/` |
+| Backend C: diferencial por tipo numérico (24 enteros + 8 decimales × 15 operaciones, fronteras y empates) | DEMONSTRATED: 24 612 corridas sin diferencias (+6 468 con sanitizers) | `evidence/c/`, `isyco/difftest.py` |
+| La suite detecta un backend saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
+| Aritmética de ISyCoLang implementada dos veces de forma independiente (Python exacto y C con `__int128`) con el mismo resultado | VERIFIED dentro del dominio probado | `evidence/c/` |
 | El validador de IR rechaza IR malformada | DEMONSTRATED (11 mutaciones, cada una con su código) | `tests/test_ir.py::ValidatorRejects` |
 | Inventario de candidatos a backend en `workspace/assembly` | DEMONSTRATED (2026-10-28) | `evidence/inventory/` |
 | Toolchains del host para olas 1–5 presentes | DEMONSTRATED (2026-10-28) | `evidence/inventory/toolchains_2026-10-28.txt` |

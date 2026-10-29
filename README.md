@@ -2,9 +2,9 @@
 
 **Repo PRIVADO** (decisión de Danny, 2026-10-28): sin licencia ni remoto público.
 
-**Estado: `EXECUTABLE`** (fase F3): intérprete de referencia conforme al corpus
-v0.1 y una IR canónica (ISY-IR) que preserva la semántica. Todavía no hay
-backend nativo (F4).
+**Estado: `EXECUTABLE`** (fase F4): intérprete de referencia conforme al corpus
+v0.1, IR canónica (ISY-IR) y un primer backend nativo (C vía gcc/clang)
+verificado contra la referencia.
 
 ## Respuestas rápidas (estándar §16)
 
@@ -13,9 +13,9 @@ backend nativo (F4).
 | ¿Qué es? | Un lenguaje pequeño con semántica propia y un compilador que usa muchos lenguajes como backends por contrato. |
 | ¿Qué lo hace distinto? | La semántica es de ISyCoLang; C, Rust, COBOL, Prolog, esolangs… compiten por implementarla y la evidencia elige. Un carril aparte (3OPS Lab) investiga bases de tres operaciones. |
 | ¿Formato? | `.isy`, spec congelada en `spec/CORE.md` (v0.1). |
-| ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` |
+| ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c` para nativo) |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia en Python, semántica normativa). |
-| ¿Qué está demostrado? | Intérprete conforme al corpus (58/58), redondeo verificado contra `decimal`, inventario de backends. |
+| ¿Qué está demostrado? | Intérprete conforme al corpus (58/58), IR que preserva la semántica, backend C igual a la referencia (corpus + 24 612 corridas diferenciales, gcc y clang, sin UB bajo sanitizers). Ver claim table. |
 | ¿Qué NO está demostrado? | Todo lo demás; ver la claim table en `ROADMAP.md` §6. |
 | ¿Tests? | `python3 -m unittest discover -s tests -v` |
 | ¿Evidencia? | `evidence/` |
@@ -32,11 +32,15 @@ evidence/inventory/                salidas del inventario y de toolchains
 spec/CORE.md                       semántica v0.1 congelada (+ ERRATA_v0.1.md)
 spec/IR.md                         forma de ISY-IR v0.1 (lo que reciben los backends)
 docs/decisions/                    decisiones registradas (p. ej. no reusar Code IR)
+docs/BACKEND_C.md                  backend C: garantías, protocolo, límites
+isyco/backends/c.py                ISY-IR -> C -> binario nativo
+isyco/difftest.py                  diferencial por tipo numérico en valores frontera
 isyco/                             intérprete de referencia y CLI
 programs/conformance/              corpus v0.1 (expected previos al intérprete)
 tests/                             conformidad, determinismo, sabotaje, oráculo
 tools/run_conformance.py           corre el corpus y guarda evidencia nueva
 tools/ir_gate.py                   compara IR vs referencia y guarda evidencia
+tools/c_gate.py                    gate F4 (tres vías, gcc/clang, sanitizers, sabotaje)
 ```
 
 ## Reproducir lo que existe
@@ -44,9 +48,10 @@ tools/ir_gate.py                   compara IR vs referencia y guarda evidencia
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 31 tests
+python3 -m unittest discover -s tests -v       # 39 tests
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
+python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
 python3 tools/run_conformance.py               # corpus + evidencia nueva
 ```
 
