@@ -1,6 +1,6 @@
 # ISyCoLang
 
-**Repo PRIVADO** (decisión de Danny, 2026-10-28): sin licencia ni remoto público.
+**Repo PRIVADO** (decisión de Danny, 2026-10-28): sin licencia ni remoto público; remoto privado en GitHub.
 
 **Estado: `EXECUTABLE`** (fase F5): intérprete de referencia conforme al corpus
 v0.1, IR canónica (ISY-IR) y backends nativos C, Rust y Zig verificados contra
