@@ -1,0 +1,1 @@
+{"out": "evidence/inventory/assembly_inventory_2026-10-29T000520Z.json", "sha256": "6feafd2c93027e7ae42c6977d62cd694bd4a636bc2385366e952d3368ed1751d", "dirs": 165, "counts": {"BOOTSTRAP_ONLY": 99, "INTERPRETER_PY": 54, "NON_ENGINE:SCAFFOLD": 9, "NON_ENGINE:TOOL": 1, "UNCLASSIFIED": 2}}

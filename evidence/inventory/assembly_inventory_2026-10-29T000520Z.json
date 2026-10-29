@@ -1,0 +1,1171 @@
+{
+  "schema": "isycolang.assembly_inventory/1",
+  "generated_utc": "2026-10-29T000520Z",
+  "assembly_root": "/home/danny/Development/ISyCo/workspace/assembly",
+  "excluded": "carpetas que empiezan con '_' o '.' (p. ej. _quarantine)",
+  "dirs": 165,
+  "counts": {
+    "BOOTSTRAP_ONLY": 99,
+    "INTERPRETER_PY": 54,
+    "NON_ENGINE:SCAFFOLD": 9,
+    "NON_ENGINE:TOOL": 1,
+    "UNCLASSIFIED": 2
+  },
+  "rows": [
+    {
+      "slug": "ada",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "agda",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "apl",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "arnoldc",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "asciidots",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "assembly",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "assemblyscript",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "awk",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "ballerina",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "bangbang_brainfeed",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "bash",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "basic",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "bct",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "befunge",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "brainfuck",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "c",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "c++",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "c_flavored_brainfuck",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "chef",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "chicken",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "chinese_ids",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "clojure",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "cobol",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "coffeescript",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "coq",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "cow",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "crystal",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "csharp",
+      "kind": "UNCLASSIFIED",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "cuda",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "cue",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "cyclictag",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "d",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "dart",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "deadfish",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "dhall",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "dotacode",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": true
+    },
+    {
+      "slug": "duelcode",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": true
+    },
+    {
+      "slug": "ebpf",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "elixir",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "elm",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "erlang",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "factor",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "fish",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "flow",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": true
+    },
+    {
+      "slug": "forth",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "fortran",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "fractran",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "fsharp",
+      "kind": "UNCLASSIFIED",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "gc",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "gdscript",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "gleam",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "go",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "godot",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "groovy",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "hare",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "haskell",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "haxe",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "hlglsl",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "holographic",
+      "kind": "NON_ENGINE:TOOL",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "hostile_parasite",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "hq9",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "hy",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "idris2",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "intercal",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "iota",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "j",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "jajaja",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "java",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "javascript",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "jot",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "jq",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "jsonnet",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "julia",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "kotlin",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "lazyk",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "lean4",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "lolcode",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "lua",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "malbolge",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "markovji",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": true
+    },
+    {
+      "slug": "matlab",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "mercury",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "mojo",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "ndim",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "nefunge",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "neko",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "nim",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "nix",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "objc",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "ocaml",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "odin",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "ook",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "opencl",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "oz",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "paren_comma_bang",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "pascal",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "path",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "perl",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "php",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "piet",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "piton",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "pokecode",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": true
+    },
+    {
+      "slug": "pony",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "powershell",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "pprime",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "prolog",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "python",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "python_host",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "r",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "r110",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "racket",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "radioelectro",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "raku",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "red",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "rego",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "rockstar",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "ruby",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "rust",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "sbcl",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "scala",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "scheme",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "shakespeare",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "sharp_hell",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "smalltalk",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "sml",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "solidity",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "spellcode",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": true
+    },
+    {
+      "slug": "sql",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "starfish",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "swift",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "systemverilog",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "tcl",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "thue",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "trefunge",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "twotag",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "typescript",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "underload",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "unefunge",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "unison",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "unity",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "unlambda",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "unreal",
+      "kind": "NON_ENGINE:SCAFFOLD",
+      "has_entry": false,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "v",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "vala",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "verilog",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "vhdl",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_ab_analysis",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_factorizer",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_fixedpoint",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_guided_factor",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_holo",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_miniquine_synth",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_mutator",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_ouroboros",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_personality_switch",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_pruner",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_quine_check",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_saverestore",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "walbolge_synthesizer",
+      "kind": "INTERPRETER_PY",
+      "has_entry": false,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "wasm",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "whitespace",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "wierd",
+      "kind": "INTERPRETER_PY",
+      "has_entry": true,
+      "has_interpreter_py": true,
+      "has_source_json": false
+    },
+    {
+      "slug": "wolfram-language",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    },
+    {
+      "slug": "zig",
+      "kind": "BOOTSTRAP_ONLY",
+      "has_entry": true,
+      "has_interpreter_py": false,
+      "has_source_json": false
+    }
+  ]
+}
