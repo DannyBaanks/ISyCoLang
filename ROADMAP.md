@@ -102,7 +102,7 @@ Definir en `spec/CORE.md`, antes de escribir el parser:
 byte a byte); casos adversariales (overflow, división por cero, límite de
 pasos) dan el estado correcto, nunca `HALTED` por `LIMIT_REACHED`.
 
-### F3 — IR canónica
+### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).
 - Validador de mundo cerrado.
@@ -240,6 +240,8 @@ Correcciones al V0 que este carril adopta:
 | El intérprete cumple el corpus v0.1 (58 casos, expected previos al intérprete) | DEMONSTRATED | `evidence/conformance/` |
 | El redondeo decimal coincide con una implementación independiente (`decimal` de Python) | VERIFIED (20 000 casos aleatorios × 3 modos) | `tests/test_reference.py::RoundingOracle` |
 | El corpus detecta semánticas saboteadas | DEMONSTRATED (4 mutaciones) | `tests/test_reference.py::Sabotage` |
+| ISY-IR preserva la semántica: resultado y traza idénticos a la referencia | DEMONSTRATED (corpus × trazas stmt/full + 4 programas de IR con límites ajustados) | `evidence/ir/`, `tests/test_ir.py` |
+| El validador de IR rechaza IR malformada | DEMONSTRATED (11 mutaciones, cada una con su código) | `tests/test_ir.py::ValidatorRejects` |
 | Inventario de candidatos a backend en `workspace/assembly` | DEMONSTRATED (2026-10-28) | `evidence/inventory/` |
 | Toolchains del host para olas 1–5 presentes | DEMONSTRATED (2026-10-28) | `evidence/inventory/toolchains_2026-10-28.txt` |
 | La arquitectura V1 es viable | INFERRED | `docs/FEASIBILITY_2026-10-28.md` |

@@ -49,6 +49,7 @@ def _copy(value):
 class Frame:
     fn: A.Fn
     scopes: list = field(default_factory=lambda: [{}])
+    types: dict = field(default_factory=dict)  # nombre -> tipo de la variable visible
 
     def get(self, name):
         for scope in reversed(self.scopes):
@@ -91,17 +92,9 @@ class Interpreter:
                "at": at, "kind": kind, **data}
         if self.trace_level == "full" and self.frames:
             frame = self.frames[-1]
-            row["locals"] = {name: self.show(value)
+            row["locals"] = {name: canonical(value, frame.types[name])
                              for scope in frame.scopes for name, value in scope.items()}
         self.trace.append(row)
-
-    @staticmethod
-    def show(value):
-        if isinstance(value, bool):
-            return "true" if value else "false"
-        if isinstance(value, list):
-            return [Interpreter.show(v) for v in value]
-        return str(value)
 
     # --- llamadas ---------------------------------------------------------------
     def call(self, fn: A.Fn, args: list, at: str):
@@ -109,8 +102,9 @@ class Interpreter:
         if len(self.frames) + 1 > self.limits["max_call_depth"]:
             raise LimitReached("max_call_depth", at)
         frame = Frame(fn)
-        for (name, _, _), value in zip(fn.params, args):
+        for (name, ty, _), value in zip(fn.params, args):
             frame.scopes[0][name] = _copy(value)
+            frame.types[name] = ty
         self.frames.append(frame)
         self.event("enter", fn.at, args=[canonical(v, t) for v, (_, t, _) in zip(args, fn.params)])
         try:
@@ -138,6 +132,7 @@ class Interpreter:
         if isinstance(s, A.Let):
             value = _copy(self.eval(s.expr))
             frame.scopes[-1][s.name] = value
+            frame.types[s.name] = s.type
             self.event("assign", s.at, name=s.name, value=canonical(value, s.type))
         elif isinstance(s, A.Assign):
             if s.index is None:

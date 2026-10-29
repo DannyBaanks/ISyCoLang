@@ -1,7 +1,11 @@
-"""CLI: python3 -m isyco run PROGRAMA.isy [--input JSON] [--trace stmt --trace-out F]
+"""CLI de ISyCoLang.
 
-Imprime el documento de resultado (JSON canónico, spec §10.2). Código de salida:
-0 HALTED · 2 INVALID_PROGRAM · 3 ERROR · 4 LIMIT_REACHED · 5 TIMEOUT · 1 uso/IO.
+    python3 -m isyco run PROGRAMA.isy [--input JSON] [--via ast|ir] [--trace stmt --trace-out F]
+    python3 -m isyco ir  PROGRAMA.isy        # imprime la ISY-IR canónica
+
+`run` imprime el documento de resultado (JSON canónico, spec §10.2). Código de
+salida: 0 HALTED · 2 INVALID_PROGRAM · 3 ERROR · 4 LIMIT_REACHED · 5 TIMEOUT · 1 uso/IO.
+`ir` sale con 0 si el programa es válido y 2 si no.
 """
 from __future__ import annotations
 
@@ -10,7 +14,10 @@ import json
 import sys
 from pathlib import Path
 
+from .errors import InvalidProgram
 from .interp import DEFAULT_LIMITS, TRACE_LEVELS, canonical_json, run
+from .ir import canonical_bytes
+from .ir_interp import compile_ir, run_via_ir
 
 EXIT = {"HALTED": 0, "INVALID_PROGRAM": 2, "ERROR": 3, "LIMIT_REACHED": 4, "TIMEOUT": 5}
 
@@ -24,18 +31,33 @@ def main(argv=None) -> int:
     for name, default in DEFAULT_LIMITS.items():
         run_p.add_argument("--" + name.replace("_", "-"), type=int, default=default)
     run_p.add_argument("--timeout-ms", type=int, default=60_000)
+    run_p.add_argument("--via", choices=("ast", "ir"), default="ast",
+                       help="ast = intérprete de referencia; ir = intérprete de ISY-IR")
     run_p.add_argument("--trace", choices=TRACE_LEVELS, default="none")
     run_p.add_argument("--trace-out", type=Path)
+    ir_p = sub.add_parser("ir", help="imprimir la ISY-IR canónica de un programa")
+    ir_p.add_argument("program", type=Path)
     args = parser.parse_args(argv)
 
     try:
         data = args.program.read_bytes()
-        inputs = json.loads(args.input)
+        inputs = json.loads(args.input) if args.cmd == "run" else None
     except (OSError, json.JSONDecodeError) as exc:
         print(f"isyco: {exc}", file=sys.stderr)
         return 1
+
+    if args.cmd == "ir":
+        try:
+            module = compile_ir(data)
+        except InvalidProgram as err:
+            print(f"INVALID_PROGRAM({err.code}) at {err.at}: {err.detail}", file=sys.stderr)
+            return 2
+        sys.stdout.write(canonical_bytes(module).decode("utf-8") + "\n")
+        return 0
+
     limits = {name: getattr(args, name) for name in DEFAULT_LIMITS}
-    result, trace = run(data, inputs, limits, args.trace, args.timeout_ms)
+    runner = run_via_ir if args.via == "ir" else run
+    result, trace = runner(data, inputs, limits, args.trace, args.timeout_ms)
     if args.trace_out is not None:
         args.trace_out.write_text("".join(canonical_json(row) + "\n" for row in trace),
                                   encoding="utf-8")
