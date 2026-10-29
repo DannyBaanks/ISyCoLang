@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 from isyco import run  # noqa: E402
 from isyco.backends import available, registry  # noqa: E402
-from isyco.backends.base import ALL_FEATURES, features_of  # noqa: E402
+from isyco.backends.base import ALL_FEATURES, GNU_TIME, features_of  # noqa: E402
 from isyco.backends.c import CBackend  # noqa: E402
 from isyco.conformance import COMPARED, load_all  # noqa: E402
 from isyco.difftest import DEC_TYPES, INT_TYPES, compare  # noqa: E402
@@ -137,6 +137,31 @@ def _make_conformance(name):
                 self.assertNotIn(value, source)
             other, _ = self.backend.run(case["program"], ["2000.00", "0.0525"])
             self.assertEqual(other["emits"], ["8.22", "16.44", "24.66"])
+
+        def test_sabotages_detected(self):
+            # Cada sabotaje declarado debe hacer fallar el corpus: si no, la suite no
+            # distinguiría este backend de uno roto (spec/BACKEND.md §5).
+            self.assertEqual(set(self.backend.sabotages), {"half_even_as_half_up", "div_floor"})
+            for sabotage in self.backend.sabotages:
+                caught = any(
+                    {k: run(c["program"], c["input"], c.get("limits"))[0][k] for k in KEYS}
+                    != {k: self.backend.run(c["program"], c["input"], c.get("limits"),
+                                            sabotage=sabotage)[0].get(k) for k in KEYS}
+                    for c in CORPUS)
+                self.assertTrue(caught, sabotage)
+
+        def test_cost_is_measured_and_not_compared(self):
+            case = by_name("027_interes")
+            got, _ = self.backend.run(case["program"], case["input"])
+            cost = got["cost"]
+            self.assertEqual(set(cost), {"wall_ms", "user_ms", "sys_ms", "max_rss_kb", "compile_ms"})
+            self.assertGreater(cost["wall_ms"], 0)
+            if GNU_TIME:
+                # Pico del binario, no del intérprete de Python que lo lanza (~12 MB).
+                self.assertLess(cost["max_rss_kb"], 10_000)
+            else:
+                self.assertIsNone(cost["max_rss_kb"])
+            self.assertNotIn("cost", KEYS)
 
     Conformance.__name__ = Conformance.__qualname__ = f"Conformance_{name}"
     return Conformance

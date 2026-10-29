@@ -126,7 +126,7 @@ superado de forma explícita en `programs/conformance/SUPERSEDED.json`.
 **Gate F4:** 100 % del corpus `EQUIVALENT_WITHIN_DECLARED_DOMAIN`; el sabotaje
 falla la suite. Primera afirmación `DEMONSTRATED` del proyecto.
 
-### F5 — Contrato de backend `ISY_BACKEND/1` y adapters  `[EN CURSO — ola 1 (C, Rust, Zig) PASS 2026-10-29: spec/BACKEND.md; evidence/backends/gate_2026-10-29T022957Z.json · olas 2–6 pendientes · costo medido NOT_DEMONSTRATED]`
+### F5 — Contrato de backend `ISY_BACKEND/1` y adapters  `[EN CURSO — ola 1 (C, Rust, Zig) PASS 2026-10-29 con sabotajes y costo medido: spec/BACKEND.md; evidence/backends/gate_2026-10-29T055122Z.json · olas 2–6 pendientes]`
 
 Los engines de `workspace/assembly` hoy implementan E=(I,X,O,S): **ejecutan su
 propio bootstrap**, no programas externos. Para ser backends hace falta un
@@ -253,9 +253,10 @@ Correcciones al V0 que este carril adopta:
 | Backends Rust y Zig: binario nativo == referencia en ambos corpus y en el diferencial por tipo | DEMONSTRATED: 78/78 y 8 484 corridas sin diferencias cada uno | `evidence/backends/gate_2026-10-29T022957Z.json` |
 | Un backend que no declara una capacidad responde `UNSUPPORTED` y no ejecuta el programa | DEMONSTRATED (backend de prueba sin decimales) | `tests/test_backends.py::Unsupported` |
 | La suite detecta un backend C saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
-| La suite detecta un backend Rust o Zig saboteado | NOT_DEMONSTRATED (sin sabotajes propios; solo el stub `test_engine_does_the_work`) | — |
+| La suite detecta un backend Rust o Zig saboteado | DEMONSTRATED (2026-10-29): los mismos 2 sabotajes que C; cada uno falla corpus (3 y 2 casos) y diferencial (12 y 53 diferencias), igual en los tres backends | `evidence/backends/gate_2026-10-29T055122Z.json`, `tests/test_backends.py` |
 | Backends de las olas 2–6 de F5 (COBOL, Fortran, Prolog/z3, Go/Java/…, esolangs) | NOT_DEMONSTRATED (no implementados) | — |
-| El contrato de backend reporta costo medido | NOT_DEMONSTRATED (en el contrato de F5, no en `ISY_BACKEND/1`) | — |
+| El contrato de backend reporta costo medido (pared, CPU, pico de memoria del binario, compilación) | DEMONSTRATED (2026-10-29), informativo y no comparado; pico de memoria por GNU time (el rusage de un hijo de Python mide al intérprete) | `spec/BACKEND.md` §3.1, `evidence/backends/gate_2026-10-29T055122Z.json` |
+| Un backend es más rápido o más ligero que otro | NOT_DEMONSTRATED (una corrida por caso en el gate, sin repeticiones ni control de carga; eso es F6) | — |
 | Aritmética de ISyCoLang implementada dos veces de forma independiente (Python exacto y C con `__int128`) con el mismo resultado | VERIFIED dentro del dominio probado | `evidence/c/` |
 | El validador de IR rechaza IR malformada | DEMONSTRATED (11 mutaciones, cada una con su código) | `tests/test_ir.py::ValidatorRejects` |
 | Inventario de candidatos a backend en `workspace/assembly` | DEMONSTRATED (2026-10-28) | `evidence/inventory/` |

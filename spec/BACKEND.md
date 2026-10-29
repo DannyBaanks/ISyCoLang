@@ -8,7 +8,7 @@ entrada, `spec/IR.md`. Un backend **implementa** esa semántica; nunca la define
 
 ```text
 entrada:  módulo ISY-IR validado  +  entrada canónica  +  límites
-salida:   documento de resultado de CORE §10.2 (status, code, emits, return, steps)
+salida:   documento de resultado de CORE §10.2 (status, code, emits, return, steps) + `cost` (§3.1)
 ```
 
 - El frontend (lexer, parser, checker, lowering, validador de IR) es **común** a
@@ -57,6 +57,27 @@ X <status> <code|-> <steps>      siempre la última línea
 - El proceso padre sube `RLIMIT_STACK` hasta el límite duro: la recursión
   profunda con arreglos copiados por valor necesita pila.
 
+### 3.1 Costo medido
+
+Todo resultado de un backend nativo lleva `cost` (agregado 2026-10-29):
+
+```text
+wall_ms      tiempo de pared de la ejecución (sin compilar)
+user_ms      CPU de usuario del hijo (wait4)
+sys_ms       CPU de sistema del hijo (wait4)
+max_rss_kb   pico de memoria del binario, por GNU time (`/usr/bin/time -f %M`)
+compile_ms   ms de compilación, o null si el binario venía de la caché
+```
+
+- El costo es **medido, no semántico**: varía entre corridas y máquinas, y
+  nunca entra en la comparación de conformidad (§5).
+- `max_rss_kb` no se toma del rusage de un hijo de Python: Linux conserva el
+  pico de memoria a través de `execve`, así que mediría al intérprete
+  (~12 MB) y no al binario. Sin GNU time vale `null` (no medido), nunca se
+  estima. El piso de GNU time es ~1,3 MB (C/Rust usan libc; Zig no, ~0,4 MB).
+- En `TIMEOUT` el costo es parcial: el grupo de procesos se mata antes de
+  que GNU time reporte, y `max_rss_kb` queda `null`.
+
 ## 4. Obligaciones semánticas (todas las de CORE, en particular)
 
 | obligación | por qué es fácil equivocarse |
@@ -80,15 +101,18 @@ Un backend es **conforme** cuando, sobre los corpus `programs/conformance*`:
    declara. Un stub que imprime respuestas conocidas no puede pasarlo: las
    entradas son aleatorias con semilla y en valores frontera;
 4. **el engine hace el trabajo**: el código generado no contiene las salidas
-   esperadas y cambiar la entrada cambia la salida (estándar §9).
+   esperadas y cambiar la entrada cambia la salida (estándar §9);
+5. **la suite lo distingue de un backend roto**: cada sabotaje que el backend
+   declara (`sabotages`: hoy `half_even_as_half_up` y `div_floor`) hace
+   fallar el corpus y el diferencial.
 
-`tools/backend_gate.py` comprueba los cuatro puntos para cada backend instalado
+`tools/backend_gate.py` comprueba los cinco puntos y resume el costo medido para cada backend instalado
 y guarda la evidencia en `evidence/backends/`.
 
 ## 6. Backends registrados
 
 | backend | toolchain | capacidades | notas |
 |---|---|---|---|
-| `c` | gcc / clang (GNU C11) | todas | `__int128`, builtins de overflow; sabotajes de prueba |
-| `rust` | rustc (ed. 2021) | todas | `-C overflow-checks=on -C panic=abort` |
-| `zig` | zig 0.16 | todas | `-O ReleaseSafe`; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |
+| `c` | gcc / clang (GNU C11) | todas | `__int128`, builtins de overflow; 2 sabotajes de prueba |
+| `rust` | rustc (ed. 2021) | todas | `-C overflow-checks=on -C panic=abort`; 2 sabotajes de prueba |
+| `zig` | zig 0.16 | todas | `-O ReleaseSafe`; 2 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |

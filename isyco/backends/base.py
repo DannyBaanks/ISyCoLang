@@ -15,7 +15,11 @@ from __future__ import annotations
 import hashlib
 import os
 import resource
+import shutil
 import subprocess
+import tempfile
+import threading
+import time
 from pathlib import Path
 
 from ..errors import InvalidProgram
@@ -26,6 +30,7 @@ from ..ir_interp import compile_ir
 from ..types import ArrT, BoolT, DecT, IntT, parse_canonical
 
 BUILD_ROOT = Path(__file__).resolve().parents[2] / "build"
+GNU_TIME = "/usr/bin/time" if Path("/usr/bin/time").exists() else None   # GNU time: pico de memoria
 
 ALL_FEATURES = frozenset(
     {f"int{bits}" for bits in (8, 16, 32, 64)}
@@ -107,7 +112,8 @@ class Backend:
         raise NotImplementedError
 
     # --- compilación con caché ------------------------------------------------
-    def build(self, source: str, extra_flags: tuple = ()) -> Path:
+    def build(self, source: str, extra_flags: tuple = ()) -> tuple[Path, float | None]:
+        """Binario compilado y ms de compilación (None si venía de la caché)."""
         # `toolchain()` lanza un subproceso (--version); el diferencial llama a
         # build miles de veces con el mismo binario, así que se memoriza.
         version = getattr(self, "_toolchain_version", None)
@@ -118,23 +124,28 @@ class Backend:
         directory = BUILD_ROOT / self.name
         binary = directory / key
         if binary.exists():
-            return binary
+            return binary, None
         directory.mkdir(parents=True, exist_ok=True)
         src = directory / f"{key}{self.extension}"
         src.write_text(source, encoding="utf-8")
         tmp = directory / f"{key}.tmp{os.getpid()}"
+        start = time.perf_counter()
         proc = subprocess.run(self.compile_cmd(src, tmp, extra_flags), capture_output=True,
                               text=True, cwd=directory)
+        compile_ms = (time.perf_counter() - start) * 1000
         if proc.returncode != 0:
             raise RuntimeError(f"{self.name}: el compilador falló:\n{(proc.stderr or proc.stdout)[:4000]}")
         tmp.replace(binary)
-        return binary
+        return binary, compile_ms
 
     # --- ejecución ------------------------------------------------------------
     def run(self, data: bytes, inputs: list, limits: dict | None = None, trace: str = "none",
             timeout_ms: int | None = 60_000, sabotage: str | None = None,
             extra_flags: tuple = ()) -> tuple[dict, list]:
-        """Mismo contrato que interp.run. No produce traza."""
+        """Mismo contrato que interp.run. No produce traza.
+
+        Agrega `cost` (spec/BACKEND.md §3.1): medido, no semántico; nunca se compara
+        en conformidad."""
         lim = dict(DEFAULT_LIMITS)
         lim.update(limits or {})
         try:
@@ -155,24 +166,86 @@ class Backend:
             result.update(status="UNSUPPORTED", code=",".join(missing), emits=[], steps=None)
             result["return"] = None
             return result, []
-        binary = self.build(self.emit(module, sabotage), extra_flags)
-        try:
-            proc = subprocess.run(
-                [str(binary), str(lim["max_steps"]), str(lim["max_call_depth"]),
-                 str(lim["max_emits"]), *args],
-                capture_output=True, text=True, preexec_fn=_raise_stack_limit,
-                timeout=None if timeout_ms is None else timeout_ms / 1000)
-        except subprocess.TimeoutExpired:
+        binary, compile_ms = self.build(self.emit(module, sabotage), extra_flags)
+        argv = [str(binary), str(lim["max_steps"]), str(lim["max_call_depth"]),
+                str(lim["max_emits"]), *args]
+        returncode, stdout, stderr, cost = run_measured(
+            argv, None if timeout_ms is None else timeout_ms / 1000)
+        cost["compile_ms"] = None if compile_ms is None else round(compile_ms, 3)
+        result["cost"] = cost
+        if returncode is None:
             result.update(status="TIMEOUT", code=None, emits=[], steps=None)
             result["return"] = None
             return result, []
-        result.update(parse_output(proc.stdout))
-        if proc.returncode != 0 or proc.stderr:
-            result["backend_stderr"] = proc.stderr[:2000]
-            result["backend_exit"] = proc.returncode
-            if proc.returncode != 0:
+        result.update(parse_output(stdout))
+        if returncode != 0 or stderr:
+            result["backend_stderr"] = stderr[:2000]
+            result["backend_exit"] = returncode
+            if returncode != 0:
                 result["status"] = "BACKEND_CRASH"
         return result, []
+
+
+def run_measured(argv: list[str], timeout_s: float | None) -> tuple[int | None, str, str, dict]:
+    """Ejecuta el binario y mide su costo (spec/BACKEND.md §3.1).
+
+    - wall/user/sys: wait4 sobre el hijo (incluye al lanzador `time` si se usa; ~1 ms).
+    - max_rss_kb: lo reporta GNU time (`/usr/bin/time -f %M`). No se puede leer del
+      rusage de un hijo de Python: Linux conserva el pico de memoria a través de
+      execve, así que mediría al intérprete (~12 MB) y no al binario. Sin GNU time
+      queda en None (no medido), nunca estimado.
+
+    Devuelve (returncode, stdout, stderr, cost); returncode None = TIMEOUT.
+    """
+    rss_file = None
+    if GNU_TIME:
+        fd, rss_file = tempfile.mkstemp(prefix="isy_rss_")
+        os.close(fd)
+        argv = [GNU_TIME, "-f", "%M", "-o", rss_file, *argv]
+    start = time.perf_counter()
+    proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            preexec_fn=_raise_stack_limit, start_new_session=True)
+    chunks = {"out": b"", "err": b""}
+
+    def drain(stream, key):
+        chunks[key] = stream.read()
+
+    readers = [threading.Thread(target=drain, args=(proc.stdout, "out")),
+               threading.Thread(target=drain, args=(proc.stderr, "err"))]
+    for t in readers:
+        t.start()
+    timed_out = threading.Event()
+    timer = None
+    if timeout_s is not None:
+        def kill():
+            timed_out.set()
+            try:
+                os.killpg(proc.pid, 9)   # grupo entero: el lanzador y el binario
+            except ProcessLookupError:
+                pass
+        timer = threading.Timer(timeout_s, kill)
+        timer.start()
+    _, status, usage = os.wait4(proc.pid, 0)
+    wall_ms = (time.perf_counter() - start) * 1000
+    proc.returncode = os.waitstatus_to_exitcode(status)   # ya cosechado: que Popen no espere
+    if timer is not None:
+        timer.cancel()
+    for t in readers:
+        t.join()
+    proc.stdout.close()
+    proc.stderr.close()
+    max_rss_kb = None
+    if rss_file is not None:
+        lines = Path(rss_file).read_text().strip().splitlines()
+        os.unlink(rss_file)
+        if lines and lines[-1].isdigit():
+            max_rss_kb = int(lines[-1])
+    cost = {"wall_ms": round(wall_ms, 3), "user_ms": round(usage.ru_utime * 1000, 3),
+            "sys_ms": round(usage.ru_stime * 1000, 3), "max_rss_kb": max_rss_kb}
+    # TIMEOUT solo si el temporizador lo mató; si terminó solo justo a tiempo, cuenta su resultado.
+    returncode = None if timed_out.is_set() and proc.returncode == -9 else proc.returncode
+    return (returncode, chunks["out"].decode("utf-8", "replace"),
+            chunks["err"].decode("utf-8", "replace"), cost)
 
 
 def _raise_stack_limit() -> None:

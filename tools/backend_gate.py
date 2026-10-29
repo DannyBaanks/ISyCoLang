@@ -7,7 +7,9 @@ Por backend (spec/BACKEND.md §5):
 2. casos fuera de capacidades -> UNSUPPORTED (se cuentan aparte);
 3. diferencial por tipo numérico (isyco/difftest.py) contra la referencia;
 4. el engine hace el trabajo: el fuente generado no contiene las salidas
-   esperadas y otra entrada da otra salida.
+   esperadas y otra entrada da otra salida;
+5. cada sabotaje declarado por el backend es detectado (corpus o diferencial);
+6. costo medido (spec/BACKEND.md §3.1): resumen por backend, informativo.
 Escribe evidence/backends/gate_<UTC>.json (nunca sobrescribe).
 """
 from __future__ import annotations
@@ -17,6 +19,7 @@ import hashlib
 import json
 import sys
 from datetime import datetime, timezone
+from functools import partial
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -31,11 +34,13 @@ from isyco.ir_interp import compile_ir  # noqa: E402
 KEYS = COMPARED + ("steps",)
 
 
-def corpus(backend, cases) -> dict:
-    passed, unsupported, failures = 0, [], []
+def corpus(backend, cases, sabotage=None) -> dict:
+    passed, unsupported, failures, costs = 0, [], [], []
     for case in cases:
         ref, _ = run(case["program"], case["input"], case.get("limits"))
-        got, _ = backend.run(case["program"], case["input"], case.get("limits"))
+        got, _ = backend.run(case["program"], case["input"], case.get("limits"), sabotage=sabotage)
+        if got.get("cost"):
+            costs.append(got["cost"])
         if got.get("status") == "UNSUPPORTED":
             unsupported.append({"name": case["name"], "missing": got["code"]})
         elif {k: ref[k] for k in KEYS} == {k: got.get(k) for k in KEYS} and not got.get("backend_stderr"):
@@ -44,7 +49,29 @@ def corpus(backend, cases) -> dict:
             failures.append({"name": case["name"], "reference": {k: ref[k] for k in KEYS},
                              "backend": {k: got.get(k) for k in KEYS},
                              "stderr": got.get("backend_stderr")})
-    return {"cases": len(cases), "passed": passed, "unsupported": unsupported, "failures": failures}
+    return {"cases": len(cases), "passed": passed, "unsupported": unsupported, "failures": failures,
+            "cost": cost_summary(costs)}
+
+
+def cost_summary(costs: list) -> dict:
+    """Resumen del costo medido en las corridas del corpus (no semántico)."""
+    rss = [c["max_rss_kb"] for c in costs if c.get("max_rss_kb") is not None]
+    return {"runs_measured": len(costs),
+            "wall_ms_total": round(sum(c["wall_ms"] for c in costs), 3),
+            "user_ms_total": round(sum(c["user_ms"] for c in costs), 3),
+            "sys_ms_total": round(sum(c["sys_ms"] for c in costs), 3),
+            "max_rss_kb_max": max(rss) if rss else None,
+            "rss_measured_runs": len(rss)}
+
+
+def sabotages(backend, cases, pairs: int) -> dict:
+    out = {}
+    for sabotage in backend.sabotages:
+        res = corpus(backend, cases, sabotage=sabotage)
+        diff = compare(partial(backend.run, sabotage=sabotage), pairs=pairs)
+        out[sabotage] = {"corpus_failures": len(res["failures"]), "difftest_diffs": len(diff["diffs"]),
+                         "detected": bool(res["failures"]) and bool(diff["diffs"])}
+    return out
 
 
 def does_the_work(backend, cases) -> dict:
@@ -80,8 +107,13 @@ def main() -> int:
         print(f"  difftest: {diff['runs']} corridas, {len(diff['diffs'])} diferencias", flush=True)
         entry["does_the_work"] = does_the_work(backend, cases)
         print(f"  engine hace el trabajo: {entry['does_the_work']['ok']}", flush=True)
+        entry["sabotage"] = sabotages(backend, cases, pairs=min(args.pairs, 4))
+        for sab, res in entry["sabotage"].items():
+            print(f"  sabotaje {sab}: detectado={res['detected']} "
+                  f"(corpus {res['corpus_failures']}, diferencial {res['difftest_diffs']})", flush=True)
         entry["conformant"] = (not entry["corpus"]["failures"] and not diff["diffs"]
-                               and entry["does_the_work"]["ok"])
+                               and entry["does_the_work"]["ok"]
+                               and all(r["detected"] for r in entry["sabotage"].values()))
         ok &= entry["conformant"]
         report["backends"][name] = entry
     report["missing_toolchains"] = sorted(set(registry()) - set(available()))

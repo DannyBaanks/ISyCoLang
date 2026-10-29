@@ -74,7 +74,7 @@ fn isy_rdiv(c: &mut Ctx, num: i128, den: i128, mode: u8) -> i128 {
     if 2 * ar > ad { return q + sign; }
     if 2 * ar < ad { return q; }
     if mode == 1 { return q + sign; }
-    if q % 2 == 0 { q } else { q + sign }
+    ISY_HALF_EVEN_TIE
 }
 fn isy_dec_fit(c: &mut Ctx, m: i128, max: i128) -> i128 {
     if m > max || m < -max { isy_fail(c, "OVERFLOW") }
@@ -94,9 +94,20 @@ fn isy_arg(a: &[String], i: usize) -> i128 { a[i].parse::<i128>().unwrap() }
 """
 
 
+HALF_EVEN_TIE = {
+    None: "if q % 2 == 0 { q } else { q + sign }",
+    # Sabotaje deliberado: half_even se comporta como half_up en los empates.
+    "half_even_as_half_up": "q + sign",
+}
+SABOTAGES = ("half_even_as_half_up", "div_floor")
+
+
 class RustEmitter:
-    def __init__(self, module: dict):
+    def __init__(self, module: dict, sabotage: str | None = None):
+        if sabotage is not None and sabotage not in SABOTAGES:
+            raise ValueError(sabotage)
         self.module = module
+        self.sabotage = sabotage
         self.lines: list[str] = []
         self.indent = 1
         self.tmp = 0
@@ -146,7 +157,8 @@ class RustEmitter:
         bodies = [self.function(fn) for fn in self.module["functions"]]
         main = next(f for f in self.module["functions"] if f["name"] == "main")
         return "\n".join([f"// generado por isyco.backends.rust desde ISY-IR {self.module['source_sha256']}",
-                          RUNTIME, *bodies, self.rust_main(main), ""])
+                          RUNTIME.replace("ISY_HALF_EVEN_TIE", HALF_EVEN_TIE.get(self.sabotage, HALF_EVEN_TIE[None])),
+                          *bodies, self.rust_main(main), ""])
 
     def signature(self, fn: dict) -> str:
         types = [ty_from_json(loc["ty"]) for loc in fn["locals"]]
@@ -344,7 +356,12 @@ class RustEmitter:
         if isinstance(t, IntT):
             if op in ("div", "rem"):
                 self.put(f"if {b} == ({0} as {self.rtype(t)}) {{ isy_fail(c, \"DIV_ZERO\") }}")
-                exact = f"(({a} as i128) {'/' if op == 'div' else '%'} ({b} as i128))"
+                if op == "div" and self.sabotage == "div_floor":
+                    # Sabotaje deliberado: división piso en vez de truncada.
+                    exact = (f"{{ let (x, y) = ({a} as i128, {b} as i128); "
+                             f"if x % y != 0 && ((x < 0) != (y < 0)) {{ x / y - 1 }} else {{ x / y }} }}")
+                else:
+                    exact = f"(({a} as i128) {'/' if op == 'div' else '%'} ({b} as i128))"
             elif op == "mul" and t.bits == 64 and not t.signed:
                 return self.temp(t, f"isy_mul_u64(c, {a}, {b}, {OVF_CODE[t.ovf]})")
             else:
@@ -379,6 +396,7 @@ class RustBackend(Backend):
     name = "rust"
     extension = ".rs"
     features = ALL_FEATURES
+    sabotages = SABOTAGES
 
     def toolchain(self) -> str | None:
         if not shutil.which("rustc"):
@@ -386,9 +404,7 @@ class RustBackend(Backend):
         return subprocess.run(["rustc", "--version"], capture_output=True, text=True).stdout.strip()
 
     def emit(self, module: dict, sabotage: str | None = None) -> str:
-        if sabotage is not None:
-            raise ValueError(f"rust no define sabotajes ({sabotage})")
-        return RustEmitter(module).emit()
+        return RustEmitter(module, sabotage).emit()
 
     def compile_cmd(self, source: Path, binary: Path, extra_flags: tuple) -> list[str]:
         return ["rustc", "--edition", "2021", "-O", "-C", "overflow-checks=on", "-C", "panic=abort",
