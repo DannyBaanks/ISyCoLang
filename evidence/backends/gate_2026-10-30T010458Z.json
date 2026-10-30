@@ -1,0 +1,255 @@
+{
+  "schema": "isycolang.backend_gate/1",
+  "pairs_per_op": 8,
+  "git_head": "1ba6b156d32855fe0b3b8107beacd20ff02aef82",
+  "registered": [
+    "c",
+    "rust",
+    "zig"
+  ],
+  "backends": {
+    "c": {
+      "toolchain": "gcc: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 170,
+        "passed": 170,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 109,
+          "wall_ms_total": 305.12,
+          "user_ms_total": 60.473,
+          "sys_ms_total": 196.355,
+          "max_rss_kb_max": 1752,
+          "rss_measured_runs": 109
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 1,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "rust": {
+      "toolchain": "rustc 1.98.1 (48a229cea 2026-09-01)",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 170,
+        "passed": 170,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 109,
+          "wall_ms_total": 404.047,
+          "user_ms_total": 63.715,
+          "sys_ms_total": 268.34,
+          "max_rss_kb_max": 2276,
+          "rss_measured_runs": 109
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 1,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "zig": {
+      "toolchain": "zig 0.16.0",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 170,
+        "passed": 170,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 109,
+          "wall_ms_total": 441.036,
+          "user_ms_total": 67.157,
+          "sys_ms_total": 268.032,
+          "max_rss_kb_max": 420,
+          "rss_measured_runs": 109
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 1,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    }
+  },
+  "missing_toolchains": [],
+  "generated_utc": "2026-10-30T010458Z",
+  "verdict": "PASS"
+}
