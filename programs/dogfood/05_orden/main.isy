@@ -1,0 +1,16 @@
+isyco 0.4
+import moneda;
+import reporte;
+
+fn main(cliente: str<20>, items: [reporte.Linea; 3]) -> dec<10,2> !emit {
+    emit reporte.cabecera(cliente);
+    let total: dec<10,2> = 0.00;
+    let i: i64 = 0;
+    while i < 3 {
+        emit reporte.linea(items[i]);
+        total = total + moneda.redondear(items[i].monto);
+        i = i + 1;
+    }
+    emit reporte.total(total);
+    return total;
+}

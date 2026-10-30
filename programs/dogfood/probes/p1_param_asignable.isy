@@ -1,0 +1,11 @@
+isyco 0.4
+
+# Sonda: ¿se puede reasignar un parámetro? (01_recibo_wanted lo daba por hecho.)
+fn acum(s: str<8>) -> str<8> {
+    s = s + "!";
+    return s;
+}
+
+fn main() -> str<8> {
+    return acum("hola");
+}

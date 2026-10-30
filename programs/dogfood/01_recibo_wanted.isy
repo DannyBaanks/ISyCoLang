@@ -1,0 +1,30 @@
+isyco 0.4
+
+# Sonda de lenguaje: un recibo con tabla alineada, escrito como lo escribiría
+# alguien en Python/C/JS. No se espera que compile: cada error es una feature
+# candidata.
+struct Item { nombre: str<16>, precio: dec<10,2>, piezas: i32 }
+
+fn pad(s: str<16>, ancho: i32) -> str<16> {
+    while len(s) < ancho {
+        s = s + " ";
+    }
+    return s;
+}
+
+fn recibo(it: Item) -> str<48> {
+    let monto: dec<10,2> = it.precio * (it.piezas as dec<10,2>);
+    return pad(it.nombre, 16) + " " + (it.piezas as str<4>) + " @ " + (it.precio as str<10>)
+        + "  " + (monto as str<12>);
+}
+
+fn main(cliente: str<20>, items: [Item; 4]) -> dec<10,2> !emit {
+    let total: dec<10,2> = 0.00;
+    emit "CLIENTE " + cliente;
+    for it in items {
+        emit recibo(it);
+        total = total + it.precio * (it.piezas as dec<10,2>);
+    }
+    emit "TOTAL    " + (total as str<12>);
+    return total;
+}

@@ -1,0 +1,11 @@
+isyco 0.4
+
+# Sonda: no existe un tipo `str` sin capacidad. La capacidad vive en cada firma,
+# así que ninguna función se puede escribir "para cadenas de cualquier ancho".
+fn grito(s: str) -> str {
+    return s + "!";
+}
+
+fn main() -> str<8> {
+    return grito("hola");
+}

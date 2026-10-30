@@ -1,0 +1,45 @@
+isyco 0.4
+
+# Control positivo: un programa numérico clásico, escrito de la única forma que
+# el core permite hoy. Debe compilar y dar el resultado correcto.
+fn mcd(a: i32, b: i32) -> i32 {
+    let x: i32 = a;
+    let y: i32 = b;
+    while y != 0 {
+        let r: i32 = x % y;
+        x = y;
+        y = r;
+    }
+    return x;
+}
+
+fn main(n: i32) -> i32 !emit {
+    let es_primo: [bool; 101] = [true; 101];
+    es_primo[0] = false;
+    es_primo[1] = false;
+    let p: i32 = 2;
+    while p * p <= n {
+        if es_primo[p] {
+            let m: i32 = p * p;
+            while m <= n {
+                es_primo[m] = false;
+                m = m + p;
+            }
+        }
+        p = p + 1;
+    }
+    let cantidad: i32 = 0;
+    let mayor: i32 = 0;
+    let i: i32 = 2;
+    while i <= n {
+        if es_primo[i] {
+            cantidad = cantidad + 1;
+            mayor = i;
+        }
+        i = i + 1;
+    }
+    emit cantidad;
+    emit mayor;
+    emit mcd(1071, 462);
+    return mayor;
+}

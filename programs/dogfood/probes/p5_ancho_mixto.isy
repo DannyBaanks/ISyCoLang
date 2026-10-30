@@ -1,0 +1,16 @@
+isyco 0.4
+
+# Sonda: `len` devuelve i64 y los contadores naturales de un programa son i32;
+# el core exige operandos del mismo tipo. Cada comparación contra len() pide un
+# cast explícito o declarar el contador en i64.
+fn recortar(s: str<32>, n: i32) -> str<32> {
+    let i: i32 = 0;
+    while i < len(s) {
+        i = i + 1;
+    }
+    return slice(s, 0, n) as str<32>;
+}
+
+fn main() -> str<32> {
+    return recortar("abcdefgh", 3);
+}

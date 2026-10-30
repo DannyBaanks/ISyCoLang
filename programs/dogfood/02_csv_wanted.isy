@@ -1,0 +1,31 @@
+isyco 0.4
+
+# Sonda: parsear una fila CSV "nombre;precio;piezas" y producir el total.
+# Así se parsea en cualquier lenguaje: buscar, cortar, convertir.
+struct Item { nombre: str<16>, precio: dec<10,2>, piezas: i32 }
+
+fn campo(fila: str<64>, desde: i64, hasta: i64) -> str<32> {
+    return slice(fila, desde, hasta);
+}
+
+fn main(fila: str<64>) -> dec<10,2> !emit {
+    let i: i64 = 0;
+    let a: i64 = 0;
+    let b: i64 = 0;
+    while i < len(fila) {
+        if fila[i] == 59 {
+            if a == 0 { a = i; } else { b = i; }
+        }
+        i = i + 1;
+    }
+    let it: Item = Item {
+        nombre: campo(fila, 0, a),
+        precio: campo(fila, a + 1, b) as dec<10,2>,
+        piezas: campo(fila, b + 1, len(fila)) as i32
+    };
+    emit it.nombre;
+    emit it.precio;
+    let total: dec<10,2> = it.precio * (it.piezas as dec<10,2>);
+    emit total;
+    return total;
+}

@@ -1,0 +1,19 @@
+isyco 0.4
+
+# El core redondea half_even; un cobro real necesita half_up. Se reimplementa a
+# mano, en el módulo, con centavos enteros.
+fn centavos(m: dec<10,2>) -> i32 {
+    return (m * 100.00) as i32;
+}
+
+fn pesos(c: i32) -> dec<10,2> {
+    return (c / 100) as dec<10,2>;
+}
+
+pub fn redondear(m: dec<10,2>) -> dec<10,2> {
+    let c: i32 = centavos(m);
+    if c % 100 >= 50 {
+        return pesos(c + 100);
+    }
+    return pesos(c);
+}

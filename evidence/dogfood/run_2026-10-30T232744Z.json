@@ -1,0 +1,695 @@
+{
+  "schema": "isycolang.dogfood/1",
+  "git_head": "b0daac5a0c7f6dc1fe496550006a159de2b3805e",
+  "backends": [
+    "c",
+    "cobol",
+    "pydecimal",
+    "rust",
+    "zig"
+  ],
+  "available": [
+    "c",
+    "cobol",
+    "pydecimal",
+    "rust",
+    "zig"
+  ],
+  "cases": [
+    {
+      "case": "01_recibo",
+      "program": "programs/dogfood/01_recibo.isy",
+      "program_sha256": "f96d386ccce6aaec8136ea255ad245fe89243528e941128441d0b5af9eac060e",
+      "input": [
+        "ACME",
+        [
+          {
+            "nombre": "Taladro",
+            "precio": "199.90",
+            "piezas": "3"
+          },
+          {
+            "nombre": "Broca",
+            "precio": "15.50",
+            "piezas": "2"
+          },
+          {
+            "nombre": "Mazo",
+            "precio": "80.00",
+            "piezas": "1"
+          },
+          {
+            "nombre": "Cinta",
+            "precio": "9.99",
+            "piezas": "10"
+          }
+        ]
+      ],
+      "reference": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "CLIENTE ACME",
+          "Taladro         3 @ 199.90 -> 599.70",
+          "Broca           2 @ 15.50 -> 31.00",
+          "Mazo            1 @ 80.00 -> 80.00",
+          "Cinta           10 @ 9.99 -> 99.90",
+          "TOTAL 810.60"
+        ],
+        "return": "810.60"
+      },
+      "steps": 142,
+      "backends": {
+        "c": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "CLIENTE ACME",
+              "Taladro         3 @ 199.90 -> 599.70",
+              "Broca           2 @ 15.50 -> 31.00",
+              "Mazo            1 @ 80.00 -> 80.00",
+              "Cinta           10 @ 9.99 -> 99.90",
+              "TOTAL 810.60"
+            ],
+            "return": "810.60"
+          },
+          "steps": 142,
+          "verdict": "MATCH"
+        },
+        "cobol": {
+          "result": {
+            "status": "UNSUPPORTED",
+            "code": "ir0.2,str,struct",
+            "emits": [],
+            "return": null
+          },
+          "steps": null,
+          "verdict": "UNSUPPORTED",
+          "missing": "ir0.2,str,struct"
+        },
+        "pydecimal": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "CLIENTE ACME",
+              "Taladro         3 @ 199.90 -> 599.70",
+              "Broca           2 @ 15.50 -> 31.00",
+              "Mazo            1 @ 80.00 -> 80.00",
+              "Cinta           10 @ 9.99 -> 99.90",
+              "TOTAL 810.60"
+            ],
+            "return": "810.60"
+          },
+          "steps": 142,
+          "verdict": "MATCH"
+        },
+        "rust": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "CLIENTE ACME",
+              "Taladro         3 @ 199.90 -> 599.70",
+              "Broca           2 @ 15.50 -> 31.00",
+              "Mazo            1 @ 80.00 -> 80.00",
+              "Cinta           10 @ 9.99 -> 99.90",
+              "TOTAL 810.60"
+            ],
+            "return": "810.60"
+          },
+          "steps": 142,
+          "verdict": "MATCH"
+        },
+        "zig": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "CLIENTE ACME",
+              "Taladro         3 @ 199.90 -> 599.70",
+              "Broca           2 @ 15.50 -> 31.00",
+              "Mazo            1 @ 80.00 -> 80.00",
+              "Cinta           10 @ 9.99 -> 99.90",
+              "TOTAL 810.60"
+            ],
+            "return": "810.60"
+          },
+          "steps": 142,
+          "verdict": "MATCH"
+        }
+      }
+    },
+    {
+      "case": "02_csv_bueno",
+      "program": "programs/dogfood/02_csv.isy",
+      "program_sha256": "25fb6a4efa2c39be71345f14d78441af96bd1146963844fc8b1c70a7b84b8679",
+      "input": [
+        "Taladro;199.90;3"
+      ],
+      "reference": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "Taladro",
+          "199.90",
+          "3",
+          "599.70"
+        ],
+        "return": "599.70"
+      },
+      "steps": 69,
+      "backends": {
+        "c": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "Taladro",
+              "199.90",
+              "3",
+              "599.70"
+            ],
+            "return": "599.70"
+          },
+          "steps": 69,
+          "verdict": "MATCH"
+        },
+        "cobol": {
+          "result": {
+            "status": "UNSUPPORTED",
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null
+          },
+          "steps": null,
+          "verdict": "UNSUPPORTED",
+          "missing": "ir0.2,str"
+        },
+        "pydecimal": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "Taladro",
+              "199.90",
+              "3",
+              "599.70"
+            ],
+            "return": "599.70"
+          },
+          "steps": 69,
+          "verdict": "MATCH"
+        },
+        "rust": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "Taladro",
+              "199.90",
+              "3",
+              "599.70"
+            ],
+            "return": "599.70"
+          },
+          "steps": 69,
+          "verdict": "MATCH"
+        },
+        "zig": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "Taladro",
+              "199.90",
+              "3",
+              "599.70"
+            ],
+            "return": "599.70"
+          },
+          "steps": 69,
+          "verdict": "MATCH"
+        }
+      }
+    },
+    {
+      "case": "02_csv_malo",
+      "program": "programs/dogfood/02_csv.isy",
+      "program_sha256": "25fb6a4efa2c39be71345f14d78441af96bd1146963844fc8b1c70a7b84b8679",
+      "input": [
+        "Taladro;199.9;3"
+      ],
+      "reference": {
+        "status": "ERROR",
+        "code": "BAD_FORMAT",
+        "emits": [],
+        "return": null
+      },
+      "steps": 59,
+      "backends": {
+        "c": {
+          "result": {
+            "status": "ERROR",
+            "code": "BAD_FORMAT",
+            "emits": [],
+            "return": null
+          },
+          "steps": 59,
+          "verdict": "MATCH"
+        },
+        "cobol": {
+          "result": {
+            "status": "UNSUPPORTED",
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null
+          },
+          "steps": null,
+          "verdict": "UNSUPPORTED",
+          "missing": "ir0.2,str"
+        },
+        "pydecimal": {
+          "result": {
+            "status": "ERROR",
+            "code": "BAD_FORMAT",
+            "emits": [],
+            "return": null
+          },
+          "steps": 59,
+          "verdict": "MATCH"
+        },
+        "rust": {
+          "result": {
+            "status": "ERROR",
+            "code": "BAD_FORMAT",
+            "emits": [],
+            "return": null
+          },
+          "steps": 59,
+          "verdict": "MATCH"
+        },
+        "zig": {
+          "result": {
+            "status": "ERROR",
+            "code": "BAD_FORMAT",
+            "emits": [],
+            "return": null
+          },
+          "steps": 59,
+          "verdict": "MATCH"
+        }
+      }
+    },
+    {
+      "case": "03_criba",
+      "program": "programs/dogfood/03_criba.isy",
+      "program_sha256": "3d96ff699c027af976f2a35b685e166530f076ebfeb4da2d677683d8ec4f5c2a",
+      "input": [
+        "100"
+      ],
+      "reference": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "25",
+          "97",
+          "21"
+        ],
+        "return": "97"
+      },
+      "steps": 732,
+      "backends": {
+        "c": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "25",
+              "97",
+              "21"
+            ],
+            "return": "97"
+          },
+          "steps": 732,
+          "verdict": "MATCH"
+        },
+        "cobol": {
+          "result": {
+            "status": "UNSUPPORTED",
+            "code": "ir0.2",
+            "emits": [],
+            "return": null
+          },
+          "steps": null,
+          "verdict": "UNSUPPORTED",
+          "missing": "ir0.2"
+        },
+        "pydecimal": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "25",
+              "97",
+              "21"
+            ],
+            "return": "97"
+          },
+          "steps": 732,
+          "verdict": "MATCH"
+        },
+        "rust": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "25",
+              "97",
+              "21"
+            ],
+            "return": "97"
+          },
+          "steps": 732,
+          "verdict": "MATCH"
+        },
+        "zig": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "25",
+              "97",
+              "21"
+            ],
+            "return": "97"
+          },
+          "steps": 732,
+          "verdict": "MATCH"
+        }
+      }
+    },
+    {
+      "case": "04_turnos",
+      "program": "programs/dogfood/04_turnos.isy",
+      "program_sha256": "04fd14ff7ea7129387f46329bf65df2c7c4fbcb6665df7476151eb53cbabc74a",
+      "input": [
+        "9",
+        "14",
+        "3"
+      ],
+      "reference": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "14",
+          "T-001",
+          "T-002",
+          "T-003"
+        ],
+        "return": "3"
+      },
+      "steps": 94,
+      "backends": {
+        "c": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "14",
+              "T-001",
+              "T-002",
+              "T-003"
+            ],
+            "return": "3"
+          },
+          "steps": 94,
+          "verdict": "MATCH"
+        },
+        "cobol": {
+          "result": {
+            "status": "UNSUPPORTED",
+            "code": "ir0.2,str,struct",
+            "emits": [],
+            "return": null
+          },
+          "steps": null,
+          "verdict": "UNSUPPORTED",
+          "missing": "ir0.2,str,struct"
+        },
+        "pydecimal": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "14",
+              "T-001",
+              "T-002",
+              "T-003"
+            ],
+            "return": "3"
+          },
+          "steps": 94,
+          "verdict": "MATCH"
+        },
+        "rust": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "14",
+              "T-001",
+              "T-002",
+              "T-003"
+            ],
+            "return": "3"
+          },
+          "steps": 94,
+          "verdict": "MATCH"
+        },
+        "zig": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "14",
+              "T-001",
+              "T-002",
+              "T-003"
+            ],
+            "return": "3"
+          },
+          "steps": 94,
+          "verdict": "MATCH"
+        }
+      }
+    },
+    {
+      "case": "p4_dividir",
+      "program": "programs/dogfood/probes/p4_dividir.isy",
+      "program_sha256": "3d9efdebcd564fb5d03dccfe7cb8f220d31f285894a0bbc00e6894d989e053af",
+      "input": [
+        "Taladro;15.50;2;envio"
+      ],
+      "reference": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "Taladro",
+          "15.50",
+          "2",
+          "envio"
+        ],
+        "return": "4"
+      },
+      "steps": 105,
+      "backends": {
+        "c": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "Taladro",
+              "15.50",
+              "2",
+              "envio"
+            ],
+            "return": "4"
+          },
+          "steps": 105,
+          "verdict": "MATCH"
+        },
+        "cobol": {
+          "result": {
+            "status": "UNSUPPORTED",
+            "code": "ir0.2,str,struct",
+            "emits": [],
+            "return": null
+          },
+          "steps": null,
+          "verdict": "UNSUPPORTED",
+          "missing": "ir0.2,str,struct"
+        },
+        "pydecimal": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "Taladro",
+              "15.50",
+              "2",
+              "envio"
+            ],
+            "return": "4"
+          },
+          "steps": 105,
+          "verdict": "MATCH"
+        },
+        "rust": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "Taladro",
+              "15.50",
+              "2",
+              "envio"
+            ],
+            "return": "4"
+          },
+          "steps": 105,
+          "verdict": "MATCH"
+        },
+        "zig": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "Taladro",
+              "15.50",
+              "2",
+              "envio"
+            ],
+            "return": "4"
+          },
+          "steps": 105,
+          "verdict": "MATCH"
+        }
+      }
+    },
+    {
+      "case": "05_orden_modulos",
+      "program": "programs/dogfood/05_orden/main.isy",
+      "program_sha256": "099a9f60529672bd313335016c05167dce5b66729dc56a5e22145a268ab35824",
+      "input": [
+        "ACME",
+        [
+          {
+            "texto": "Taladro",
+            "monto": "199.90"
+          },
+          {
+            "texto": "Broca",
+            "monto": "15.50"
+          },
+          {
+            "texto": "Mazo",
+            "monto": "80.00"
+          }
+        ]
+      ],
+      "reference": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "CLIENTE: ACME",
+          "Taladro 199.90",
+          "Broca 15.50",
+          "Mazo 80.00",
+          "TOTAL 296.00"
+        ],
+        "return": "296.00"
+      },
+      "steps": 54,
+      "backends": {
+        "c": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "CLIENTE: ACME",
+              "Taladro 199.90",
+              "Broca 15.50",
+              "Mazo 80.00",
+              "TOTAL 296.00"
+            ],
+            "return": "296.00"
+          },
+          "steps": 54,
+          "verdict": "MATCH"
+        },
+        "cobol": {
+          "result": {
+            "status": "UNSUPPORTED",
+            "code": "ir0.2,str,struct",
+            "emits": [],
+            "return": null
+          },
+          "steps": null,
+          "verdict": "UNSUPPORTED",
+          "missing": "ir0.2,str,struct"
+        },
+        "pydecimal": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "CLIENTE: ACME",
+              "Taladro 199.90",
+              "Broca 15.50",
+              "Mazo 80.00",
+              "TOTAL 296.00"
+            ],
+            "return": "296.00"
+          },
+          "steps": 54,
+          "verdict": "MATCH"
+        },
+        "rust": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "CLIENTE: ACME",
+              "Taladro 199.90",
+              "Broca 15.50",
+              "Mazo 80.00",
+              "TOTAL 296.00"
+            ],
+            "return": "296.00"
+          },
+          "steps": 54,
+          "verdict": "MATCH"
+        },
+        "zig": {
+          "result": {
+            "status": "HALTED",
+            "code": null,
+            "emits": [
+              "CLIENTE: ACME",
+              "Taladro 199.90",
+              "Broca 15.50",
+              "Mazo 80.00",
+              "TOTAL 296.00"
+            ],
+            "return": "296.00"
+          },
+          "steps": 54,
+          "verdict": "MATCH"
+        }
+      }
+    }
+  ],
+  "generated_utc": "2026-10-30T232744Z"
+}

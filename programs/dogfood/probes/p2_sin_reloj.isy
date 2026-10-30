@@ -1,0 +1,10 @@
+isyco 0.4
+
+# Sonda: el lenguaje no tiene forma de observar el mundo. Reloj, argumentos crudos,
+# variables de ambiente y lectura de archivos no existen como efecto declarable:
+# el único efecto del core es `emit`.
+fn main() -> i64 !emit {
+    let t: i64 = now();
+    emit t;
+    return t;
+}

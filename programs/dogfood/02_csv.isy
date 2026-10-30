@@ -1,0 +1,32 @@
+isyco 0.4
+
+# Versión forzada de 02_csv_wanted: `slice` devuelve la capacidad de la cadena
+# fuente (str<64>), así que cada campo tiene que recortarse con `as str<N>` y
+# recién ahí convertirse. Ningún ancho se puede derivar del dato.
+fn main(fila: str<64>) -> dec<10,2> !emit {
+    let n: i64 = len(fila);
+    let i: i64 = 0;
+    let a: i64 = 0;
+    let b: i64 = 0;
+    while i < n {
+        if fila[i] == 59 {
+            if a == 0 {
+                a = i;
+            } else {
+                if b == 0 {
+                    b = i;
+                }
+            }
+        }
+        i = i + 1;
+    }
+    let nombre: str<16> = slice(fila, 0, a) as str<16>;
+    let precio: dec<10,2> = slice(fila, a + 1, b) as str<16> as dec<10,2>;
+    let piezas: i32 = slice(fila, b + 1, n) as str<6> as i32;
+    let total: dec<10,2> = precio * (piezas as dec<10,2>);
+    emit nombre;
+    emit precio;
+    emit piezas;
+    emit total;
+    return total;
+}

@@ -1,0 +1,12 @@
+isyco 0.4
+
+# Sonda: ¿el parámetro entero es reasignable? (las funciones puras del core se
+# usan por copia; esto decide si un `while` natural puede reusar sus entradas.)
+fn cuenta(x: i32) -> i32 {
+    x = x + 1;
+    return x;
+}
+
+fn main() -> i32 {
+    return cuenta(41);
+}

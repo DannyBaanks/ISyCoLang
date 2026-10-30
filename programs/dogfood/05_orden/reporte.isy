@@ -1,0 +1,15 @@
+isyco 0.4
+
+pub struct Linea { texto: str<16>, monto: dec<10,2> }
+
+pub fn cabecera(cliente: str<20>) -> str<40> {
+    return "CLIENTE: " + cliente;
+}
+
+pub fn linea(l: Linea) -> str<32> {
+    return l.texto + " " + (l.monto as str<10>);
+}
+
+pub fn total(t: dec<10,2>) -> str<18> {
+    return "TOTAL " + (t as str<12>);
+}

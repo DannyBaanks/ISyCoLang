@@ -1,0 +1,44 @@
+isyco 0.4
+
+# Versión forzada de 04_turnos_wanted: el estado viaja como parámetro y como
+# valor de retorno, la hora entra por la entrada y el relleno a ceros se
+# programa a mano. Mismo resultado observable, 4x el código.
+struct Ventanilla { atendidos: i32 }
+
+fn ceros(n: i32) -> str<3> {
+    let base: str<3> = n as str<3>;
+    let digitos: i32 = 0;
+    let t: i32 = n;
+    while t > 0 {
+        digitos = digitos + 1;
+        t = t / 10;
+    }
+    let out: str<3> = "";
+    let i: i32 = digitos;
+    while i < 3 {
+        out = out + "0";
+        i = i + 1;
+    }
+    return out + base;
+}
+
+fn etiqueta(n: i32) -> str<8> {
+    return "T-" + ceros(n);
+}
+
+fn atender(v: Ventanilla, llegada: i32) -> Ventanilla !emit {
+    let nuevo: Ventanilla = Ventanilla { atendidos: v.atendidos + 1 };
+    emit etiqueta(nuevo.atendidos);
+    return nuevo;
+}
+
+fn main(llegada: i32, hora: i32, cantidad: i32) -> i32 !emit {
+    let v: Ventanilla = Ventanilla { atendidos: 0 };
+    emit hora;
+    let i: i32 = 0;
+    while i < cantidad {
+        v = atender(v, llegada + i);
+        i = i + 1;
+    }
+    return v.atendidos;
+}

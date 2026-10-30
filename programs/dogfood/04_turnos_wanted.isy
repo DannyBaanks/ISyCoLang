@@ -1,0 +1,27 @@
+isyco 0.4
+
+# Sonda: ventanilla de atención. Un programa así requiere tres cosas que ni la
+# spec v0.1 ni la v0.4 ofrecen: leer la hora, mantener un contador entre
+# llamadas y formar "T-007" con ceros a la izquierda.
+fn etiqueta(n: i32) -> str<8> {
+    return "T-" + (n as str<3>);
+}
+
+fn atender(llegada: i32) -> str<8> !emit {
+    atendidos = atendidos + 1;
+    emit etiqueta(atendidos);
+    return etiqueta(atendidos);
+}
+
+let atendidos: i32 = 0;
+
+fn main(cantidad: i32) -> i32 !emit {
+    let hora: i32 = now();
+    emit hora;
+    let i: i32 = 0;
+    while i < cantidad {
+        emit atender(9 + i);
+        i = i + 1;
+    }
+    return atendidos;
+}

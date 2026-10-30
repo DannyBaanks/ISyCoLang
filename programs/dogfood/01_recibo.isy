@@ -1,0 +1,34 @@
+isyco 0.4
+
+# Versión forzada de 01_recibo_wanted. Cambios impuestos por el core:
+#   - `for it in items` -> while + índice + el literal 4 repetido a mano;
+#   - el parámetro no se reasigna: `pad` copia a una variable local;
+#   - cada número que va a la tabla pasa por `as str<N>` con capacidad a mano.
+struct Item { nombre: str<16>, precio: dec<10,2>, piezas: i32 }
+
+fn pad(s: str<16>) -> str<16> {
+    let out: str<16> = s;
+    while len(out) < 16 {
+        out = out + " ";
+    }
+    return out;
+}
+
+fn recibo(it: Item) -> str<64> {
+    let monto: dec<10,2> = it.precio * (it.piezas as dec<10,2>);
+    return pad(it.nombre) + (it.piezas as str<4>) + " @ " + (it.precio as str<10>)
+        + " -> " + (monto as str<12>);
+}
+
+fn main(cliente: str<20>, items: [Item; 4]) -> dec<10,2> !emit {
+    let total: dec<10,2> = 0.00;
+    emit "CLIENTE " + cliente;
+    let i: i64 = 0;
+    while i < 4 {
+        emit recibo(items[i]);
+        total = total + items[i].precio * (items[i].piezas as dec<10,2>);
+        i = i + 1;
+    }
+    emit "TOTAL " + (total as str<12>);
+    return total;
+}
