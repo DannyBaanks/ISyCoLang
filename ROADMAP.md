@@ -148,7 +148,7 @@ la referencia en el corpus completo.
 **Gate F4:** 100 % del corpus `EQUIVALENT_WITHIN_DECLARED_DOMAIN`; el sabotaje
 falla la suite. Primera afirmación `DEMONSTRATED` del proyecto.
 
-### F5 — Contrato de backend `ISY_BACKEND/1` y adapters  `[EN CURSO — ola 1 (C, Rust, Zig) PASS 2026-10-29 con sabotajes y costo medido: spec/BACKEND.md; evidence/backends/gate_2026-10-29T055122Z.json · olas 2–6 pendientes]`
+### F5 — Contrato de backend `ISY_BACKEND/1` y adapters  `[EN CURSO — ola 1 (C, Rust, Zig) PASS 2026-10-29 con sabotajes y costo medido: spec/BACKEND.md; evidence/backends/gate_2026-10-29T055122Z.json · ola 2 empezada: `pydecimal` PASS 2026-10-30 (evidence/backends/gate_2026-10-30T074904Z.json); COBOL pendiente · olas 3–6 pendientes]`
 
 Los engines de `workspace/assembly` hoy implementan E=(I,X,O,S): **ejecutan su
 propio bootstrap**, no programas externos. Para ser backends hace falta un
@@ -170,7 +170,7 @@ Orden propuesto de backends (por toolchain presente y valor distinto):
 | ola | backends | qué aporta |
 |---|---|---|
 | 1 | C, Rust, Zig | nativo, enteros con ancho explícito |
-| 2 | COBOL (`cobc`), Python `decimal` | decimal de punto fijo verificable (E22) |
+| 2 | COBOL (`cobc`), Python `decimal` **← `pydecimal` PASS 2026-10-30** | decimal de punto fijo verificable (E22) |
 | 3 | Fortran (`gfortran`), Julia | arreglos y numérico científico |
 | 4 | Prolog (`swipl`), z3 | búsqueda y restricciones como backend de funciones declarativas |
 | 5 | Go, Java, .NET, Haskell, OCaml, Lisp (`sbcl`), Lua, Node | interoperabilidad con ecosistemas |
@@ -288,7 +288,8 @@ Correcciones al V0 que este carril adopta:
 | El corpus detecta un enlazador que ignora `pub` | DEMONSTRATED (mutación: 304 y 305 fallan) | `tests/test_modules.py::Sabotage` |
 | La suite detecta un backend C saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
 | La suite detecta un backend Rust o Zig saboteado | DEMONSTRATED (2026-10-29): los mismos 2 sabotajes que C; cada uno falla corpus (3 y 2 casos) y diferencial (12 y 53 diferencias), igual en los tres backends | `evidence/backends/gate_2026-10-29T055122Z.json`, `tests/test_backends.py` |
-| Backends de las olas 2–6 de F5 (COBOL, Fortran, Prolog/z3, Go/Java/…, esolangs) | NOT_DEMONSTRATED (no implementados) | — |
+| Backends de las olas 2–6 de F5 (COBOL, Fortran, Prolog/z3, Go/Java/…, esolangs; `pydecimal` ya está PASS) | COBOL, Fortran, Prolog/z3, Go/Java/…, esolangs: NOT_DEMONSTRATED (no implementados) | — |
+| El contrato acepta un backend cuyo sustrato NO es nativo (Python 3 + `decimal`) con el mismo resultado que la referencia | DEMONSTRATED (2026-10-30): 170/170, 8 484 corridas del diferencial y 1 270 de strings sin diferencias; los 3 sabotajes detectados; todos los redondeos decididos por la división y `quantize` de CPython (la referencia usa enteros escalados), coste medido aparte (RSS de intérprete, ~14 MB) | `evidence/backends/gate_2026-10-30T074904Z.json`, `isyco/backends/pydecimal.py` |
 | El contrato de backend reporta costo medido (pared, CPU, pico de memoria del binario, compilación) | DEMONSTRATED (2026-10-29), informativo y no comparado; pico de memoria por GNU time (el rusage de un hijo de Python mide al intérprete) | `spec/BACKEND.md` §3.1, `evidence/backends/gate_2026-10-29T055122Z.json` |
 | Un backend es más rápido o más ligero que otro | NOT_DEMONSTRATED (una corrida por caso en el gate, sin repeticiones ni control de carga; eso es F6) | — |
 | Aritmética de ISyCoLang implementada dos veces de forma independiente (Python exacto y C con `__int128`) con el mismo resultado | VERIFIED dentro del dominio probado | `evidence/c/` |

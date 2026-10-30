@@ -1,0 +1,336 @@
+{
+  "schema": "isycolang.backend_gate/1",
+  "pairs_per_op": 8,
+  "git_head": "9363868bbcc9b8fdc725fe20a8b591b4fc04434e",
+  "registered": [
+    "c",
+    "pydecimal",
+    "rust",
+    "zig"
+  ],
+  "backends": {
+    "c": {
+      "toolchain": "gcc: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 170,
+        "passed": 170,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 109,
+          "wall_ms_total": 319.81,
+          "user_ms_total": 58.666,
+          "sys_ms_total": 208.726,
+          "max_rss_kb_max": 1748,
+          "rss_measured_runs": 109
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 1,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "rust": {
+      "toolchain": "rustc 1.98.1 (48a229cea 2026-09-01)",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 170,
+        "passed": 170,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 109,
+          "wall_ms_total": 420.381,
+          "user_ms_total": 53.444,
+          "sys_ms_total": 292.507,
+          "max_rss_kb_max": 2272,
+          "rss_measured_runs": 109
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 1,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "zig": {
+      "toolchain": "zig 0.16.0",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 170,
+        "passed": 170,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 109,
+          "wall_ms_total": 391.884,
+          "user_ms_total": 62.855,
+          "sys_ms_total": 242.163,
+          "max_rss_kb_max": 420,
+          "rss_measured_runs": 109
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 1,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "pydecimal": {
+      "toolchain": "/usr/bin/python3: Python 3.12.3",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 170,
+        "passed": 170,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 109,
+          "wall_ms_total": 3071.451,
+          "user_ms_total": 1925.753,
+          "sys_ms_total": 993.358,
+          "max_rss_kb_max": 14360,
+          "rss_measured_runs": 109
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 1,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    }
+  },
+  "missing_toolchains": [],
+  "generated_utc": "2026-10-30T074904Z",
+  "verdict": "PASS"
+}

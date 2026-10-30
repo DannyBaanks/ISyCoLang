@@ -91,7 +91,7 @@ python3 -m isyco run ticket.isy --input '["Danny", {"nombre":"Mezcal","precio":"
   En la condición de un `if`/`while`, un literal de struct va entre paréntesis.
 - En la entrada, un struct es un objeto JSON; `emit` de un struct o arreglo
   saca JSON en una línea.
-- v0.3 corre con los cinco ejecutores: `ast`, `ir`, `c`, `rust` y `zig`.
+- v0.3 corre con los seis ejecutores: `ast`, `ir`, `c`, `rust`, `zig` y `pydecimal`.
 
 ## 2c. Módulos (`isyco 0.4`)
 
@@ -116,7 +116,7 @@ python3 -m isyco run proyecto/main.isy          # return "42"; el resultado list
 - Sin imports circulares (`IMPORT_CYCLE`); todos los archivos deben ser `isyco 0.4`.
 - Ninguna variable o función puede llamarse como un módulo importado.
 - Un error dentro de un módulo dice el archivo: `at: "util.isy:2:38"`.
-- Los cinco ejecutores (`ast`, `ir`, `c`, `rust`, `zig`) corren programas con módulos.
+- Los seis ejecutores (`ast`, `ir`, `c`, `rust`, `zig`, `pydecimal`) corren programas con módulos.
 
 ## 3. Elegir quién lo ejecuta (`--via`)
 
@@ -125,9 +125,10 @@ python3 -m isyco run proyecto/main.isy          # return "42"; el resultado list
 | `ast` (por defecto) | intérprete de referencia: la semántica normativa |
 | `ir` | intérprete de la IR canónica (lo que reciben los backends) |
 | `c`, `rust`, `zig` | compila a binario nativo y lo corre |
+| `pydecimal` | genera un programa Python 3 (con el módulo `decimal`) y lo corre |
 
-Los cinco dan el mismo `status`/`emits`/`return`/`steps` (eso es lo que
-prueban los tests). Los nativos agregan `cost`: tiempo, CPU, pico de memoria y
+Los seis dan el mismo `status`/`emits`/`return`/`steps` (eso es lo que
+prueban los tests). Los compilados agregan `cost`: tiempo, CPU, pico de memoria y
 tiempo de compilación (`null` si el binario ya estaba en `build/`). La primera
 corrida en Zig tarda unos segundos en compilar.
 
@@ -160,7 +161,7 @@ Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 
 ```bash
 python3 tools/warm_build_cache.py              # opcional: precompila en paralelo (la primera vez tarda)
-python3 -m unittest discover -s tests          # suite completa: 81 tests, ~2 min con la caché llena (91.9 s medidos 2026-10-30)
+python3 -m unittest discover -s tests          # suite completa: 86 tests, ~4 min con la caché llena (211.8 s medidos 2026-10-30 con pydecimal)
 python3 tools/backend_gate.py                  # gate de backends: escribe evidence/backends/gate_<UTC>.json
 ```
 

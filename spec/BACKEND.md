@@ -134,3 +134,4 @@ y guarda la evidencia en `evidence/backends/`.
 | `c` | gcc / clang (GNU C11) | todas (desde 2026-10-29 también `ir0.2 str struct`) | `__int128`, builtins de overflow; 3 sabotajes de prueba (2 numéricos, 1 de str) |
 | `rust` | rustc (ed. 2021) | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-C overflow-checks=on -C panic=abort`; 3 sabotajes de prueba |
 | `zig` | zig 0.16 | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-O ReleaseSafe`; 3 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |
+| `pydecimal` | python3 (CPython) | todas | ola 2: los `dec` son `decimal.Decimal`; cada redondeo lo deciden la división y `quantize` de CPython (`isy_rdiv`), no enteros escalados; el "binario" es el fuente con shebang (`py_compile` solo valida) y su RSS es el de un intérprete (~13 MB) |
