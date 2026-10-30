@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -25,6 +26,14 @@ from isyco.ir_interp import compile_ir, run_via_ir  # noqa: E402
 
 def sha(obj) -> str:
     return hashlib.sha256(canonical_json(obj).encode("utf-8")).hexdigest()
+
+
+def git_head() -> str:
+    try:
+        return subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
+                              text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
 
 
 def main() -> int:
@@ -45,6 +54,7 @@ def main() -> int:
     with_ir = len({r["name"] for r in rows if r["ir_semantic_hash"]})
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
     report = {"schema": "isycolang.ir_gate/1", "generated_utc": stamp,
+              "git_head": git_head(),
               "comparisons": len(rows), "equal": equal, "programs_lowered_to_ir": with_ir,
               "rows": rows}
     out = ROOT / "evidence" / "ir" / f"gate_{stamp}.json"

@@ -3,7 +3,7 @@
 Uso: python3 tools/backend_gate.py [--pairs N] [--only c,rust,zig]
 
 Por backend (spec/BACKEND.md §5):
-1. corpus v0.1 + v0.2: mismo status/code/emits/return/steps que la referencia;
+1. corpus v0.1–v0.4: mismo status/code/emits/return/steps que la referencia;
 2. casos fuera de capacidades -> UNSUPPORTED (se cuentan aparte);
 3. diferencial por tipo numérico (isyco/difftest.py) contra la referencia;
 4. el engine hace el trabajo: el fuente generado no contiene las salidas
@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 import sys
 from datetime import datetime, timezone
 from functools import partial
@@ -33,6 +34,14 @@ from isyco.difftest import compare, compare_str  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
 
 KEYS = COMPARED + ("steps",)
+
+
+def git_head() -> str:
+    try:
+        return subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
+                              text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
 
 
 def corpus(backend, cases, sabotage=None) -> dict:
@@ -95,6 +104,7 @@ def main() -> int:
     only = set(filter(None, args.only.split(",")))
     cases = load_all(ROOT)
     report = {"schema": "isycolang.backend_gate/1", "pairs_per_op": args.pairs,
+              "git_head": git_head(),
               "registered": sorted(registry()), "backends": {}}
     ok = True
     for name, backend in available().items():

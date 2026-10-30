@@ -34,6 +34,14 @@ SANITIZE = ("-fsanitize=undefined,address", "-fno-sanitize-recover=all")
 KEYS = COMPARED + ("steps",)
 
 
+def git_head() -> str:
+    try:
+        return subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
+                              text=True, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+
+
 def version(cc: str) -> str:
     return subprocess.run([cc, "--version"], capture_output=True, text=True).stdout.split("\n")[0]
 
@@ -95,6 +103,7 @@ def main() -> int:
         print(f"sabotaje {sabotage}: detectado={detected}", flush=True)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
     report["generated_utc"] = stamp
+    report["git_head"] = git_head()
     report["verdict"] = "PASS" if ok else "FAIL"
     out = ROOT / "evidence" / "c" / f"gate_{stamp}.json"
     out.parent.mkdir(parents=True, exist_ok=True)

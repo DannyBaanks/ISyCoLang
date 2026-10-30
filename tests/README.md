@@ -7,6 +7,7 @@ Tests: `python3 -m unittest discover -s tests -v`
 | `test_backend_c.py` | backend C: tres vías, diferencial numérico, sabotajes (F4) |
 | `test_modules.py` | módulos (v0.4): identificadores seguros en backends, CLI con módulos, sabotaje del enlazador |
 | `test_backends.py` | contrato ISY_BACKEND/1 en C, Rust y Zig: corpus, UNSUPPORTED, diferenciales, sabotajes por testigos, costo (F5) |
+| `test_evidence.py` | `evidence/*/SHA256SUMS.txt` verificadas dentro de la suite y cifras del README contra la evidencia más reciente (PL-02); control negativo con `ISYCO_EVIDENCE_ROOT=<copia>` |
 
 Tiempos (12 núcleos, 2026-10-29): ~2 min (101.6 s medidos el 2026-10-29) con la
 caché `build/` llena. En frío
