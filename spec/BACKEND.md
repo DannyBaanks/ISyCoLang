@@ -136,3 +136,16 @@ y guarda la evidencia en `evidence/backends/`.
 | `zig` | zig 0.16 | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-O ReleaseSafe`; 3 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |
 | `pydecimal` | python3 (CPython) | todas | ola 2: los `dec` son `decimal.Decimal`; cada redondeo lo deciden la división y `quantize` de CPython (`isy_rdiv`), no enteros escalados; el "binario" es el fuente con shebang (`py_compile` solo valida) y su RSS es el de un intérprete (~13 MB) |
 | `cobol` | cobc (GnuCOBOL 3.1.2) | núcleo numérico v0.1: `str` y `struct` responden UNSUPPORTED | ola 2: zoned decimal nativo con `ISY-RDIV`; entrada por STDIN en hexadecimal (cobc no expone argv); cada función IR es un subprograma `IS RECURSIVE` con `CALL` y resultado por referencia; `DIVIDE … REMAINDER` trunca hacia cero como la referencia |
+
+### 6.1 Límites del backend COBOL
+
+- **Transporte por STDIN hexadecimal.** Cada argumento se decodifica en
+  `WS-ARG PIC X(64)` (`isyco/backends/cobol.py:982`, `:997`) sin `ON OVERFLOW`:
+  caben 64 bytes y lo que exceda se trunca en silencio (sonda con `cobc` 3.1.2:
+  64 caracteres llenan el campo, el 65 se descarta). El flujo hexadecimal entra
+  en `WS-HEX PIC X(65536)` (`:974`) ⇒ 64 KiB de STDIN como máximo.
+- **Puntos y ámbitos.** Un punto en COBOL cierra *todos* los ámbitos abiertos
+  (IF/ELSE/PERFORM) y no puede haber etiqueta de párrafo dentro de un IF; el
+  emisor lo resuelve con heurísticas en `Unit.put`/`end_sentence` (`:632`,
+  `:641`). Todo constructo nuevo del IR exige una sonda con `cobc` antes de
+  confiar en el emisor.

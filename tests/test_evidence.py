@@ -22,10 +22,15 @@ import hashlib
 import json
 import os
 import re
+import sys
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from isyco.backends import registry  # noqa: E402
+
 EVIDENCE = Path(os.environ.get("ISYCO_EVIDENCE_ROOT") or ROOT / "evidence")
 
 
@@ -88,16 +93,27 @@ class DocsMatchLatestEvidence(unittest.TestCase):
         self.assertIn(norm(f"{gate['equal']}/{gate['comparisons']}"), self.readme())
 
     def test_backend_figures(self):
-        gate = json.loads(latest("backends", "gate_").read_text(encoding="utf-8"))
-        self.assertEqual(gate["verdict"], "PASS", "el último gate de backends no es PASS")
+        # `--only X` escribe un gate parcial: cada backend se ata a su entrada
+        # más reciente en cualquier gate, no solo al último archivo, para que un
+        # gate parcial no deje a los demás sin cifra que los respalde.
+        gates = [json.loads(p.read_text(encoding="utf-8"))
+                 for p in sorted((EVIDENCE / "backends").glob("gate_*.json"))]
+        self.assertTrue(gates, "evidence/backends: sin gates")
+        self.assertEqual(gates[-1]["verdict"], "PASS", "el último gate de backends no es PASS")
+        newest: dict[str, dict] = {}
+        for gate in gates:
+            newest.update(gate["backends"])
+        self.assertLessEqual(set(registry()), set(newest), "backend registrado sin evidencia")
         readme = self.readme()
-        for name, entry in gate["backends"].items():
+        for name, entry in sorted(newest.items()):
             corpus = entry["corpus"]
-            # UNSUPPORTED no es fallo: es el dominio declarado (p. ej. cobol
-            # con el núcleo numérico y str/struct fuera de alcance).
+            # UNSUPPORTED no es fallo: es el dominio declarado (p. ej. cobol con
+            # el núcleo numérico y str/struct fuera de alcance). Pero el README
+            # debe citar la cifra exacta: si el dominio se encoge en silencio,
+            # la suite enrojece en vez de aceptarlo.
+            self.assertTrue(entry["conformant"], name)
             self.assertEqual(corpus["failures"], [], name)
-            self.assertEqual(corpus["passed"] + len(corpus["unsupported"]),
-                             corpus["cases"], name)
+            self.assertIn(norm(f"{corpus['passed']}/{corpus['cases']}"), readme, name)
             self.assertEqual(entry["difftest"]["diff_count"], 0, name)
             runs = norm(f"{entry['difftest']['runs']:,}".replace(",", " "))
             self.assertIn(runs, readme,
