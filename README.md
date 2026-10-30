@@ -2,6 +2,11 @@
 
 **Repo PRIVADO** (decisión de Danny, 2026-10-28): sin licencia ni remoto.
 
+**Respaldo**: sin remoto no hay `push`; se usa un bundle verificable **fuera** del
+repo: `git bundle create ../ISyCoLang-<fecha>.bundle --all` y `git bundle verify`
+(historia completa; el SHA-256 del snapshot vigente se publica en el Tablero,
+comentario de cierre de la lista de pulido).
+
 **Estado: `EXECUTABLE`** (core v0.4: strings, structs y módulos; fase F5, ola 1 de 6): intérprete de referencia conforme al corpus
 v0.1, IR canónica (ISY-IR) y backends nativos C, Rust y Zig verificados contra
 la referencia bajo el contrato `ISY_BACKEND/1`.
