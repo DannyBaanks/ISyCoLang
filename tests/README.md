@@ -16,7 +16,12 @@ casi todo es compilar Zig; para no esperar:
 ```bash
 python3 tools/warm_build_cache.py              # precompila en paralelo (añade --sabotages para el gate)
 ISYCO_TEST_BACKENDS=c,rust python3 -m unittest discover -s tests   # suite sin Zig
+ISYCO_ALLOW_MISSING_TOOLCHAINS=1 python3 -m unittest discover -s tests   # permitir un toolchain ausente
 ```
+
+Si falta el toolchain de un backend registrado, la suite **falla**
+(`test_backends.Toolchains`) en vez de saltarse tests en silencio; el contador
+de skips ya no es la única señal.
 
 Los sabotajes se prueban aquí solo con sus casos testigo (`SABOTAGE_WITNESSES` en
 `test_backends.py`); el barrido completo de corpus + diferenciales saboteados lo hace

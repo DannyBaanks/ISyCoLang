@@ -169,6 +169,9 @@ python3 tools/backend_gate.py                  # gate de backends: escribe evide
 
 Si no quieres esperar a Zig: `ISYCO_TEST_BACKENDS=c,rust python3 -m unittest discover -s tests`.
 
+Si falta el toolchain de un backend, la suite falla en vez de saltarse tests en
+silencio; para correr igual: `ISYCO_ALLOW_MISSING_TOOLCHAINS=1 python3 -m unittest discover -s tests`.
+
 Si agregas evidencia nueva, agrega su hash a `SHA256SUMS.txt` de esa carpeta.
 Nunca edites un caso del corpus ni un archivo de evidencia existente: el
 corpus usa `SUPERSEDED.json`, la evidencia usa archivos nuevos.
