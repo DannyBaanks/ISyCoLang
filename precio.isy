@@ -1,0 +1,15 @@
+isyco 0.2
+fn con_iva(precio: dec<12,2>) -> dec<12,2> {
+    return precio * 1.16;
+}
+
+fn main(precio: dec<12,2>, piezas: i32) -> dec<12,2> !emit {
+    let total: dec<12,2> = 0.00;
+    let i: i32 = 0;
+    while i < piezas {
+        total = total + con_iva(precio);
+        emit total;
+        i = i + 1;
+    }
+    return total;
+}

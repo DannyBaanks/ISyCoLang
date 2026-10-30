@@ -1,8 +1,12 @@
 # GUÍA — escribir y correr un programa ISyCoLang
 
 Guía para una persona, no para un agente. Todo lo de aquí se ejecutó el
-2026-10-29 en este host (Ubuntu 24.04, Python 3). La semántica exacta está en
-`spec/CORE.md` + `spec/CORE_v0.2.md`; esta guía no la reemplaza.
+2026-10-29 y se volvió a ejecutar **tal cual** el 2026-10-30 en este host
+(Ubuntu 24.04, Python 3); el transcript crudo, con los códigos de salida de
+cada comando, está en `evidence/human_guide/transcript_*.txt`. Los ejemplos
+`precio.isy`, `ticket.isy` y `proyecto/` viven en la raíz del repo para que
+los comandos de esta guía corran sin pasos previos. La semántica exacta está
+en `spec/CORE*.md` (v0.1–v0.4); esta guía no la reemplaza.
 
 ## 1. Un programa
 
@@ -156,7 +160,7 @@ Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 
 ```bash
 python3 tools/warm_build_cache.py              # opcional: precompila en paralelo (la primera vez tarda)
-python3 -m unittest discover -s tests          # suite completa: 76 tests, ~2 min con la caché llena (101.6 s medidos 2026-10-29)
+python3 -m unittest discover -s tests          # suite completa: 81 tests, ~2 min con la caché llena (91.9 s medidos 2026-10-30)
 python3 tools/backend_gate.py                  # gate de backends: escribe evidence/backends/gate_<UTC>.json
 ```
 

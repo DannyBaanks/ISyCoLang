@@ -1,0 +1,4 @@
+isyco 0.4
+pub fn x0() -> i32 {
+    return 21;
+}

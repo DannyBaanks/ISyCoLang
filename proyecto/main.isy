@@ -1,0 +1,7 @@
+isyco 0.4
+import util;
+import geo.punto;
+
+fn main() -> i32 {
+    return util.doble(punto.x0());
+}

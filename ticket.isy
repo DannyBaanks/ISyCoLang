@@ -1,0 +1,14 @@
+isyco 0.3
+struct Item { nombre: str<16>, precio: dec<10,2>, piezas: i32 }
+
+fn linea(it: Item) -> str<48> {
+    let total: dec<10,2> = it.precio * (it.piezas as dec<10,2>);
+    return it.nombre + " x" + (it.piezas as str<6>) + " = " + (total as str<14>);
+}
+
+fn main(cliente: str<20>, it: Item) -> Item !emit {
+    emit "Cliente: " + cliente;
+    emit linea(it);
+    it.piezas = it.piezas + 1;
+    return it;
+}

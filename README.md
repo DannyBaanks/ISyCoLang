@@ -63,7 +63,7 @@ tools/warm_build_cache.py          precompila en paralelo los binarios del corpu
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 76 tests (~2 min con build/ llena; ver tests/README.md)
+python3 -m unittest discover -s tests -v       # 81 tests (~2 min con build/ llena; ver tests/README.md)
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
