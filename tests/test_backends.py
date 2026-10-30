@@ -112,6 +112,20 @@ class Registry(unittest.TestCase):
         self.assertEqual(set(registry()), {"c", "cobol", "pydecimal", "rust", "zig"})
 
 
+class Toolchains(unittest.TestCase):
+    def test_every_registered_backend_is_testable(self):
+        # Un backend registrado sin toolchain dejaría la suite en verde sin
+        # probarlo (solo quedaría el contador de skips). Falla salvo opt-out
+        # explícito. No usa AVAILABLE: ISYCO_TEST_BACKENDS filtra qué probar,
+        # no qué está instalado.
+        missing = sorted(set(registry()) - set(available()))
+        if missing and os.environ.get("ISYCO_ALLOW_MISSING_TOOLCHAINS") == "1":
+            self.skipTest("toolchains ausentes (permitido): " + ", ".join(missing))
+        self.assertEqual(missing, [],
+                         "toolchain ausente: " + ", ".join(missing)
+                         + " (define ISYCO_ALLOW_MISSING_TOOLCHAINS=1 para correr sin ellos)")
+
+
 @unittest.skipUnless(AVAILABLE, "no hay toolchain nativo instalado")
 class Cli(unittest.TestCase):
     def test_native_via_matches_reference(self):

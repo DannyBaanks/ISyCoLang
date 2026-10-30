@@ -72,35 +72,47 @@ def main() -> int:
     args = parser.parse_args()
     cases = load_all(ROOT)
     compilers = [cc for cc in ("gcc", "clang") if shutil.which(cc)]
+    missing_compilers = [cc for cc in ("gcc", "clang") if cc not in compilers]
     report = {"schema": "isycolang.c_gate/1", "compilers": {cc: version(cc) for cc in compilers},
+              "missing_compilers": missing_compilers,
               "cflags": C.CFLAGS, "sanitize_flags": list(SANITIZE), "corpus": {}, "difftest": {},
               "sabotage": {}}
-    ok = True
+    # El gate promete gcc Y clang (docs/BACKEND_C.md): con uno solo no se puede afirmar.
+    ok = not missing_compilers
+    if missing_compilers:
+        print(f"compiladores ausentes: {', '.join(missing_compilers)}", file=sys.stderr)
     for cc in compilers:
         os.environ["ISYCO_CC"] = cc
         for label, flags in (("plain", ()), ("sanitized", SANITIZE)):
             res = corpus_three_way(cases, extra_flags=flags)
             report["corpus"][f"{cc}/{label}"] = res
-            ok &= not res["failures"]
-            print(f"corpus {cc}/{label}: {res['reference_vs_backend_ok']}/{res['cases']}", flush=True)
-    os.environ["ISYCO_CC"] = compilers[0]
-    for label, executor, pairs in (("gcc/plain", C.run_c, args.pairs),
-                                   ("gcc/sanitized", partial(C.run_c, extra_flags=SANITIZE), 4)):
-        res = compare(executor, pairs=pairs)
-        report["difftest"][label] = {"runs": res["runs"], "pairs_per_op": pairs, "seed": res["seed"],
-                                     "types": len(res["types"]), "diffs": res["diffs"][:50],
-                                     "diff_count": len(res["diffs"])}
-        ok &= not res["diffs"]
-        print(f"difftest {label}: {res['runs']} corridas, {len(res['diffs'])} diferencias", flush=True)
-    for sabotage in ("half_even_as_half_up", "div_floor"):
-        corpus_res = corpus_three_way(cases, sabotage=sabotage)
-        diff_res = compare(partial(C.run_c, sabotage=sabotage), pairs=4)
-        detected = bool(corpus_res["failures"]) and bool(diff_res["diffs"])
-        report["sabotage"][sabotage] = {
-            "corpus_failures": [f["name"] for f in corpus_res["failures"]],
-            "difftest_diffs": len(diff_res["diffs"]), "detected": detected}
-        ok &= detected
-        print(f"sabotaje {sabotage}: detectado={detected}", flush=True)
+            # UNSUPPORTED no pertenece al denominador: fuera del dominio declarado
+            # el gate no puede afirmar nada, así que C (que declara todas las
+            # capacidades) lo trata como fallo en vez de encoger la cuenta.
+            ok &= not res["failures"] and not res["unsupported"]
+            print(f"corpus {cc}/{label}: {res['reference_vs_backend_ok']}/{res['cases']} "
+                  f"(unsupported {len(res['unsupported'])})", flush=True)
+    if compilers:
+        os.environ["ISYCO_CC"] = compilers[0]
+        for label, executor, pairs in (("gcc/plain", C.run_c, args.pairs),
+                                       ("gcc/sanitized", partial(C.run_c, extra_flags=SANITIZE), 4)):
+            res = compare(executor, pairs=pairs)
+            report["difftest"][label] = {"runs": res["runs"], "pairs_per_op": pairs,
+                                         "seed": res["seed"], "types": len(res["types"]),
+                                         "diffs": res["diffs"][:50],
+                                         "diff_count": len(res["diffs"])}
+            ok &= not res["diffs"]
+            print(f"difftest {label}: {res['runs']} corridas, "
+                  f"{len(res['diffs'])} diferencias", flush=True)
+        for sabotage in ("half_even_as_half_up", "div_floor"):
+            corpus_res = corpus_three_way(cases, sabotage=sabotage)
+            diff_res = compare(partial(C.run_c, sabotage=sabotage), pairs=4)
+            detected = bool(corpus_res["failures"]) and bool(diff_res["diffs"])
+            report["sabotage"][sabotage] = {
+                "corpus_failures": [f["name"] for f in corpus_res["failures"]],
+                "difftest_diffs": len(diff_res["diffs"]), "detected": detected}
+            ok &= detected
+            print(f"sabotaje {sabotage}: detectado={detected}", flush=True)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
     report["generated_utc"] = stamp
     report["git_head"] = git_head()

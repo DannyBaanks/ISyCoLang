@@ -31,6 +31,8 @@ def git_head() -> str:
 def main() -> int:
     rows = run_corpus(load_all(ROOT))
     passed = sum(row["verdict"] == "PASS" for row in rows)
+    # Un corpus vacío no es un corpus conforme: sin filas, 0 == 0 no demuestra nada.
+    ok = bool(rows) and passed == len(rows)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
     report = {
         "schema": "isycolang.conformance_run/1",
@@ -41,6 +43,7 @@ def main() -> int:
         "spec_sha256": hashlib.sha256((ROOT / "spec" / "CORE.md").read_bytes()).hexdigest(),
         "total": len(rows),
         "passed": passed,
+        "verdict": "PASS" if ok else "FAIL",
         "rows": rows,
     }
     out_dir = ROOT / "evidence" / "conformance"
@@ -49,12 +52,14 @@ def main() -> int:
     payload = json.dumps(report, indent=2, ensure_ascii=False) + "\n"
     out_file.write_text(payload, encoding="utf-8")
     digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
-    print(json.dumps({"out": str(out_file.relative_to(ROOT)), "sha256": digest,
-                      "total": len(rows), "passed": passed}))
+    print(json.dumps({"out": str(out_file.relative_to(ROOT)), "verdict": report["verdict"],
+                      "sha256": digest, "total": len(rows), "passed": passed}))
+    if not rows:
+        print("corpus vacío: no hay nada que verificar", file=sys.stderr)
     for row in rows:
         if row["verdict"] != "PASS":
             print("FAIL", row["name"], row["observed"], file=sys.stderr)
-    return 0 if passed == len(rows) else 1
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
