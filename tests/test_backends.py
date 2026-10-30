@@ -106,7 +106,10 @@ class Registry(unittest.TestCase):
                 self.assertIn(sabotage, SABOTAGE_WITNESSES, f"{backend.name}: {sabotage}")
 
     def test_wave_one_registered(self):
-        self.assertEqual(set(registry()), {"c", "rust", "zig"})
+        # Ola 1: C, Rust, Zig (F5). Ola 2: pydecimal (ROADMAP F5, "decimal de
+        # punto fijo verificable"). El nombre del test es de la ola 1; el
+        # registro hereda backends a medida que se cierra cada ola.
+        self.assertEqual(set(registry()), {"c", "rust", "zig", "pydecimal"})
 
 
 @unittest.skipUnless(AVAILABLE, "no hay toolchain nativo instalado")
@@ -116,9 +119,7 @@ class Cli(unittest.TestCase):
         ref, _ = run(program.read_bytes(), ["1000.00", "0.0525"])
         want = {k: ref[k] for k in KEYS}
         seen = []
-        for via in ("c", "rust", "zig"):
-            if via not in AVAILABLE:
-                continue
+        for via in AVAILABLE:
             proc = subprocess.run(
                 [sys.executable, "-m", "isyco", "run", str(program),
                  "--input", '["1000.00","0.0525"]', "--via", via],
@@ -185,8 +186,9 @@ def _make_conformance(name):
             self.assertEqual(set(cost), {"wall_ms", "user_ms", "sys_ms", "max_rss_kb", "compile_ms"})
             self.assertGreater(cost["wall_ms"], 0)
             if GNU_TIME:
-                # Pico del binario, no del intérprete de Python que lo lanza (~12 MB).
-                self.assertLess(cost["max_rss_kb"], 10_000)
+                # Pico del binario, no del intérprete de Python que lo lanza
+                # (~12 MB). pydecimal SÍ es un intérprete: su techo es propio.
+                self.assertLess(cost["max_rss_kb"], self.backend.rss_ceiling_kb)
             else:
                 self.assertIsNone(cost["max_rss_kb"])
             self.assertNotIn("cost", KEYS)
@@ -195,7 +197,7 @@ def _make_conformance(name):
     return Conformance
 
 
-for _name in ("c", "rust", "zig"):
+for _name in ("c", "rust", "zig", "pydecimal"):
     globals()[f"Conformance_{_name}"] = _make_conformance(_name)
 
 

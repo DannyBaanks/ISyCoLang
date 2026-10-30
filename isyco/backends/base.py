@@ -131,6 +131,9 @@ class Backend:
     extension = ".txt"
     features: frozenset = ALL_FEATURES - V2_FEATURES
     sabotages: tuple = ()
+    # Techo de max_rss_kb que tests/test_backends.py acepta medido en el binario
+    # de este backend (los nativos ~4 MB; un intérprete de lenguaje, mucho más).
+    rss_ceiling_kb = 10_000
 
     def toolchain(self) -> str | None:
         raise NotImplementedError
