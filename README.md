@@ -7,10 +7,11 @@ repo: `git bundle create ../ISyCoLang-<fecha>.bundle --all` y `git bundle verify
 (historia completa; el SHA-256 del snapshot vigente se publica en el Tablero,
 comentario de cierre de la lista de pulido).
 
-**Estado: `EXECUTABLE`** (core v0.4: strings, structs y módulos; fase F5, ola 1 PASS + ola 2 empezada): intérprete de referencia conforme al corpus
-v0.1, IR canónica (ISY-IR) y backends nativos C, Rust y Zig — más el backend
-`pydecimal` de la ola 2, con sustrato `decimal` — verificados contra
-la referencia bajo el contrato `ISY_BACKEND/1`.
+**Estado: `EXECUTABLE`** (core v0.4: strings, structs y módulos; fase F5, olas 1 y 2 PASS): intérprete de referencia conforme al corpus
+v0.1, IR canónica (ISY-IR) y backends nativos C, Rust y Zig — más los backends
+`pydecimal` y `cobol` de la ola 2, con sustratos `decimal` y GnuCOBOL —
+verificados contra la referencia bajo el contrato `ISY_BACKEND/1` (`cobol` en el
+núcleo numérico v0.1: `str` y `struct` responden UNSUPPORTED).
 
 ## Respuestas rápidas (estándar §16)
 
@@ -19,9 +20,9 @@ la referencia bajo el contrato `ISY_BACKEND/1`.
 | ¿Qué es? | Un lenguaje pequeño con semántica propia y un compilador que usa muchos lenguajes como backends por contrato. |
 | ¿Qué lo hace distinto? | La semántica es de ISyCoLang; C, Rust, COBOL, Prolog, esolangs… compiten por implementarla y la evidencia elige. Un carril aparte (3OPS Lab) investiga bases de tres operaciones. |
 | ¿Formato? | `.isy`; spec congelada en `spec/CORE.md` (v0.1) + `spec/CORE_v0.2.md` + `spec/CORE_v0.3.md` (strings y structs) + `spec/CORE_v0.4.md` (módulos); la cabecera `isyco 0.1`/`0.2`/`0.3`/`0.4` elige. |
-| ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c`, `--via rust`, `--via zig` o `--via pydecimal` para compilado). Guía para personas: `GUIA.md`. |
+| ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c`, `--via rust`, `--via zig`, `--via pydecimal` o `--via cobol` para compilado). Guía para personas: `GUIA.md`. |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia en Python, semántica normativa). |
-| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.4 (170/170), IR que preserva la semántica (340/340 comparaciones iguales, 113 programas bajados a IR), backends C, Rust, Zig y pydecimal iguales a la referencia (170/170 y 8 484 corridas diferenciales sin diferencias cada uno; C además con gcc/clang y sanitizers). Ver claim table. |
+| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.4 (170/170), IR que preserva la semántica (340/340 comparaciones iguales, 113 programas bajados a IR), backends C, Rust, Zig y pydecimal iguales a la referencia (170/170 y 8 484 corridas diferenciales sin diferencias cada uno; C además con gcc/clang y sanitizers); COBOL igual dentro de su dominio declarado (113/170, 57 UNSUPPORTED de `str`/`struct`, 8 484 corridas diferenciales sin diferencias). Ver claim table. |
 | ¿Qué NO está demostrado? | Todo lo demás; ver la claim table en `ROADMAP.md` §6. |
 | ¿Tests? | `python3 -m unittest discover -s tests -v` |
 | ¿Evidencia? | `evidence/` |
@@ -46,6 +47,7 @@ isyco/backends/base.py             driver común: validación, capacidades, cach
 isyco/backends/c.py                ISY-IR -> C -> binario nativo
 isyco/backends/rust.py             ISY-IR -> Rust -> binario nativo
 isyco/backends/zig.py              ISY-IR -> Zig -> binario nativo
+isyco/backends/cobol.py            ISY-IR -> GnuCOBOL -> binario nativo (núcleo numérico)
 isyco/difftest.py                  diferencial por tipo numérico en valores frontera
 isyco/                             intérprete de referencia y CLI
 programs/conformance/              corpus v0.1 (expected previos al intérprete; SUPERSEDED.json)
@@ -64,11 +66,11 @@ tools/warm_build_cache.py          precompila en paralelo los binarios del corpu
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 86 tests (~4 min con build/ llena; ver tests/README.md)
+python3 -m unittest discover -s tests -v       # 91 tests (~3 min con build/ llena; ver tests/README.md)
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
-python3 tools/backend_gate.py                  # gate F5: C, Rust, Zig y pydecimal + evidencia nueva
+python3 tools/backend_gate.py                  # gate F5: C, Rust, Zig, pydecimal y cobol + evidencia nueva
 python3 tools/run_conformance.py               # corpus + evidencia nueva
 ```
 

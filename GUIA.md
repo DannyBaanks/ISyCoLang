@@ -126,11 +126,13 @@ python3 -m isyco run proyecto/main.isy          # return "42"; el resultado list
 | `ir` | intérprete de la IR canónica (lo que reciben los backends) |
 | `c`, `rust`, `zig` | compila a binario nativo y lo corre |
 | `pydecimal` | genera un programa Python 3 (con el módulo `decimal`) y lo corre |
+| `cobol` | compila con GnuCOBOL y lo corre; solo el núcleo numérico v0.1 (`str`/`struct` responden `UNSUPPORTED`) |
 
-Los seis dan el mismo `status`/`emits`/`return`/`steps` (eso es lo que
-prueban los tests). Los compilados agregan `cost`: tiempo, CPU, pico de memoria y
-tiempo de compilación (`null` si el binario ya estaba en `build/`). La primera
-corrida en Zig tarda unos segundos en compilar.
+Los ejecutores dan el mismo `status`/`emits`/`return`/`steps` dentro de su dominio
+declarado (`cobol` cubre el núcleo numérico; `c`, `rust`, `zig` y `pydecimal`,
+todo). Eso es lo que prueban los tests. Los compilados agregan `cost`: tiempo,
+CPU, pico de memoria y tiempo de compilación (`null` si el binario ya estaba en
+`build/`). La primera corrida en Zig tarda unos segundos en compilar.
 
 ```bash
 python3 -m isyco run precio.isy --input '["19.99","3"]' --via c
@@ -161,7 +163,7 @@ Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 
 ```bash
 python3 tools/warm_build_cache.py              # opcional: precompila en paralelo (la primera vez tarda)
-python3 -m unittest discover -s tests          # suite completa: 86 tests, ~4 min con la caché llena (211.8 s medidos 2026-10-30 con pydecimal)
+python3 -m unittest discover -s tests          # suite completa: 91 tests, ~3 min con la caché llena (197.0 s medidos 2026-10-30)
 python3 tools/backend_gate.py                  # gate de backends: escribe evidence/backends/gate_<UTC>.json
 ```
 

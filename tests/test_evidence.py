@@ -93,7 +93,11 @@ class DocsMatchLatestEvidence(unittest.TestCase):
         readme = self.readme()
         for name, entry in gate["backends"].items():
             corpus = entry["corpus"]
-            self.assertEqual(corpus["passed"], corpus["cases"], name)
+            # UNSUPPORTED no es fallo: es el dominio declarado (p. ej. cobol
+            # con el núcleo numérico y str/struct fuera de alcance).
+            self.assertEqual(corpus["failures"], [], name)
+            self.assertEqual(corpus["passed"] + len(corpus["unsupported"]),
+                             corpus["cases"], name)
             self.assertEqual(entry["difftest"]["diff_count"], 0, name)
             runs = norm(f"{entry['difftest']['runs']:,}".replace(",", " "))
             self.assertIn(runs, readme,

@@ -6,10 +6,10 @@ Tests: `python3 -m unittest discover -s tests -v`
 | `test_ir.py` | ISY-IR v0.1/v0.2: resultado y traza iguales a la referencia, validador de mundo cerrado (F3) |
 | `test_backend_c.py` | backend C: tres vías, diferencial numérico, sabotajes (F4) |
 | `test_modules.py` | módulos (v0.4): identificadores seguros en backends, CLI con módulos, sabotaje del enlazador |
-| `test_backends.py` | contrato ISY_BACKEND/1 en C, Rust y Zig: corpus, UNSUPPORTED, diferenciales, sabotajes por testigos, costo (F5) |
+| `test_backends.py` | contrato ISY_BACKEND/1 en C, Rust, Zig, pydecimal y cobol: corpus, UNSUPPORTED, diferenciales, sabotajes por testigos, costo (F5) |
 | `test_evidence.py` | `evidence/*/SHA256SUMS.txt` verificadas dentro de la suite y cifras del README contra la evidencia más reciente (PL-02); control negativo con `ISYCO_EVIDENCE_ROOT=<copia>` |
 
-Tiempos (12 núcleos, 2026-10-29): ~2 min (101.6 s medidos el 2026-10-29) con la
+Tiempos (12 núcleos, 2026-10-30): ~3 min (197.0 s medidos, 91 tests) con la
 caché `build/` llena. En frío
 casi todo es compilar Zig; para no esperar:
 

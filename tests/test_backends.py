@@ -109,7 +109,7 @@ class Registry(unittest.TestCase):
         # Ola 1: C, Rust, Zig (F5). Ola 2: pydecimal (ROADMAP F5, "decimal de
         # punto fijo verificable"). El nombre del test es de la ola 1; el
         # registro hereda backends a medida que se cierra cada ola.
-        self.assertEqual(set(registry()), {"c", "rust", "zig", "pydecimal"})
+        self.assertEqual(set(registry()), {"c", "cobol", "pydecimal", "rust", "zig"})
 
 
 @unittest.skipUnless(AVAILABLE, "no hay toolchain nativo instalado")
@@ -197,7 +197,7 @@ def _make_conformance(name):
     return Conformance
 
 
-for _name in ("c", "rust", "zig", "pydecimal"):
+for _name in ("c", "rust", "zig", "pydecimal", "cobol"):
     globals()[f"Conformance_{_name}"] = _make_conformance(_name)
 
 

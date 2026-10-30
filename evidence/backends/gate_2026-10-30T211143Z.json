@@ -1,0 +1,312 @@
+{
+  "schema": "isycolang.backend_gate/1",
+  "pairs_per_op": 8,
+  "git_head": "b713357c9ee62bfd0b8e8635796d5f11914fb154",
+  "registered": [
+    "c",
+    "cobol",
+    "pydecimal",
+    "rust",
+    "zig"
+  ],
+  "backends": {
+    "cobol": {
+      "toolchain": "cobc: cobc (GnuCOBOL) 3.1.2.0",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 170,
+        "passed": 113,
+        "unsupported": [
+          {
+            "name": "119_header_v03",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "201_str_literal",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "202_str_widen_concat",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "203_str_concat_overflow",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "204_str_concat_no_context",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "207_str_as_narrow",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "208_str_compare",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "209_str_index_byte",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "210_str_index_oob",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "212_str_slice",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "213_str_slice_oob",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "214_str_slice_past_len",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "215_str_chr",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "216_str_chr_bad",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "217_str_chr_newline",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "218_str_escapes",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "221_num_as_str",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "222_num_as_str_overflow",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "223_str_as_int",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "224_str_as_int_ovf",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "225_str_as_int_leading_zero",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "226_str_as_int_minus_zero",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "227_str_as_dec",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "228_str_as_dec_wrong_scale",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "229_str_as_bool",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "230_struct_copy",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "231_struct_emit",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "232_struct_equality",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "233_struct_param_copy",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "234_struct_nested",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "235_struct_array",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "243_input_struct_str",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "248_array_equality",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "250_struct_field_order",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "251_struct_lit_in_if_parens",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "253_emit_array",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "254_lvalue_order",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "255_lvalue_oob_after_rhs",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "256_str_widen_arg",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "258_str_cmp_capacities",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "259_struct_json_escape",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "261_main_returns_struct",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "263_str_concat_limit_ctx",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "264_header_v04",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "301_basic",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "302_nested_path",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "303_struct_from_module",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "311_diamond",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "313_same_names",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "314_runtime_error_in_module",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "318_recursion_in_module",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "321_limit_across_modules",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "324_module_main",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "325_input_struct_from_module",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "326_pub_in_main",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "327_qualified_call_stmt",
+            "missing": "ir0.2"
+          },
+          {
+            "name": "328_private_helper_inside",
+            "missing": "ir0.2"
+          }
+        ],
+        "failures": [],
+        "cost": {
+          "runs_measured": 52,
+          "wall_ms_total": 441.289,
+          "user_ms_total": 199.357,
+          "sys_ms_total": 350.698,
+          "max_rss_kb_max": 14540,
+          "rss_measured_runs": 52
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        }
+      },
+      "conformant": true
+    }
+  },
+  "missing_toolchains": [],
+  "generated_utc": "2026-10-30T211143Z",
+  "verdict": "PASS"
+}
