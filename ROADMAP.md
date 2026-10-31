@@ -135,12 +135,15 @@ la referencia en el corpus completo.
 Nace del dogfood (`docs/DOGFOOD_2026-10-30.md`): los cinco programas reales midieron
 qué no se puede escribir. `spec/CORE_v0.5_propuesta.md` convierte eso en siete
 decisiones numeradas **V1–V7** con su corpus `programs/conformance_v0.5/` (401–410)
-y los `expected` escritos a mano **antes** de implementar. Nada de v0.5 está
-aprobado ni implementado; el directorio está fuera de `CORPORA`, así que los 170
+y los `expected` escritos a mano **antes** de implementar. A 2026-10-30 nada de v0.5 estaba
+aprobado ni implementado; los bloques fechados debajo lo superan: **V6, V6-bis y V7 están
+implementados y sellados, V1–V5 no.** El directorio sigue fuera de `CORPORA`, así que los 170
 casos de F2.3 no se mueven. Dos medidas que sí entran hoy: el azúcar del `for`
 con el incremento al final del cuerpo es **incorrecto** (`continue` no avanza →
 `LIMIT_REACHED`, control negativo en el corpus) y añadir la cabecera `0.5` toca
-**diez** sitios con la versión fijada en código (`evidence/v05_propuesta/`).
+**diez** sitios con la versión fijada en código (`evidence/v05_propuesta/`) — cifra
+**corregida a doce** el 2026-10-31 al implementar V6/V7: ver la nota de §7 en
+`spec/CORE_v0.5_propuesta.md` y el bloque de V7 más abajo.
 
 **Gate F2.4:** los seis ítems de `spec/CORE_v0.5_propuesta.md` §5, incluida la
 igualdad de `steps` contra los `while` gemelo (23 / 38 / 20) y la corrida COBOL
@@ -188,11 +191,13 @@ que falsifica V7.
 > Solo le cambia a COBOL (63 → 48 en esa población) y su gate F5 sube **113 → 125/170** con
 > UNSUPPORTED **57 → 45**, cero fallos, 8 484 corridas sin diferencias y los dos sabotajes
 > detectados. Sale además un bug **previo** de COBOL: una llamada void en sentencia no declaraba
-> el hueco `{prefijo}RET` que proemio y epílogo escriben (`isyco/backends/cobol.py:907`) — se
+> el hueco `{prefijo}RET` que el proemio y el epílogo escriben (`isyco/backends/cobol.py:907`) — se
 > arregla el emisor, no se inventa una capacidad para taparlo. Corrección a §7: son **12** los
 > sitios con la versión fijada, no 10, y la fuente única que pedía ya existe (`isyco/versions.py`).
-> Decisión: `docs/decisions/V7_CONTENT_CAPABILITIES.md`;
-> `evidence/v05_v7/run_20261031T194109Z.json`. Quedan revalidar V1–V5 y P1–P4.
+> Decisión: `docs/decisions/V7_CONTENT_CAPABILITIES.md`; gate de release
+> `evidence/backends/gate_2026-10-31T200602Z.json` (sha `f24c8f0c…`) y sonda
+> `evidence/v05_v7/run_20261031T200146Z.json` (`RELEASE_GATE`, mismo `corpus_hash` que la
+> corrida `EVIDENCE_ONLY` `run_20261031T194109Z`). Quedan revalidar V1–V5 y P1–P4.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 

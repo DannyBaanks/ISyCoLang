@@ -71,7 +71,10 @@ COBOL, y **la medición completa**: `(60, 46)` sobre el corpus congelado. Suite:
 
 ## Medición
 
-`tools/v7_capability_probe.py` (recibo `isyco.evidence/0.1`; sección 1 del recibo):
+`tools/v7_capability_probe.py` (recibo `isyco.evidence/0.1`; sección 1 del recibo). Dos
+corridas con el mismo `corpus_hash` `b446fea8bf5e…` sobre los mismos 118 módulos:
+`evidence/v05_v7/run_20261031T194109Z.json` (`EVIDENCE_ONLY`, árbol sucio) y
+`evidence/v05_v7/run_20261031T200146Z.json` (`RELEASE_GATE`, HEAD `a66689c`, árbol limpio).
 
 - Corpus congelado (170 casos, 114 bajan a IR): **60** llevan `isy-ir/0.2`, **46** usan `str`
   o `struct`, **14** pedían `ir0.2` por pura etiqueta.
@@ -93,10 +96,13 @@ separada por brazo):
 | etiqueta (pre-V7) | 17 `UNSUPPORTED(ir0.2)` |
 | contenido (V7) | **15 EQUIV** (status, code, emits, return **y pasos** iguales a la referencia) + 2 `UNSUPPORTED(emit_array)` |
 
-Gate F5 de COBOL re-corrido (`tools/backend_gate.py --only cobol`,
-`evidence/backends/gate_2026-10-31T193053Z.json`, sha `7bd113bf…`): **113 → 125** de 170,
+Gate F5 de COBOL re-corrido (`tools/backend_gate.py --only cobol`): **113 → 125** de 170,
 UNSUPPORTED **57 → 45**, cero fallos, 8 484 corridas diferenciales sin diferencias,
-`does_the_work` `True`, los dos sabotajes detectados. Los 12 recuperados son
+`does_the_work` `True`, los dos sabotajes detectados. Dos corridas, mismo resultado:
+`gate_2026-10-31T193053Z.json` (sha `7bd113bf…`, árbol de V7 aún sin commitear — el recibo
+del gate no registra suciedad, así que vale como EVIDENCE_ONLY) y
+`gate_2026-10-31T200602Z.json` (sha `f24c8f0c…`, `git_head` = `a66689c`, árbol limpio:
+el RELEASE_GATE). Los 12 recuperados son
 `119, 248, 264, 301, 313, 314, 318, 321, 324, 326, 327, 328`; `253` sigue sin cubrirse pero
 ahora con el nombre correcto (`emit_array` en vez de `ir0.2`), y `254_lvalue_order` pasa de
 `ir0.2,struct` a `emit_array,ir0.2,struct`. `322_header_v05` aparece como recuperado en el
@@ -108,7 +114,7 @@ brazo pero nunca estuvo en la lista del gate: con `0.5` declarado (V6) dejó de 
 - **Nunca BUILD_FAIL → UNSUPPORTED.** El brazo `contenido` clasifica `BUILD_FAIL` por
   excepción real y la registra; los 15 EQUIV no pasan por ahí. Y el camino inverso también
   se cerró: `UNSUPPORTED` de COBOL sobre 441/253 es una capacidad exigida, no una excusa.
-- **Un cascos no es detección.** Los sabotajes de COBOL sobre la población recuperada se
+- **Un vacío no se vende como cobertura.** Los sabotajes de COBOL sobre la población recuperada se
   declaran `NO_MIDE_EN_ESTA_POBLACION` y se remiten al gate: `half_even_as_half_up` no tiene
   ningún caso con `dec`, y `div_floor` tiene uno solo (`314`), cuyos operandos reales son
   `10/2` —exacto, así que trunc y floor coinciden— y `1/0`, que trampa antes de producir
@@ -140,5 +146,5 @@ mismos 60 módulos conservan su `schema`.
 | `emit_array` nombra un hueco real de COBOL | **DEMONSTRATED** | regalar la capacidad da `BUILD_FAIL` (`AttributeError`), no `EQUIV` |
 | La llamada void en sentencia era un bug del emisor, no una capacidad ausente | **DEMONSTRATED** | reproducible en `isyco 0.1` (`439`), arreglado en `cobol.py:907`, `327` coincide |
 | Ningún otro backend cambia su dominio | **DEMONSTRATED** | UNSUPPORTED 0 → 0 en c, rust, zig y pydecimal (aritmética de conjuntos sobre 118 módulos) |
-| El dominio declarado de COBOL sube de 113 a 125 de 170 sin divergencias | **DEMONSTRATED** (EVIDENCE_ONLY: árbol sucio) | `gate_2026-10-31T193053Z.json`; queda por sellar el RELEASE_GATE sobre el commit de V7 |
+| El dominio declarado de COBOL sube de 113 a 125 de 170 sin divergencias | **DEMONSTRATED** (RELEASE_GATE) | `gate_2026-10-31T200602Z.json` (sha `f24c8f0c…`, HEAD `a66689c`, árbol limpio), que reproduce `gate_2026-10-31T193053Z.json`; sonda `run_20261031T200146Z.json` con `veredicto_arbol=RELEASE_GATE` |
 | COBOL puede imprimir arreglos | **NOT_DEMONSTRATED** a propósito | es el hueco que el átomo declara |

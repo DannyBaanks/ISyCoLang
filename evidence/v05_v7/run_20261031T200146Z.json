@@ -1,0 +1,797 @@
+{
+  "brazos": [
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 1
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "119_header_v03",
+      "pasos_iguales": true,
+      "pasos_referencia": 1,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 6
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "248_array_equality",
+      "pasos_iguales": true,
+      "pasos_referencia": 6,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [
+          "true",
+          "false"
+        ],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(emit_array)",
+        "missing": "emit_array",
+        "pasos": null
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "253_emit_array",
+      "pasos_iguales": false,
+      "pasos_referencia": 3,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [
+          "[\"1\",\"-2\",\"3\"]"
+        ],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 1
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "264_header_v04",
+      "pasos_iguales": true,
+      "pasos_referencia": 1,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 4
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "301_basic",
+      "pasos_iguales": true,
+      "pasos_referencia": 4,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": "42",
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 10
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "313_same_names",
+      "pasos_iguales": true,
+      "pasos_referencia": 10,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [
+          "1",
+          "2",
+          "3"
+        ],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "ERROR(DIV_ZERO)",
+        "missing": null,
+        "pasos": 7
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "314_runtime_error_in_module",
+      "pasos_iguales": true,
+      "pasos_referencia": 7,
+      "programa": "IR",
+      "referencia": {
+        "code": "DIV_ZERO",
+        "emits": [
+          "5"
+        ],
+        "return": null,
+        "status": "ERROR"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 32
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "318_recursion_in_module",
+      "pasos_iguales": true,
+      "pasos_referencia": 32,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": "3628800",
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "LIMIT_REACHED(max_steps)",
+        "missing": null,
+        "pasos": 15
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "321_limit_across_modules",
+      "pasos_iguales": true,
+      "pasos_referencia": 15,
+      "programa": "IR",
+      "referencia": {
+        "code": "max_steps",
+        "emits": [
+          "0",
+          "2"
+        ],
+        "return": null,
+        "status": "LIMIT_REACHED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 1
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "322_header_v05",
+      "pasos_iguales": true,
+      "pasos_referencia": 1,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 4
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "324_module_main",
+      "pasos_iguales": true,
+      "pasos_referencia": 4,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": "42",
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 4
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "326_pub_in_main",
+      "pasos_iguales": true,
+      "pasos_referencia": 4,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": "1",
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 7
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "327_qualified_call_stmt",
+      "pasos_iguales": true,
+      "pasos_referencia": 7,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [
+          "7",
+          "8"
+        ],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 6
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "328_private_helper_inside",
+      "pasos_iguales": true,
+      "pasos_referencia": 6,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": "10",
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 7
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "440_llamada_calificada_void",
+      "pasos_iguales": true,
+      "pasos_referencia": 7,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [
+          "99",
+          "1"
+        ],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(emit_array)",
+        "missing": "emit_array",
+        "pasos": null
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "441_emit_arreglo_v03",
+      "pasos_iguales": false,
+      "pasos_referencia": 3,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [
+          "[\"4\",\"-5\"]"
+        ],
+        "return": null,
+        "status": "HALTED"
+      }
+    },
+    {
+      "contenido": {
+        "clasificacion": "EQUIV",
+        "estado": "HALTED",
+        "missing": null,
+        "pasos": 24
+      },
+      "etiqueta": {
+        "clasificacion": "UNSUPPORTED",
+        "estado": "UNSUPPORTED(ir0.2)",
+        "missing": "ir0.2",
+        "pasos": null
+      },
+      "name": "442_nucleo_03_sin_str",
+      "pasos_iguales": true,
+      "pasos_referencia": 24,
+      "programa": "IR",
+      "referencia": {
+        "code": null,
+        "emits": [
+          "6"
+        ],
+        "return": null,
+        "status": "HALTED"
+      }
+    }
+  ],
+  "canarios": [
+    {
+      "capacidades": [
+        "calls",
+        "emit",
+        "int64",
+        "ovf:trap"
+      ],
+      "claim": "V7: llamada a una funcion void en posicion de sentencia (v0.1) corre en la referencia",
+      "cobol": "EQUIV",
+      "esperado": {
+        "code": null,
+        "emits": [
+          "7"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "estado": "HALTED",
+      "ir0.2_por_contenido": false,
+      "name": "439_void_en_sentencia",
+      "pasos_cobol": 6,
+      "pasos_referencia": 6,
+      "referencia": {
+        "code": null,
+        "emits": [
+          "7"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "referencia_ok": true,
+      "schema": "isy-ir/0.1"
+    },
+    {
+      "capacidades": [
+        "calls",
+        "emit",
+        "int64",
+        "ovf:trap"
+      ],
+      "claim": "V7: llamada void calificada en posicion de sentencia emite primero el efecto del modulo",
+      "cobol": "EQUIV",
+      "esperado": {
+        "code": null,
+        "emits": [
+          "99",
+          "1"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "estado": "HALTED",
+      "ir0.2_por_contenido": false,
+      "name": "440_llamada_calificada_void",
+      "pasos_cobol": 7,
+      "pasos_referencia": 7,
+      "referencia": {
+        "code": null,
+        "emits": [
+          "99",
+          "1"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "referencia_ok": true,
+      "schema": "isy-ir/0.2"
+    },
+    {
+      "capacidades": [
+        "arrays",
+        "emit",
+        "emit_array",
+        "int64",
+        "ovf:trap"
+      ],
+      "claim": "V7: emit de un arreglo es JSON, con cada elemento como cadena",
+      "cobol": "UNSUPPORTED",
+      "esperado": {
+        "code": null,
+        "emits": [
+          "[\"4\",\"-5\"]"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "estado": "UNSUPPORTED(emit_array)",
+      "ir0.2_por_contenido": false,
+      "name": "441_emit_arreglo_v03",
+      "pasos_cobol": null,
+      "pasos_referencia": 3,
+      "referencia": {
+        "code": null,
+        "emits": [
+          "[\"4\",\"-5\"]"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "referencia_ok": true,
+      "schema": "isy-ir/0.2"
+    },
+    {
+      "capacidades": [
+        "bool",
+        "calls",
+        "emit",
+        "int64",
+        "ovf:trap",
+        "while"
+      ],
+      "claim": "V7: un programa 0.3 sin str/struct no necesita ninguna capacidad 0.2 (0+2+4)",
+      "cobol": "EQUIV",
+      "esperado": {
+        "code": null,
+        "emits": [
+          "6"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "estado": "HALTED",
+      "ir0.2_por_contenido": false,
+      "name": "442_nucleo_03_sin_str",
+      "pasos_cobol": 24,
+      "pasos_referencia": 24,
+      "referencia": {
+        "code": null,
+        "emits": [
+          "6"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "referencia_ok": true,
+      "schema": "isy-ir/0.2"
+    }
+  ],
+  "conteos": {
+    "congelado": {
+      "por_contenido": 46,
+      "por_etiqueta": 60,
+      "solo_etiqueta": [
+        "119_header_v03",
+        "248_array_equality",
+        "253_emit_array",
+        "264_header_v04",
+        "301_basic",
+        "313_same_names",
+        "314_runtime_error_in_module",
+        "318_recursion_in_module",
+        "321_limit_across_modules",
+        "322_header_v05",
+        "324_module_main",
+        "326_pub_in_main",
+        "327_qualified_call_stmt",
+        "328_private_helper_inside"
+      ],
+      "total": 114
+    },
+    "por_backend": {
+      "c": {
+        "cambia": false,
+        "declara_0_2": true,
+        "unsupported_contenido": 0,
+        "unsupported_etiqueta": 0
+      },
+      "cobol": {
+        "cambia": true,
+        "declara_0_2": false,
+        "unsupported_contenido": 48,
+        "unsupported_etiqueta": 63
+      },
+      "pydecimal": {
+        "cambia": false,
+        "declara_0_2": true,
+        "unsupported_contenido": 0,
+        "unsupported_etiqueta": 0
+      },
+      "rust": {
+        "cambia": false,
+        "declara_0_2": true,
+        "unsupported_contenido": 0,
+        "unsupported_etiqueta": 0
+      },
+      "zig": {
+        "cambia": false,
+        "declara_0_2": true,
+        "unsupported_contenido": 0,
+        "unsupported_etiqueta": 0
+      }
+    },
+    "por_contenido": 46,
+    "por_etiqueta": 63,
+    "solo_etiqueta": [
+      "119_header_v03",
+      "248_array_equality",
+      "253_emit_array",
+      "264_header_v04",
+      "301_basic",
+      "313_same_names",
+      "314_runtime_error_in_module",
+      "318_recursion_in_module",
+      "321_limit_across_modules",
+      "322_header_v05",
+      "324_module_main",
+      "326_pub_in_main",
+      "327_qualified_call_stmt",
+      "328_private_helper_inside",
+      "440_llamada_calificada_void",
+      "441_emit_arreglo_v03",
+      "442_nucleo_03_sin_str"
+    ],
+    "total": 118
+  },
+  "emit_array": {
+    "253_congelado": {
+      "clasificacion": "BUILD_FAIL",
+      "con_la_capacidad_de_claro_no_es_EQUIV": true,
+      "detalle": "AttributeError: 'ArrT' object has no attribute 's'",
+      "missing_cobol_real": [
+        "emit_array"
+      ]
+    },
+    "441_canario": {
+      "clasificacion": "BUILD_FAIL",
+      "con_la_capacidad_de_claro_no_es_EQUIV": true,
+      "detalle": "AttributeError: 'ArrT' object has no attribute 's'",
+      "missing_cobol_real": [
+        "emit_array"
+      ]
+    },
+    "hueco_real": true
+  },
+  "fidelidad_brazo_viejo": {
+    "divergencias": [],
+    "estado": "FIEL",
+    "modulos_comparados": 118,
+    "nota": "features_of leido de f856d55 (isyco/backends/base.py)"
+  },
+  "gate_f5": {
+    "archivo": "gate_2026-10-31T193053Z.json",
+    "cobol_corpus": {
+      "cases": 170,
+      "passed": 125
+    },
+    "cobol_sabotaje": {
+      "div_floor": {
+        "corpus_failures": 2,
+        "detected": true,
+        "difftest_diffs": 53
+      },
+      "half_even_as_half_up": {
+        "corpus_failures": 3,
+        "detected": true,
+        "difftest_diffs": 12
+      }
+    },
+    "cobol_unsupported": 45,
+    "git_head": "5c6fbf989c56c888104e184b440a8e910b578656",
+    "hay": true,
+    "sha256": "7bd113bfdc8ea045bd433b602355af6e2988d97ea61f58ac95eb207381623505"
+  },
+  "hace_el_trabajo": {
+    "control_de_literales_248": "NO_APLICABLE: el runtime de COBOL ya escribe \"true\"/\"false\" al formatear booleanos, así que buscar la salida en el fuente no distingue calculado de escrito",
+    "literal_no_escrito": true,
+    "ok": true,
+    "variantes": [
+      {
+        "caso": "442_nucleo_03_sin_str",
+        "coincide_referencia_variante": true,
+        "la_salida_cambia": true,
+        "salida_original": [
+          "6"
+        ],
+        "salida_variante": [
+          "12"
+        ],
+        "salidas_escritas_en_el_fuente_de_la_variante": [],
+        "variante": "while k < 4"
+      },
+      {
+        "caso": "248_array_equality",
+        "coincide_referencia_variante": true,
+        "la_salida_cambia": true,
+        "salida_original": [
+          "true",
+          "false"
+        ],
+        "salida_variante": [
+          "true",
+          "true"
+        ],
+        "salidas_escritas_en_el_fuente_de_la_variante": [
+          "true",
+          "true"
+        ],
+        "variante": "b[0] = 1"
+      }
+    ]
+  },
+  "receipt": {
+    "arbol_sucio_codigo": false,
+    "backends_disponibles": [
+      "c",
+      "cobol",
+      "pydecimal",
+      "rust",
+      "zig"
+    ],
+    "brazo_viejo_desde": "f856d55",
+    "casos": 118,
+    "comando": "python3 tools/v7_capability_probe.py --write",
+    "corpus": "programs/conformance_v0.1..v0.4 (congelado) + canarios V7 439..442 en programs/conformance_v0.5",
+    "corpus_hash": "b446fea8bf5e20c76ba1ae1b95e9787c5cb85bb5df9ee22f489dd1590311eac8",
+    "git_head": "a66689c946afea895a01150a7fee09998969d7fc",
+    "milestone": "V7 (CORE v0.5) — capacidades derivadas del contenido del programa",
+    "python": "3.12.3",
+    "schema": "isyco.evidence/0.1",
+    "utc": "2026-10-31T20:01:46Z",
+    "veredicto_arbol": "RELEASE_GATE"
+  },
+  "sabotaje": {
+    "div_floor": {
+      "cascos": [],
+      "casos_con_el_rasgo": [
+        "314_runtime_error_in_module"
+      ],
+      "casos_rotos": [],
+      "divergen": 0,
+      "lectura": "NO_MIDE_EN_ESTA_POBLACION",
+      "necesita": "idiv",
+      "observados": [
+        {
+          "caso": "314_runtime_error_in_module",
+          "observado": {
+            "code": "DIV_ZERO",
+            "emits": [
+              "5"
+            ],
+            "return": null,
+            "status": "ERROR"
+          }
+        }
+      ],
+      "por_que_no_FALSO": "un rasgo presente no es un observable que lo distinga: ver «observados» (los operandos deciden) y el barrido completo del gate",
+      "se_mide_en": "gate_2026-10-31T193053Z.json (sha 7bd113bfdc8e) con {\"corpus_failures\": 2, \"difftest_diffs\": 53, \"detected\": true}"
+    },
+    "half_even_as_half_up": {
+      "cascos": [],
+      "casos_con_el_rasgo": [],
+      "casos_rotos": [],
+      "divergen": 0,
+      "lectura": "NO_MIDE_EN_ESTA_POBLACION",
+      "necesita": "dec",
+      "observados": [],
+      "por_que_no_FALSO": "un rasgo presente no es un observable que lo distinga: ver «observados» (los operandos deciden) y el barrido completo del gate",
+      "se_mide_en": "gate_2026-10-31T193053Z.json (sha 7bd113bfdc8e) con {\"corpus_failures\": 3, \"difftest_diffs\": 12, \"detected\": true}"
+    }
+  }
+}

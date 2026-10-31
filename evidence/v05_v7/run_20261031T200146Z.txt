@@ -1,0 +1,62 @@
+V7 (CORE v0.5) — UNSUPPORTED por capacidad exigida, no por etiqueta de schema
+utc=2026-10-31T20:01:46Z  git_head=a66689c946afea895a01150a7fee09998969d7fc  arbol=RELEASE_GATE  (sucio_codigo=False)
+comando: python3 tools/v7_capability_probe.py --write
+corpus=programs/conformance_v0.1..v0.4 (congelado) + canarios V7 439..442 en programs/conformance_v0.5  casos_con_IR=118  corpus_hash=b446fea8bf5e20c76ba1ae1b95e9787c5cb85bb5df9ee22f489dd1590311eac8
+python=3.12.3  backends=c,cobol,pydecimal,rust,zig
+
+1) SCHEMA_CAN_EXPRESS vs PROGRAM_REQUIRES
+   congelado (v0.1..v0.4, 114 programas con IR): por etiqueta = 60   por contenido (ir0.2) = 46   solo por etiqueta = 14
+   + canarios V7 (118 programas con IR): por etiqueta = 63   por contenido = 46   solo por etiqueta = 17
+   ['119_header_v03', '248_array_equality', '253_emit_array', '264_header_v04', '301_basic', '313_same_names', '314_runtime_error_in_module', '318_recursion_in_module', '321_limit_across_modules', '322_header_v05', '324_module_main', '326_pub_in_main', '327_qualified_call_stmt', '328_private_helper_inside', '440_llamada_calificada_void', '441_emit_arreglo_v03', '442_nucleo_03_sin_str']
+   por backend (UNSUPPORTED antes -> despues, sin compilar: aritmetica de conjuntos):
+     c            0 ->    0   no cambia (declara ir0.2 y las capacidades 0.2)
+     cobol       63 ->   48   CAMBIA
+     pydecimal    0 ->    0   no cambia (declara ir0.2 y las capacidades 0.2)
+     rust         0 ->    0   no cambia (declara ir0.2 y las capacidades 0.2)
+     zig          0 ->    0   no cambia (declara ir0.2 y las capacidades 0.2)
+
+2) brazo viejo reconstruido desde git: FIEL (features_of leido de f856d55 (isyco/backends/base.py); 118 modulos, divergencias [])
+   ejecucion de los casos donde las dos reglas difieren:
+     119_header_v03               ref=HALTED          pasos=1  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=1 PASOS_IGUAL
+     248_array_equality           ref=HALTED          pasos=6  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=6 PASOS_IGUAL
+     253_emit_array               ref=HALTED          pasos=3  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=UNSUPPORTED(emit_array)
+     264_header_v04               ref=HALTED          pasos=1  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=1 PASOS_IGUAL
+     301_basic                    ref=HALTED          pasos=4  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=4 PASOS_IGUAL
+     313_same_names               ref=HALTED          pasos=10  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=10 PASOS_IGUAL
+     314_runtime_error_in_module  ref=ERROR           pasos=7  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=7 PASOS_IGUAL
+     318_recursion_in_module      ref=HALTED          pasos=32  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=32 PASOS_IGUAL
+     321_limit_across_modules     ref=LIMIT_REACHED   pasos=15  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=15 PASOS_IGUAL
+     322_header_v05               ref=HALTED          pasos=1  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=1 PASOS_IGUAL
+     324_module_main              ref=HALTED          pasos=4  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=4 PASOS_IGUAL
+     326_pub_in_main              ref=HALTED          pasos=4  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=4 PASOS_IGUAL
+     327_qualified_call_stmt      ref=HALTED          pasos=7  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=7 PASOS_IGUAL
+     328_private_helper_inside    ref=HALTED          pasos=6  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=6 PASOS_IGUAL
+     440_llamada_calificada_void  ref=HALTED          pasos=7  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=7 PASOS_IGUAL
+     441_emit_arreglo_v03         ref=HALTED          pasos=3  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=UNSUPPORTED(emit_array)
+     442_nucleo_03_sin_str        ref=HALTED          pasos=24  etiqueta=UNSUPPORTED(ir0.2)  ->  contenido=EQUIV pasos=24 PASOS_IGUAL
+
+3) canarios V7 (esperado escrito a mano antes de implementar):
+     439_void_en_sentencia        schema=0.1 ir0.2por_contenido=False ref=OK pasos ref=6 cobol=6  cobol=EQUIV HALTED
+                                  capacidades=['calls', 'emit', 'int64', 'ovf:trap']
+     440_llamada_calificada_void  schema=0.2 ir0.2por_contenido=False ref=OK pasos ref=7 cobol=7  cobol=EQUIV HALTED
+                                  capacidades=['calls', 'emit', 'int64', 'ovf:trap']
+     441_emit_arreglo_v03         schema=0.2 ir0.2por_contenido=False ref=OK pasos ref=3 cobol=None  cobol=UNSUPPORTED UNSUPPORTED(emit_array)
+                                  capacidades=['arrays', 'emit', 'emit_array', 'int64', 'ovf:trap']
+     442_nucleo_03_sin_str        schema=0.2 ir0.2por_contenido=False ref=OK pasos ref=24 cobol=24  cobol=EQUIV HALTED
+                                  capacidades=['bool', 'calls', 'emit', 'int64', 'ovf:trap', 'while']
+
+4) ¿hace falta el atomo nuevo? (COBOL con `emit_array` regalada):
+     253_congelado   BUILD_FAIL  missing_cobol_real=['emit_array']  AttributeError: 'ArrT' object has no attribute 's'
+     441_canario     BUILD_FAIL  missing_cobol_real=['emit_array']  AttributeError: 'ArrT' object has no attribute 's'
+   hueco_real=True
+
+5) el engine hace el trabajo (variantes del programa, no de la salida):
+     442_nucleo_03_sin_str        ['6'] --[while k < 4]--> ['12']  coincide_ref=True  cambia=True  escritas_en_fuente=[]
+     248_array_equality           ['true', 'false'] --[b[0] = 1]--> ['true', 'true']  coincide_ref=True  cambia=True  escritas_en_fuente=['true', 'true']
+   NO_APLICABLE: el runtime de COBOL ya escribe "true"/"false" al formatear booleanos, así que buscar la salida en el fuente no distingue calculado de escrito
+   ok=True
+6) sabotajes de COBOL sobre la población recuperada (mide capacidades, no operadores):
+     half_even_as_half_up   NO_MIDE_EN_ESTA_POBLACION  casos con el rasgo=[]  observados=[]
+                            se mide en: gate_2026-10-31T193053Z.json (sha 7bd113bfdc8e) con {"corpus_failures": 3, "difftest_diffs": 12, "detected": true}
+     div_floor              NO_MIDE_EN_ESTA_POBLACION  casos con el rasgo=['314_runtime_error_in_module']  observados=[{"caso": "314_runtime_error_in_module", "observado": {"status": "ERROR", "code": "DIV_ZERO", "emits": ["5"], "return": null}}]
+                            se mide en: gate_2026-10-31T193053Z.json (sha 7bd113bfdc8e) con {"corpus_failures": 2, "difftest_diffs": 53, "detected": true}
