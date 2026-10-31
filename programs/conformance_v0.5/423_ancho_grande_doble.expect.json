@@ -1,0 +1,10 @@
+{
+  "claim": "V6: doble[str<8>] adentro y doble[str<64>] afuera; la cadena produce 32 bytes",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["abcdefghabcdefghabcdefghabcdefgh"],
+    "return": null
+  }
+}

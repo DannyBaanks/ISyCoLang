@@ -156,6 +156,15 @@ que falsifica V7.
 > pedía aritmética de capacidades queda refutada: `checker.py:377-379` ya la tiene.
 > Corrección completa en `spec/CORE_v0.5_propuesta.md` §8.
 
+> **V6 implementado y sellado 2026-10-31.** `str` pelado en parámetros, resuelto por el
+> sitio de llamada con una copia por resolución (`isyco/specialize.py`): los 18 casos
+> nuevos `411`–`428` coinciden en referencia, IR y cada backend —77 EQUIV, 13 UNSUPPORTED
+> (todos COBOL, y por la etiqueta `ir0.2`, no por V6), cero DIVERGENT/BUILD_FAIL—;
+> 22 clones en el corpus, máximo 2 por definición, sin tope fijado (base de P4).
+> Decisión y controles: `docs/decisions/V6_CONTEXTUAL_STR.md`;
+> `evidence/v05_v6/run_20261031T103514Z.json`. Quedan V6-bis, V7, revalidar V1–V5 y P1–P4;
+> el directorio sigue fuera de `CORPORA` hasta que `401`–`410` pasen.
+
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).

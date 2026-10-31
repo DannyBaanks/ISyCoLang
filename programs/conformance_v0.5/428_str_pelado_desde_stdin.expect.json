@@ -1,0 +1,10 @@
+{
+  "claim": "V6: la capacidad instanciada viene del parámetro str<16> de main; len cuenta el valor real",
+  "input": ["hola"],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "4"
+  }
+}

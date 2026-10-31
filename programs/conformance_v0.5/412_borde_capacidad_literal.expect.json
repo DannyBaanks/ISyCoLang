@@ -1,0 +1,10 @@
+{
+  "claim": "V6: `pad` con un literal de 6 bytes se instancia en str<6> y el vacio en str<1>; len mira el valor, no la capacidad",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["abcdef", "2"],
+    "return": null
+  }
+}

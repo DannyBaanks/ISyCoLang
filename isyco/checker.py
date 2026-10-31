@@ -7,9 +7,11 @@ de fuente.
 from __future__ import annotations
 
 from . import ast as A
+from . import specialize as spec
 from .errors import InvalidProgram
 from .types import (INT_ALIASES, MAX_STR, MAX_VALUE_SIZE, U8, ArrT, BoolT, DecT, IntT, NamedT,
                     StrT, StructT, is_numeric, is_scalar, type_size)
+from .versions import has
 
 ARITH = {"+", "-", "*", "/", "%"}
 ORDER = {"<", "<=", ">", ">="}
@@ -33,8 +35,9 @@ class Checker:
         self.scopes: list[dict] = []
         self.loop_depth = 0
         self.emits = False
-        self.v03 = program.version in ("0.3", "0.4")   # v0.4 = v0.3 + módulos
+        self.v03 = has(program.version, "v03")   # v0.4 y v0.5 traen lo de v0.3
         self.struct_types: dict[str, StructT] = {}
+        self.specs: dict[str, A.Fn] = {}         # V6: especializaciones ya chequeadas
 
     def check(self) -> None:
         if self.v03:
@@ -49,8 +52,18 @@ class Checker:
                 fn.ret = self.resolve(fn.ret)
         elif main.ret is not None and not is_scalar(main.ret):
             raise InvalidProgram("TYPE_MISMATCH", main.at, "main debe retornar un escalar")
-        for fn in self.program.fns.values():
+        if spec.is_contextual(main):
+            raise InvalidProgram("TYPE_MISMATCH", main.at,
+                                 "main: ninguna llamada fija la capacidad del str pelado")
+        pelados = [name for name, fn in self.program.fns.items() if spec.is_contextual(fn)]
+        for fn in list(self.program.fns.values()):
+            if spec.is_contextual(fn):
+                continue    # V6: la definición pelada no se chequea; se chequea cada copia
             self.check_fn(fn)
+        for name in pelados:
+            # Sin llamadas no hay código: la definición original desaparece antes de la IR,
+            # así que `str` pelado nunca llega a `ty_to_json` ni a `type_size`.
+            del self.program.fns[name]
 
     # --- structs y tipos con nombre (CORE v0.3 §3, §5, §7.1) -------------------
     def check_structs(self) -> None:
@@ -231,7 +244,7 @@ class Checker:
 
     def index_type(self, e) -> None:
         # CORE v0.2 C1: un índice sin tipo propio (literales) toma i64.
-        hint = INT_ALIASES["i64"] if self.program.version != "0.1" and is_poly(e) else None
+        hint = INT_ALIASES["i64"] if has(self.program.version, "v02") and is_poly(e) else None
         ty = self.typeof(e, hint)
         if not isinstance(ty, IntT):
             raise InvalidProgram("TYPE_MISMATCH", e.at, "el índice debe ser entero")
@@ -429,13 +442,51 @@ class Checker:
             raise InvalidProgram("UNKNOWN_NAME", e.at, e.name)
         if len(e.args) != len(callee.params):
             raise InvalidProgram("TYPE_MISMATCH", e.at, f"{e.name} espera {len(callee.params)} argumentos")
-        for arg, (_, ty, _) in zip(e.args, callee.params):
-            self.expect(arg, ty)
+        destino = None
+        if spec.is_contextual(callee):
+            callee, destino = self.specialize(e, callee)
+        else:
+            for arg, (_, ty, _) in zip(e.args, callee.params):
+                self.expect(arg, ty)
         if callee.emits:
             self.emits = True
         if callee.ret is None and not allow_void:
             raise InvalidProgram("TYPE_MISMATCH", e.at, f"{e.name} no retorna valor")
+        if destino is not None:
+            e.name = destino
         return callee.ret
+
+    def specialize(self, e: A.Call, callee: A.Fn):
+        """V6: instancia la firma con las capacidades de los argumentos y chequea la copia.
+
+        El ancho de un parámetro escrito `str` sin capacidad es el tipo real del
+        argumento: si no es `str`, es TYPE_MISMATCH en el argumento. No hay
+        inferencia permisiva — un `str<8>` pedido con un `str<16>` nunca se recorta.
+        La copia se chequea en el sitio de la primera llamada y una sola vez: la
+        clave ya registrada antes de entrar corta la recursión, incluida la mutua.
+        """
+        pelados = spec.contextual_slots(callee)
+        widths = []
+        for i, (arg, (_, ty, _)) in enumerate(zip(e.args, callee.params)):
+            if i not in pelados:
+                self.expect(arg, ty)
+                continue
+            got = self.typeof(arg, None)
+            if not isinstance(got, StrT):
+                raise InvalidProgram("TYPE_MISMATCH", arg.at, f"se esperaba str, llegó {got}")
+            widths.append(got.n)
+        widths = tuple(widths)
+        name = spec.spec_name(callee.name, widths, None)
+        if name not in self.specs:
+            clone = spec.make_clone(callee, name, widths, None)
+            self.specs[name] = clone
+            self.program.fns[name] = clone
+            guardado = (self.fn, self.scopes, self.loop_depth, self.emits)
+            try:
+                self.check_fn(clone)
+            finally:
+                self.fn, self.scopes, self.loop_depth, self.emits = guardado
+        return self.specs[name], name
 
 
 def check(program: A.Program) -> None:

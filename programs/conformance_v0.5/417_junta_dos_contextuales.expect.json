@@ -1,0 +1,10 @@
+{
+  "claim": "V6: junta[str<3>,str<2>] produce `abcde` dentro de str<16>",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["abcde"],
+    "return": null
+  }
+}

@@ -1,0 +1,18 @@
+isyco 0.5
+
+# V6: cuando el argumento es un literal sin contexto, la capacidad que se
+# instancia es la del propio literal (str<N> con N = max(len, 1)).
+fn pad(s: str, n: i64, c: str<1>) -> str<32> {
+    let out: str<32> = s;
+    let k: i64 = len(s);
+    while k < n {
+        out = out + c;
+        k = k + 1;
+    }
+    return out;
+}
+
+fn main() !emit {
+    emit pad("abcdef", 6, "0");
+    emit len(pad("", 2, "z"));
+}

@@ -4,12 +4,13 @@ from __future__ import annotations
 from . import ast as A
 from .errors import InvalidProgram
 from .lexer import Token
-from .types import INT_ALIASES, MAX_STR, ArrT, BoolT, DecT, IntT, NamedT, StrT
+from .types import INT_ALIASES, MAX_STR, ArrT, BoolT, ContextStrT, DecT, IntT, NamedT, StrT
+from .versions import SUPPORTED, has
 
 CMP_OPS = {"==", "!=", "<", "<=", ">", ">="}
 ROUND_MODES = {"half_even", "half_up", "down", "exact"}
 MAX_ARRAY = 65536
-SUPPORTED_VERSIONS = {"0.1", "0.2", "0.3", "0.4"}
+SUPPORTED_VERSIONS = set(SUPPORTED)
 
 
 class Parser:
@@ -21,11 +22,15 @@ class Parser:
 
     @property
     def v03(self) -> bool:
-        return self.version in ("0.3", "0.4")
+        return has(self.version, "v03")
 
     @property
     def v04(self) -> bool:
-        return self.version == "0.4"
+        return has(self.version, "v04")
+
+    @property
+    def v05(self) -> bool:
+        return has(self.version, "v05")
 
     def is_qualified(self) -> bool:
         """CORE v0.4: `x.f(`, `x.S {` o `x.S` en un tipo son nombres calificados."""
@@ -143,7 +148,7 @@ class Parser:
             while True:
                 ptok = self.ident()
                 self.expect(":")
-                params.append((ptok.text, self.type_(), ptok.at))
+                params.append((ptok.text, self.type_(bare_str=True), ptok.at))
                 if not self.accept(","):
                     break
         self.expect(")")
@@ -155,7 +160,8 @@ class Parser:
         return A.Fn(at, name, params, ret, emits, self.block())
 
     # --- tipos ----------------------------------------------------------------
-    def type_(self):
+    def type_(self, bare_str: bool = False):
+        """`bare_str` (CORE v0.5 V6): solo en parámetros se acepta `str` sin capacidad."""
         token = self.tok
         if self.accept("bool"):
             return BoolT()
@@ -192,6 +198,12 @@ class Parser:
                 raise InvalidProgram("DEC_PARAMS", token.at, f"dec<{p},{s}>")
             return DecT(p, s, rnd)
         if self.v03 and self.accept("str"):
+            if not self.is_("<"):
+                # V6: `str` pelado NO es «capacidad infinita»; es una capacidad diferida
+                # que solo existe en un parámetro, y solo a partir de 0.5.
+                if not (bare_str and self.v05):
+                    self.fail("str necesita su capacidad: str<N>")
+                return ContextStrT()
             self.expect("<")
             n = self.nat()
             self.expect(">")
@@ -344,7 +356,7 @@ class Parser:
 
     def unary(self):
         if self.tok.kind == "OP" and self.tok.text == "-":
-            if self.version != "0.1" and self.peek().kind in ("INT", "DEC"):
+            if has(self.version, "v02") and self.peek().kind in ("INT", "DEC"):
                 # CORE v0.2 C2: '-' seguido de un literal es un solo literal negativo (primario).
                 at = self.take().at
                 literal = self.primary()

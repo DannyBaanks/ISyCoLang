@@ -1,0 +1,12 @@
+isyco 0.5
+
+# Canario F (otra mitad): mismo programa con las llamadas invertidas. Si la
+# resolucion contaminara, 414 y 415 no darian el resultado simetrico.
+fn largo(s: str) -> i64 {
+    return len(s);
+}
+
+fn main() !emit {
+    emit largo("12");
+    emit largo("12345678");
+}

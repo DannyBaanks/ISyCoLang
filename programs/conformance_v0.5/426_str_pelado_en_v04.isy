@@ -1,0 +1,11 @@
+isyco 0.4
+
+# La cabecera manda. Con 0.4 un parametro pelado no existe: V6 no relaja ninguna
+# semantica de 0.1-0.4, y los `str<N>` de v0.3 se chequean igual que antes.
+fn largo(s: str) -> i64 {
+    return len(s);
+}
+
+fn main() !emit {
+    emit largo("abc");
+}

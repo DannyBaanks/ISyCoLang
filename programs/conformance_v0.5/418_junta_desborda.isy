@@ -1,0 +1,11 @@
+isyco 0.5
+
+# La misma definicion, otra resolucion: 8 + 16 bytes en un str<16> declarado.
+fn junta(a: str, b: str) -> str<16> {
+    let r: str<16> = a + b;
+    return r;
+}
+
+fn main() !emit {
+    emit junta("aaaaaaaa", "bbbbbbbbbbbbbbbb");
+}

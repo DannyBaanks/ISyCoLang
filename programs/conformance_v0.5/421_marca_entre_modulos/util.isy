@@ -1,0 +1,4 @@
+isyco 0.5
+pub fn marca(s: str) -> str<8> {
+    return s as str<8>;
+}

@@ -1,0 +1,12 @@
+isyco 0.5
+
+# La restriccion aparece donde la semantica la pide: `s as str<2>` trunca el
+# valor? No. Con s instanciado en str<3> el cast es ERROR(OVERFLOW), nunca
+# truncado silencioso (CORE v0.3: OVERFLOW no truncacion).
+fn guion(s: str) -> str<2> {
+    return s as str<2>;
+}
+
+fn main() !emit {
+    emit guion("abc");
+}

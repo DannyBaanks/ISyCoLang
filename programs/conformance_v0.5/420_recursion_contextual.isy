@@ -1,0 +1,15 @@
+isyco 0.5
+
+# La recursion dentro de una especializacion se llama a si misma: la clave ya
+# esta en curso y devuelve el nombre de la copia en curso.
+fn cuenta(s: str, n: i64) -> i64 {
+    if n <= 0 {
+        return 0;
+    }
+    return cuenta(s, n - 1) + len(s);
+}
+
+fn main() !emit {
+    emit cuenta("abcd", 3);
+    emit cuenta("x", 2);
+}

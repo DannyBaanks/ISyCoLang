@@ -1,0 +1,18 @@
+{
+  "322_header_v05": {
+    "superseded_by": "spec/CORE_v0.5_propuesta.md §2 V6/V6-bis/V7 (ordenado implementarlo Danny el 2026-10-30)",
+    "reason": "El caso afirmaba que la cabecera 'isyco 0.5' es SYNTAX, porque hasta hoy solo existían v0.1 a v0.4. Con las decisiones v0.5 en el código esa cabecera es válida y `fn main() { }` termina sin salida (medido: HALTED, steps=1; pinzado por tests/test_versions.py::Cabecera::test_0_5_es_valida). La afirmación que sigue vigente —una versión desconocida es SYNTAX— queda pinzada por tests/test_versions.py::Cabecera::test_version_desconocida_es_syntax con 'isyco 0.6' (medido: INVALID_PROGRAM/SYNTAX); el caso 264 en v0.3 ya hizo el mismo trayecto por la misma razón.",
+    "original_expected": {
+      "status": "INVALID_PROGRAM",
+      "code": "SYNTAX",
+      "emits": [],
+      "return": null
+    },
+    "expected": {
+      "status": "HALTED",
+      "code": null,
+      "emits": [],
+      "return": null
+    }
+  }
+}

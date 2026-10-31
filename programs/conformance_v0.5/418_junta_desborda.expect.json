@@ -1,0 +1,10 @@
+{
+  "claim": "V6: la especializacion str<8>,str<16> rebasa str<16> al ejecutar y es ERROR(OVERFLOW)",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "V6: `str` sin capacidad fuera de un parametro es SYNTAX en 0.5",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

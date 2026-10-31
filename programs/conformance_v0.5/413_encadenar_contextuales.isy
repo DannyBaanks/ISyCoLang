@@ -1,0 +1,18 @@
+isyco 0.5
+
+# V6: una llamada contextual dentro de otra contextual. La capacidad entra por
+# el parametro ya resuelto del llamador, asi que `copia` se especializa dos veces
+# (str<3> y str<8>) desde una sola cadena de llamadas.
+fn copia(s: str) -> str<8> {
+    let r: str<8> = s as str<8>;
+    return r;
+}
+
+fn envia(s: str) -> str<8> {
+    return copia(s);
+}
+
+fn main() !emit {
+    emit envia("abc");
+    emit envia("12345678");
+}

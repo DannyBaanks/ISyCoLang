@@ -1,0 +1,10 @@
+{
+  "claim": "V6: la capacidad diferida es de 0.5; el mismo fuente con cabecera 0.4 sigue siendo SYNTAX",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

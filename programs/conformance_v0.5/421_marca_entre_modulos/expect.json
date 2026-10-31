@@ -1,0 +1,10 @@
+{
+  "claim": "V6: una funcion contextual de un modulo se especializa por llamado desde la raiz",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["hola", "ady"],
+    "return": null
+  }
+}

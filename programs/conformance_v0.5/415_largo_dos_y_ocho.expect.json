@@ -1,0 +1,10 @@
+{
+  "claim": "V6: invertir el orden de las llamadas no cambia ningun resultado",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["2", "8"],
+    "return": null
+  }
+}

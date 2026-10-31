@@ -1,0 +1,10 @@
+{
+  "claim": "V6: la misma definicion con `str` pelado se especializa en str<2> y str<7> sin duplicarla",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["hi---", "unohola!!"],
+    "return": null
+  }
+}

@@ -1,0 +1,12 @@
+isyco 0.5
+
+# Y la otra mitad del fail-closed: si el CUERPO exige un maximo que la resolucion
+# no le da, el error es estatico (TYPE_MISMATCH en la copia), no runtime.
+fn estrecho(s: str) -> str<4> {
+    let t: str<4> = s;
+    return t;
+}
+
+fn main() !emit {
+    emit estrecho("abcde");
+}

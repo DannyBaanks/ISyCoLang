@@ -1,0 +1,10 @@
+{
+  "claim": "V6: cuenta[str<4>] y cuenta[str<1>] son dos especializaciones recursivas independientes",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["12", "2"],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "V6: pasar un i64 a un slot pelado es TYPE_MISMATCH estatico; no hay inferencia permisiva",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

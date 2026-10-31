@@ -1,0 +1,11 @@
+isyco 0.5
+
+# Una definicion contextual que nadie llama no tiene capacidad que resolver:
+# se descarta, no se convierte en error (la semantica observable no depende de ella).
+fn sin_usar(s: str) -> str<4> {
+    return s as str<4>;
+}
+
+fn main() -> i64 {
+    return 7;
+}

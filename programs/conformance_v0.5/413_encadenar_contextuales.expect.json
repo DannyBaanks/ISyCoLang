@@ -1,0 +1,10 @@
+{
+  "claim": "V6: la resolucion se propaga por una cadena de llamadas contextuales",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["abc", "12345678"],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "V6: `sin_usar` nunca se instancia y el programa sigue siendo valido",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "7"
+  }
+}

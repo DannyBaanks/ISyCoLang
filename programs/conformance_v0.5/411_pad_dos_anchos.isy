@@ -1,0 +1,17 @@
+isyco 0.5
+
+# V6: una sola definicion `pad` sirve para dos anchos distintos (canario A).
+fn pad(s: str, n: i64, c: str<1>) -> str<32> {
+    let out: str<32> = s;
+    let k: i64 = len(s);
+    while k < n {
+        out = out + c;
+        k = k + 1;
+    }
+    return out;
+}
+
+fn main() !emit {
+    emit pad("hi", 5, "-");
+    emit pad("unohola", 9, "!");
+}

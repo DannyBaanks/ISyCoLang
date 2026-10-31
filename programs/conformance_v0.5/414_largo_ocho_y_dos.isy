@@ -1,0 +1,11 @@
+isyco 0.5
+
+# Canario F (mitad): la especializacion de 8 no puede contaminar a la de 2.
+fn largo(s: str) -> i64 {
+    return len(s);
+}
+
+fn main() !emit {
+    emit largo("12345678");
+    emit largo("12");
+}

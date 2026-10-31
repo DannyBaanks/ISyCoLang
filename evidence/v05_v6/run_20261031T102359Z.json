@@ -1,0 +1,2078 @@
+{
+  "cases": [
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "hi---",
+              "unohola!!"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "hi---",
+              "unohola!!"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "hi---",
+              "unohola!!"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "hi---",
+              "unohola!!"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: la misma definicion con `str` pelado se especializa en str<2> y str<7> sin duplicarla",
+      "especializaciones": {
+        "creadas": [
+          "pad.2",
+          "pad.7"
+        ],
+        "descartadas": [
+          "pad"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "hi---",
+          "unohola!!"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "main",
+        "pad.2",
+        "pad.7"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "hi---",
+          "unohola!!"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "411_pad_dos_anchos",
+      "program_sha256": "f7a57b7420337e42db87ad7561b2dfe17b60285b7c43394e555160fb1b787625",
+      "reference": {
+        "code": null,
+        "emits": [
+          "hi---",
+          "unohola!!"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 30
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcdef",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcdef",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcdef",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcdef",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: `pad` con un literal de 6 bytes se instancia en str<6> y el vacio en str<1>; len mira el valor, no la capacidad",
+      "especializaciones": {
+        "creadas": [
+          "pad.1",
+          "pad.6"
+        ],
+        "descartadas": [
+          "pad"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "abcdef",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "main",
+        "pad.1",
+        "pad.6"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "abcdef",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "412_borde_capacidad_literal",
+      "program_sha256": "f2a7bd405a1d5a89fefb97ef27aebaab93efdb681c7b051df3a7e7ae22c6215f",
+      "reference": {
+        "code": null,
+        "emits": [
+          "abcdef",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 21
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abc",
+              "12345678"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abc",
+              "12345678"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abc",
+              "12345678"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abc",
+              "12345678"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: la resolucion se propaga por una cadena de llamadas contextuales",
+      "especializaciones": {
+        "creadas": [
+          "copia.3",
+          "copia.8",
+          "envia.3",
+          "envia.8"
+        ],
+        "descartadas": [
+          "copia",
+          "envia"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "abc",
+          "12345678"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "copia.3",
+        "copia.8",
+        "envia.3",
+        "envia.8",
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "abc",
+          "12345678"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "413_encadenar_contextuales",
+      "program_sha256": "0a2c16ae0410a87458bfb04ec19d4fd656ba4de6c9f8294b41058461c9ac9ebe",
+      "reference": {
+        "code": null,
+        "emits": [
+          "abc",
+          "12345678"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 13
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "8",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "8",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "8",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "8",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: coexisten largo[str<8>] y largo[str<2>], cada una ve su propio ancho",
+      "especializaciones": {
+        "creadas": [
+          "largo.2",
+          "largo.8"
+        ],
+        "descartadas": [
+          "largo"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "8",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "largo.2",
+        "largo.8",
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "8",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "414_largo_ocho_y_dos",
+      "program_sha256": "97a5e160188985753fd6f7b2b72bc9593f788052c5cd0398ecf0492b6e718c00",
+      "reference": {
+        "code": null,
+        "emits": [
+          "8",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 7
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "2",
+              "8"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "2",
+              "8"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "2",
+              "8"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "2",
+              "8"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: invertir el orden de las llamadas no cambia ningun resultado",
+      "especializaciones": {
+        "creadas": [
+          "largo.2",
+          "largo.8"
+        ],
+        "descartadas": [
+          "largo"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "2",
+          "8"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "largo.2",
+        "largo.8",
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "2",
+          "8"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "415_largo_dos_y_ocho",
+      "program_sha256": "31abd0d18e2a04200bec305a85a9a93045e5f394f91590f124cb34f5d9bc485b",
+      "reference": {
+        "code": null,
+        "emits": [
+          "2",
+          "8"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 7
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "ERROR(OVERFLOW)",
+          "missing": null,
+          "observed": {
+            "code": "OVERFLOW",
+            "emits": [],
+            "return": null,
+            "status": "ERROR"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "ERROR(OVERFLOW)",
+          "missing": null,
+          "observed": {
+            "code": "OVERFLOW",
+            "emits": [],
+            "return": null,
+            "status": "ERROR"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "ERROR(OVERFLOW)",
+          "missing": null,
+          "observed": {
+            "code": "OVERFLOW",
+            "emits": [],
+            "return": null,
+            "status": "ERROR"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "ERROR(OVERFLOW)",
+          "missing": null,
+          "observed": {
+            "code": "OVERFLOW",
+            "emits": [],
+            "return": null,
+            "status": "ERROR"
+          }
+        }
+      },
+      "claim": "V6: pedir 3 bytes dentro de un str<2> es ERROR(OVERFLOW) y no sale nada",
+      "especializaciones": {
+        "creadas": [
+          "guion.3"
+        ],
+        "descartadas": [
+          "guion"
+        ]
+      },
+      "expected": {
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null,
+        "status": "ERROR"
+      },
+      "funciones_ir": [
+        "guion.3",
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null,
+        "status": "ERROR"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "416_cast_mas_estrecho",
+      "program_sha256": "c671311a9af76d0e0abacd1b39711599732bf689100e260c125b7ab1a11091c2",
+      "reference": {
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null,
+        "status": "ERROR"
+      },
+      "reference_ok": true,
+      "steps": 4
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcde"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcde"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcde"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcde"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: junta[str<3>,str<2>] produce `abcde` dentro de str<16>",
+      "especializaciones": {
+        "creadas": [
+          "junta.3.2"
+        ],
+        "descartadas": [
+          "junta"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "abcde"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "junta.3.2",
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "abcde"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "417_junta_dos_contextuales",
+      "program_sha256": "981c7953d1a2cab7f06f3a67c3f5a27a23215de372b3debd87c43bbdb403a7b6",
+      "reference": {
+        "code": null,
+        "emits": [
+          "abcde"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 5
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "ERROR(OVERFLOW)",
+          "missing": null,
+          "observed": {
+            "code": "OVERFLOW",
+            "emits": [],
+            "return": null,
+            "status": "ERROR"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "ERROR(OVERFLOW)",
+          "missing": null,
+          "observed": {
+            "code": "OVERFLOW",
+            "emits": [],
+            "return": null,
+            "status": "ERROR"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "ERROR(OVERFLOW)",
+          "missing": null,
+          "observed": {
+            "code": "OVERFLOW",
+            "emits": [],
+            "return": null,
+            "status": "ERROR"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "ERROR(OVERFLOW)",
+          "missing": null,
+          "observed": {
+            "code": "OVERFLOW",
+            "emits": [],
+            "return": null,
+            "status": "ERROR"
+          }
+        }
+      },
+      "claim": "V6: la especializacion str<8>,str<16> rebasa str<16> al ejecutar y es ERROR(OVERFLOW)",
+      "especializaciones": {
+        "creadas": [
+          "junta.8.16"
+        ],
+        "descartadas": [
+          "junta"
+        ]
+      },
+      "expected": {
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null,
+        "status": "ERROR"
+      },
+      "funciones_ir": [
+        "junta.8.16",
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null,
+        "status": "ERROR"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "418_junta_desborda",
+      "program_sha256": "486d4fcefb2137675b13070a7812214a0ac8fb469b0c51a07e7d47c636b4b079",
+      "reference": {
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null,
+        "status": "ERROR"
+      },
+      "reference_ok": true,
+      "steps": 4
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [],
+            "return": "7",
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2)",
+          "missing": "ir0.2",
+          "observed": {
+            "code": "ir0.2",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [],
+            "return": "7",
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [],
+            "return": "7",
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [],
+            "return": "7",
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: `sin_usar` nunca se instancia y el programa sigue siendo valido",
+      "especializaciones": {
+        "creadas": [],
+        "descartadas": [
+          "sin_usar"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [],
+        "return": "7",
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [],
+        "return": "7",
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "419_definicion_sin_llamadas",
+      "program_sha256": "dbff1f1cdc9e3ac8c29012e436c31c8d96ce2ab7786ea214e988a8e9716364a7",
+      "reference": {
+        "code": null,
+        "emits": [],
+        "return": "7",
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 2
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "12",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "12",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "12",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "12",
+              "2"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: cuenta[str<4>] y cuenta[str<1>] son dos especializaciones recursivas independientes",
+      "especializaciones": {
+        "creadas": [
+          "cuenta.1",
+          "cuenta.4"
+        ],
+        "descartadas": [
+          "cuenta"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "12",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "cuenta.1",
+        "cuenta.4",
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "12",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "420_recursion_contextual",
+      "program_sha256": "b1684ab5973e8365c6ea41cbdf06f67a0de959ccaca832320d6890207db055fc",
+      "reference": {
+        "code": null,
+        "emits": [
+          "12",
+          "2"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 24
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "cobol": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        }
+      },
+      "claim": "V6: asignar str<5> a un str<4> dentro del cuerpo rechaza el programa antes de ejecutar",
+      "especializaciones": {
+        "creadas": [],
+        "descartadas": [],
+        "rechazado": "TYPE_MISMATCH"
+      },
+      "excepcion_ir": "InvalidProgram: INVALID_PROGRAM(TYPE_MISMATCH) at 6:21: se esperaba str<4>, llegó str<5>",
+      "expected": {
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "input": [],
+      "ir": null,
+      "ir_ok": false,
+      "name": "422_ancho_insuficiente_estatico",
+      "program_sha256": "7354657da00fd76004c1ef4c09b1af847e736e6355ca37d70f237f5ec8c72cd2",
+      "reference": {
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "reference_ok": true,
+      "steps": 0
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcdefghabcdefghabcdefghabcdefgh"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcdefghabcdefghabcdefghabcdefgh"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcdefghabcdefghabcdefghabcdefgh"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "abcdefghabcdefghabcdefghabcdefgh"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: doble[str<8>] adentro y doble[str<64>] afuera; la cadena produce 32 bytes",
+      "especializaciones": {
+        "creadas": [
+          "doble.64",
+          "doble.8"
+        ],
+        "descartadas": [
+          "doble"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "abcdefghabcdefghabcdefghabcdefgh"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "doble.64",
+        "doble.8",
+        "main"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "abcdefghabcdefghabcdefghabcdefgh"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "423_ancho_grande_doble",
+      "program_sha256": "85004eacbe40cb94598060754ccc5f203cdf2a833d8d5780c225168657f4eba9",
+      "reference": {
+        "code": null,
+        "emits": [
+          "abcdefghabcdefghabcdefghabcdefgh"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 9
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "cobol": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        }
+      },
+      "claim": "V6: un `str` pelado en main es INVALID_PROGRAM; la capacidad diferida necesita un sitio de llamada",
+      "especializaciones": {
+        "creadas": [],
+        "descartadas": [],
+        "rechazado": "TYPE_MISMATCH"
+      },
+      "excepcion_ir": "InvalidProgram: INVALID_PROGRAM(TYPE_MISMATCH) at 6:1: main: ninguna llamada fija la capacidad del str pelado",
+      "expected": {
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "input": [
+        "abc"
+      ],
+      "ir": null,
+      "ir_ok": false,
+      "name": "424_main_contextual",
+      "program_sha256": "f45556d8da3da0d6b74abb0f191f5795d353d3dc150783766365937e75c4a8ca",
+      "reference": {
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "reference_ok": true,
+      "steps": 0
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "cobol": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        }
+      },
+      "claim": "V6: `str` sin capacidad fuera de un parametro es SYNTAX en 0.5",
+      "especializaciones": {
+        "creadas": [],
+        "descartadas": [],
+        "rechazado": "SYNTAX"
+      },
+      "excepcion_ir": "InvalidProgram: INVALID_PROGRAM(SYNTAX) at 6:16: str necesita su capacidad: str<N>, llegó '='",
+      "expected": {
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "input": [],
+      "ir": null,
+      "ir_ok": false,
+      "name": "425_str_pelado_fuera_de_parametro",
+      "program_sha256": "2fdd1e1293a96649322451b69eca4bbfa9a6a1ea2888d2c84e6a4ffa1db5fa28",
+      "reference": {
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "reference_ok": true,
+      "steps": 0
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "cobol": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(SYNTAX)",
+          "missing": null,
+          "observed": {
+            "code": "SYNTAX",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        }
+      },
+      "claim": "V6: la capacidad diferida es de 0.5; el mismo fuente con cabecera 0.4 sigue siendo SYNTAX",
+      "especializaciones": {
+        "creadas": [],
+        "descartadas": [],
+        "rechazado": "SYNTAX"
+      },
+      "excepcion_ir": "InvalidProgram: INVALID_PROGRAM(SYNTAX) at 5:16: str necesita su capacidad: str<N>, llegó ')'",
+      "expected": {
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "input": [],
+      "ir": null,
+      "ir_ok": false,
+      "name": "426_str_pelado_en_v04",
+      "program_sha256": "ae3909fcd362e065634db23cb5ad5159da69730b30dd7514ea1acccd066312a7",
+      "reference": {
+        "code": "SYNTAX",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "reference_ok": true,
+      "steps": 0
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "cobol": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "INVALID_PROGRAM(TYPE_MISMATCH)",
+          "missing": null,
+          "observed": {
+            "code": "TYPE_MISMATCH",
+            "emits": [],
+            "return": null,
+            "status": "INVALID_PROGRAM"
+          }
+        }
+      },
+      "claim": "V6: pasar un i64 a un slot pelado es TYPE_MISMATCH estatico; no hay inferencia permisiva",
+      "especializaciones": {
+        "creadas": [],
+        "descartadas": [],
+        "rechazado": "TYPE_MISMATCH"
+      },
+      "excepcion_ir": "InvalidProgram: INVALID_PROGRAM(TYPE_MISMATCH) at 11:18: se esperaba str, llegó int<64,signed,trap>",
+      "expected": {
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "input": [],
+      "ir": null,
+      "ir_ok": false,
+      "name": "427_argumento_no_str",
+      "program_sha256": "da8bec09ce812ad1a9889a9e89fa16b840873aed6d254ceef39bf36f8909f62e",
+      "reference": {
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "return": null,
+        "status": "INVALID_PROGRAM"
+      },
+      "reference_ok": true,
+      "steps": 0
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [],
+            "return": "4",
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [],
+            "return": "4",
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [],
+            "return": "4",
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [],
+            "return": "4",
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: la capacidad instanciada viene del parámetro str<16> de main; len cuenta el valor real",
+      "especializaciones": {
+        "creadas": [
+          "largo.16"
+        ],
+        "descartadas": [
+          "largo"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [],
+        "return": "4",
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "largo.16",
+        "main"
+      ],
+      "input": [
+        "hola"
+      ],
+      "ir": {
+        "code": null,
+        "emits": [],
+        "return": "4",
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "428_str_pelado_desde_stdin",
+      "program_sha256": "c5786797f306f14f71ca41a68371e06eabdc6999b1d67848d6bdfb766d458a87",
+      "reference": {
+        "code": null,
+        "emits": [],
+        "return": "4",
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 4
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "hola",
+              "ady"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "cobol": {
+          "clasificacion": "UNSUPPORTED",
+          "estado": "UNSUPPORTED(ir0.2,str)",
+          "missing": "ir0.2,str",
+          "observed": {
+            "code": "ir0.2,str",
+            "emits": [],
+            "return": null,
+            "status": "UNSUPPORTED"
+          }
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "hola",
+              "ady"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "hola",
+              "ady"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "missing": null,
+          "observed": {
+            "code": null,
+            "emits": [
+              "hola",
+              "ady"
+            ],
+            "return": null,
+            "status": "HALTED"
+          }
+        }
+      },
+      "claim": "V6: una funcion contextual de un modulo se especializa por llamado desde la raiz",
+      "especializaciones": {
+        "creadas": [
+          "util.marca.3",
+          "util.marca.4"
+        ],
+        "descartadas": [
+          "util.marca"
+        ]
+      },
+      "expected": {
+        "code": null,
+        "emits": [
+          "hola",
+          "ady"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "funciones_ir": [
+        "main",
+        "util.marca.3",
+        "util.marca.4"
+      ],
+      "input": [],
+      "ir": {
+        "code": null,
+        "emits": [
+          "hola",
+          "ady"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "ir_ok": true,
+      "ir_schema": "isy-ir/0.2",
+      "name": "421_marca_entre_modulos",
+      "program_sha256": "864a6c5f81ebd776e18b4ce97a2e4915f3b70a6af1819dc48ca169169556858c",
+      "reference": {
+        "code": null,
+        "emits": [
+          "hola",
+          "ady"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "steps": 7
+    }
+  ],
+  "controles": {
+    "c": {
+      "hace_el_trabajo": {
+        "cadena_de_32_en_el_fuente": false,
+        "esperada": "4",
+        "ok": true,
+        "otra_entrada": "adios",
+        "otra_salida": "5"
+      },
+      "sabotaje": {
+        "div_floor": {
+          "cascos": [],
+          "casos": [],
+          "detectado": false,
+          "divergen": 0
+        },
+        "half_even_as_half_up": {
+          "cascos": [],
+          "casos": [],
+          "detectado": false,
+          "divergen": 0
+        },
+        "str_concat_truncates": {
+          "cascos": [],
+          "casos": [
+            "418_junta_desborda"
+          ],
+          "detectado": true,
+          "divergen": 1
+        }
+      }
+    },
+    "cobol": {
+      "hace_el_trabajo": {
+        "no_aplicable": "ValueError: parámetro fuera del alcance numérico: str<8>"
+      },
+      "sabotaje": {
+        "div_floor": {
+          "cascos": [],
+          "casos": [
+            "411_pad_dos_anchos",
+            "412_borde_capacidad_literal",
+            "413_encadenar_contextuales",
+            "414_largo_ocho_y_dos",
+            "415_largo_dos_y_ocho",
+            "416_cast_mas_estrecho",
+            "417_junta_dos_contextuales",
+            "418_junta_desborda"
+          ],
+          "detectado": true,
+          "divergen": 13
+        },
+        "half_even_as_half_up": {
+          "cascos": [],
+          "casos": [
+            "411_pad_dos_anchos",
+            "412_borde_capacidad_literal",
+            "413_encadenar_contextuales",
+            "414_largo_ocho_y_dos",
+            "415_largo_dos_y_ocho",
+            "416_cast_mas_estrecho",
+            "417_junta_dos_contextuales",
+            "418_junta_desborda"
+          ],
+          "detectado": true,
+          "divergen": 13
+        }
+      }
+    },
+    "pydecimal": {
+      "hace_el_trabajo": {
+        "cadena_de_32_en_el_fuente": false,
+        "esperada": "4",
+        "ok": true,
+        "otra_entrada": "adios",
+        "otra_salida": "5"
+      },
+      "sabotaje": {
+        "div_floor": {
+          "cascos": [],
+          "casos": [],
+          "detectado": false,
+          "divergen": 0
+        },
+        "half_even_as_half_up": {
+          "cascos": [],
+          "casos": [],
+          "detectado": false,
+          "divergen": 0
+        },
+        "str_concat_truncates": {
+          "cascos": [],
+          "casos": [
+            "418_junta_desborda"
+          ],
+          "detectado": true,
+          "divergen": 1
+        }
+      }
+    },
+    "rust": {
+      "hace_el_trabajo": {
+        "cadena_de_32_en_el_fuente": false,
+        "esperada": "4",
+        "ok": true,
+        "otra_entrada": "adios",
+        "otra_salida": "5"
+      },
+      "sabotaje": {
+        "div_floor": {
+          "cascos": [],
+          "casos": [],
+          "detectado": false,
+          "divergen": 0
+        },
+        "half_even_as_half_up": {
+          "cascos": [],
+          "casos": [],
+          "detectado": false,
+          "divergen": 0
+        },
+        "str_concat_truncates": {
+          "cascos": [],
+          "casos": [
+            "418_junta_desborda"
+          ],
+          "detectado": true,
+          "divergen": 1
+        }
+      }
+    },
+    "zig": {
+      "hace_el_trabajo": {
+        "cadena_de_32_en_el_fuente": false,
+        "esperada": "4",
+        "ok": true,
+        "otra_entrada": "adios",
+        "otra_salida": "5"
+      },
+      "sabotaje": {
+        "div_floor": {
+          "cascos": [],
+          "casos": [],
+          "detectado": false,
+          "divergen": 0
+        },
+        "half_even_as_half_up": {
+          "cascos": [],
+          "casos": [],
+          "detectado": false,
+          "divergen": 0
+        },
+        "str_concat_truncates": {
+          "cascos": [],
+          "casos": [
+            "418_junta_desborda"
+          ],
+          "detectado": true,
+          "divergen": 1
+        }
+      }
+    }
+  },
+  "receipt": {
+    "arbol_sucio": true,
+    "backends_disponibles": [
+      "c",
+      "cobol",
+      "pydecimal",
+      "rust",
+      "zig"
+    ],
+    "casos": 18,
+    "comando": "python3 tools/v05_v6_probe.py --write",
+    "corpus": "programs/conformance_v0.5, casos 411..428",
+    "corpus_hash": "650dd0594848723649b8a45a09808aa7170d31f96c71765d339fb9a241aebb7a",
+    "git_head": "ce8663f8add4eed9c6391e5d19cf3e04e6b4ab3c",
+    "milestone": "V6 (CORE v0.5) — str contextual en parámetros",
+    "python": "3.12.3",
+    "schema": "isyco.evidence/0.1",
+    "semilla": "n/a — la sonda no genera valores aleatorios",
+    "utc": "2026-10-31T10:23:59Z",
+    "veredicto_arbol": "EVIDENCE_ONLY",
+    "versiones_backends": {
+      "c": "gcc: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "cobol": "cobc: cobc (GnuCOBOL) 3.1.2.0",
+      "pydecimal": "/usr/bin/python3: Python 3.12.3",
+      "rust": "rustc 1.98.1 (48a229cea 2026-09-01)",
+      "zig": "zig 0.16.0"
+    }
+  }
+}

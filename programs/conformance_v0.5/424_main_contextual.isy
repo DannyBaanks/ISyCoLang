@@ -1,0 +1,8 @@
+isyco 0.5
+
+# Fail-closed: `main` no tiene sitio de llamada. Sus argumentos llegan de stdin y
+# stdin no trae capacidades, asi que un parametro pelado de main no lo puede
+# resolver nadie: el programa se rechaza, no se le inventa un ancho.
+fn main(s: str) -> i64 {
+    return len(s);
+}

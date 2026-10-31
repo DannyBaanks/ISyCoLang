@@ -1,0 +1,10 @@
+{
+  "claim": "V6: asignar str<5> a un str<4> dentro del cuerpo rechaza el programa antes de ejecutar",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

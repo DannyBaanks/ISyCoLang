@@ -1,0 +1,13 @@
+isyco 0.5
+
+# Extremos de la escalera de anchos (1, 2, 3, 4, 5, 7, 8, 16, 64): aqui 8 y 64
+# coexisten en la misma definicion, anidada dos veces.
+fn doble(s: str) -> str<64> {
+    let r: str<64> = s + s;
+    return r;
+}
+
+fn main() !emit {
+    let base: str<8> = "abcdefgh";
+    emit doble(doble(base));
+}

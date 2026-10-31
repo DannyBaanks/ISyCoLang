@@ -35,7 +35,8 @@ def failing(executor=run) -> list[str]:
 
 class Conformance(unittest.TestCase):
     def test_corpus_frozen(self):
-        for corpus in ("conformance", "conformance_v0.2", "conformance_v0.3", "conformance_v0.4"):
+        for corpus in ("conformance", "conformance_v0.2", "conformance_v0.3", "conformance_v0.4",
+                       "conformance_v0.5"):
             sums = (ROOT / "programs" / corpus / "SHA256SUMS.txt").read_text().split("\n")
             for line in filter(None, sums):
                 digest, name = line.split()
@@ -49,7 +50,8 @@ class Conformance(unittest.TestCase):
     def test_superseded_cases_are_explicit(self):
         """Solo los casos listados en SUPERSEDED.json cambian de expected, y lo dicen."""
         superseded = {c["name"] for c in CORPUS if "superseded" in c}
-        self.assertEqual(superseded, {"003_header_wrong_version", "119_header_v03", "264_header_v04"})
+        self.assertEqual(superseded, {"003_header_wrong_version", "119_header_v03",
+                                      "264_header_v04", "322_header_v05"})
 
     def test_determinism(self):
         for case in CORPUS:

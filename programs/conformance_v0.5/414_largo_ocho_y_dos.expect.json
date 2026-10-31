@@ -1,0 +1,10 @@
+{
+  "claim": "V6: coexisten largo[str<8>] y largo[str<2>], cada una ve su propio ancho",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["8", "2"],
+    "return": null
+  }
+}

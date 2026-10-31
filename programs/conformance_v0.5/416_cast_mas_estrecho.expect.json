@@ -1,0 +1,10 @@
+{
+  "claim": "V6: pedir 3 bytes dentro de un str<2> es ERROR(OVERFLOW) y no sale nada",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

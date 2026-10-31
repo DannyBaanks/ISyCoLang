@@ -20,6 +20,7 @@ from .lexer import decode, header_version, tokenize
 from .parser import parse
 from .source import Bundle
 from .types import ArrT, NamedT
+from .versions import has
 
 
 def load_program(source) -> A.Program:
@@ -30,7 +31,7 @@ def load_program(source) -> A.Program:
             raise InvalidProgram("UNKNOWN_MODULE", program.imports[0].at, program.imports[0].file)
         return program
     root = parse(tokenize(decode(source.main_bytes)))
-    if root.version != "0.4":
+    if not has(root.version, "v04"):
         return root
     loaded: dict[str, A.Program] = {}
 
@@ -44,7 +45,10 @@ def load_program(source) -> A.Program:
             if imp.file in loaded:
                 continue
             text = decode(data)
-            if header_version(text) != "0.4":
+            if header_version(text) != root.version:
+                # v0.4 exigía `0.4` exacto en el módulo; con v0.5 la regla se vuelve
+                # «misma versión que la raíz»: un módulo de otra familia no puede
+                # mezclarse sin decidir antes qué semántica gana.
                 raise InvalidProgram("VERSION_MISMATCH", imp.at, imp.file)
             module = parse(tokenize(text, prefix=f"{imp.file}:"))
             loaded[imp.file] = module

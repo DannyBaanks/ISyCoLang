@@ -1,0 +1,12 @@
+isyco 0.5
+
+# Dos parametros pelados en la misma firma: la clave de la especializacion es la
+# dupla de capacidades, en orden posicional.
+fn junta(a: str, b: str) -> str<16> {
+    let r: str<16> = a + b;
+    return r;
+}
+
+fn main() !emit {
+    emit junta("abc", "de");
+}

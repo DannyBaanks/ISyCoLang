@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .errors import InvalidProgram
+from .versions import has
 
 KEYWORDS = {
     "isyco", "fn", "let", "if", "else", "while", "break", "continue", "return",
@@ -61,9 +62,9 @@ def header_version(source: str) -> str | None:
 def tokenize(source: str, prefix: str = "") -> list[Token]:
     """prefix: `ruta.isy:` para un módulo importado (CORE v0.4 P5)."""
     version = header_version(source)
-    v03 = version in ("0.3", "0.4")
+    v03 = has(version, "v03")
     keywords = KEYWORDS | KEYWORDS_V03 if v03 else KEYWORDS
-    if version == "0.4":
+    if has(version, "v04"):
         keywords = keywords | KEYWORDS_V04
     tokens: list[Token] = []
     i, line, col = 0, 1, 1

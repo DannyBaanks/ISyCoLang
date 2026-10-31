@@ -1,0 +1,9 @@
+isyco 0.5
+import util;
+
+# Reutilizar de verdad: una definicion `pub` en un modulo, dos anchos desde el
+# archivo principal. `util.marca` se especializa en str<4> y str<3>.
+fn main() !emit {
+    emit util.marca("hola");
+    emit util.marca("ady");
+}

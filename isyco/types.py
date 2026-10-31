@@ -75,6 +75,19 @@ class StrT:
 
 
 @dataclass(frozen=True)
+class ContextStrT:
+    """`str` escrito sin capacidad (CORE v0.5 V6/V6-bis): la fija el sitio de llamada.
+
+    Existe solo en el AST de la definición, antes de especializar; `ir.ty_to_json` no
+    la conoce y `type_size` la rechaza. «Abierto» no se codifica como un entero
+    centinela: es otro tipo, y una capacidad diferida que sobrevive a la
+    especialización es un bug del frontend, no un dato.
+    """
+    def __str__(self) -> str:
+        return "str"
+
+
+@dataclass(frozen=True)
 class StructT:
     """Struct ya resuelto (CORE v0.3 §3): nombre y campos (nombre, tipo) en orden."""
     name: str
@@ -117,6 +130,9 @@ def type_size(t) -> int:
         return t.n * type_size(t.elem)
     if isinstance(t, StructT):
         return sum(type_size(ft) for _, ft in t.fields)
+    if isinstance(t, ContextStrT):
+        raise AssertionError("una capacidad diferida (V6) no puede medir tamaño: "
+                             "la especialización del frontend no sustituyó el str pelado")
     return 1
 
 

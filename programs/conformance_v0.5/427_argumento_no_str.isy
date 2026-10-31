@@ -1,0 +1,12 @@
+isyco 0.5
+
+# La otra mitad del fail-closed: un parametro pelado exige `str`. Darle un entero
+# es TYPE_MISMATCH en el argumento, no una coercion ni una especializacion rara.
+fn largo(s: str) -> i64 {
+    return len(s);
+}
+
+fn main() -> i64 {
+    let n: i64 = 5;
+    return largo(n);
+}

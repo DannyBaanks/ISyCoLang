@@ -1,0 +1,10 @@
+{
+  "claim": "V6: un `str` pelado en main es INVALID_PROGRAM; la capacidad diferida necesita un sitio de llamada",
+  "input": ["abc"],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

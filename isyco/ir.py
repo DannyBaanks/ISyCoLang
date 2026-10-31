@@ -18,6 +18,7 @@ import json
 
 from . import ast as A
 from .types import ArrT, BoolT, DecT, IntT, StrT, StructT, canonical
+from .versions import has
 
 SCHEMA = "isy-ir/0.1"
 SCHEMA_V2 = "isy-ir/0.2"
@@ -225,7 +226,7 @@ class _FnLowering:
 
 def lower(program: A.Program, source_sha256: str) -> dict:
     """Programa ya chequeado -> módulo ISY-IR (dict JSON)."""
-    schema = SCHEMA_V2 if program.version in ("0.3", "0.4") else SCHEMA   # v0.4 no cambia la IR
+    schema = SCHEMA_V2 if has(program.version, "v03") else SCHEMA   # lo que trae v0.3+
     return {"schema": schema, "source_sha256": source_sha256,
             "functions": [_FnLowering(fn, program).lower() for fn in program.fns.values()]}
 
