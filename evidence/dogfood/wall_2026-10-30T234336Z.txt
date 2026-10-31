@@ -1,0 +1,15 @@
+# sonda del muro de cabecera — comando: python3 tools/dogfood_wall_probe.py
+# git_head=4688517  python=Python 3.12.3  utc=2026-10-30T23:43:36Z
+== ¿etiqueta o contenido? cada programa reescrito con `isyco 0.2` ==
+248_array_equality                 RECHAZADO por contenido: INVALID_PROGRAM(TYPE_MISMATCH)
+253_emit_array                     RECHAZADO por contenido: INVALID_PROGRAM(TYPE_MISMATCH)
+301_basic                          RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+313_same_names                     RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+314_runtime_error_in_module        RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+318_recursion_in_module            RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+321_limit_across_modules           RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+324_module_main                    RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+326_pub_in_main                    RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+327_qualified_call_stmt            RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+328_private_helper_inside          RECHAZADO por contenido: INVALID_PROGRAM(SYNTAX)
+03_criba (sin str/struct/import)   aceptado: schema=isy-ir/0.1 ref=HALTED/None cobol=HALTED/None igual=True emits=['25', '97', '21']
