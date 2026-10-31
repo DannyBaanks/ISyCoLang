@@ -163,7 +163,7 @@ Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 
 ```bash
 python3 tools/warm_build_cache.py              # opcional: precompila en paralelo (la primera vez tarda)
-python3 -m unittest discover -s tests          # suite completa: 138 tests, 202-269 s con la caché llena (379.5 s en frío, medidos 2026-10-31)
+python3 -m unittest discover -s tests          # suite completa: 148 tests, 183,6-185,6 s con la caché llena (los 379,5 s en frío son de la suite de 138)
 python3 tools/backend_gate.py                  # gate de backends: escribe evidence/backends/gate_<UTC>.json
 ```
 

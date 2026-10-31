@@ -1,0 +1,46 @@
+Revalidación CORE v0.5 — tres vías, gemelos estáticos, no regresión, auto-falsación
+utc=2026-10-31T21:02:58Z  git_head=8c230aaf0853dacd5d9e759e0a70f1798df3918a  arbol=RELEASE_GATE (sucio_codigo=False)
+comando: --casos 401,406 --write   casos=['401', '406']   backends=['c', 'cobol', 'pydecimal', 'rust', 'zig']
+
+1) tres vias (expected a mano <-> referencia <-> backend)
+   401_len_arreglo  claim=len de un arreglo devuelve su capacidad, sin contar paso (
+     esperado: {'status': 'HALTED', 'code': None, 'emits': ['5'], 'return': '5'}
+     referencia: {'status': 'HALTED', 'code': None, 'emits': ['5'], 'return': '5'}  pasos=6
+     c         EQUIV        HALTED  pasos=6
+     cobol     EQUIV        HALTED  pasos=6
+     pydecimal EQUIV        HALTED  pasos=6
+     rust      EQUIV        HALTED  pasos=6
+     zig       EQUIV        HALTED  pasos=6
+   406_len_parametro  claim=len(a) dentro de una función sirve como cota del while (1+
+     esperado: {'status': 'HALTED', 'code': None, 'emits': [], 'return': '21'}
+     referencia: {'status': 'HALTED', 'code': None, 'emits': [], 'return': '21'}  pasos=27
+     c         EQUIV        HALTED  pasos=27
+     cobol     EQUIV        HALTED  pasos=27
+     pydecimal EQUIV        HALTED  pasos=27
+     rust      EQUIV        HALTED  pasos=27
+     zig       EQUIV        HALTED  pasos=27
+
+2) gemelos estaticos (los mismos pasos que la forma larga a mano)
+   401_len_arreglo              IGUAL        {'azucar': 6, 'gemelo': 6}
+   406_len_parametro            IGUAL        {'azucar': 27, 'gemelo': 27}
+
+3) no regresion (la misma fuente recabezada a versiones anteriores)
+   401_len_arreglo              0.1=INVALID_PROGRAM(UNKNOWN_NAME)  0.2=INVALID_PROGRAM(UNKNOWN_NAME)  0.3=INVALID_PROGRAM(TYPE_MISMATCH)  0.4=INVALID_PROGRAM(TYPE_MISMATCH)
+   406_len_parametro            0.1=INVALID_PROGRAM(UNKNOWN_NAME)  0.2=INVALID_PROGRAM(UNKNOWN_NAME)  0.3=INVALID_PROGRAM(TYPE_MISMATCH)  0.4=INVALID_PROGRAM(TYPE_MISMATCH)
+
+4) brazo viejo (la regla v05 apagada en el checker)
+   401_len_arreglo              INVALID_PROGRAM(TYPE_MISMATCH)
+   406_len_parametro            INVALID_PROGRAM(TYPE_MISMATCH)
+
+5) el valor viene del tipo (variante de capacidad)
+   401_len_arreglo              observado={'status': 'HALTED', 'code': None, 'emits': ['6'], 'return': '6'}
+                                predicho={'status': 'HALTED', 'code': None, 'emits': ['6'], 'return': '6'} coincide=True mueve_la_salida=True pasos=6
+   406_len_parametro            observado={'status': 'HALTED', 'code': None, 'emits': [], 'return': '28'}
+                                predicho={'status': 'HALTED', 'code': None, 'emits': [], 'return': '28'} coincide=True mueve_la_salida=True pasos=30
+
+6) la IR no gana nodos nuevos (V1: len de arreglo es const)
+   401_len_arreglo              nodos_len=0 schema=isy-ir/0.2
+   406_len_parametro            nodos_len=0 schema=isy-ir/0.2
+   control len(str) = 1 nodos_len (debe ser 1)
+
+conteo por clase: {'c:EQUIV': 2, 'cobol:EQUIV': 2, 'pydecimal:EQUIV': 2, 'rust:EQUIV': 2, 'zig:EQUIV': 2}

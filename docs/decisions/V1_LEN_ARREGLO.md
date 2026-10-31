@@ -33,7 +33,12 @@ referencia respondía `INVALID_PROGRAM(TYPE_MISMATCH)`.
 
 ## Medición
 
-`tools/v05_revalida_probe.py --casos 401,406` (recibo `isyco.evidence/0.1`):
+`tools/v05_revalida_probe.py --casos 401,406` (recibo `isyco.evidence/0.1`), sellado dos
+veces con los mismos números: `run_20261031T210001Z` con el árbol de trabajo sucio
+(`veredicto_arbol=EVIDENCE_ONLY`) y `run_20261031T210258Z` ya con `HEAD` en el commit de V1
+y `git status` vacío (`RELEASE_GATE`, `arbol_sucio_codigo=false`, `git_head=8c230aa`). Los
+recibos del gate de backends no llevan campo de suciedad, así que la etiqueta la escribe la
+sonda y por eso la primera corrida no se cita como release.
 
 - **Tres vías:** los dos casos coinciden en `expected` ↔ referencia ↔ los cinco backends
   instalados (`c`, `cobol`, `pydecimal`, `rust`, `zig`): 10 EQUIV, cero DIVERGENT, cero
@@ -83,7 +88,7 @@ backends (170 casos) no se mueve y la evidencia de V1 es la sonda, no el gate.
 
 | claim | estado | dónde |
 |---|---|---|
-| `len` de un arreglo devuelve su capacidad en la referencia y en los cinco backends | **DEMONSTRATED** | 10 EQUIV de tres vías (`evidence/v05_revalida/`) |
+| `len` de un arreglo devuelve su capacidad en la referencia y en los cinco backends | **DEMONSTRATED** (RELEASE_GATE) | 10 EQUIV de tres vías, recibo limpio `run_20261031T210258Z` sobre `8c230aa` |
 | Es estático: no cuesta pasos | **DEMONSTRATED** | gemelos 6 = 6 y 27 = 27, medidos |
 | La IR no cambia (ningún nodo `len` nuevo) | **DEMONSTRATED** | 0 nodos en 401/406; control `len(str)` = 1 |
 | Ningún programa 0.1–0.4 cambia de significado | **DEMONSTRATED** | recabezados: `UNKNOWN_NAME` (0.1/0.2), `TYPE_MISMATCH` (0.3/0.4) |
