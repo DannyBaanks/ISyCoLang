@@ -84,6 +84,14 @@ sola definición con `str<2>` fijo rechaza el llamado de 8 bytes, y lo hace con 
 más preciso que existe —`LITERAL_OUT_OF_RANGE`—, que es exactamente el muro que V6 quita
 (`414` adaptado, en el mismo archivo de test).
 
+> **Aclaración medida al cerrar V6-bis (2026-10-31):** la igualdad de `steps` solo vale
+> entre programas de **misma forma**. El primer gemelo de `429` se escribió con
+> `emit f(...)` directo mientras el caso usaba `let` + `emit`, y daba 7 pasos contra 9 —
+> la diferencia eran los `let`, no la especialización. Los gemelos de `411` y `423` sí
+> son de forma idéntica (mismos `emit`, misma anidación), así que la afirmación de arriba
+> se mantiene tal cual; el control de forma queda escrito en
+> `docs/decisions/V6B_CONTEXTUAL_RETURN.md`.
+
 ## Lo que se descarta
 
 Una definición contextual que nadie llama no tiene capacidad que resolver; se quita

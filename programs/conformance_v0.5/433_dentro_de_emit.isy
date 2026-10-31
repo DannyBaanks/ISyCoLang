@@ -1,0 +1,10 @@
+isyco 0.5
+
+# `emit` no espera un tipo concreto: no hay capacidad que transmitirle a la copia.
+fn doble(s: str) -> str {
+    return s + s;
+}
+
+fn main() !emit {
+    emit doble("ab");
+}

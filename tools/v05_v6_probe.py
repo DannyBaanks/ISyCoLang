@@ -1,4 +1,4 @@
-"""Sonda del milestone V6 (CORE v0.5): capacidad diferida en parámetros.
+"""Sonda del milestone V6+V6-bis (CORE v0.5): capacidad diferida en parámetros y retornos.
 
 Corre los casos V6 de `programs/conformance_v0.5/` contra las tres rutas —intérprete de
 referencia, ISY-IR (ida y vuelta por JSON) y cada backend instalado— y compara con los
@@ -38,9 +38,10 @@ from isyco.ir_interp import compile_ir, run_via_ir                    # noqa: E4
 from isyco.source import program_sha256                               # noqa: E402
 
 CORPUS_DIR = ROOT / "programs" / "conformance_v0.5"
-V6 = tuple(f"{n:03d}" for n in range(411, 429))     # los casos que fija la decisión V6
-CASO_ENTRADA = "428_str_pelado_desde_stdin"          # el único V6 con entrada por stdin
+V6 = tuple(f"{n:03d}" for n in range(411, 439))     # V6 (411–428) + V6-bis (429–438)
+CASO_ENTRADA = "428_str_pelado_desde_stdin"          # el único con entrada por stdin
 CASO_EMISION_LARGA = "423_ancho_grande_doble"        # emite 32 bytes que el fuente no contiene
+CASO_RETORNO = "429_retorno_pelado_dos_expectativas"  # concatena y emite 8 bytes que el fuente no contiene
 OTRA_ENTRADA = "adios"
 KEYS = COMPARED
 
@@ -257,20 +258,26 @@ def sabotage_control(backend, cases: list[dict]) -> dict:
     return out
 
 
-def does_the_work(backend, caso_largo: dict, caso_entrada: dict) -> dict:
-    """El engine hace el trabajo, no el generador. Dos controles, cada uno donde aplica:
+def does_the_work(backend, caso_largo: dict, caso_entrada: dict, caso_retorno: dict) -> dict:
+    """El engine hace el trabajo, no el generador. Tres controles, cada uno donde aplica:
 
     - `423` emite 32 bytes que el fuente NO contiene escritos (`abcde…` se arma con `s + s`);
-    - `428` lee stdin: cambiar la entrada tiene que cambiar la salida.
+    - `428` lee stdin: cambiar la entrada tiene que cambiar la salida;
+    - `429` (V6-bis) emite `abcdabcd`, que tampoco está escrito en el fuente: lo arma
+      la copia especializada del retorno pelado.
     """
     esperado_largo = caso_largo["expected"]["emits"][0]
     source = backend.emit(compile_ir(caso_largo["program"]))
     filtrada = esperado_largo in source
+    esperado_ret = caso_retorno["expected"]["emits"][0]
+    source_ret = backend.emit(compile_ir(caso_retorno["program"]))
+    filtrada_ret = esperado_ret in source_ret
     esperado = caso_entrada["expected"]["return"]
     otra, _ = backend.run(caso_entrada["program"], [OTRA_ENTRADA], caso_entrada.get("limits"))
     return {"cadena_de_32_en_el_fuente": filtrada, "otra_entrada": OTRA_ENTRADA,
             "otra_salida": otra.get("return"), "esperada": esperado,
-            "ok": not filtrada and otra.get("return") not in (None, esperado)}
+            "cadena_de_retorno_en_el_fuente": filtrada_ret,
+            "ok": not filtrada and not filtrada_ret and otra.get("return") not in (None, esperado)}
 
 
 def receipt(cases: list[dict], comando: str) -> dict:
@@ -281,7 +288,7 @@ def receipt(cases: list[dict], comando: str) -> dict:
         sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
     return {
         "schema": "isyco.evidence/0.1",
-        "milestone": "V6 (CORE v0.5) — str contextual en parámetros",
+        "milestone": "V6/V6-bis (CORE v0.5) — str contextual en parámetros y retornos",
         "utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "comando": comando,
         "git_head": git_head(),
@@ -294,7 +301,7 @@ def receipt(cases: list[dict], comando: str) -> dict:
         "veredicto_arbol": "EVIDENCE_ONLY" if sucio_codigo else "RELEASE_GATE",
         "python": platform.python_version(),
         "semilla": "n/a — la sonda no genera valores aleatorios",
-        "corpus": "programs/conformance_v0.5, casos 411..428",
+        "corpus": "programs/conformance_v0.5, casos 411..438",
         "corpus_hash": corpus_hash,
         "backends_disponibles": sorted(available()),
         "versiones_backends": {name: (available()[name].toolchain() if name in available() else None)
@@ -305,7 +312,7 @@ def receipt(cases: list[dict], comando: str) -> dict:
 
 def tabla(rec: dict, rows: list[dict], controles: dict) -> list[str]:
     lineas = [
-        "V6 (CORE v0.5) — capacidad diferida en parámetros",
+        "V6+V6-bis (CORE v0.5) — capacidad diferida en parámetros y retornos",
         f"utc={rec['utc']}  git_head={rec['git_head']}  arbol={rec['veredicto_arbol']}"
         f"  (sucio_codigo={rec['arbol_sucio_codigo']}  sucio_crudo={rec['arbol_sucio']})",
         f"comando: {rec['comando']}",
@@ -362,10 +369,12 @@ def main(argv: list[str]) -> int:
     controles = {}
     caso_largo = next(c for c in cases if c["name"] == CASO_EMISION_LARGA)
     caso_entrada = next(c for c in cases if c["name"] == CASO_ENTRADA)
+    caso_retorno = next(c for c in cases if c["name"] == CASO_RETORNO)
     for name, backend in sorted(backends.items()):
         control = {"sabotaje": sabotage_control(backend, cases)}
         try:
-            control["hace_el_trabajo"] = does_the_work(backend, caso_largo, caso_entrada)
+            control["hace_el_trabajo"] = does_the_work(backend, caso_largo, caso_entrada,
+                                                       caso_retorno)
         except Exception as exc:                     # noqa: BLE001
             control["hace_el_trabajo"] = {"no_aplicable": f"{type(exc).__name__}: {str(exc)[:160]}"}
         controles[name] = control

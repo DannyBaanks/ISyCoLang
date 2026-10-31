@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: expectativa y capacidad diferida en la misma arista es circular; ningún ancho por defecto",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,12 @@
+isyco 0.5
+
+# Canario B: la expectativa es str<4> y el valor son 8 bytes. No se trunca:
+# la regla «OVERFLOW nunca truncación» de v0.3 decide al ejecutar.
+fn doble(s: str) -> str {
+    return s + s;
+}
+
+fn main() !emit {
+    let cuatro: str<4> = doble("abcd");
+    emit cuatro;
+}

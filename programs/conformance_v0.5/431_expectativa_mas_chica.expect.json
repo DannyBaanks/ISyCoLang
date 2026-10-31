@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: required (str<16>) > expected (str<8>) se rechaza en el chequeo, con el `at` del return",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

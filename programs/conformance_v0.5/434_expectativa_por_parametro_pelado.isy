@@ -1,0 +1,17 @@
+isyco 0.5
+
+# La expectativa no puede viajar a traves de un parametro que tambien esta pelado:
+# `envia` fija su ancho MIRANDO el argumento, y el ancho del argumento dependeria
+# de `envia`. Ciclo: se rechaza en vez de inventar un numero.
+fn doble(s: str) -> str {
+    return s + s;
+}
+
+fn envia(t: str) -> bool {
+    emit t;
+    return true;
+}
+
+fn main() !emit {
+    let b: bool = envia(doble("ab"));
+}

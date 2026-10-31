@@ -1,0 +1,11 @@
+isyco 0.5
+
+# Un llamado usado como sentencia no tiene contexto que espere un str: la capacidad
+# del retorno pelado no se inventa por defecto.
+fn doble(s: str) -> str {
+    return s + s;
+}
+
+fn main() {
+    doble("ab");
+}

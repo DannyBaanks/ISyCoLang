@@ -1,0 +1,16 @@
+isyco 0.5
+
+# Transmision: `eco` tambien devuelve str pelado, y dentro de `eco` la capacidad
+# esperada para `doble` es la del sitio que llama a `eco`.
+fn doble(s: str) -> str {
+    return s + s;
+}
+
+fn eco(t: str) -> str {
+    return doble(t);
+}
+
+fn main() !emit {
+    let ocho: str<8> = eco("abcd");
+    emit ocho;
+}

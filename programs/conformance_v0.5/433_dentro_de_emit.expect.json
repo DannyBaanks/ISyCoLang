@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: un retorno pelado dentro de `emit` se rechaza; `str` pelado no significa MAX_STR",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

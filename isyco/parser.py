@@ -152,7 +152,7 @@ class Parser:
                 if not self.accept(","):
                     break
         self.expect(")")
-        ret = self.type_() if self.accept("->") else None
+        ret = self.type_(bare_str=True) if self.accept("->") else None
         emits = False
         if self.accept("!"):
             self.expect("emit")
@@ -161,7 +161,8 @@ class Parser:
 
     # --- tipos ----------------------------------------------------------------
     def type_(self, bare_str: bool = False):
-        """`bare_str` (CORE v0.5 V6): solo en parámetros se acepta `str` sin capacidad."""
+        """`bare_str` (CORE v0.5 V6/V6-bis): en parámetros y en el retorno se acepta
+        `str` sin capacidad. En cualquier otra posición sigue siendo `SYNTAX`."""
         token = self.tok
         if self.accept("bool"):
             return BoolT()
@@ -199,8 +200,9 @@ class Parser:
             return DecT(p, s, rnd)
         if self.v03 and self.accept("str"):
             if not self.is_("<"):
-                # V6: `str` pelado NO es «capacidad infinita»; es una capacidad diferida
-                # que solo existe en un parámetro, y solo a partir de 0.5.
+                # V6/V6-bis: `str` pelado NO es «capacidad infinita»; es una capacidad
+                # diferida que solo existe en un parámetro (V6) o en el retorno (V6-bis),
+                # y solo a partir de 0.5.
                 if not (bare_str and self.v05):
                     self.fail("str necesita su capacidad: str<N>")
                 return ContextStrT()

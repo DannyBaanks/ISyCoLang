@@ -1,0 +1,9 @@
+isyco 0.4
+
+# V6-bis llega con la cabecera 0.5: con 0.4 el retorno pelado sigue siendo SYNTAX.
+fn doble(s: str<4>) -> str {
+    return s;
+}
+
+fn main() {
+}

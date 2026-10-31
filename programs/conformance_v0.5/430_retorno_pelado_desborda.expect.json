@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: expected str<4> con un valor de 8 bytes es ERROR(OVERFLOW), jamás truncado",
+  "input": [],
+  "expected": {
+    "status": "ERROR",
+    "code": "OVERFLOW",
+    "emits": [],
+    "return": null
+  }
+}

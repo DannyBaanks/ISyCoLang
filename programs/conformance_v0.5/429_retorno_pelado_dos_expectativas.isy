@@ -1,0 +1,14 @@
+isyco 0.5
+
+# V6-bis: `-> str` pelado. La capacidad del retorno la fija el contexto del llamado,
+# asi que la misma definicion sirve para str<8> y para str<4> sin reescribirla.
+fn doble(s: str) -> str {
+    return s + s;
+}
+
+fn main() !emit {
+    let ocho: str<8> = doble("abcd");
+    emit ocho;
+    let cuatro: str<4> = doble("ab");
+    emit cuatro;
+}

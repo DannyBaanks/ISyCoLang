@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: `-> str` pelado en main se rechaza, igual que en los parámetros (424)",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: doble[str<4>]->str<8> y doble[str<2>]->str<4> conviven como dos copias de una sola definición",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["abcdabcd", "abab"],
+    "return": null
+  }
+}

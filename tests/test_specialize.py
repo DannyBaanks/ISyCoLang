@@ -65,16 +65,22 @@ def ejecutar(data: bytes, entradas: list = ()) -> dict:
 
 
 class ReglaDePosicion(unittest.TestCase):
-    """`str` sin capacidad solo existe en un parámetro y solo a partir de 0.5."""
+    """`str` sin capacidad solo existe en un parámetro (V6) o en el retorno (V6-bis),
+    y solo a partir de 0.5."""
 
     def test_parametro_en_0_5_es_capacidad_diferida(self):
         program = parse(tokenize(decode(bytes_de("414_largo_ocho_y_dos"))))
         self.assertEqual(contextual_slots(program.fns["largo"]), [0])
         self.assertTrue(is_contextual(program.fns["largo"]))
 
-    def test_pelado_rechazado_fuera_del_parametro(self):
+    def test_retorno_pelado_es_un_molde_y_no_un_rechazo(self):
+        """V6-bis: sin llamada que fije la expectativa no hay copia, y la definición
+        desaparece; el programa sigue HALTED en vez de SYNTAX."""
+        fuente = "isyco 0.5\nfn f() -> str {\n    return \"a\";\n}\nfn main() {\n}\n"
+        self.assertEqual(ejecutar(fuente.encode())["status"], "HALTED")
+
+    def test_pelado_rechazado_fuera_del_parametro_y_del_retorno(self):
         posiciones = {
-            "retorno": "isyco 0.5\nfn f() -> str {\n    return \"a\";\n}\nfn main() {\n}\n",
             "let": "isyco 0.5\nfn main() {\n    let t: str = \"abc\";\n}\n",
             "cast": "isyco 0.5\nfn main() {\n    let t: str<4> = \"abc\" as str;\n}\n",
             "arreglo": "isyco 0.5\nfn main() {\n    let t: [str; 2] = [\"a\", \"b\"];\n}\n",
@@ -87,14 +93,19 @@ class ReglaDePosicion(unittest.TestCase):
                                  ("INVALID_PROGRAM", "SYNTAX"))
 
     def test_pelado_rechazado_en_0_4(self):
-        """La cabecera manda: V6 no relaja ninguna 0.1–0.4 (regla de la propuesta §2)."""
+        """La cabecera manda: V6/V6-bis no relajan ninguna 0.1–0.4 (propuesta §2)."""
         for version in ("0.3", "0.4"):
-            fuente = (f"isyco {version}\nfn largo(s: str) -> i64 {{\n    return len(s);\n}}\n"
-                      f"fn main() {{\n}}\n").encode()
-            with self.subTest(version=version):
-                observe = ejecutar(fuente)
-                self.assertEqual((observe["status"], observe["code"]),
-                                 ("INVALID_PROGRAM", "SYNTAX"))
+            posiciones = {
+                "parametro": f"isyco {version}\nfn largo(s: str) -> i64 {{\n    return len(s);\n}}\n"
+                             f"fn main() {{\n}}\n",
+                "retorno": f"isyco {version}\nfn f() -> str {{\n    return \"a\";\n}}\n"
+                           f"fn main() {{\n}}\n",
+            }
+            for donde, fuente in posiciones.items():
+                with self.subTest(version=version, posicion=donde):
+                    observe = ejecutar(fuente.encode())
+                    self.assertEqual((observe["status"], observe["code"]),
+                                     ("INVALID_PROGRAM", "SYNTAX"))
 
 
 class Especializacion(unittest.TestCase):
@@ -209,7 +220,8 @@ class NingunCentinela(unittest.TestCase):
     def test_todas_las_capacidades_de_la_ir_estan_acotadas(self):
         for nombre in ("411_pad_dos_anchos", "413_encadenar_contextuales",
                        "417_junta_dos_contextuales", "420_recursion_contextual",
-                       "423_ancho_grande_doble"):
+                       "423_ancho_grande_doble", "429_retorno_pelado_dos_expectativas",
+                       "435_transmision_pelado_a_pelado", "438_retorno_pelado_desde_stdin"):
             modulo = compile_ir(bytes_de(nombre))
             for ty in tipos_de(modulo):
                 with self.subTest(caso=nombre, ty=str(ty)):
@@ -267,3 +279,79 @@ class Gemelo(unittest.TestCase):
         observe = ejecutar(data.encode())
         self.assertEqual((observe["status"], observe["code"]),
                          ("INVALID_PROGRAM", "LITERAL_OUT_OF_RANGE"))
+
+
+class RetornoPelado(unittest.TestCase):
+    """V6-bis: `-> str` se resuelve con la capacidad esperada en el sitio de llamada.
+
+    La clave de la copia lleva las dos orillas —capacidades de los argumentos y del
+    retorno—, así que dos expectativas distintas conviven como dos copias. Una posición
+    sin expectativa no tiene ancho por defecto: se rechaza, nunca se asume MAX_STR.
+    """
+
+    def test_dos_expectativas_son_dos_copias(self):
+        fns = funciones(bytes_de("429_retorno_pelado_dos_expectativas"))
+        self.assertEqual(set(fns), {"main", "doble.4.r8", "doble.2.r4"})
+        self.assertEqual(ty_from_json(fns["doble.4.r8"]["ret"]), StrT(8))
+        self.assertEqual(ty_from_json(fns["doble.2.r4"]["ret"]), StrT(4))
+        self.assertEqual(ty_from_json(fns["doble.2.r4"]["locals"][0]["ty"]), StrT(2))
+
+    def test_la_clave_lleva_las_dos_orillas(self):
+        """El ancho del parámetro viene de stdin y el del retorno del `let`."""
+        self.assertEqual(set(funciones(bytes_de("438_retorno_pelado_desde_stdin"))),
+                         {"main", "doble.8.r16"})
+
+    def test_transmision_de_expectativa(self):
+        self.assertEqual(set(funciones(bytes_de("435_transmision_pelado_a_pelado"))),
+                         {"main", "eco.4.r8", "doble.4.r8"})
+
+    def test_desborde_es_overflow_y_no_emite(self):
+        obs = ejecutar(bytes_de("430_retorno_pelado_desborda"))
+        self.assertEqual((obs["status"], obs["code"], obs["emits"]),
+                         ("ERROR", "OVERFLOW", []))
+
+    def test_sin_expectativa_no_hay_ancho_por_defecto(self):
+        for nombre in ("432_llamado_como_sentencia", "433_dentro_de_emit"):
+            obs = ejecutar(bytes_de(nombre))
+            with self.subTest(caso=nombre):
+                self.assertEqual((obs["status"], obs["code"]),
+                                 ("INVALID_PROGRAM", "TYPE_MISMATCH"))
+
+    def test_el_ciclo_expectativa_parametro_pelado_se_rechaza(self):
+        obs = ejecutar(bytes_de("434_expectativa_por_parametro_pelado"))
+        self.assertEqual((obs["status"], obs["code"]), ("INVALID_PROGRAM", "TYPE_MISMATCH"))
+
+    def test_estatico_mas_grande_que_la_expectativa(self):
+        obs = ejecutar(bytes_de("431_expectativa_mas_chica"))
+        self.assertEqual((obs["status"], obs["code"]), ("INVALID_PROGRAM", "TYPE_MISMATCH"))
+
+    def test_main_y_la_cabecera_v04(self):
+        esperado = {"436_retorno_pelado_en_main": "TYPE_MISMATCH",
+                    "437_retorno_pelado_en_v04": "SYNTAX"}
+        for nombre, codigo in esperado.items():
+            obs = ejecutar(bytes_de(nombre))
+            with self.subTest(caso=nombre):
+                self.assertEqual((obs["status"], obs["code"]), ("INVALID_PROGRAM", codigo))
+
+    def test_un_cast_fija_la_expectativa(self):
+        data = (
+            "isyco 0.5\n"
+            "fn doble(s: str) -> str {\n    return s + s;\n}\n"
+            'fn main() !emit {\n    emit doble("ab") as str<8>;\n}\n'
+        ).encode()
+        obs = ejecutar(data)
+        self.assertEqual((obs["status"], obs["emits"]), ("HALTED", ["abab"]))
+
+    def test_el_gemelo_escrito_a_mano_cuesta_dos_funciones(self):
+        """Misma forma (let + emit) y mismo resultado con anchos fijos: el azúcar no
+        añade pasos, solo evita escribir una definición por ancho."""
+        gemelo = (
+            "isyco 0.4\n"
+            "fn doble4(s: str<4>) -> str<8> {\n    return s + s;\n}\n"
+            "fn doble2(s: str<2>) -> str<4> {\n    return s + s;\n}\n"
+            'fn main() !emit {\n'
+            '    let ocho: str<8> = doble4("abcd");\n    emit ocho;\n'
+            '    let cuatro: str<4> = doble2("ab");\n    emit cuatro;\n}\n'
+        ).encode()
+        self.assertEqual(ejecutar(gemelo),
+                         ejecutar(bytes_de("429_retorno_pelado_dos_expectativas")))

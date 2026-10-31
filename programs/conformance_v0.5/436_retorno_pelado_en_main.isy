@@ -1,0 +1,7 @@
+isyco 0.5
+
+# `main` no tiene sitio de llamada: su valor tendria que serializarse sin capacidad,
+# asi que un `-> str` pelado aqui no se resuelve con MAX_STR ni con ningun numero.
+fn main() -> str {
+    return "hola";
+}

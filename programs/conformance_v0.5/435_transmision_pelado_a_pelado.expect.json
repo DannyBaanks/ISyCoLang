@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: la capacidad viaja eco[str<4>]->str<8> y doble[str<4>]->str<8]; dos copias, un solo fuente",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["abcdabcd"],
+    "return": null
+  }
+}

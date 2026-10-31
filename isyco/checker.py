@@ -9,8 +9,8 @@ from __future__ import annotations
 from . import ast as A
 from . import specialize as spec
 from .errors import InvalidProgram
-from .types import (INT_ALIASES, MAX_STR, MAX_VALUE_SIZE, U8, ArrT, BoolT, DecT, IntT, NamedT,
-                    StrT, StructT, is_numeric, is_scalar, type_size)
+from .types import (INT_ALIASES, MAX_STR, MAX_VALUE_SIZE, U8, ArrT, BoolT, ContextStrT, DecT,
+                    IntT, NamedT, StrT, StructT, is_numeric, is_scalar, type_size)
 from .versions import has
 
 ARITH = {"+", "-", "*", "/", "%"}
@@ -264,7 +264,10 @@ class Checker:
         if isinstance(e, A.Name):
             return self.lookup(e.name, e.at)
         if isinstance(e, A.Call):
-            return self.call(e, allow_void=False)
+            # V6-bis: la capacidad esperada en esta posición es la que resuelve un
+            # retorno pelado; sin espera explícita (emit, sentencia, comparación) se
+            # rechaza, no se inventa un ancho.
+            return self.call(e, allow_void=False, expected=expected)
         if isinstance(e, A.StrLit):
             if isinstance(expected, StrT) and len(e.value) > expected.n:
                 raise InvalidProgram("LITERAL_OUT_OF_RANGE", e.at, f"{len(e.value)} bytes en {expected}")
@@ -436,7 +439,7 @@ class Checker:
             self.expect(e.elem, expected.elem)
         return expected
 
-    def call(self, e: A.Call, allow_void: bool):
+    def call(self, e: A.Call, allow_void: bool, expected=None):
         callee = self.program.fns.get(e.name)
         if callee is None:
             raise InvalidProgram("UNKNOWN_NAME", e.at, e.name)
@@ -444,7 +447,7 @@ class Checker:
             raise InvalidProgram("TYPE_MISMATCH", e.at, f"{e.name} espera {len(callee.params)} argumentos")
         destino = None
         if spec.is_contextual(callee):
-            callee, destino = self.specialize(e, callee)
+            callee, destino = self.specialize(e, callee, expected)
         else:
             for arg, (_, ty, _) in zip(e.args, callee.params):
                 self.expect(arg, ty)
@@ -456,14 +459,21 @@ class Checker:
             e.name = destino
         return callee.ret
 
-    def specialize(self, e: A.Call, callee: A.Fn):
-        """V6: instancia la firma con las capacidades de los argumentos y chequea la copia.
+    def specialize(self, e: A.Call, callee: A.Fn, expected=None):
+        """V6/V6-bis: instancia la firma y chequea la copia, una sola vez por resolución.
 
-        El ancho de un parámetro escrito `str` sin capacidad es el tipo real del
-        argumento: si no es `str`, es TYPE_MISMATCH en el argumento. No hay
-        inferencia permisiva — un `str<8>` pedido con un `str<16>` nunca se recorta.
-        La copia se chequea en el sitio de la primera llamada y una sola vez: la
-        clave ya registrada antes de entrar corta la recursión, incluida la mutua.
+        - Parámetro pelado (V6): la capacidad es el tipo real del argumento. Si no es
+          `str`, es TYPE_MISMATCH **en el argumento**.
+        - Retorno pelado (V6-bis): la capacidad es la **esperada en la posición de
+          llamada** —el tipo declarado del `let`, el `return` del que llama, el blanco
+          de un `cast`, el parámetro concreto del destinatario—. Si nada la fija, es
+          TYPE_MISMATCH en el llamado: `str` pelado no significa `MAX_STR` ni ningún
+          número por defecto.
+
+        No hay inferencia permisiva en ninguna de las dos orillas: un `str<8>` pedido
+        con un `str<16>` nunca se recorta. La copia se chequea en el sitio de su primera
+        llamada y una sola vez: la clave ya registrada antes de entrar corta la
+        recursión, incluida la mutua.
         """
         pelados = spec.contextual_slots(callee)
         widths = []
@@ -476,9 +486,15 @@ class Checker:
                 raise InvalidProgram("TYPE_MISMATCH", arg.at, f"se esperaba str, llegó {got}")
             widths.append(got.n)
         widths = tuple(widths)
-        name = spec.spec_name(callee.name, widths, None)
+        ret_width = None
+        if isinstance(callee.ret, ContextStrT):
+            if not isinstance(expected, StrT):
+                raise InvalidProgram("TYPE_MISMATCH", e.at,
+                                     f"ninguna capacidad esperada fija el retorno pelado de {callee.name}")
+            ret_width = expected.n
+        name = spec.spec_name(callee.name, widths, ret_width)
         if name not in self.specs:
-            clone = spec.make_clone(callee, name, widths, None)
+            clone = spec.make_clone(callee, name, widths, ret_width)
             self.specs[name] = clone
             self.program.fns[name] = clone
             guardado = (self.fn, self.scopes, self.loop_depth, self.emits)

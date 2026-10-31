@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: sin expectativa en la posición de llamada, el retorno pelado se rechaza (fail-closed)",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "TYPE_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

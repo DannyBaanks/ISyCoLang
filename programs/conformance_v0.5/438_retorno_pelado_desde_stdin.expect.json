@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: con \"hola\" por stdin, doble[str<8>]->str<16] produce 8 bytes y len devuelve 8",
+  "input": ["hola"],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "8"
+  }
+}

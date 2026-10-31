@@ -1,0 +1,10 @@
+{
+  "claim": "V6-bis: la posición de retorno pelada no existía antes de 0.5; con cabecera 0.4 es SYNTAX",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SYNTAX",
+    "emits": [],
+    "return": null
+  }
+}

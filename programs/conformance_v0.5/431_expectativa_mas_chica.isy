@@ -1,0 +1,13 @@
+isyco 0.5
+
+# El cuerpo exige mas capacidad de la que la expectativa da: se decide en el chequeo,
+# no al ejecutar, y no se recorta nada.
+fn largo_dos(s: str) -> str {
+    let r: str<16> = s + s;
+    return r;
+}
+
+fn main() !emit {
+    let ocho: str<8> = largo_dos("ab");
+    emit ocho;
+}

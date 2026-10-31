@@ -1,0 +1,330 @@
+V6+V6-bis (CORE v0.5) — capacidad diferida en parámetros y retornos
+utc=2026-10-31T18:35:42Z  git_head=82608e326a4852f5eb34ad6a055ad0549455f515  arbol=EVIDENCE_ONLY  (sucio_codigo=True  sucio_crudo=True)
+comando: python3 tools/v05_v6_probe.py --write
+corpus=programs/conformance_v0.5, casos 411..438  casos=28  corpus_hash=db2cb8389db95bc87130416429216525a574a32a56c03a5f625f3b2bbef6d371
+python=3.12.3  backends=c,cobol,pydecimal,rust,zig
+semilla: n/a — la sonda no genera valores aleatorios
+
+Cada caso se compara contra el expected escrito a mano en tres rutas: referencia,
+ISY-IR (ida y vuelta por JSON) y cada backend instalado. UNSUPPORTED no es fallo:
+es el dominio declarado del backend. Un programa rechazado en el chequeo no tiene
+IR: la ruta IR coincide cuando rechaza el mismo código de error.
+
+411_pad_dos_anchos  —  V6: la misma definicion con `str` pelado se especializa en str<2> y str<7> sin duplicarla
+  esperado   {"status": "HALTED", "code": null, "emits": ["hi---", "unohola!!"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["hi---", "unohola!!"], "return": null}  steps=30  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["hi---", "unohola!!"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['pad.2', 'pad.7']  descartadas ['pad']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["hi---", "unohola!!"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["hi---", "unohola!!"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["hi---", "unohola!!"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["hi---", "unohola!!"], "return": null}
+
+412_borde_capacidad_literal  —  V6: `pad` con un literal de 6 bytes se instancia en str<6> y el vacio en str<1>; len mira el valor, no la capacidad
+  esperado   {"status": "HALTED", "code": null, "emits": ["abcdef", "2"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["abcdef", "2"], "return": null}  steps=21  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["abcdef", "2"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['pad.1', 'pad.6']  descartadas ['pad']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdef", "2"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdef", "2"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdef", "2"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdef", "2"], "return": null}
+
+413_encadenar_contextuales  —  V6: la resolucion se propaga por una cadena de llamadas contextuales
+  esperado   {"status": "HALTED", "code": null, "emits": ["abc", "12345678"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["abc", "12345678"], "return": null}  steps=13  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["abc", "12345678"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['copia.3', 'copia.8', 'envia.3', 'envia.8']  descartadas ['copia', 'envia']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abc", "12345678"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abc", "12345678"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abc", "12345678"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abc", "12345678"], "return": null}
+
+414_largo_ocho_y_dos  —  V6: coexisten largo[str<8>] y largo[str<2>], cada una ve su propio ancho
+  esperado   {"status": "HALTED", "code": null, "emits": ["8", "2"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["8", "2"], "return": null}  steps=7  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["8", "2"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['largo.2', 'largo.8']  descartadas ['largo']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["8", "2"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["8", "2"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["8", "2"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["8", "2"], "return": null}
+
+415_largo_dos_y_ocho  —  V6: invertir el orden de las llamadas no cambia ningun resultado
+  esperado   {"status": "HALTED", "code": null, "emits": ["2", "8"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["2", "8"], "return": null}  steps=7  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["2", "8"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['largo.2', 'largo.8']  descartadas ['largo']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["2", "8"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["2", "8"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["2", "8"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["2", "8"], "return": null}
+
+416_cast_mas_estrecho  —  V6: pedir 3 bytes dentro de un str<2> es ERROR(OVERFLOW) y no sale nada
+  esperado   {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  referencia {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}  steps=4  COINCIDE
+  ir         {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['guion.3']  descartadas ['guion']
+  c          EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  rust       EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  zig        EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+
+417_junta_dos_contextuales  —  V6: junta[str<3>,str<2>] produce `abcde` dentro de str<16>
+  esperado   {"status": "HALTED", "code": null, "emits": ["abcde"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["abcde"], "return": null}  steps=5  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["abcde"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['junta.3.2']  descartadas ['junta']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcde"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcde"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcde"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcde"], "return": null}
+
+418_junta_desborda  —  V6: la especializacion str<8>,str<16> rebasa str<16> al ejecutar y es ERROR(OVERFLOW)
+  esperado   {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  referencia {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}  steps=4  COINCIDE
+  ir         {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['junta.8.16']  descartadas ['junta']
+  c          EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  rust       EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  zig        EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+
+419_definicion_sin_llamadas  —  V6: `sin_usar` nunca se instancia y el programa sigue siendo valido
+  esperado   {"status": "HALTED", "code": null, "emits": [], "return": "7"}
+  referencia {"status": "HALTED", "code": null, "emits": [], "return": "7"}  steps=2  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": [], "return": "7"}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas []  descartadas ['sin_usar']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "7"}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2) missing=ir0.2
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "7"}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "7"}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "7"}
+
+420_recursion_contextual  —  V6: cuenta[str<4>] y cuenta[str<1>] son dos especializaciones recursivas independientes
+  esperado   {"status": "HALTED", "code": null, "emits": ["12", "2"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["12", "2"], "return": null}  steps=24  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["12", "2"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['cuenta.1', 'cuenta.4']  descartadas ['cuenta']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["12", "2"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["12", "2"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["12", "2"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["12", "2"], "return": null}
+
+422_ancho_insuficiente_estatico  —  V6: asignar str<5> a un str<4> dentro del cuerpo rechaza el programa antes de ejecutar
+  esperado   {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(TYPE_MISMATCH)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+
+423_ancho_grande_doble  —  V6: doble[str<8>] adentro y doble[str<64>] afuera; la cadena produce 32 bytes
+  esperado   {"status": "HALTED", "code": null, "emits": ["abcdefghabcdefghabcdefghabcdefgh"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["abcdefghabcdefghabcdefghabcdefgh"], "return": null}  steps=9  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["abcdefghabcdefghabcdefghabcdefgh"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['doble.64', 'doble.8']  descartadas ['doble']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdefghabcdefghabcdefghabcdefgh"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdefghabcdefghabcdefghabcdefgh"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdefghabcdefghabcdefghabcdefgh"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdefghabcdefghabcdefghabcdefgh"], "return": null}
+
+424_main_contextual  —  V6: un `str` pelado en main es INVALID_PROGRAM; la capacidad diferida necesita un sitio de llamada
+  esperado   {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(TYPE_MISMATCH)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+
+425_str_pelado_fuera_de_parametro  —  V6: `str` sin capacidad fuera de un parametro es SYNTAX en 0.5
+  esperado   {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(SYNTAX)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+
+426_str_pelado_en_v04  —  V6: la capacidad diferida es de 0.5; el mismo fuente con cabecera 0.4 sigue siendo SYNTAX
+  esperado   {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(SYNTAX)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+
+427_argumento_no_str  —  V6: pasar un i64 a un slot pelado es TYPE_MISMATCH estatico; no hay inferencia permisiva
+  esperado   {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(TYPE_MISMATCH)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+
+428_str_pelado_desde_stdin  —  V6: la capacidad instanciada viene del parámetro str<16> de main; len cuenta el valor real
+  esperado   {"status": "HALTED", "code": null, "emits": [], "return": "4"}
+  referencia {"status": "HALTED", "code": null, "emits": [], "return": "4"}  steps=4  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": [], "return": "4"}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['largo.16']  descartadas ['largo']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "4"}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "4"}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "4"}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "4"}
+
+429_retorno_pelado_dos_expectativas  —  V6-bis: doble[str<4>]->str<8> y doble[str<2>]->str<4> conviven como dos copias de una sola definición
+  esperado   {"status": "HALTED", "code": null, "emits": ["abcdabcd", "abab"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["abcdabcd", "abab"], "return": null}  steps=9  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["abcdabcd", "abab"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['doble.2.r4', 'doble.4.r8']  descartadas ['doble']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdabcd", "abab"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdabcd", "abab"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdabcd", "abab"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdabcd", "abab"], "return": null}
+
+430_retorno_pelado_desborda  —  V6-bis: expected str<4> con un valor de 8 bytes es ERROR(OVERFLOW), jamás truncado
+  esperado   {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  referencia {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}  steps=4  COINCIDE
+  ir         {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['doble.4.r4']  descartadas ['doble']
+  c          EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  rust       EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+  zig        EQUIV          ERROR(OVERFLOW)    {"status": "ERROR", "code": "OVERFLOW", "emits": [], "return": null}
+
+431_expectativa_mas_chica  —  V6-bis: required (str<16>) > expected (str<8>) se rechaza en el chequeo, con el `at` del return
+  esperado   {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(TYPE_MISMATCH)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+
+432_llamado_como_sentencia  —  V6-bis: sin expectativa en la posición de llamada, el retorno pelado se rechaza (fail-closed)
+  esperado   {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(TYPE_MISMATCH)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+
+433_dentro_de_emit  —  V6-bis: un retorno pelado dentro de `emit` se rechaza; `str` pelado no significa MAX_STR
+  esperado   {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(TYPE_MISMATCH)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+
+434_expectativa_por_parametro_pelado  —  V6-bis: expectativa y capacidad diferida en la misma arista es circular; ningún ancho por defecto
+  esperado   {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(TYPE_MISMATCH)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+
+435_transmision_pelado_a_pelado  —  V6-bis: la capacidad viaja eco[str<4>]->str<8> y doble[str<4>]->str<8]; dos copias, un solo fuente
+  esperado   {"status": "HALTED", "code": null, "emits": ["abcdabcd"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["abcdabcd"], "return": null}  steps=7  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["abcdabcd"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['doble.4.r8', 'eco.4.r8']  descartadas ['doble', 'eco']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdabcd"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdabcd"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdabcd"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["abcdabcd"], "return": null}
+
+436_retorno_pelado_en_main  —  V6-bis: `-> str` pelado en main se rechaza, igual que en los parámetros (424)
+  esperado   {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(TYPE_MISMATCH)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(TYPE_MISMATCH) {"status": "INVALID_PROGRAM", "code": "TYPE_MISMATCH", "emits": [], "return": null}
+
+437_retorno_pelado_en_v04  —  V6-bis: la posición de retorno pelada no existía antes de 0.5; con cabecera 0.4 es SYNTAX
+  esperado   {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  referencia {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}  steps=0  COINCIDE
+  ir         null  schema=None  RECHAZADO IGUAL QUE LA REFERENCIA INVALID_PROGRAM(SYNTAX)
+  especializaciones creadas []  descartadas []
+  c          EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  cobol      EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  pydecimal  EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  rust       EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+  zig        EQUIV          INVALID_PROGRAM(SYNTAX) {"status": "INVALID_PROGRAM", "code": "SYNTAX", "emits": [], "return": null}
+
+438_retorno_pelado_desde_stdin  —  V6-bis: con "hola" por stdin, doble[str<8>]->str<16] produce 8 bytes y len devuelve 8
+  esperado   {"status": "HALTED", "code": null, "emits": [], "return": "8"}
+  referencia {"status": "HALTED", "code": null, "emits": [], "return": "8"}  steps=5  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": [], "return": "8"}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['doble.8.r16']  descartadas ['doble']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "8"}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "8"}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "8"}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": [], "return": "8"}
+
+421_marca_entre_modulos  —  V6: una funcion contextual de un modulo se especializa por llamado desde la raiz
+  esperado   {"status": "HALTED", "code": null, "emits": ["hola", "ady"], "return": null}
+  referencia {"status": "HALTED", "code": null, "emits": ["hola", "ady"], "return": null}  steps=7  COINCIDE
+  ir         {"status": "HALTED", "code": null, "emits": ["hola", "ady"], "return": null}  schema=isy-ir/0.2  COINCIDE
+  especializaciones creadas ['util.marca.3', 'util.marca.4']  descartadas ['util.marca']
+  c          EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["hola", "ady"], "return": null}
+  cobol      UNSUPPORTED    UNSUPPORTED(ir0.2,str) missing=ir0.2,str
+  pydecimal  EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["hola", "ady"], "return": null}
+  rust       EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["hola", "ady"], "return": null}
+  zig        EQUIV          HALTED             {"status": "HALTED", "code": null, "emits": ["hola", "ady"], "return": null}
+
+control c (testigos propios: 28/28): half_even_as_half_up: 0 rotas de 0 casos con «dec» [VACÍO]  div_floor: 0 rotas de 0 casos con «idiv» [VACÍO]  str_concat_truncates: 2 rotas de 9 casos con «str_concat» [DETECTADO]
+  hace_el_trabajo={'cadena_de_32_en_el_fuente': False, 'otra_entrada': 'adios', 'otra_salida': '5', 'esperada': '4', 'cadena_de_retorno_en_el_fuente': False, 'ok': True}
+control cobol (testigos propios: 11/28): half_even_as_half_up: 0 rotas de 0 casos con «dec» [VACÍO]  div_floor: 0 rotas de 0 casos con «idiv» [VACÍO]
+  hace_el_trabajo={'no_aplicable': 'ValueError: parámetro fuera del alcance numérico: str<8>'}
+control pydecimal (testigos propios: 28/28): half_even_as_half_up: 0 rotas de 0 casos con «dec» [VACÍO]  div_floor: 0 rotas de 0 casos con «idiv» [VACÍO]  str_concat_truncates: 2 rotas de 9 casos con «str_concat» [DETECTADO]
+  hace_el_trabajo={'cadena_de_32_en_el_fuente': False, 'otra_entrada': 'adios', 'otra_salida': '5', 'esperada': '4', 'cadena_de_retorno_en_el_fuente': False, 'ok': True}
+control rust (testigos propios: 28/28): half_even_as_half_up: 0 rotas de 0 casos con «dec» [VACÍO]  div_floor: 0 rotas de 0 casos con «idiv» [VACÍO]  str_concat_truncates: 2 rotas de 9 casos con «str_concat» [DETECTADO]
+  hace_el_trabajo={'cadena_de_32_en_el_fuente': False, 'otra_entrada': 'adios', 'otra_salida': '5', 'esperada': '4', 'cadena_de_retorno_en_el_fuente': False, 'ok': True}
+control zig (testigos propios: 28/28): half_even_as_half_up: 0 rotas de 0 casos con «dec» [VACÍO]  div_floor: 0 rotas de 0 casos con «idiv» [VACÍO]  str_concat_truncates: 2 rotas de 9 casos con «str_concat» [DETECTADO]
+  hace_el_trabajo={'cadena_de_32_en_el_fuente': False, 'otra_entrada': 'adios', 'otra_salida': '5', 'esperada': '4', 'cadena_de_retorno_en_el_fuente': False, 'ok': True}

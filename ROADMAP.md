@@ -165,6 +165,18 @@ que falsifica V7.
 > `evidence/v05_v6/run_20261031T103514Z.json`. Quedan V6-bis, V7, revalidar V1–V5 y P1–P4;
 > el directorio sigue fuera de `CORPORA` hasta que `401`–`410` pasen.
 
+> **V6-bis implementado y sellado 2026-10-31.** `-> str` pelado resuelto por la capacidad
+> **esperada en el sitio de llamada**: `429`–`438` (4 ejecutables, 6 rechazos) con los
+> `expected` a mano antes de tocar `isyco/`; dos expectativas de la misma definición dan
+> dos copias (`doble.4.r8`, `doble.2.r4`), ninguna expectativa es `TYPE_MISMATCH` (nunca
+> `MAX_STR`), y desbordar la expectativa es `ERROR(OVERFLOW)` con cero `emits` (`430`) —
+> nada de truncate and continue. Diferencial extendido a los 28 casos `411`–`438`:
+> **123 EQUIV, 17 UNSUPPORTED (COBOL, otra vez por la etiqueta `ir0.2`), cero
+> DIVERGENT/BUILD_FAIL**; el sabotaje `str_concat_truncates` ahora rompe dos casos
+> (`418` y `430`). 28 clones en el corpus, máximo 4 por programa, sin tope fijado.
+> Decisión: `docs/decisions/V6B_CONTEXTUAL_RETURN.md`;
+> `evidence/v05_v6/run_20261031T183542Z.json`. Quedan V7, revalidar V1–V5 y P1–P4.
+
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).

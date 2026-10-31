@@ -1,0 +1,12 @@
+isyco 0.5
+
+# Las dos orillas de la misma llamada: el ancho del parametro viene del tipo de main
+# (stdin) y el del retorno viene de la expectativa del `let`.
+fn doble(s: str) -> str {
+    return s + s;
+}
+
+fn main(s: str<8>) -> i64 {
+    let r: str<16> = doble(s);
+    return len(r);
+}
