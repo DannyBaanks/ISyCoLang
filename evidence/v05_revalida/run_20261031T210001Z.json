@@ -1,0 +1,271 @@
+{
+  "brazo_viejo": [
+    {
+      "caso": "401_len_arreglo",
+      "sin_la_regla": "INVALID_PROGRAM(TYPE_MISMATCH)"
+    },
+    {
+      "caso": "406_len_parametro",
+      "sin_la_regla": "INVALID_PROGRAM(TYPE_MISMATCH)"
+    }
+  ],
+  "gemelos": [
+    {
+      "caso": "401_len_arreglo",
+      "estado": "IGUAL",
+      "pasos": {
+        "azucar": 6,
+        "gemelo": 6
+      },
+      "rechazo_gemelo": null,
+      "salidas": {
+        "azucar": {
+          "code": null,
+          "emits": [
+            "5"
+          ],
+          "return": "5",
+          "status": "HALTED"
+        },
+        "gemelo": {
+          "code": null,
+          "emits": [
+            "5"
+          ],
+          "return": "5",
+          "status": "HALTED"
+        }
+      }
+    },
+    {
+      "caso": "406_len_parametro",
+      "estado": "IGUAL",
+      "pasos": {
+        "azucar": 27,
+        "gemelo": 27
+      },
+      "rechazo_gemelo": null,
+      "salidas": {
+        "azucar": {
+          "code": null,
+          "emits": [],
+          "return": "21",
+          "status": "HALTED"
+        },
+        "gemelo": {
+          "code": null,
+          "emits": [],
+          "return": "21",
+          "status": "HALTED"
+        }
+      }
+    }
+  ],
+  "hace_el_trabajo": [
+    {
+      "caso": "401_len_arreglo",
+      "coincide_con_lo_predicho": true,
+      "esperado": {
+        "code": null,
+        "emits": [
+          "6"
+        ],
+        "return": "6",
+        "status": "HALTED"
+      },
+      "mueve_la_salida": true,
+      "observado": {
+        "code": null,
+        "emits": [
+          "6"
+        ],
+        "return": "6",
+        "status": "HALTED"
+      },
+      "pasos": 6,
+      "rechazo": null
+    },
+    {
+      "caso": "406_len_parametro",
+      "coincide_con_lo_predicho": true,
+      "esperado": {
+        "code": null,
+        "emits": [],
+        "return": "28",
+        "status": "HALTED"
+      },
+      "mueve_la_salida": true,
+      "observado": {
+        "code": null,
+        "emits": [],
+        "return": "28",
+        "status": "HALTED"
+      },
+      "pasos": 30,
+      "rechazo": null
+    }
+  ],
+  "ir": {
+    "casos": [
+      {
+        "caso": "401_len_arreglo",
+        "nodos_len": 0,
+        "schema": "isy-ir/0.2"
+      },
+      {
+        "caso": "406_len_parametro",
+        "nodos_len": 0,
+        "schema": "isy-ir/0.2"
+      }
+    ],
+    "control_len_de_str": 1
+  },
+  "milestone": "Revalidación CORE v0.5 (V1/V2) — corpus 401..410",
+  "no_regresion": [
+    {
+      "caso": "401_len_arreglo",
+      "rechazos": {
+        "0.1": "INVALID_PROGRAM(UNKNOWN_NAME)",
+        "0.2": "INVALID_PROGRAM(UNKNOWN_NAME)",
+        "0.3": "INVALID_PROGRAM(TYPE_MISMATCH)",
+        "0.4": "INVALID_PROGRAM(TYPE_MISMATCH)"
+      }
+    },
+    {
+      "caso": "406_len_parametro",
+      "rechazos": {
+        "0.1": "INVALID_PROGRAM(UNKNOWN_NAME)",
+        "0.2": "INVALID_PROGRAM(UNKNOWN_NAME)",
+        "0.3": "INVALID_PROGRAM(TYPE_MISMATCH)",
+        "0.4": "INVALID_PROGRAM(TYPE_MISMATCH)"
+      }
+    }
+  ],
+  "receipt": {
+    "arbol_sucio_codigo": true,
+    "backends": [
+      "c",
+      "cobol",
+      "pydecimal",
+      "rust",
+      "zig"
+    ],
+    "casos": [
+      "401",
+      "406"
+    ],
+    "comando": "--casos 401,406 --write",
+    "corpus": "programs/conformance_v0.5",
+    "git_head": "6954561c3380097826aec0e80f792a93da58c7d1",
+    "python": "3.12.3",
+    "utc": "2026-10-31T21:00:01Z",
+    "veredicto_arbol": "EVIDENCE_ONLY"
+  },
+  "schema": "isyco.evidence/0.1",
+  "tres_vias": [
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 6
+        },
+        "cobol": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 6
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 6
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 6
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 6
+        }
+      },
+      "caso": "401_len_arreglo",
+      "claim": "len de un arreglo devuelve su capacidad, sin contar paso (V1)",
+      "expected": {
+        "code": null,
+        "emits": [
+          "5"
+        ],
+        "return": "5",
+        "status": "HALTED"
+      },
+      "pasos_referencia": 6,
+      "rechazo_referencia": null,
+      "referencia": {
+        "code": null,
+        "emits": [
+          "5"
+        ],
+        "return": "5",
+        "status": "HALTED"
+      }
+    },
+    {
+      "backends": {
+        "c": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 27
+        },
+        "cobol": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 27
+        },
+        "pydecimal": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 27
+        },
+        "rust": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 27
+        },
+        "zig": {
+          "clasificacion": "EQUIV",
+          "estado": "HALTED",
+          "excepcion": null,
+          "pasos": 27
+        }
+      },
+      "caso": "406_len_parametro",
+      "claim": "len(a) dentro de una función sirve como cota del while (1+..+6)",
+      "expected": {
+        "code": null,
+        "emits": [],
+        "return": "21",
+        "status": "HALTED"
+      },
+      "pasos_referencia": 27,
+      "rechazo_referencia": null,
+      "referencia": {
+        "code": null,
+        "emits": [],
+        "return": "21",
+        "status": "HALTED"
+      }
+    }
+  ]
+}

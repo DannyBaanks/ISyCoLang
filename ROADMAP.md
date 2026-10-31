@@ -199,6 +199,19 @@ que falsifica V7.
 > `evidence/v05_v7/run_20261031T200146Z.json` (`RELEASE_GATE`, mismo `corpus_hash` que la
 > corrida `EVIDENCE_ONLY` `run_20261031T194109Z`). Quedan revalidar V1–V5 y P1–P4.
 
+> **V1 implementado 2026-10-31 (revalidación de V1–V5).** `len(a)` con `a: [T; N]` devuelve
+> `N` en `i64` y **el frontend lo sustituye en el AST** (`isyco/checker.py:37`), así que la IR
+> no gana ningún nodo ni ninguna capacidad: 0 nodos `{"k": "len"}` en 401/406 frente al control
+> `len(s)` de v0.3, que sigue bajando con el suyo. Medido: `401` y `406` pasan de
+> `INVALID_PROGRAM(TYPE_MISMATCH)` a coincidir en `expected` ↔ referencia ↔ **los cinco**
+> backends (10 EQUIV, pasos incluidos), con los mismos pasos que su gemelo con la capacidad
+> escrita a mano (6 = 6 y 27 = 27) — es estático, no cuesta paso. No regresión: la misma fuente
+> recabezada a 0.1/0.2 sigue en `UNKNOWN_NAME` (ahí `len` no es palabra clave) y a 0.3/0.4 en
+> `TYPE_MISMATCH`. La sonda se auto-falsifica: apagando la familia `v05` en el checker los dos
+> casos vuelven a rechazarse, y si no lo hicieran el EQUIV sería vacuo
+> (`tools/v05_revalida_probe.py --casos 401,406`). Decisión:
+> `docs/decisions/V1_LEN_ARREGLO.md`. Quedan V2 (`402`–`405`), V3–V5 y P1–P4.
+
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).

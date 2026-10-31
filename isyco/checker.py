@@ -6,6 +6,8 @@ de fuente.
 """
 from __future__ import annotations
 
+import dataclasses
+
 from . import ast as A
 from . import specialize as spec
 from .errors import InvalidProgram
@@ -28,6 +30,35 @@ def is_poly(e) -> bool:
     return False
 
 
+#: campos que no son sub-AST: tipos anotados por este checker, no expresiones
+_NOT_AST = ("ty", "target_ty", "steps_ty", "type", "target")
+
+
+def static_len(value):
+    """CORE v0.5 V1: reemplaza `len(a)` con `a: [T; N]` por el entero `N` en el AST.
+
+    Es estático porque lo resuelve el tipo, no la ejecución: la capacidad `N` ya es un dato
+    del tipo, así que el nodo desaparece antes de la IR — ningún backend nuevo, ninguna
+    capacidad nueva, `features_of` intacta (el mismo movimiento de v0.4 con los imports).
+    `len(s)` de v0.3 §2.4 no se toca: sigue siendo una operación. Se llama después de
+    chequear, con los `ty` llenados: el literal carga `ty` y `val` como los habría dejado
+    `int_literal` con `expected = i64`, que es el tipo que el checker ya le dio al `len`.
+    """
+    if isinstance(value, list):
+        return [static_len(v) for v in value]
+    if isinstance(value, tuple):
+        return tuple(static_len(v) for v in value)
+    if isinstance(value, (A.Expr, A.Stmt, A.Block)):
+        for f in dataclasses.fields(value):
+            if f.name not in _NOT_AST:
+                setattr(value, f.name, static_len(getattr(value, f.name)))
+        if isinstance(value, A.Len) and isinstance(value.expr.ty, ArrT):
+            lit = A.IntLit(value.at, value.expr.ty.n)
+            lit.ty, lit.val = INT_ALIASES["i64"], value.expr.ty.n
+            return lit
+    return value
+
+
 class Checker:
     def __init__(self, program: A.Program):
         self.program = program
@@ -36,6 +67,7 @@ class Checker:
         self.loop_depth = 0
         self.emits = False
         self.v03 = has(program.version, "v03")   # v0.4 y v0.5 traen lo de v0.3
+        self.v05 = has(program.version, "v05")
         self.struct_types: dict[str, StructT] = {}
         self.specs: dict[str, A.Fn] = {}         # V6: especializaciones ya chequeadas
 
@@ -64,6 +96,11 @@ class Checker:
             # Sin llamadas no hay código: la definición original desaparece antes de la IR,
             # así que `str` pelado nunca llega a `ty_to_json` ni a `type_size`.
             del self.program.fns[name]
+        if self.v05:
+            # V1 se aplica sobre las funciones que sobreviven al chequeo —incluidas las copias
+            # de V6—, con los `ty` ya llenados y el cuerpo de los pelados original fuera.
+            for fn in self.program.fns.values():
+                fn.body = static_len(fn.body)
 
     # --- structs y tipos con nombre (CORE v0.3 §3, §5, §7.1) -------------------
     def check_structs(self) -> None:
@@ -282,7 +319,15 @@ class Checker:
         if isinstance(e, A.StructLit):
             return self.struct_literal(e)
         if isinstance(e, A.Len):
-            if not isinstance(self.typeof(e.expr, None), StrT):
+            ty = self.typeof(e.expr, None)
+            if isinstance(ty, ArrT):
+                # V1: solo con cabecera 0.5. En 0.1-0.4 `len` sigue siendo una operación
+                # de strings y un arreglo es TYPE_MISMATCH, sin cambiar programas viejos.
+                if not self.v05:
+                    raise InvalidProgram("TYPE_MISMATCH", e.at,
+                                         f"len de {ty} llegó con CORE v0.5 (V1): len requiere un str")
+                return INT_ALIASES["i64"]
+            if not isinstance(ty, StrT):
                 raise InvalidProgram("TYPE_MISMATCH", e.at, "len requiere un str")
             return INT_ALIASES["i64"]
         if isinstance(e, A.Slice):
