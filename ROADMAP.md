@@ -146,6 +146,16 @@ con el incremento al final del cuerpo es **incorrecto** (`continue` no avanza �
 igualdad de `steps` contra los `while` gemelo (23 / 38 / 20) y la corrida COBOL
 que falsifica V7.
 
+> **Repriorizado 2026-10-30 por el objetivo real de Danny: una librería de texto.**
+> `programs/dogfood/06_biblioteca_texto.isy` ya la escribe en `isyco 0.4` — `pad`,
+> `empieza_con`, `cuenta_letra`, `mayus`, con los 11 `emits` predichos a mano antes de
+> correr y `HALTED` en los cinco ejecutores; `07_texto_desborda.isy` fija que desbordar
+> la capacidad declarada es `ERROR(OVERFLOW)` y nunca truncado
+> (`evidence/textlib/run_2026-10-31T012545Z.json`). Con eso **V6 (y su ampliación
+> V6-bis, `str` pelado en el retorno) pasa delante de V1/V2**, y la fila de §3 que
+> pedía aritmética de capacidades queda refutada: `checker.py:377-379` ya la tiene.
+> Corrección completa en `spec/CORE_v0.5_propuesta.md` §8.
+
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).
