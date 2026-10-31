@@ -1,0 +1,16 @@
+{
+  "claim": "for recorre un arreglo de structs y suma un campo dec",
+  "input": [
+    [
+      {"nombre": "a", "precio": "1.50"},
+      {"nombre": "b", "precio": "2.25"},
+      {"nombre": "c", "precio": "0.10"}
+    ]
+  ],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "3.85"
+  }
+}

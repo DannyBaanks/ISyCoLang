@@ -1,0 +1,22 @@
+isyco 0.4
+
+# Variante ingenua del azúcar V2: el incremento DESPUÉS del cuerpo. El `continue`
+# del ejemplo salta el `i = i + 1` y el bucle no avanza nunca.
+fn main() -> i32 !emit {
+    let xs: [i32; 6] = [2, 3, 5, 7, 9, 11];
+    let contados: i32 = 0;
+    let i: i64 = 0;
+    while i < 6 {
+        let x: i32 = xs[i];
+        if x == 5 {
+            continue;
+        }
+        if x > 7 {
+            break;
+        }
+        emit x;
+        contados = contados + 1;
+        i = i + 1;
+    }
+    return contados;
+}

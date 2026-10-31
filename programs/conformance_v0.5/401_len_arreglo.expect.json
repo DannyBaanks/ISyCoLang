@@ -1,0 +1,12 @@
+{
+  "claim": "len de un arreglo devuelve su capacidad, sin contar paso (V1)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "5"
+    ],
+    "return": "5"
+  }
+}

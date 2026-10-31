@@ -1,0 +1,13 @@
+{
+  "claim": "es_vacia es una sola función para la vacía y para la no vacía",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "true",
+      "false"
+    ],
+    "return": "false"
+  }
+}

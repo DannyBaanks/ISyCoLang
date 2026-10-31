@@ -1,0 +1,10 @@
+isyco 0.5
+# V2: for sobre un arreglo de enteros; equivalente exacto al while con len.
+fn main() -> i32 {
+    let xs: [i32; 4] = [2, 3, 5, 7];
+    let total: i32 = 0;
+    for x in xs {
+        total = total + x;
+    }
+    return total;
+}

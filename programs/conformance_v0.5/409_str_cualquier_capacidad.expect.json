@@ -1,0 +1,13 @@
+{
+  "claim": "primero(s) funciona con str<4> y con str<10> sin reescribir la función",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "104",
+      "97"
+    ],
+    "return": "4"
+  }
+}

@@ -1,0 +1,391 @@
+{
+  "corpus": [
+    {
+      "a_0.4": {
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "frontend": "TYPE_MISMATCH at 5:12: len requiere un str",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "case": "401_len_arreglo",
+      "claim": "len de un arreglo devuelve su capacidad, sin contar paso (V1)",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [
+          "5"
+        ],
+        "return": "5",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    },
+    {
+      "a_0.4": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 7:9: se esperaba '=', llegó 'it'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "case": "402_for_decimales",
+      "claim": "for recorre un arreglo de structs y suma un campo dec",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [],
+        "return": "3.85",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": [
+        [
+          {
+            "nombre": "a",
+            "precio": "1.50"
+          },
+          {
+            "nombre": "b",
+            "precio": "2.25"
+          },
+          {
+            "nombre": "c",
+            "precio": "0.10"
+          }
+        ]
+      ]
+    },
+    {
+      "a_0.4": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 6:9: se esperaba '=', llegó 'x'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "case": "403_for_enteros",
+      "claim": "for suma un arreglo de enteros (2+3+5+7)",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [],
+        "return": "17",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    },
+    {
+      "a_0.4": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 6:9: se esperaba '=', llegó 'x'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "case": "404_for_break_continue",
+      "claim": "continue salta 5, break corta en 9: emite 2 3 7 y cuenta 3",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [
+          "2",
+          "3",
+          "7"
+        ],
+        "return": "3",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    },
+    {
+      "a_0.4": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 5:9: se esperaba '=', llegó 'x'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "case": "405_for_copia",
+      "claim": "asignar a la variable del for no muta el arreglo (sin aliasing, §1.2)",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [
+          "1",
+          "3"
+        ],
+        "return": "2",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    },
+    {
+      "a_0.4": {
+        "code": "TYPE_MISMATCH",
+        "emits": [],
+        "frontend": "TYPE_MISMATCH at 6:15: len requiere un str",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "case": "406_len_parametro",
+      "claim": "len(a) dentro de una función sirve como cota del while (1+..+6)",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [],
+        "return": "21",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    },
+    {
+      "a_0.4": {
+        "code": null,
+        "emits": [
+          "41"
+        ],
+        "frontend": null,
+        "return": "42",
+        "status": "HALTED",
+        "steps": 8
+      },
+      "case": "407_parametro_reasignable",
+      "claim": "reasignar un parámetro no muta el argumento del llamador (41 sigue siendo 41)",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [
+          "41"
+        ],
+        "return": "42",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    },
+    {
+      "a_0.4": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 3:18: se esperaba '<', llegó ')'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "case": "409_str_cualquier_capacidad",
+      "claim": "primero(s) funciona con str<4> y con str<10> sin reescribir la función",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [
+          "104",
+          "97"
+        ],
+        "return": "4",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 8:18: carácter inesperado '\"'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    },
+    {
+      "a_0.4": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 3:19: se esperaba '<', llegó ')'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "case": "410_str_vacia_reutilizable",
+      "claim": "es_vacia es una sola función para la vacía y para la no vacía",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [
+          "true",
+          "false"
+        ],
+        "return": "false",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 8:19: carácter inesperado '\"'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    },
+    {
+      "a_0.4": {
+        "code": null,
+        "emits": [],
+        "frontend": null,
+        "return": "9.00",
+        "status": "HALTED",
+        "steps": 7
+      },
+      "case": "408_qname_arreglo",
+      "claim": "arreglo cuyo tipo de elemento viene de un módulo: [linea.Linea; 2]",
+      "coincide": false,
+      "expected": {
+        "code": null,
+        "emits": [],
+        "return": "9.00",
+        "status": "HALTED"
+      },
+      "hoy_0.5": {
+        "code": "SYNTAX",
+        "emits": [],
+        "frontend": "SYNTAX at 7:36: carácter inesperado '\"'",
+        "return": null,
+        "status": "INVALID_PROGRAM",
+        "steps": 0
+      },
+      "input": []
+    }
+  ],
+  "gemelos": [
+    {
+      "coincide_con_expected": true,
+      "expected_de": "403_for_enteros",
+      "gemelo": "403_while",
+      "limits": "defaults",
+      "observed": {
+        "code": null,
+        "emits": [],
+        "return": "17",
+        "status": "HALTED",
+        "steps": 23
+      },
+      "prediccion_steps": 23,
+      "version": "isyco 0.4"
+    },
+    {
+      "coincide_con_expected": false,
+      "expected_de": "404_for_break_continue",
+      "gemelo": "404_while_incremento_abajo",
+      "limits": "max_steps=20000",
+      "observed": {
+        "code": "max_steps",
+        "emits": [
+          "2",
+          "3"
+        ],
+        "return": null,
+        "status": "LIMIT_REACHED",
+        "steps": 20001
+      },
+      "prediccion_steps": 20001,
+      "version": "isyco 0.4"
+    },
+    {
+      "coincide_con_expected": true,
+      "expected_de": "404_for_break_continue",
+      "gemelo": "404_while_incremento_arriba",
+      "limits": "defaults",
+      "observed": {
+        "code": null,
+        "emits": [
+          "2",
+          "3",
+          "7"
+        ],
+        "return": "3",
+        "status": "HALTED",
+        "steps": 38
+      },
+      "prediccion_steps": 38,
+      "version": "isyco 0.4"
+    },
+    {
+      "coincide_con_expected": true,
+      "expected_de": "405_for_copia",
+      "gemelo": "405_while",
+      "limits": "defaults",
+      "observed": {
+        "code": null,
+        "emits": [
+          "1",
+          "3"
+        ],
+        "return": "2",
+        "status": "HALTED",
+        "steps": 20
+      },
+      "prediccion_steps": 20,
+      "version": "isyco 0.4"
+    }
+  ],
+  "git_head": "4688517732ec07d4ebe223fb1e5c04bb675318d7"
+}

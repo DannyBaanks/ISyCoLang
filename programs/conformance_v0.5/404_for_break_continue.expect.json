@@ -1,0 +1,14 @@
+{
+  "claim": "continue salta 5, break corta en 9: emite 2 3 7 y cuenta 3",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "2",
+      "3",
+      "7"
+    ],
+    "return": "3"
+  }
+}

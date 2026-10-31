@@ -1,0 +1,10 @@
+{
+  "claim": "len(a) dentro de una función sirve como cota del while (1+..+6)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "21"
+  }
+}

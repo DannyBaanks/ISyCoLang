@@ -1,0 +1,17 @@
+isyco 0.5
+# V2: break y continue dentro del for valen lo mismo que en el while gemelo.
+fn main() -> i32 !emit {
+    let xs: [i32; 6] = [2, 3, 5, 7, 9, 11];
+    let contados: i32 = 0;
+    for x in xs {
+        if x == 5 {
+            continue;
+        }
+        if x > 7 {
+            break;
+        }
+        emit x;
+        contados = contados + 1;
+    }
+    return contados;
+}

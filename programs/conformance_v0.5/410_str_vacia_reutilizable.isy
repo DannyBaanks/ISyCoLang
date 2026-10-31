@@ -1,0 +1,11 @@
+isyco 0.5
+# V6: la misma utilidad sirve para una cadena vacía (str<1> con len 0).
+fn es_vacia(s: str) -> bool {
+    return len(s) == 0;
+}
+
+fn main() -> bool !emit {
+    emit es_vacia("");
+    emit es_vacia("hola");
+    return es_vacia("hola");
+}

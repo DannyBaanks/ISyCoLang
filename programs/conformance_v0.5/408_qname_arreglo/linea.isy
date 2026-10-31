@@ -1,0 +1,7 @@
+isyco 0.5
+
+pub struct Linea { descripcion: str<16>, importe: dec<8,2> }
+
+pub fn importe_de(l: Linea) -> dec<8,2> {
+    return l.importe;
+}

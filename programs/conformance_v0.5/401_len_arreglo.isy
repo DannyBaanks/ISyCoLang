@@ -1,0 +1,12 @@
+isyco 0.5
+
+# V1: len de un arreglo devuelve N (i64), resuelto por el frontend.
+fn cuanto(a: [i32; 5]) -> i64 {
+    return len(a);
+}
+
+fn main() -> i64 !emit {
+    let xs: [i32; 5] = [1, 2, 3, 4, 5];
+    emit cuanto(xs);
+    return len(xs);
+}

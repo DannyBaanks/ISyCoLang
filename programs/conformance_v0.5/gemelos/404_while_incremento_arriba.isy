@@ -1,0 +1,21 @@
+isyco 0.4
+
+# Gemelo V2 con el incremento ANTES del cuerpo: `continue` no salta el avance.
+fn main() -> i32 !emit {
+    let xs: [i32; 6] = [2, 3, 5, 7, 9, 11];
+    let contados: i32 = 0;
+    let i: i64 = -1;
+    while i + 1 < 6 {
+        i = i + 1;
+        let x: i32 = xs[i];
+        if x == 5 {
+            continue;
+        }
+        if x > 7 {
+            break;
+        }
+        emit x;
+        contados = contados + 1;
+    }
+    return contados;
+}

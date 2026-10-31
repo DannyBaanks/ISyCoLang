@@ -1,0 +1,10 @@
+{
+  "claim": "for suma un arreglo de enteros (2+3+5+7)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "17"
+  }
+}

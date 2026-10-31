@@ -1,0 +1,11 @@
+isyco 0.5
+# V6: una utilidad sin capacidad sirve para cualquier str; s[0] es el byte u8.
+fn primero(s: str) -> u8 {
+    return s[0];
+}
+
+fn main() -> i64 !emit {
+    emit primero("hola");
+    emit primero("abcdefghij");
+    return len("hola");
+}

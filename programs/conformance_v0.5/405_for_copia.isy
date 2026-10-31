@@ -1,0 +1,11 @@
+isyco 0.5
+# V2 + V4: la variable del for es una COPIA del elemento; reasignarla no toca el arreglo.
+fn main() -> i32 !emit {
+    let xs: [i32; 3] = [1, 2, 3];
+    for x in xs {
+        x = x * 10;
+    }
+    emit xs[0];
+    emit xs[2];
+    return xs[1];
+}

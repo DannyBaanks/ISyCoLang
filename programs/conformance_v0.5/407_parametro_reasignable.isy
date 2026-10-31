@@ -1,0 +1,13 @@
+isyco 0.5
+# V4: un parámetro es una local mutable del marco; asignarle no toca al llamador.
+fn cuenta(x: i32) -> i32 {
+    x = x + 1;
+    return x;
+}
+
+fn main() -> i32 !emit {
+    let n: i32 = 41;
+    let m: i32 = cuenta(n);
+    emit n;
+    return m;
+}

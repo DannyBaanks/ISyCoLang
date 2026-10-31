@@ -1,0 +1,11 @@
+isyco 0.5
+import linea;
+
+# V5: el tipo de elemento de un arreglo puede ser un qname de módulo importado.
+fn main() -> dec<8,2> {
+    let items: [linea.Linea; 2] = [
+        linea.Linea { descripcion: "servicio A", importe: 4.00 },
+        linea.Linea { descripcion: "servicio B", importe: 5.00 }
+    ];
+    return linea.importe_de(items[0]) + linea.importe_de(items[1]);
+}

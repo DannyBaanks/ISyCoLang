@@ -130,6 +130,22 @@ aprobados por Danny el 2026-10-29.
 sin cambiar ningún resultado anterior; IR y los tres backends nativos iguales a
 la referencia en el corpus completo.
 
+#### F2.4 — Core v0.5: `for`, `len` de arreglos, `str` sin capacidad  `[PROPUESTA 2026-10-30 — bloqueada por decisión de Danny, no por código]`
+
+Nace del dogfood (`docs/DOGFOOD_2026-10-30.md`): los cinco programas reales midieron
+qué no se puede escribir. `spec/CORE_v0.5_propuesta.md` convierte eso en siete
+decisiones numeradas **V1–V7** con su corpus `programs/conformance_v0.5/` (401–410)
+y los `expected` escritos a mano **antes** de implementar. Nada de v0.5 está
+aprobado ni implementado; el directorio está fuera de `CORPORA`, así que los 170
+casos de F2.3 no se mueven. Dos medidas que sí entran hoy: el azúcar del `for`
+con el incremento al final del cuerpo es **incorrecto** (`continue` no avanza →
+`LIMIT_REACHED`, control negativo en el corpus) y añadir la cabecera `0.5` toca
+**diez** sitios con la versión fijada en código (`evidence/v05_propuesta/`).
+
+**Gate F2.4:** los seis ítems de `spec/CORE_v0.5_propuesta.md` §5, incluida la
+igualdad de `steps` contra los `while` gemelo (23 / 38 / 20) y la corrida COBOL
+que falsifica V7.
+
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).

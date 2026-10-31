@@ -1,0 +1,83 @@
+git_head=4688517732ec07d4ebe223fb1e5c04bb675318d7  corpus=programs/conformance_v0.5
+
+== casos 401-410: el expected NO se copió del resultado ==
+
+401_len_arreglo  —  len de un arreglo devuelve su capacidad, sin contar paso (V1)
+  esperado     {"code": null, "emits": ["5"], "return": "5", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'
+  cuerpo a 0.4 INVALID_PROGRAM(TYPE_MISMATCH) emits=[] return=None steps=0
+               frontend: TYPE_MISMATCH at 5:12: len requiere un str
+
+402_for_decimales  —  for recorre un arreglo de structs y suma un campo dec
+  esperado     {"code": null, "emits": [], "return": "3.85", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'
+  cuerpo a 0.4 INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 7:9: se esperaba '=', llegó 'it'
+
+403_for_enteros  —  for suma un arreglo de enteros (2+3+5+7)
+  esperado     {"code": null, "emits": [], "return": "17", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'
+  cuerpo a 0.4 INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 6:9: se esperaba '=', llegó 'x'
+
+404_for_break_continue  —  continue salta 5, break corta en 9: emite 2 3 7 y cuenta 3
+  esperado     {"code": null, "emits": ["2", "3", "7"], "return": "3", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'
+  cuerpo a 0.4 INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 6:9: se esperaba '=', llegó 'x'
+
+405_for_copia  —  asignar a la variable del for no muta el arreglo (sin aliasing, §1.2)
+  esperado     {"code": null, "emits": ["1", "3"], "return": "2", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'
+  cuerpo a 0.4 INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 5:9: se esperaba '=', llegó 'x'
+
+406_len_parametro  —  len(a) dentro de una función sirve como cota del while (1+..+6)
+  esperado     {"code": null, "emits": [], "return": "21", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'
+  cuerpo a 0.4 INVALID_PROGRAM(TYPE_MISMATCH) emits=[] return=None steps=0
+               frontend: TYPE_MISMATCH at 6:15: len requiere un str
+
+407_parametro_reasignable  —  reasignar un parámetro no muta el argumento del llamador (41 sigue siendo 41)
+  esperado     {"code": null, "emits": ["41"], "return": "42", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 1:1: la cabecera debe ser 'isyco' + una de ['0.1', '0.2', '0.3', '0.4'], llegó 'isyco'
+  cuerpo a 0.4 HALTED emits=['41'] return='42' steps=8
+               frontend: None
+
+409_str_cualquier_capacidad  —  primero(s) funciona con str<4> y con str<10> sin reescribir la función
+  esperado     {"code": null, "emits": ["104", "97"], "return": "4", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 8:18: carácter inesperado '"'
+  cuerpo a 0.4 INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 3:18: se esperaba '<', llegó ')'
+
+410_str_vacia_reutilizable  —  es_vacia es una sola función para la vacía y para la no vacía
+  esperado     {"code": null, "emits": ["true", "false"], "return": "false", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 8:19: carácter inesperado '"'
+  cuerpo a 0.4 INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 3:19: se esperaba '<', llegó ')'
+
+408_qname_arreglo  —  arreglo cuyo tipo de elemento viene de un módulo: [linea.Linea; 2]
+  esperado     {"code": null, "emits": [], "return": "9.00", "status": "HALTED"}
+  hoy (0.5)    INVALID_PROGRAM(SYNTAX) emits=[] return=None steps=0
+               frontend: SYNTAX at 7:36: carácter inesperado '"'
+  cuerpo a 0.4 HALTED emits=[] return='9.00' steps=7
+               frontend: None
+
+== gemelos V2 (cabecera 0.4, corren hoy) ==
+403_while                          HALTED emits=[] return='17' steps=23
+                                   vs expected de 403_for_enteros: COINCIDE  pasos predichos=23
+404_while_incremento_abajo         LIMIT_REACHED(max_steps) emits=['2', '3'] return=None steps=20001
+                                   vs expected de 404_for_break_continue: DIFIERE  pasos predichos=20001
+404_while_incremento_arriba        HALTED emits=['2', '3', '7'] return='3' steps=38
+                                   vs expected de 404_for_break_continue: COINCIDE  pasos predichos=38
+405_while                          HALTED emits=['1', '3'] return='2' steps=20
+                                   vs expected de 405_for_copia: COINCIDE  pasos predichos=20

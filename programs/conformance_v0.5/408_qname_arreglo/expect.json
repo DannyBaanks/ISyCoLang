@@ -1,0 +1,10 @@
+{
+  "claim": "arreglo cuyo tipo de elemento viene de un módulo: [linea.Linea; 2]",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [],
+    "return": "9.00"
+  }
+}

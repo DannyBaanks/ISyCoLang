@@ -1,0 +1,11 @@
+isyco 0.5
+# V2: for sobre un arreglo de structs; el cuerpo accede a los campos igual que el while gemelo.
+struct Item { nombre: str<8>, precio: dec<8,2> }
+
+fn main(items: [Item; 3]) -> dec<8,2> {
+    let total: dec<8,2> = 0.00;
+    for it in items {
+        total = total + it.precio;
+    }
+    return total;
+}

@@ -1,0 +1,12 @@
+{
+  "claim": "reasignar un parámetro no muta el argumento del llamador (41 sigue siendo 41)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "41"
+    ],
+    "return": "42"
+  }
+}
