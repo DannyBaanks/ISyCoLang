@@ -1,0 +1,10 @@
+{
+  "claim": "V7: un programa 0.3 sin str/struct no necesita ninguna capacidad 0.2 (0+2+4)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["6"],
+    "return": null
+  }
+}

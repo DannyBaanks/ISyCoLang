@@ -1,0 +1,5 @@
+isyco 0.4
+pub fn grita() !emit {
+    let n: i64 = 99;
+    emit n;
+}

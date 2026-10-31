@@ -1,0 +1,9 @@
+isyco 0.3
+
+# V7 canario: emitir un arreglo es una relajacion de v0.3, no un tipo 0.2. El programa
+# no usa str ni struct, asi que la etiqueta `ir0.2` no debe colar aqui: lo que falta es
+# la capacidad real `emit_array`.
+fn main() !emit {
+    let a: [i64; 2] = [4, -5];
+    emit a;
+}

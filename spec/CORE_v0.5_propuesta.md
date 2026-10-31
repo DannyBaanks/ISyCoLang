@@ -272,6 +272,25 @@ son comparaciones de igualdad: en cuanto `0.5` entre en `Parser.v04` sin entrar 
 ningún error**. Ninguna de las pruebas actuales ejercita esa combinación, porque hoy es
 inalcanzable; se convierte en test en el momento de declarar `0.5`.
 
+> **Corrección medida 2026-10-31 (al cerrar V7).** El «diez» de arriba depende del patrón
+> buscado y se quedó corto. `git grep -nE '"0\.[0-5]"' ce8663f -- 'isyco/*.py'` (el árbol
+> inmediatamente anterior a V6) da 15 coincidencias, de las cuales **12 son decisiones de
+> versión**: las diez de la tabla más `checker.py:234` (`self.program.version != "0.1"`, el
+> hint polimórfico i64 de v0.2) y `parser.py:347` (`self.version != "0.1"`, el literal
+> polimórfico). El patrón `"0.3"/"0.4"` no las ve porque comparan contra `0.1`. Las otras
+> tres coincidencias no son decisiones: `ast.py:221` y `parser.py:19` son valores por defecto
+> y `pydecimal.py:36` es `Decimal("0.1")`.
+>
+> Y lo que esta sección pedía —una sola fuente de verdad— **ya está hecho**, no pendiente:
+> V6 (`7b967f2`) creó `isyco/versions.py` (`SUPPORTED`, `INTRODUCED`, `has(version, familia)`)
+> y los doce puntos hoy llaman a ese único módulo —once llamadas a `has(...)`
+> (`lexer` 2, `parser` 4, `checker` 2, `ir` 1, `modules` 1, `__main__` 1) más
+> `parser.py:13 SUPPORTED_VERSIONS = set(SUPPORTED)`. La relación es monotónica por índice en
+> `SUPPORTED`, así que `0.5` hereda las familias `v03`/`v04`/`v05` por construcción y una
+> versión desconocida no trae ninguna (`has` devuelve False: fail-closed). El riesgo de los
+> sitios 8, 9 y 10 —igualdades que no se activan con una versión mayor— deja de existir: no
+> quedan igualdades literales que olvidar.
+
 ## 8. Corrección (2026-10-30, la misma noche) — el objetivo es una librería de texto
 
 Danny respondió a la pregunta de qué programas quiere escribir con una librería de

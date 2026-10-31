@@ -31,14 +31,14 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from .base import ALL_FEATURES, V2_FEATURES, Backend
+from .base import ALL_FEATURES, V03_FEATURES, Backend
 from ..ir import ty_from_json
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 
 SABOTAGES = ("half_even_as_half_up", "div_floor")
 OVF_CODE = {"trap": 0, "wrap": 1, "sat": 2}
 # Núcleo numérico de v0.1: bool, arreglos, llamadas, recursión, while, emit.
-FEATURES = ALL_FEATURES - V2_FEATURES
+FEATURES = ALL_FEATURES - V03_FEATURES
 
 RUNTIME = r"""       IDENTIFICATION DIVISION.
        FUNCTION-ID. ISY-PUT-INT.
@@ -900,8 +900,11 @@ class CobolEmitter:
         ret = ty_from_json(fn["ret"])
         unit = Unit(ident, "LS-", False, list(self.HELPERS))
         # El resultado viaja como último argumento por referencia: las
-        # FUNCTION-ID recursivas de GnuCOBOL 3.1 no devuelven su valor.
-        unit.ret_item = "LS-RET" if ret is not None else "PS-RET"
+        # FUNCTION-ID recursivas de GnuCOBOL 3.1 no devuelven su valor. El hueco
+        # existe aunque la función no retorne nada: el proemio y el epílogo escriben
+        # su conteo de profundidad en `{prefijo}RET`, y el llamador en posición de
+        # sentencia pasa un destino igualmente (CORE v0.1, `fn f() { }` + `f();`).
+        unit.ret_item = f"{unit.prefix}RET"
         for p in fn["params"]:
             t = types[p]
             if isinstance(t, IntT):

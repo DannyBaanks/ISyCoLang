@@ -177,6 +177,23 @@ que falsifica V7.
 > Decisión: `docs/decisions/V6B_CONTEXTUAL_RETURN.md`;
 > `evidence/v05_v6/run_20261031T183542Z.json`. Quedan V7, revalidar V1–V5 y P1–P4.
 
+> **V7 implementado 2026-10-31.** La capacidad la exige el **programa**, no su cabecera:
+> `features_of` camina los tipos bajados y las sentencias, `ir0.2` solo aparece si hay `str` o
+> `struct`, y el átomo nuevo `emit_array` nombra lo que la etiqueta tapaba — imprimir un arreglo.
+> Medido sobre el corpus congelado: **60** módulos dicen `isy-ir/0.2`, **46** lo usan y **14**
+> pedían `ir0.2` por pura etiqueta (**17** con los canarios `439`–`442`). El brazo viejo se
+> reconstruye del commit previo (`git show f856d55:isyco/backends/base.py`, **FIEL en los 118
+> módulos**, cero divergencias) en vez de caricaturizarse: 17 `UNSUPPORTED(ir0.2)` → **15 EQUIV**
+> —status, code, emits, return **y pasos** iguales a la referencia— + 2 `UNSUPPORTED(emit_array)`.
+> Solo le cambia a COBOL (63 → 48 en esa población) y su gate F5 sube **113 → 125/170** con
+> UNSUPPORTED **57 → 45**, cero fallos, 8 484 corridas sin diferencias y los dos sabotajes
+> detectados. Sale además un bug **previo** de COBOL: una llamada void en sentencia no declaraba
+> el hueco `{prefijo}RET` que proemio y epílogo escriben (`isyco/backends/cobol.py:907`) — se
+> arregla el emisor, no se inventa una capacidad para taparlo. Corrección a §7: son **12** los
+> sitios con la versión fijada, no 10, y la fuente única que pedía ya existe (`isyco/versions.py`).
+> Decisión: `docs/decisions/V7_CONTENT_CAPABILITIES.md`;
+> `evidence/v05_v7/run_20261031T194109Z.json`. Quedan revalidar V1–V5 y P1–P4.
+
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).

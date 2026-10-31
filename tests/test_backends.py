@@ -66,6 +66,82 @@ class Features(unittest.TestCase):
             self.assertLessEqual(features_of(module), ALL_FEATURES, case["name"])
 
 
+V05 = ROOT / "programs" / "conformance_v0.5"
+
+
+def por_numero(numero: str):
+    """Un caso del corpus v0.5 (fuera de `CORPORA` hasta que V1–V5 pasen)."""
+    from isyco.conformance import load_corpus
+    return next(c for c in load_corpus(V05) if c["name"].startswith(f"{numero}_"))
+
+
+class ContenidoNoEtiqueta(unittest.TestCase):
+    """CORE v0.5 V7: `UNSUPPORTED` tiene que señalar una capacidad que el programa
+    realmente exige, no el número de schema con el que bajó la IR.
+
+    Medido sobre el corpus congelado: 60 programas llevan `isy-ir/0.2` y los 60
+    recibían `ir0.2` por la etiqueta; solo 46 usan `str` o `struct`. Los 14 restantes
+    eran `UNSUPPORTED` sin pedir nada que COBOL no sepa hacer.
+    """
+
+    def test_la_etiqueta_no_es_una_capacidad(self):
+        modulo = compile_ir(por_numero("442")["program"])
+        self.assertEqual(modulo["schema"], "isy-ir/0.2")        # lo que el contenedor puede
+        self.assertNotIn("ir0.2", features_of(modulo))          # lo que este programa no pide
+
+    def test_un_tipo_0_2_si_la_requiere(self):
+        self.assertIn("ir0.2", features_of(compile_ir(by_name("234_struct_nested")["program"])))
+
+    def test_emitir_arreglo_pide_emit_array_no_ir02(self):
+        f = features_of(compile_ir(por_numero("441")["program"]))
+        self.assertIn("emit_array", f)
+        self.assertNotIn("ir0.2", f)         # no hay str ni struct: la etiqueta no cuenta
+        self.assertIn("arrays", f)
+        # Átomos distintos: `033` usa arreglos y emite enteros, así que no pide imprimirlos.
+        self.assertNotIn("emit_array", features_of(compile_ir(by_name("033_array_copy")["program"])))
+
+    def test_el_unsupported_dice_la_capacidad_exacta(self):
+        self.assertEqual(missing_features(AVAILABLE["cobol"], por_numero("441")["program"]),
+                         ["emit_array"])
+        self.assertEqual(missing_features(AVAILABLE["cobol"], by_name("253_emit_array")["program"]),
+                         ["emit_array"])
+
+    @unittest.skipUnless("cobol" in AVAILABLE, "no hay cobc")
+    def test_cobol_ejecuta_lo_que_el_contenido_permite(self):
+        """Canario D: los cuatro casos que la etiqueta bloqueaba se ejecutan y coinciden."""
+        for numero in ("439", "440", "442"):
+            case = por_numero(numero)
+            ref, _ = run(case["program"], case["input"], case.get("limits"))
+            got, _ = AVAILABLE["cobol"].run(case["program"], case["input"], case.get("limits"))
+            with self.subTest(caso=case["name"]):
+                self.assertNotEqual(got["status"], "UNSUPPORTED", case["name"])
+                self.assertEqual({k: got[k] for k in KEYS}, {k: ref[k] for k in KEYS},
+                                 case["name"])
+
+    @unittest.skipUnless("cobol" in AVAILABLE, "no hay cobc")
+    def test_llamada_void_en_sentencia_compila(self):
+        """La forma que 327 expuso: antes el proemio escribía en un hueco que solo se
+        declaraba si la función retornaba algo, y `cobc` rechazaba el programa."""
+        case = by_name("327_qualified_call_stmt")
+        ref, _ = run(case["program"], case["input"], case.get("limits"))
+        got, _ = AVAILABLE["cobol"].run(case["program"], case["input"], case.get("limits"))
+        self.assertEqual({k: got[k] for k in KEYS}, {k: ref[k] for k in KEYS})
+
+    def test_sesenta_por_etiqueta_cuarenta_y_seis_por_contenido(self):
+        """La separación es medible en el corpus congelado, no una declaración."""
+        by_schema = by_content = 0
+        for case in CORPUS:
+            try:
+                modulo = compile_ir(case["program"])
+            except InvalidProgram:
+                continue
+            if modulo["schema"] == "isy-ir/0.2":
+                by_schema += 1
+            if "ir0.2" in features_of(modulo):
+                by_content += 1
+        self.assertEqual((by_schema, by_content), (60, 46))
+
+
 class NoDecimalC(CBackend):
     """Backend de prueba que declara no saber decimales (además de lo que C no sabe)."""
     name = "c_nodec"

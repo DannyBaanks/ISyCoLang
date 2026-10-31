@@ -26,7 +26,7 @@ from ..errors import InvalidProgram
 from ..interp import DEFAULT_LIMITS, canonical_json, source_modules
 from ..source import program_sha256
 from ..interp import run as run_reference
-from ..ir import SCHEMA_V2, ty_from_json
+from ..ir import ty_from_json
 from ..ir_interp import compile_ir
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 
@@ -37,9 +37,10 @@ ALL_FEATURES = frozenset(
     {f"int{bits}" for bits in (8, 16, 32, 64)}
     | {"unsigned", "ovf:trap", "ovf:wrap", "ovf:sat", "dec", "dec:half_even", "dec:half_up",
        "dec:down", "dec:exact", "bool", "arrays", "calls", "recursion", "while", "emit",
-       "ir0.2", "str", "struct"})
-# Lo que trae isy-ir/0.2 (CORE v0.3): ningún backend nativo lo implementa todavía.
-V2_FEATURES = frozenset({"ir0.2", "str", "struct"})
+       "ir0.2", "str", "struct", "emit_array"})
+# Lo que llegó con CORE v0.3 —`str`, `struct`, su schema y emitir arreglos—. Es el suelo
+# del dominio declarado: `Backend` no las asume y cada backend suma lo que implemente.
+V03_FEATURES = frozenset({"ir0.2", "str", "struct", "emit_array"})
 
 
 # --- identificadores ----------------------------------------------------------------
@@ -94,10 +95,22 @@ def _type_features(t, out: set) -> None:
 
 
 def features_of(module: dict) -> set[str]:
-    """Capacidades que un módulo ISY-IR necesita de un backend."""
+    """PROGRAM_REQUIRES: lo que ESTE programa usa, no lo que su cabecera permite.
+
+    V7 separa dos preguntas que antes respondía una sola etiqueta:
+
+    - `SCHEMA_CAN_EXPRESS` es `module["schema"]`: el contenedor *puede* representar
+      `str`/`struct`. Es un dato del módulo, no una necesidad del programa.
+    - `PROGRAM_REQUIRES` es este conjunto: lo que un backend tiene que implementar para
+      ejecutar este módulo. Se lee del contenido —tipos bajados y sentencias—, así que
+      un módulo 0.2 que no usa ningún tipo 0.2 no requiere nada de 0.2, y uno que emite
+      un arreglo requiere `emit_array` aunque no toque `str`.
+
+    Antes `ir0.2` se añadía por la etiqueta: cualquier programa 0.3+ era UNSUPPORTED en
+    COBOL aunque no usara ningún rasgo 0.3. Un UNSUPPORTED tiene que señalar una
+    capacidad realmente exigida, no un número de schema.
+    """
     out: set[str] = set()
-    if module.get("schema") == SCHEMA_V2:
-        out.add("ir0.2")
     calls: dict[str, set[str]] = {}
     for fn in module["functions"]:
         calls[fn["name"]] = set()
@@ -113,6 +126,12 @@ def features_of(module: dict) -> set[str]:
                 out.add("while")
             if node.get("s") == "emit":
                 out.add("emit")
+                if (node.get("value") or {}).get("ty", {}).get("t") == "arr":
+                    out.add("emit_array")
+    # CORE v0.3: `str` y `struct` son los únicos tipos que no caben en isy-ir/0.1
+    # (`ir_validate._has_v2_type`). Si el programa no usa ninguno, no requiere 0.2.
+    if {"str", "struct"} & out:
+        out.add("ir0.2")
     # recursión = algún ciclo en el grafo de llamadas
     def reaches(start: str, target: str, seen: set) -> bool:
         for nxt in calls.get(start, ()):
@@ -129,7 +148,7 @@ def features_of(module: dict) -> set[str]:
 class Backend:
     name = "abstract"
     extension = ".txt"
-    features: frozenset = ALL_FEATURES - V2_FEATURES
+    features: frozenset = ALL_FEATURES - V03_FEATURES
     sabotages: tuple = ()
     # Techo de max_rss_kb que tests/test_backends.py acepta medido en el binario
     # de este backend (los nativos ~4 MB; un intérprete de lenguaje, mucho más).

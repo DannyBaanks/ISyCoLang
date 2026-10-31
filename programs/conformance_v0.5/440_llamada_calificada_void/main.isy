@@ -1,0 +1,10 @@
+isyco 0.4
+import bicho;
+
+# V7 canario (la forma que 327 expuso): llamada void a una funcion de otro modulo,
+# en posicion de sentencia.
+fn main() !emit {
+    bicho.grita();
+    let n: i64 = 1;
+    emit n;
+}

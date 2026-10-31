@@ -1,0 +1,19 @@
+isyco 0.3
+
+# V7 canario (D): un programa 0.3 sin str, sin struct y sin emitir arreglos. La IR baja
+# con schema isy-ir/0.2, pero el programa no pide nada que el nucleo numerico no tenga:
+# tiene que ejecutarse, no responder UNSUPPORTED por la etiqueta.
+fn escala(x: i64) -> i64 {
+    let t: i64 = x * 2;
+    return t;
+}
+
+fn main() !emit {
+    let k: i64 = 0;
+    let suma: i64 = 0;
+    while k < 3 {
+        suma = suma + escala(k);
+        k = k + 1;
+    }
+    emit suma;
+}

@@ -24,13 +24,20 @@ Cada backend declara qué partes de la IR implementa (`features`):
 int8 int16 int32 int64 unsigned ovf:trap ovf:wrap ovf:sat
 dec dec:half_even dec:half_up dec:down dec:exact
 bool arrays calls recursion while emit
-ir0.2 str struct                        (isy-ir/0.2, CORE v0.3)
+ir0.2 str struct emit_array        (llegaron con CORE v0.3)
 ```
 
 `features_of(módulo)` calcula lo que un programa necesita (recursión = ciclo
 en el grafo de llamadas). Si al backend le falta algo, el resultado es
 `status = UNSUPPORTED`, `code = <capacidades que faltan>`, y el programa **no
 se ejecuta**. Nunca se aproxima ni se degrada en silencio.
+
+Las capacidades se leen del **contenido** de la IR, no de su cabecera (CORE v0.5 V7):
+`module["schema"]` dice lo que el contenedor *puede* representar (`SCHEMA_CAN_EXPRESS`),
+`features_of` dice lo que *este programa* exige (`PROGRAM_REQUIRES`). `ir0.2` solo se
+pide si el programa usa `str` o `struct` —los únicos tipos que no caben en `isy-ir/0.1`—,
+y `emit_array` si emite un arreglo. Un módulo `isy-ir/0.2` que no use ninguno de esos
+tipos no requiere nada de 0.2.
 
 `UNSUPPORTED` no es un estado de la semántica (CORE §9): es una respuesta del
 backend, y en conformidad cuenta como **no cubierto**, nunca como PASS.
@@ -135,7 +142,7 @@ y guarda la evidencia en `evidence/backends/`.
 | `rust` | rustc (ed. 2021) | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-C overflow-checks=on -C panic=abort`; 3 sabotajes de prueba |
 | `zig` | zig 0.16 | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-O ReleaseSafe`; 3 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |
 | `pydecimal` | python3 (CPython) | todas | ola 2: los `dec` son `decimal.Decimal`; cada redondeo lo deciden la división y `quantize` de CPython (`isy_rdiv`), no enteros escalados; el "binario" es el fuente con shebang (`py_compile` solo valida) y su RSS es el de un intérprete (~13 MB) |
-| `cobol` | cobc (GnuCOBOL 3.1.2) | núcleo numérico v0.1: `str` y `struct` responden UNSUPPORTED | ola 2: zoned decimal nativo con `ISY-RDIV`; entrada por STDIN en hexadecimal (cobc no expone argv); cada función IR es un subprograma `IS RECURSIVE` con `CALL` y resultado por referencia; `DIVIDE … REMAINDER` trunca hacia cero como la referencia |
+| `cobol` | cobc (GnuCOBOL 3.1.2) | núcleo numérico v0.1: `str`, `struct` y `emit_array` responden UNSUPPORTED; un programa `isy-ir/0.2` que no los usa sí se ejecuta (V7) | ola 2: zoned decimal nativo con `ISY-RDIV`; entrada por STDIN en hexadecimal (cobc no expone argv); cada función IR es un subprograma `IS RECURSIVE` con `CALL` y resultado por referencia; el hueco del resultado existe también en funciones `void` porque el proemio y el epílogo cuentan profundidad ahí; `DIVIDE … REMAINDER` trunca hacia cero como la referencia |
 
 ### 6.1 Límites del backend COBOL
 

@@ -1,0 +1,10 @@
+{
+  "claim": "V7: emit de un arreglo es JSON, con cada elemento como cadena",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["[\"4\",\"-5\"]"],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "V7: llamada void calificada en posicion de sentencia emite primero el efecto del modulo",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["99", "1"],
+    "return": null
+  }
+}

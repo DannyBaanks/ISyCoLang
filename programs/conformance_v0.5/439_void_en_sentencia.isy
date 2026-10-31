@@ -1,0 +1,14 @@
+isyco 0.1
+
+# V7 canario (forma que la etiqueta nunca cubrio): una funcion sin retorno, llamada
+# como sentencia. Cae dentro del dominio numerico v0.1 que COBOL dice cubrir, asi que
+# la etiqueta 0.2 no tiene nada que ver aqui: es contenido puro.
+fn silencia() {
+    let x: i64 = 1;
+}
+
+fn main() !emit {
+    silencia();
+    let n: i64 = 7;
+    emit n;
+}

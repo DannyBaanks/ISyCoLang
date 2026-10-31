@@ -1,0 +1,10 @@
+{
+  "claim": "V7: llamada a una funcion void en posicion de sentencia (v0.1) corre en la referencia",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": ["7"],
+    "return": null
+  }
+}
