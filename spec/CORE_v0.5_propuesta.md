@@ -158,9 +158,11 @@ nombres calificados). El validador ya rechaza esos tipos fuera de `0.2`
 ## 4. Corpus propuesto
 
 `programs/conformance_v0.5/` (401–410). **Los `expected` están escritos a mano el
-2026-10-30, antes de implementar cualquier V**, y el directorio está fuera de
-`CORPORA` (`isyco/conformance.py:13`) hasta que F2.4 se apruebe: el gate de 170
-casos no se mueve.
+2026-10-30, antes de implementar cualquier V** (commits `dd561c6` y `0e9ca79`). Las
+fechas de commit son hora local (`-06:00`) y la evidencia se sella en UTC: por eso
+`run_2026-10-31T001600Z` es el mismo 30 de octubre, 18:16 locales. El directorio está
+fuera de `CORPORA` (`isyco/conformance.py:13`) hasta que F2.4 se apruebe: el gate de
+170 casos no se mueve.
 
 La columna «cuerpo a 0.4» es la medición de ese mismo cuerpo con **solo la línea 1
 reescrita** a `isyco 0.4` (`tools/v05_proposal_probe.py`): así el rechazo registrado
@@ -220,7 +222,7 @@ texto de spec, no código nuevo.
 | Claim | Status |
 |---|---|
 | V1–V7 resuelven B1, B2, B6, D1, D2 | **INFERRED** — es una propuesta; nada está implementado |
-| Los `expected` de 401–410 se escribieron antes de implementar | **DEMONSTRATED** — commit fechado 2026-10-30 con `programs/conformance_v0.5/`, y la columna «cuerpo a 0.4» medida contra el core actual (`evidence/v05_propuesta/run_2026-10-31T001600Z.txt`) |
+| Los `expected` de 401–410 se escribieron antes de implementar | **DEMONSTRATED** — `git show --stat 0e9ca79` y `dd561c6` no tocan ningún archivo de `isyco/`: el árbol de esos commits tiene los diez `expected` y cero implementaciones V1–V7; la columna «cuerpo a 0.4» está medida contra el core actual (`evidence/v05_propuesta/run_2026-10-31T001600Z.txt`) |
 | El azúcar V2 con el incremento **después** del cuerpo es incorrecto: `continue` no avanza | **DEMONSTRATED** — `404_while_incremento_abajo.isy` corre hoy en `0.4` y da `LIMIT_REACHED(max_steps)` con `emits=["2","3"]` |
 | Los esperados de 403/404/405 son reproducibles hoy con el `while` gemelo | **DEMONSTRATED** — los tres gemelos coinciden (`17`, `2 3 7`/`3`, `1 3`/`2`) |
 | D1 (parámetros reasignables) y D2 (`[modulo.Tipo; N]`) ya funcionan sin spec que los otorgue | **DEMONSTRATED** — 407 `HALTED`/`42` en 8 pasos y 408 `HALTED`/`9.00` en 7 pasos, cuerpo a cabecera `0.4` |

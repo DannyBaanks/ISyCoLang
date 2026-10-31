@@ -1,10 +1,13 @@
 # `programs/conformance_v0.5/` — corpus **propuesto**, aún inerte
 
-Los `expected` de este directorio se escribieron a mano el **2026-10-30**, antes de
-implementar ninguna decisión V1–V7 de `spec/CORE_v0.5_propuesta.md`. Ningún caso
-corre hoy: todos empiezan con la cabecera `isyco 0.5`, que `isyco/parser.py:12`
-(`SUPPORTED_VERSIONS`) rechaza, y el directorio está **fuera de `CORPORA`**
-(`isyco/conformance.py:13`), así que el gate de 170 casos no se mueve.
+Los `expected` de este directorio se escribieron a mano el **2026-10-30** (commits
+`dd561c6` y `0e9ca79`, que no tocan ningún archivo de `isyco/`), antes de implementar
+ninguna decisión V1–V7 de `spec/CORE_v0.5_propuesta.md`. Ningún caso corre hoy: los
+siete sin strings los rechaza la cabecera
+(`isyco/parser.py:12`, `SYNTAX at 1:1`) y los tres con strings tropezan antes, en el
+léxico (`isyco/lexer.py:64` solo enciende `"…"` para `0.3`/`0.4`). El directorio está
+**fuera de `CORPORA`** (`isyco/conformance.py:13`), así que el gate de 170 casos no se
+mueve.
 
 | archivo | qué fija | decisión |
 |---|---|---|
