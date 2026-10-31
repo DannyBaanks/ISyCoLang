@@ -1,0 +1,66 @@
+isyco 0.4
+
+# Librería de texto escrita con lo que el core v0.4 ya permite: cuatro utilidades
+# (crecer, prefijo, contar un carácter, pasar a mayúsculas) con las capacidades
+# declaradas a mano en cada firma. Sonda de `tools/textlib_probe.py`.
+
+fn pad(s: str<8>, ancho: i64, relleno: str<1>) -> str<16> {
+    let out: str<16> = s;
+    let n: i64 = len(s);
+    while n < ancho {
+        out = out + relleno;
+        n = n + 1;
+    }
+    return out;
+}
+
+fn empieza_con(s: str<16>, p: str<4>) -> bool {
+    if len(p) > len(s) {
+        return false;
+    }
+    return slice(s, 0, len(p)) == p;
+}
+
+fn cuenta_letra(s: str<16>, p: str<1>) -> i64 {
+    if len(p) == 0 {
+        return 0;
+    }
+    let n: i64 = 0;
+    let i: i64 = 0;
+    while i < len(s) {
+        if s[i] == p[0] {
+            n = n + 1;
+        }
+        i = i + 1;
+    }
+    return n;
+}
+
+fn mayus(s: str<16>) -> str<16> {
+    let out: str<16> = "";
+    let i: i64 = 0;
+    while i < len(s) {
+        let c: i32 = s[i] as i32;
+        if c >= 97 and c <= 122 {
+            out = out + chr((c - 32) as u8);
+        } else {
+            out = out + chr(s[i]);
+        }
+        i = i + 1;
+    }
+    return out;
+}
+
+fn main() !emit {
+    emit pad("hola", 8, "-");
+    emit pad("abc", 6, ".");
+    emit len(pad("hi", 5, "0"));
+    emit empieza_con("banana", "ban");
+    emit empieza_con("banana", "nan");
+    emit empieza_con("hi", "hola");
+    emit cuenta_letra("banana", "a");
+    emit cuenta_letra("banana", "z");
+    emit cuenta_letra("banana", "");
+    emit mayus("Hola 123");
+    emit mayus(pad("id", 6, "-"));
+}

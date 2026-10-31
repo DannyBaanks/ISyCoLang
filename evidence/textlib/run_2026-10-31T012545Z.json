@@ -1,0 +1,211 @@
+{
+  "cases": [
+    {
+      "backends": {
+        "c": {
+          "code": null,
+          "emits": [
+            "hola----",
+            "abc...",
+            "5",
+            "true",
+            "false",
+            "false",
+            "3",
+            "0",
+            "0",
+            "HOLA 123",
+            "ID----"
+          ],
+          "igual_a_esperado": true,
+          "igual_a_referencia": true,
+          "return": null,
+          "status": "HALTED",
+          "stderr": false
+        },
+        "cobol": {
+          "code": "ir0.2,str",
+          "emits": [],
+          "igual_a_esperado": false,
+          "igual_a_referencia": false,
+          "return": null,
+          "status": "UNSUPPORTED(ir0.2,str)",
+          "stderr": false
+        },
+        "pydecimal": {
+          "code": null,
+          "emits": [
+            "hola----",
+            "abc...",
+            "5",
+            "true",
+            "false",
+            "false",
+            "3",
+            "0",
+            "0",
+            "HOLA 123",
+            "ID----"
+          ],
+          "igual_a_esperado": true,
+          "igual_a_referencia": true,
+          "return": null,
+          "status": "HALTED",
+          "stderr": false
+        },
+        "rust": {
+          "code": null,
+          "emits": [
+            "hola----",
+            "abc...",
+            "5",
+            "true",
+            "false",
+            "false",
+            "3",
+            "0",
+            "0",
+            "HOLA 123",
+            "ID----"
+          ],
+          "igual_a_esperado": true,
+          "igual_a_referencia": true,
+          "return": null,
+          "status": "HALTED",
+          "stderr": false
+        },
+        "zig": {
+          "code": null,
+          "emits": [
+            "hola----",
+            "abc...",
+            "5",
+            "true",
+            "false",
+            "false",
+            "3",
+            "0",
+            "0",
+            "HOLA 123",
+            "ID----"
+          ],
+          "igual_a_esperado": true,
+          "igual_a_referencia": true,
+          "return": null,
+          "status": "HALTED",
+          "stderr": false
+        }
+      },
+      "claim": "pad, empieza_con, cuenta_letra y mayus funcionan con capacidades fijas",
+      "expected": {
+        "code": null,
+        "emits": [
+          "hola----",
+          "abc...",
+          "5",
+          "true",
+          "false",
+          "false",
+          "3",
+          "0",
+          "0",
+          "HOLA 123",
+          "ID----"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "inputs": [],
+      "name": "06_biblioteca_texto",
+      "reference": {
+        "code": null,
+        "emits": [
+          "hola----",
+          "abc...",
+          "5",
+          "true",
+          "false",
+          "false",
+          "3",
+          "0",
+          "0",
+          "HOLA 123",
+          "ID----"
+        ],
+        "return": null,
+        "status": "HALTED"
+      },
+      "reference_ok": true,
+      "schema": "isy-ir/0.2",
+      "steps": 225
+    },
+    {
+      "backends": {
+        "c": {
+          "code": "OVERFLOW",
+          "emits": [],
+          "igual_a_esperado": true,
+          "igual_a_referencia": true,
+          "return": null,
+          "status": "ERROR(OVERFLOW)",
+          "stderr": false
+        },
+        "cobol": {
+          "code": "ir0.2,str",
+          "emits": [],
+          "igual_a_esperado": false,
+          "igual_a_referencia": false,
+          "return": null,
+          "status": "UNSUPPORTED(ir0.2,str)",
+          "stderr": false
+        },
+        "pydecimal": {
+          "code": "OVERFLOW",
+          "emits": [],
+          "igual_a_esperado": true,
+          "igual_a_referencia": true,
+          "return": null,
+          "status": "ERROR(OVERFLOW)",
+          "stderr": false
+        },
+        "rust": {
+          "code": "OVERFLOW",
+          "emits": [],
+          "igual_a_esperado": true,
+          "igual_a_referencia": true,
+          "return": null,
+          "status": "ERROR(OVERFLOW)",
+          "stderr": false
+        },
+        "zig": {
+          "code": "OVERFLOW",
+          "emits": [],
+          "igual_a_esperado": true,
+          "igual_a_referencia": true,
+          "return": null,
+          "status": "ERROR(OVERFLOW)",
+          "stderr": false
+        }
+      },
+      "claim": "rellenar más allá de la capacidad declarada es ERROR(OVERFLOW), nunca truncado",
+      "expected": {
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null,
+        "status": "ERROR"
+      },
+      "inputs": [],
+      "name": "07_texto_desborda",
+      "reference": {
+        "code": "OVERFLOW",
+        "emits": [],
+        "return": null,
+        "status": "ERROR"
+      },
+      "reference_ok": true,
+      "schema": "isy-ir/0.2",
+      "steps": 44
+    }
+  ],
+  "git_head": "e94bb842153966d452a444ff6d44a2522b9fd287"
+}

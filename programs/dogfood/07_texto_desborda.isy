@@ -1,0 +1,15 @@
+isyco 0.4
+
+fn pad(s: str<8>, ancho: i64, relleno: str<1>) -> str<16> {
+    let out: str<16> = s;
+    let n: i64 = len(s);
+    while n < ancho {
+        out = out + relleno;
+        n = n + 1;
+    }
+    return out;
+}
+
+fn main() !emit {
+    emit pad("hola", 20, "-");
+}

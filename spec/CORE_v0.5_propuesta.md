@@ -107,6 +107,11 @@ estricta que la implementación, y caso 408 que lo fije.
 
 ### V6 — `str` sin capacidad, solo en posiciones donde el contexto la fija **[D]**
 
+> **Corregido por medición el mismo día: ver §8.** Lo que esta sección llama
+> «aritmética de capacidades» ya existe en el core (`isyco/checker.py:377-379`) y
+> `pad` sí se escribe hoy. La decisión real es más pequeña y más barata de lo que
+> este borrador afirmaba.
+
 Objetivo medido: que exista una librería de texto reutilizable. Hoy `pad` solo
 sirve para `str<16>` y hay que reescribirla por ancho.
 
@@ -153,7 +158,7 @@ nombres calificados). El validador ya rechaza esos tipos fuera de `0.2`
 | B7 anchos enteros mixtos | regla de coerción sobre 6 tipos de entero con `ovf` distinto; con V1 el dolor real desaparece en los casos medidos |
 | B8 texto decimal no canónico (`"199.9"` ⇒ `BAD_FORMAT`) | cambiar `ERROR(BAD_FORMAT)` es cambiar la forma canónica de §10.1 y los cinco backends. Es la decisión más valiosa de la lista y la más cara: va a v0.6 con su propio estudio |
 | B9 valor ausente / arreglos que crecen | `null`/optional exige forma canónica de salida y entrada, y los arreglos dinámicos rompen §1.1 (sin heap) |
-| V6 aritmética de capacidad (`str<N+k>`) | sin ella no hay `pad` genérico; es la fila honesta de §2 V6 |
+| V6 aritmética de capacidad (`str<N+k>`) | ~~sin ella no hay `pad` genérico~~ **FALSO, medido en §8**: `str<N> + str<M>` ya da `str<N+M>` y con contexto devuelve la capacidad esperada, así que `pad` corre hoy en los cinco backends. Lo que falta no es aritmética sino *reutilizar una sola definición por ancho* |
 
 ## 4. Corpus propuesto
 
@@ -266,3 +271,58 @@ son comparaciones de igualdad: en cuanto `0.5` entre en `Parser.v04` sin entrar 
 `modules.py:33`, un programa modular se enlaza como si no tuviera `import` y **no salta
 ningún error**. Ninguna de las pruebas actuales ejercita esa combinación, porque hoy es
 inalcanzable; se convierte en test en el momento de declarar `0.5`.
+
+## 8. Corrección (2026-10-30, la misma noche) — el objetivo es una librería de texto
+
+Danny respondió a la pregunta de qué programas quiere escribir con una librería de
+texto. Eso cambia el orden de este borrador y echa abajo una de sus filas, así que se
+registra aquí como corrección en vez de reescribir §2 y §3 en silencio.
+
+**Lo que estaba mal.** §2 V6 y la última fila de §3 afirmaban que `pad` y `grito` eran
+imposibles sin «aritmética de capacidades». FALSO: `isyco/checker.py:377-379`
+(`str_binary`) ya la tiene, en dos formas —
+
+- sin contexto: `str<N> + str<M>` ⇒ `str<min(N+M, MAX_STR)>`;
+- con contexto: si el `expected` es un `str<K>`, la expresión **toma** `str<K>`.
+
+La segunda es la que importa: un acumulador declarado ancho puede crecer dentro de un
+bucle. Medido con dos programas nuevos (`tools/textlib_probe.py`,
+`evidence/textlib/run_2026-10-31T012545Z.txt`, sha256 `04dfee7c…` — ver `SHA256SUMS.txt`):
+
+| programa | qué es | resultado |
+|---|---|---|
+| `programs/dogfood/06_biblioteca_texto.isy` | `pad` (crece con `+` en un `while`), `empieza_con` (`slice` + `==`), `cuenta_letra` (`s[i]` carácter a carácter), `mayus` (`chr` + `as`) | `HALTED`, 225 pasos, 11 emits — **exactamente los 11 predichos a mano antes de correr** (`hola----`, `abc...`, `5`, `true`, `false`, `false`, `3`, `0`, `0`, `HOLA 123`, `ID----`); idéntico en C, pydecimal, Rust y Zig; COBOL `UNSUPPORTED(ir0.2,str)` (dominio declarado) |
+| `programs/dogfood/07_texto_desborda.isy` | el mismo `pad` pidiendo 20 bytes en un `str<16>` | `ERROR(OVERFLOW)` en la referencia y en los cuatro backends, **sin truncar** — la regla «OVERFLOW nunca truncación» de v0.3 se sostiene en el texto |
+
+**Consecuencia para v0.5.** El dolor real de una librería de texto no es la semántica
+de capacidades, ya resuelta, sino la **duplicación por ancho**: `pad` sirve para
+`str<8>` y hay que reescribirlo para `str<24>`. Eso es exactamente V6, y por eso V6
+pasa delante de V1/V2 en la lista de decisión.
+
+**Decisión nueva que la medición abre — V6-bis `str` pelado también en la posición de
+retorno [D].** Con `str` solo en parámetros, una función que crece tiene que fijar un
+techo en su firma (`-> str<16>`) y el llamador lo paga. Si el retorno admitiera `str`
+pelado, resuelto por la capacidad **esperada en el sitio de llamada**, la regla sería
+la misma que `str_binary` ya aplica (contexto ⇒ capacidad) y el techo lo elegiría quien
+llama:
+
+```
+fn pad(s: str, ancho: i64, relleno: str<1>) -> str        // hoy imposible
+let ancho8: str<8>  = pad(clave, 8, "0");                 // cabe
+let ancho40: str<40> = pad(nota, 40, " ");                // la misma definición
+```
+
+Coste: es un parámetro más de monomorfización ([P3]/[P4] se amplían a
+(capacidades de entrada, capacidad de salida)), y hay que decidir qué pasa cuando la
+capacidad esperada es **más chica** de la que el cuerpo necesita: todo indica que
+`ERROR(OVERFLOW)` medido en 07 es la respuesta correcta y coherente, pero en esa forma
+hay que escribirlo en la spec, no suponerlo. Sin V6-bis la librería sigue siendo
+posible, con un `str<K>` fijo por utilidad.
+
+| Claim | Status |
+|---|---|
+| Una librería de texto real (crecer, prefijo, contar, mayúsculas) es escribible hoy en `isyco 0.4` | **DEMONSTRATED** — 06 en referencia + C + pydecimal + Rust + Zig, los 11 emits predichos a mano antes de correr |
+| Desbordar la capacidad declarada de un `str` es `ERROR(OVERFLOW)`, no truncado | **DEMONSTRATED** — 07, los mismos cinco ejecutores |
+| La aritmética de capacidades que §2 y §3 pedían para v0.5 ya existe | **DEMONSTRATED** — `checker.py:377-379` + los dos programas anteriores |
+| V6 resuelve la reutilización por ancho | **INFERRED** — sigue sin implementarse; lo medido es el workaround con capacidades fijas |
+| V6-bis (retorno pelado resuelto por el contexto) es coherente con el core | **NOT_DEMONSTRATED** — es una proposición; no hay ni un prototipo |

@@ -1,0 +1,23 @@
+# sonda de libreria de texto -- comando: python3 tools/textlib_probe.py
+# git_head=e94bb842153966d452a444ff6d44a2522b9fd287  python=Python 3.12.3  utc=2026-10-31T01:25:45Z
+# programas: programs/dogfood/06_biblioteca_texto.isy, programs/dogfood/07_texto_desborda.isy
+git_head=e94bb842153966d452a444ff6d44a2522b9fd287
+UNSUPPORTED no es fallo: es el dominio declarado del backend (COBOL no cubre str ni isy-ir/0.2).
+
+06_biblioteca_texto  —  pad, empieza_con, cuenta_letra y mayus funcionan con capacidades fijas
+  esperado (a mano) {"status": "HALTED", "code": null, "return": null, "emits": ["hola----", "abc...", "5", "true", "false", "false", "3", "0", "0", "HOLA 123", "ID----"]}
+  referencia        HALTED emits=['hola----', 'abc...', '5', 'true', 'false', 'false', '3', '0', '0', 'HOLA 123', 'ID----'] steps=225 schema=isy-ir/0.2  COINCIDE
+  c          HALTED                 vs esperado=IGUAL vs referencia=IGUAL
+  cobol      UNSUPPORTED(ir0.2,str) vs esperado=distinto vs referencia=distinto
+  pydecimal  HALTED                 vs esperado=IGUAL vs referencia=IGUAL
+  rust       HALTED                 vs esperado=IGUAL vs referencia=IGUAL
+  zig        HALTED                 vs esperado=IGUAL vs referencia=IGUAL
+
+07_texto_desborda  —  rellenar más allá de la capacidad declarada es ERROR(OVERFLOW), nunca truncado
+  esperado (a mano) {"status": "ERROR", "code": "OVERFLOW", "return": null, "emits": []}
+  referencia        ERROR(OVERFLOW) emits=[] steps=44 schema=isy-ir/0.2  COINCIDE
+  c          ERROR(OVERFLOW)        vs esperado=IGUAL vs referencia=IGUAL
+  cobol      UNSUPPORTED(ir0.2,str) vs esperado=distinto vs referencia=distinto
+  pydecimal  ERROR(OVERFLOW)        vs esperado=IGUAL vs referencia=IGUAL
+  rust       ERROR(OVERFLOW)        vs esperado=IGUAL vs referencia=IGUAL
+  zig        ERROR(OVERFLOW)        vs esperado=IGUAL vs referencia=IGUAL
