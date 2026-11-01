@@ -19,12 +19,18 @@ from isyco import run  # noqa: E402
 from isyco.backends import available, registry  # noqa: E402
 from isyco.backends.base import ALL_FEATURES, GNU_TIME, features_of, missing_features  # noqa: E402
 from isyco.backends.c import CBackend  # noqa: E402
-from isyco.conformance import COMPARED, load_all  # noqa: E402
+from isyco.conformance import COMPARED, load_all, load_corpus  # noqa: E402
 from isyco.difftest import DEC_TYPES, INT_TYPES, compare, compare_str  # noqa: E402
 from isyco.errors import InvalidProgram  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
 
 CORPUS = load_all(ROOT)
+#: Población del claim «60 por etiqueta, 46 por contenido»: los cuatro corpus congelados
+#: ANTES de v0.5. No es `CORPUS`, que desde 2026-10-31 incluye `conformance_v0.5` y daría
+#: 90/66 — lo que V7 midió fue la población que ya existía, no el total del gate.
+CONGELADO = [case for nombre in ("conformance", "conformance_v0.2", "conformance_v0.3",
+                                 "conformance_v0.4")
+             for case in load_corpus(ROOT / "programs" / nombre)]
 KEYS = COMPARED + ("steps",)
 AVAILABLE = available()
 # ISYCO_TEST_BACKENDS=c,rust limita qué backends nativos prueba esta suite (p. ej. para
@@ -70,8 +76,7 @@ V05 = ROOT / "programs" / "conformance_v0.5"
 
 
 def por_numero(numero: str):
-    """Un caso del corpus v0.5 (fuera de `CORPORA` hasta que V1–V5 pasen)."""
-    from isyco.conformance import load_corpus
+    """Un caso del corpus v0.5, cogido por número (está en `CORPORA` desde 2026-10-31)."""
     return next(c for c in load_corpus(V05) if c["name"].startswith(f"{numero}_"))
 
 
@@ -128,9 +133,14 @@ class ContenidoNoEtiqueta(unittest.TestCase):
         self.assertEqual({k: got[k] for k in KEYS}, {k: ref[k] for k in KEYS})
 
     def test_sesenta_por_etiqueta_cuarenta_y_seis_por_contenido(self):
-        """La separación es medible en el corpus congelado, no una declaración."""
+        """La separación es medible en el corpus congelado, no una declaración.
+
+        La población se nombra explícitamente (`CONGELADO`): con `conformance_v0.5` dentro de
+        `CORPORA` el conteo total sube a 90 por etiqueta y 66 por contenido, medido el
+        2026-10-31, y el claim de V7 dejaría de ser el que se selló.
+        """
         by_schema = by_content = 0
-        for case in CORPUS:
+        for case in CONGELADO:
             try:
                 modulo = compile_ir(case["program"])
             except InvalidProgram:

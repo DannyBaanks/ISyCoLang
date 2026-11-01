@@ -121,6 +121,25 @@ def podar(nodo):
     return nodo
 
 
+def traza_de(codigo: bytes, entrada: list | None, indice_sintetico: bool = False) -> list[str]:
+    """Traza `stmt` sin posiciones, que es lo que el gate F2.4 ítem 2 compara línea a línea.
+
+    Con `indice_sintetico` el índice del `for` se renombra al nombre que usa el gemelo: [P1]
+    dice que el `at` de las sentencias generadas y el nombre elegido por el parser no forman
+    parte del claim — lo que tiene que coincidir es la secuencia de eventos.
+    """
+    _, filas = run(codigo, entrada or [], None, trace="stmt")
+    out = []
+    for fila in filas:
+        texto = json.dumps({k: v for k, v in fila.items() if k != "at"},
+                           sort_keys=True, ensure_ascii=False, default=str)
+        if indice_sintetico:
+            for n in range(4):
+                texto = texto.replace(f"foridx{n}", "i")
+        out.append(texto)
+    return out
+
+
 class LenArreglo(unittest.TestCase):
     def test_len_de_arreglo_devuelve_su_capacidad(self):
         for numero, esperado in (("401", {"status": "HALTED", "code": None,
@@ -244,6 +263,20 @@ class ForAzucar(unittest.TestCase):
                 self.assertEqual(azucar, gemelo, "azúcar y gemelo divergen")
                 if numero in PASOS_EXIGIDOS:
                     self.assertEqual(gemelo["steps"], PASOS_EXIGIDOS[numero])
+
+    def test_la_traza_stmt_es_la_traza_del_gemelo(self):
+        """La cola del ítem 2 del gate: no solo los pasos, la traza `stmt` evento por evento.
+
+        Medido: 17, 22, 35 y 19 filas idénticas en `402`, `403`, `404` y `405`, una vez fuera
+        las posiciones y con el índice sintético llamado como el gemelo ([P1]).
+        """
+        for numero in GEMELOS:
+            case = caso(numero)
+            with self.subTest(caso=case["name"]):
+                azucar = traza_de(case["program"], case["input"], indice_sintetico=True)
+                gemelo = traza_de(fuente_gemelo(numero), case["input"])
+                self.assertGreater(len(azucar), 0, "un trazo vacío sería un pase vacuo")
+                self.assertEqual(azucar, gemelo, "la secuencia de eventos no es la del gemelo")
 
     def test_el_control_negativo_sigue_siendo_negativo(self):
         """El incremento abajo —la forma intuitiva— no es un gemelo: el `continue` salta el

@@ -10,7 +10,8 @@ from .source import Bundle
 COMPARED = ("status", "code", "emits", "return")
 
 
-CORPORA = ("conformance", "conformance_v0.2", "conformance_v0.3", "conformance_v0.4")
+CORPORA = ("conformance", "conformance_v0.2", "conformance_v0.3", "conformance_v0.4",
+           "conformance_v0.5")
 
 
 def load_corpus(directory: Path) -> list[dict]:
@@ -41,7 +42,7 @@ def load_corpus(directory: Path) -> list[dict]:
 
 
 def load_all(root: Path) -> list[dict]:
-    """Todos los corpus de programs/ (v0.1 a v0.4)."""
+    """Todos los corpus de programs/ (v0.1 a v0.5)."""
     return [case for name in CORPORA for case in load_corpus(root / "programs" / name)]
 
 

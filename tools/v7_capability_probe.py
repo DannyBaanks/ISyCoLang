@@ -42,12 +42,17 @@ import isyco.backends.base as base                                   # noqa: E40
 from isyco import run                                                 # noqa: E402
 from isyco.backends import available                                  # noqa: E402
 from isyco.backends.base import features_of, missing_features         # noqa: E402
-from isyco.conformance import COMPARED, load_all, load_corpus         # noqa: E402
+from isyco.conformance import COMPARED, load_corpus                   # noqa: E402
 from isyco.errors import InvalidProgram                               # noqa: E402
 from isyco.ir_validate import SCHEMA_V2                               # noqa: E402
 
 KEYS = COMPARED
 V05 = ROOT / "programs" / "conformance_v0.5"
+#: Población declarada de la sonda, nombrada a propósito: los cuatro corpus que estaban
+#: congelados ANTES de v0.5. No se toma de `isyco.conformance.CORPORA` porque desde V2 ese
+#: tuple incluye también `conformance_v0.5`, y el «60 contra 46» de la columna del brazo
+#: `etiqueta` deja de ser medible si la población crece con el corpus nuevo.
+FROZEN = ("conformance", "conformance_v0.2", "conformance_v0.3", "conformance_v0.4")
 CANARIOS = ("439", "440", "441", "442")
 # Estado del engine ANTES de V7: el commit del gate sellado de V6-bis.
 REF_ETIQUETA = "f856d55"
@@ -136,16 +141,21 @@ def features_etiqueta_desde_git() -> tuple[object | None, str]:
 
 
 # --- población ------------------------------------------------------------------------
+def cargar_congelado() -> list[dict]:
+    return [case for name in FROZEN for case in load_corpus(ROOT / "programs" / name)]
+
+
 def modulos() -> list[dict]:
     """Todos los programas que bajan a IR: corpus congelado + canarios V7."""
-    casos = list(load_all(ROOT)) + [next(c for c in load_corpus(V05)
-                                         if c["name"].startswith(f"{n}_")) for n in CANARIOS]
-    congelado = {c["name"] for c in load_all(ROOT)}
+    congelado = cargar_congelado()
+    casos = congelado + [next(c for c in load_corpus(V05)
+                              if c["name"].startswith(f"{n}_")) for n in CANARIOS]
+    nombres = {c["name"] for c in congelado}
     out = []
     for case in casos:
         module = compile_ir_safe(case["program"])
         if module is not None:
-            out.append({"case": case, "module": module, "congelado": case["name"] in congelado})
+            out.append({"case": case, "module": module, "congelado": case["name"] in nombres})
     return out
 
 
@@ -238,7 +248,7 @@ _ALL_CASES: list[dict] | None = None
 def cases_all() -> list[dict]:
     global _ALL_CASES
     if _ALL_CASES is None:
-        _ALL_CASES = list(load_all(ROOT)) + load_corpus(V05)
+        _ALL_CASES = cargar_congelado() + load_corpus(V05)
     return _ALL_CASES
 
 
