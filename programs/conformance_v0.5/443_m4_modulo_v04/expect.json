@@ -1,0 +1,10 @@
+{
+  "claim": "M4 con raíz 0.5: un módulo con cabecera 0.4 es VERSION_MISMATCH (la diagonal 0.5 no la fijaba ningún caso)",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "VERSION_MISMATCH",
+    "emits": [],
+    "return": null
+  }
+}

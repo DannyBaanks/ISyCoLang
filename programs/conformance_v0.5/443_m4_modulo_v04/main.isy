@@ -1,0 +1,7 @@
+isyco 0.5
+import util;
+
+# N2: la regla es «todo módulo tiene la misma versión que la raíz». Con raíz 0.5 el
+# renglón nuevo de la regla no lo fijaba ningún caso del corpus: 308 fija el cruce con
+# raíz 0.4. Aquí lo único defectuoso es la cabecera del módulo.
+fn main() -> i32 { return util.doble(1); }

@@ -1,4 +1,4 @@
-# `programs/conformance_v0.5/` — corpus **activo**: 42/42 coinciden con su `expected`
+# `programs/conformance_v0.5/` — corpus **activo**: 43/43 coinciden con su `expected`
 
 Los `expected` de este directorio se escribieron a mano el **2026-10-30** (commits
 `dd561c6` y `0e9ca79`, que no tocan ningún archivo de `isyco/`), antes de implementar
@@ -20,9 +20,24 @@ los **42** casos del directorio coinciden en `status`, `code`, `emits` y `return
         print(c["name"], {k: got[k] for k in COMPARED} == c["expected"])
     PY
 
-`408_qname_arreglo/` y `440_llamada_calificada_void/` tienen que leerse con
+**Alta del caso `443` (2026-11-01).** Con el `443_m4_modulo_v04/` el directorio tiene 43
+casos y el mismo bucle de arriba da **43/43 IGUAL**. El `expected` se transcribió de la
+regla (`isyco/modules.py:48-52`: la cabecera del módulo tiene que coincidir con la de la
+raíz) antes de correrlo; los dos controles que lo rodean se corrieron en memoria con el
+mismo par de archivos y solo la cabecera cambiada:
+
+| raíz | módulo | observado |
+|---|---|---|
+| `0.5` | `0.4` | `INVALID_PROGRAM(VERSION_MISMATCH)` — el caso del corpus |
+| `0.5` | `0.5` | `HALTED`, `return 2`, 4 pasos — lo único defectuoso era la cabecera |
+| `0.4` | `0.5` | `INVALID_PROGRAM(VERSION_MISMATCH)` — la regla es simétrica |
+
+Los cuatro casos con módulos —`408_qname_arreglo/`, `421_marca_entre_modulos/`,
+`440_llamada_calificada_void/` y `443_m4_modulo_v04/`— tienen que leerse con
 `load_corpus`, que arma el `Bundle` del directorio: tomar `main.isy` como bytes sueltos
-devuelve un falso `UNKNOWN_MODULE`.
+devuelve un falso `UNKNOWN_MODULE`. La población del directorio es 39 programas a un
+archivo + 4 carpetas = **43**; un `glob("4*.isy")` sobre la raíz se queda en 39 y esa es
+la cuenta que el censo de P4 hizo mal la primera vez (`docs/EVIDENCE_MATRIX.md`, hallazgo 2).
 
 | archivo | qué fija | decisión | hoy (referencia) |
 |---|---|---|---|
@@ -37,7 +52,8 @@ devuelve un falso `UNKNOWN_MODULE`.
 | `409_str_cualquier_capacidad` | `str` sin capacidad en un parámetro | V6 | `HALTED`, `104 97 → 4`, 8 pasos |
 | `410_str_vacia_reutilizable` | la misma utilidad sirve con la cadena vacía | V6 | `HALTED`, `true false → false`, 10 pasos |
 
-`411`–`428` (V6), `429`–`438` (V6-bis) y `439`–`442` (V7) se agregaron con sus propias
+`411`–`428` (V6), `429`–`438` (V6-bis), `439`–`442` (V7) y `443` (M4 generalizada, N2 en
+`docs/OPEN_QUESTIONS_P1_P4.md`) se agregaron con sus propias
 decisiones: `docs/decisions/V6_CONTEXTUAL_STR.md`, `docs/decisions/V6B_CONTEXTUAL_RETURN.md`
 y `docs/decisions/V7_CONTENT_CAPABILITIES.md`.
 
