@@ -1,0 +1,65 @@
+Borrador CORE v0.5 — las aristas que el texto afirma y el corpus no fija
+utc=2026-11-01T21:00:09Z  git_head=c5368588f81fbc8d6127c6ea8a287846f968932e  arbol=RELEASE_GATE (sucio_codigo=False)
+comando: --write   python=3.12.3
+
+1) M4: todo modulo del programa tiene la MISMA version que la raiz
+   raiz=0.4  modulo=0.2  ->  INVALID_PROGRAM(VERSION_MISMATCH)  return=None  diagonal=False
+   raiz=0.4  modulo=0.3  ->  INVALID_PROGRAM(VERSION_MISMATCH)  return=None  diagonal=False
+   raiz=0.4  modulo=0.4  ->  HALTED(None)  return=7  diagonal=True
+   raiz=0.4  modulo=0.5  ->  INVALID_PROGRAM(VERSION_MISMATCH)  return=None  diagonal=False
+   raiz=0.5  modulo=0.2  ->  INVALID_PROGRAM(VERSION_MISMATCH)  return=None  diagonal=False
+   raiz=0.5  modulo=0.3  ->  INVALID_PROGRAM(VERSION_MISMATCH)  return=None  diagonal=False
+   raiz=0.5  modulo=0.4  ->  INVALID_PROGRAM(VERSION_MISMATCH)  return=None  diagonal=False
+   raiz=0.5  modulo=0.5  ->  HALTED(None)  return=7  diagonal=True
+
+2) lexico (V3): `for` reservada solo desde 0.5; `in` nunca reservada
+   0.4: let for: i32 = 5  ->  HALTED(None)  return=5  predicho=5
+   0.5: let for: i32 = 5  ->  INVALID_PROGRAM(SYNTAX)  return=None  predicho=None
+   0.4: let in: i32 = 5  ->  HALTED(None)  return=5  predicho=5
+   0.5: let in: i32 = 5  ->  HALTED(None)  return=5  predicho=5
+
+3) el `let` sin anotacion es SOLO el sintético del `for` (§4.1, N3)
+   0.5: let x = 1; (escrito a mano)                    -> INVALID_PROGRAM(SYNTAX)  return=None  predicho=('INVALID_PROGRAM', 'SYNTAX', None)
+   0.4: let x = 1; (escrito a mano)                    -> INVALID_PROGRAM(SYNTAX)  return=None  predicho=('INVALID_PROGRAM', 'SYNTAX', None)
+   0.5: let x: i32 = 1; (con anotación)                -> HALTED(None)  return=1  predicho=('HALTED', None, '1')
+   0.5: for x en [dec<8,2>; 2] (el sintético, tipo del elemento) -> HALTED(None)  return=3.85  predicho=('HALTED', None, '3.85')
+
+4) el iterando del `for` es un LUGAR (V2 §4.3), no una expresion
+   for x in xs                                    -> HALTED(None) emits=['1', '2', '3']  predicho=['1', '2', '3']
+   for x in p.xs                                  -> HALTED(None) emits=['1', '2', '3']  predicho=['1', '2', '3']
+   for x in p.q.ys                                -> HALTED(None) emits=['4', '5']  predicho=['4', '5']
+   for x in xs[0]                                 -> INVALID_PROGRAM(SYNTAX) emits=[]  predicho=None
+   for x in id(xs)                                -> INVALID_PROGRAM(SYNTAX) emits=[]  predicho=None
+   for x in (xs)                                  -> INVALID_PROGRAM(SYNTAX) emits=[]  predicho=None
+   for x in [1,2,3]  [P2]                         -> INVALID_PROGRAM(SYNTAX) emits=[]  predicho=None
+   for x con x visible                            -> INVALID_PROGRAM(DUPLICATE_NAME) emits=[]  predicho=DUP
+   for anidado                                    -> HALTED(None) emits=['2', '3', '3', '4']  predicho=['2', '3', '3', '4']
+   continue en for (el incremento avanza)         -> HALTED(None) emits=[]  predicho=[]
+   foridx elegido fuera de los nombres del módulo -> HALTED(None) emits=['8', '9']  predicho=['8', '9']
+
+5) pasos a FORMA CONSTANTE (V2 §4.4 y V6 §7) — y el control de forma
+   A for / str<4>                               -> HALTED(None) pasos=24  emits=['104', '111', '108', '97']  return=4
+   B while / str<4>                             -> HALTED(None) pasos=24  emits=['104', '111', '108', '97']  return=4
+   C while / str pelado (V6)                    -> HALTED(None) pasos=24  emits=['104', '111', '108', '97']  return=4
+   D for / str pelado (V2+V6)                   -> HALTED(None) pasos=24  emits=['104', '111', '108', '97']  return=4
+   Z while / str<4> SIN el let (forma distinta) -> HALTED(None) pasos=20  emits=['104', '111', '108', '97']  return=4
+
+6) P3: la especializacion no mueve program_sha256 y si se ve en la traza
+   411_pad_dos_anchos             sha_resultado==sha_archivo=True  f7a57b7420337e42
+   417_junta_dos_contextuales     sha_resultado==sha_archivo=True  981c7953d1a2cab7
+   420_recursion_contextual       sha_resultado==sha_archivo=True  b1684ab5973e8365
+   fn en la traza de 411: ['main', 'pad.2', 'pad.7']   (la definicion pelada no aparece)
+
+7) N1 (§4.4): `for` sobre un `str` recorre len(s) bytes, variable u8 copia
+   for c en str<4> con "hola"                     -> HALTED(None) pasos=22 emits=['104', '111', '108', '97']  predicho=('HALTED', None, ['104', '111', '108', '97'])
+   for c en str<8> con "hola"                     -> HALTED(None) pasos=22 emits=['104', '111', '108', '97']  predicho=('HALTED', None, ['104', '111', '108', '97'])
+   for c en str<16> con "hola"                    -> HALTED(None) pasos=22 emits=['104', '111', '108', '97']  predicho=('HALTED', None, ['104', '111', '108', '97'])
+   str<1> vacia: cero vueltas                     -> HALTED(None) pasos=6 emits=[]  predicho=('HALTED', None, [])
+   campo calificado l.texto                       -> HALTED(None) pasos=18 emits=['97', '98', '99']  predicho=('HALTED', None, ['97', '98', '99'])
+   arreglo de cadenas, for anidado                -> HALTED(None) pasos=38 emits=['97', '98', '99', '100', '101']  predicho=('HALTED', None, ['97', '98', '99', '100', '101'])
+   str pelado V6 (fn recorre(s: str))             -> HALTED(None) pasos=24 emits=['104', '111', '108', '97']  predicho=('HALTED', None, ['104', '111', '108', '97'])
+   c es u8: n + c sin cast                        -> INVALID_PROGRAM(TYPE_MISMATCH) pasos=0 emits=[]  predicho=('INVALID_PROGRAM', 'TYPE_MISMATCH', [])
+   c no escapa del bucle                          -> INVALID_PROGRAM(UNKNOWN_NAME) pasos=0 emits=[]  predicho=('INVALID_PROGRAM', 'UNKNOWN_NAME', [])
+   for c en s[0]: no es lugar                     -> INVALID_PROGRAM(SYNTAX) pasos=0 emits=[]  predicho=('INVALID_PROGRAM', 'SYNTAX', [])
+   cabecera 0.4: for reservada solo desde 0.5     -> INVALID_PROGRAM(SYNTAX) pasos=0 emits=[]  predicho=('INVALID_PROGRAM', 'SYNTAX', [])
+   control: while gemelo con la CAPACIDAD en la cota -> ERROR(INDEX_OUT_OF_BOUNDS) pasos=23 emits=['104', '111', '108', '97']  predicho=('ERROR', 'INDEX_OUT_OF_BOUNDS', ['104', '111', '108', '97'])
