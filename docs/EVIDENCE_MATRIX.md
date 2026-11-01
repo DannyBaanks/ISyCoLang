@@ -1,0 +1,97 @@
+# Matriz de evidencia
+
+Inventario de qué está sellado, dónde, y con qué árbol de código. Existe porque
+`tests/test_evidence.py` puede verificar que un recibo no se tocó, pero **no puede**
+verificar que una frase escrita en un `.md` tenga recibo: esa comprobación la hace esta
+matriz a mano. Cuando una afirmación no tiene fila aquí, o tiene un comando que la
+re-produce o es prosa.
+
+**Reglas de lectura.**
+
+- Un recibo `RELEASE_GATE` significa `arbol_sucio_codigo=false`: ni el engine, ni el
+  corpus, ni las pruebas estaban modificados cuando corrió. `EVIDENCE_ONLY` es el mismo
+  dato con el árbol de código sucio — sirve como referencia, no como gate.
+- Las rutas de recibo son relativas al repo; cada directorio tiene su `SHA256SUMS.txt` y
+  se verifica desde la raíz: `sha256sum -c evidence/<dir>/SHA256SUMS.txt`.
+- `git_head` se abrevia a 7. Un recibo viejo sigue siendo válido para el árbol que fija.
+
+## Gates
+
+| gate | recibo más reciente | head | veredicto | cifras |
+|---|---|---|---|---|
+| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-01T033345Z.json` | `57f38bc` | `PASS` | 212/212 en los cinco corpus |
+| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-01T013721Z.json` | `57f38bc` | — | 424/424 comparaciones iguales, 145 programas bajados |
+| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-10-30T220800Z.json` | `ec6b823` | `PASS` | 170 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario ok y cero fallos; diferencial 24 612 corridas en `gcc/plain` (semilla 20261028) |
+| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-01T015245Z.json` | `57f38bc` | `PASS` | c/rust/zig/pydecimal 212/212; cobol 146/212 con 66 `UNSUPPORTED` nombrados; 8 484 corridas diferenciales por backend; `missing_toolchains: []` |
+
+**Hueco conocido (2026-11-01):** F4 no se re-corré desde que `conformance_v0.5` entró en
+`CORPORA`, así que su recibo más reciente fija 170 casos, no 212. Los 42 nuevos están
+cubiertos por F5, que incluye a C sobre los 212 — pero la vía de F4 con sanitizers
+(`gcc/sanitized`) no se ha corrido sobre ellos. Re-correrlo es `python3 tools/c_gate.py`.
+
+## Decisiones de CORE v0.5
+
+| decisión | recibo | head | veredicto | qué fija |
+|---|---|---|---|---|
+| V1 (`len` en posición de i) | `evidence/v05_revalida/run_20261101T001608Z.json` | `dcd6880` | `RELEASE_GATE` | `401`–`406` contra `expected`, IR igual al gemelo, brazos viejo y nuevo |
+| V2 (azúcar `for`) | el mismo recibo (`gemelos`, `no_regresion`) | `dcd6880` | `RELEASE_GATE` | traza `stmt` del `for` igual a la del `while` gemelo salvos `at`, y `pasos.azucar == pasos.gemelo` caso por caso; los valores **exigidos** (23/38/20) viven en `tests/test_v05_core.py:105` |
+| V3, V4, V5 (léxico, parámetro reasignable, forma del `elem_type`) | `evidence/v05_spec/run_20261101T043007Z.json` | `a9a17bc` | `RELEASE_GATE` | 4 cabeceras del léxico; 11 formas del iterando; 4 programas a forma constante (24 pasos) con su control de forma (20) |
+| V6 y V6-bis (`str` contextual) | `evidence/v05_v6/run_20261031T184709Z.json` | `f856d55` | `RELEASE_GATE` | 28 casos `411`–`438` diferenciales: 123 EQUIV, 17 `UNSUPPORTED` (COBOL por etiqueta), cero DIVERGENT |
+| V7 (capacidades por contenido) | `evidence/v05_v7/run_20261031T200146Z.json` | `a66689c` | `RELEASE_GATE` | 118 módulos del corpus congelado en dos brazos, brazo viejo FIEL, conteos 113→125 en COBOL, canario `439` |
+| Borrador normativo v0.5 | `evidence/v05_spec/run_20261101T043007Z.json` | `a9a17bc` | `RELEASE_GATE` | las 5 matrices de aristas que el corpus no fija |
+| Censo y forma de P4 | `evidence/v05_p4/run_20261101T062234Z.json` | `52f5564` | `RELEASE_GATE` | 32 clones en 18/42 casos; curvas K, W², W³; control de 20 sitios → 1 clon; sin techo hasta 2048 |
+
+## Preguntas y puntos nuevos
+
+| id | estado | recibo o falta |
+|---|---|---|
+| P1 (`at` del azúcar) | cerrada | `evidence/v05_revalida/run_20261101T001608Z.json` + test `ForAzucar` |
+| P2 (`for` sobre literal de arreglo) | cerrada: no | `evidence/v05_spec/run_20261101T043007Z.json` §3 |
+| P3 (nombres e identidad) | cerrada | el mismo recibo §5 (`411`/`417`/`420`) + `tests/test_specialize.py` |
+| P4 (cota de especializaciones) | **abierta — decisión, no medición** | base sellada en `evidence/v05_p4/run_20261101T062234Z.json`; falta elegir granularidad, número y el error nombrado |
+| N1 (`for` sobre `str`) | abierta — decisión | medido en `evidence/v05_spec/…` §4; ningún caso del corpus lo fija |
+| N2 (diagonal `0.5` de M4) | abierta — decisión | medido en `evidence/v05_spec/…` §1 (8 combinaciones); el corpus no cubre ningún cruce con raíz `0.5` |
+| N3 (`let` sin anotación) | abierta — texto | la regla vive en `checker.py:205-209` y en el docstring; hay que escribirla en la spec |
+
+## Evidencia de contexto (no es gate)
+
+| directorio | qué | cuándo |
+|---|---|---|
+| `evidence/v05_propuesta/` | las mediciones que reordenaron v0.5 (diez → doce sitios de versión) | 2026-10-31, head `4688517` |
+| `evidence/dogfood/` | `programs/dogfood/` contra los cinco backends y su pared de tiempo | 2026-10-30, head `b0daac5` |
+| `evidence/textlib/` | la librería de texto que motivó V6/V6-bis (`pad`, `mayus`, desbordamiento) | 2026-10-31, head `e94bb84` |
+| `evidence/human_guide/` | transcripción de una persona operando `GUIA.md` sin ayuda | 2026-10-30 |
+| `evidence/inventory/` | inventario de `workspace/assembly` (solo lectura) y toolchains | 2026-10-28/29 |
+
+## Afirmaciones que no son evidencia
+
+Viven en `README.md`, `GUIA.md` y `tests/README.md`, y se re-producen con un comando — no
+tienen recibo porque un recibo de ellas sería una foto de un día:
+
+| afirmación | comando |
+|---|---|
+| «166 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
+| «sha256sum -c de `docs/origin/` coincide» | `sha256sum -c docs/origin/SHA256SUMS.txt` desde la raíz del repo |
+| conteos de `SUPPORTED`, llamadas a `has()` y sitios de versión | `grep -n` de `spec/CORE_v0.5.md` §0, fijados como test en `tests/test_versions.py` |
+
+## Auditoría 2026-11-01
+
+Qué encontró esta matriz al cotejar prose contra recibos:
+
+1. **El censo de P4 no estaba en ningún recibo.** `V6_CONTEXTUAL_STR.md` y
+   `V6B_CONTEXTUAL_RETURN.md` atribuían «22 clones» y «28 clones, máximo 2 por definición»
+   a `evidence/v05_v6/run_*` , y esos recibos solo guardan el resultado de cada backend
+   por caso. Medido desde el instrumento (`Checker.specs`): **32** clones en 18 de los 42
+   casos, 26 V6 + 6 V6-bis, máximo 4 por programa, 2 por definición **dentro de un
+   programa** pero **7 de `doble` en todo el corpus**. Las dos secciones y `ROADMAP.md`
+   llevan la corrección fechada; el dato nuevo está sellado arriba.
+2. **Contar la población equivocada.** El primer censo usaba `glob("4*.isy")` y perdía los
+   tres casos con módulos (`408`, `421`, `440`) — `421` es justo el de `util.marca.3` y
+   `util.marca.4`. La sonda ahora itera `load_corpus`, la misma población del gate. Es el
+   mismo clase de bug de deriva de población que V7 ya había cazado con el «corpus
+   congelado» de 118.
+3. **F4 con 170 mientras F5 tiene 212.** No es un error: es un gate que no se re-corré.
+   Queda escrito arriba en vez de suponerse.
+
+Nada de lo anterior cambia un `expected`, un hash congelado ni un resultado de gate: son
+correcciones de *atribución* (una cifra que no tenía recibo) y una re-medición.

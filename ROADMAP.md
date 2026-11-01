@@ -185,6 +185,17 @@ que falsifica V7.
 > Decisión: `docs/decisions/V6B_CONTEXTUAL_RETURN.md`;
 > `evidence/v05_v6/run_20261031T183542Z.json`. Quedan V7, revalidar V1–V5 y P1–P4.
 
+> **Censo de P4 corregido y sellado 2026-11-01.** Los «22 clones» y los «28 clones, máximo
+> 2 por definición» de los dos bloques de arriba no estaban en ningún recibo: las sondas
+> V6 guardan el resultado por backend, no el registro de clones. `tools/v05_p4_probe.py`
+> lo recalcula desde `Checker.specs` sobre la población del gate y sella
+> `evidence/v05_p4/run_20261101T062234Z.json` (`RELEASE_GATE` sobre `52f5564`): **32 clones**
+> en 18 de 42 casos (26 de V6 + 6 de V6-bis), 4 por programa como máximo, 2 por definición
+> **dentro de un programa** pero **7 de `doble` en todo el corpus**. La forma también está
+> medida: K anchos en una ranura → K clones, dos ranuras → W², tres → W³, y 20 sitios con el
+> mismo ancho → 1 clon. Ningún techo ni error nombrado hasta 2048 clones: **P4 sigue
+> abierta**, con la base numérica en evidencia en lugar de en prosa.
+
 > **V7 implementado 2026-10-31.** La capacidad la exige el **programa**, no su cabecera:
 > `features_of` camina los tipos bajados y las sentencias, `ir0.2` solo aparece si hay `str` o
 > `struct`, y el átomo nuevo `emit_array` nombra lo que la etiqueta tapaba — imprimir un arreglo.

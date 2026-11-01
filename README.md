@@ -28,7 +28,7 @@ no por su cabecera — CORE v0.5 V7).
 | ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.5 (212/212), IR que preserva la semántica (424/424 comparaciones iguales, 145 programas bajados a IR), backends C, Rust, Zig y pydecimal iguales a la referencia (212/212 y 8 484 corridas diferenciales sin diferencias cada uno, más 1 270 del diferencial de strings; C además con gcc/clang y sanitizers); COBOL igual dentro de su dominio declarado (146/212, 66 UNSUPPORTED nombrando la capacidad que exige cada programa —`str`/`struct`/`emit_array`; las capacidades las exige el programa, no su cabecera: CORE v0.5 V7—, 8 484 corridas diferenciales sin diferencias). Ver claim table. |
 | ¿Qué NO está demostrado? | Todo lo demás; ver la claim table en `ROADMAP.md` §6. |
 | ¿Tests? | `python3 -m unittest discover -s tests -v` |
-| ¿Evidencia? | `evidence/` |
+| ¿Evidencia? | `evidence/`, inventariada en `docs/EVIDENCE_MATRIX.md` |
 | ¿Límites conocidos? | Ver `docs/FEASIBILITY_2026-10-28.md` §12 (riesgos). |
 
 ## Mapa
@@ -47,6 +47,8 @@ spec/IR.md                         forma de ISY-IR v0.1 y v0.2 (lo que reciben l
 GUIA.md                            guía para personas: escribir, correr y leer un resultado
 spec/BACKEND.md                    contrato ISY_BACKEND/1 (capacidades, protocolo, conformidad, costo)
 docs/decisions/                    decisiones registradas (p. ej. no reusar Code IR)
+docs/OPEN_QUESTIONS_P1_P4.md       qué respondieron P1–P4 y qué dejó abierto la implementación
+docs/EVIDENCE_MATRIX.md            qué está sellado, con qué árbol, y qué afirmación no tiene recibo
 docs/BACKEND_C.md                  backend C: garantías, protocolo, límites
 isyco/backends/base.py             driver común: validación, capacidades, caché, ejecución
 isyco/backends/c.py                ISY-IR -> C -> binario nativo
@@ -76,6 +78,7 @@ tools/v05_proposal_probe.py        qué dice el core HOY del corpus y los gemelo
 tools/v05_revalida_probe.py        revalidación de V1 y V2: tres vías, gemelos, no regresión
 tools/v05_v6_probe.py              diferencial de V6/V6-bis: referencia, IR ida y vuelta, backends
 tools/v05_spec_probe.py            aristas que `spec/CORE_v0.5.md` afirma y ningún caso fija
+tools/v05_p4_probe.py              censo de especializaciones (P4) y forma del crecimiento
 tools/v7_capability_probe.py       V7: capacidades por contenido vs por etiqueta, con brazo viejo
 tools/textlib_probe.py             ¿librería de texto hoy? tres vías sobre `programs/dogfood/`
 tools/dogfood_wall_probe.py        el «muro de cabecera» del dogfood: víctimas de la etiqueta o del programa
@@ -86,7 +89,7 @@ tools/dogfood_wall_probe.py        el «muro de cabecera» del dogfood: víctima
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 166 tests (~3,5 min con build/ llena; ver tests/README.md)
+python3 -m unittest discover -s tests -v       # 166 tests (~3,2 min con build/ llena; ver tests/README.md)
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
@@ -94,6 +97,7 @@ python3 tools/backend_gate.py                  # gate F5: C, Rust, Zig, pydecima
 python3 tools/run_conformance.py               # corpus + evidencia nueva
 python3 tools/v05_spec_probe.py                # aristas del borrador v0.5: mide y reporta
 python3 tools/v05_spec_probe.py --write        # …y sella en evidence/v05_spec/ (árbol limpio = RELEASE_GATE)
+python3 tools/v05_p4_probe.py                  # censo de especializaciones (P4): K, W2, W3 y costo
 ```
 
 ## Relación con el monorepo

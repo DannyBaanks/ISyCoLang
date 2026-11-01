@@ -75,10 +75,32 @@ dentro. Recibo `evidence/backends/gate_2026-11-01T015245Z.json`.
 
 ## Medición (base de P4, sin límite fijado)
 
-`tools/v05_v6_probe.py` sobre los 28 casos 411–438: **28 clones en todo el corpus** (22 de
-V6 + 6 de V6-bis), máximo **4 copias por programa** (`413`) y máximo **2 copias por
-definición**, sin ningún caso que pida una tercera. No se fija ningún tope: P4 pide medir
-antes de poner número.
+**Corregida 2026-11-01.** Lo que decía esta sección —«28 clones en todo el corpus (22 de
+V6 + 6 de V6-bis), máximo 4 copias por programa y máximo 2 copias por definición, sin
+ningún caso que pida una tercera»— no estaba en ningún recibo sellado:
+`tools/v05_v6_probe.py` guarda el resultado de cada backend por caso, no el registro de
+clones del checker. `tools/v05_p4_probe.py` lo recalcula desde el instrumento
+(`isyco/checker.py`: `Checker.specs`) sobre la población del gate y sella
+`evidence/v05_p4/run_20261101T062234Z.json` (sha `26af3945…`, `RELEASE_GATE` sobre
+`52f5564`, árbol de código limpio):
+
+- **32 clones** en 18 de los 42 casos de `programs/conformance_v0.5`: 26 sin retorno pelado
+  (V6) y 6 con él (V6-bis). Los 6 de V6-bis son lo único de la cifra vieja que se sostiene.
+- Máximo **4 copias por programa** —`413_encadenar_contextuales`—, como se afirmaba.
+- Máximo **2 copias por definición dentro de un programa**, pero **7 de `doble` en todo el
+  corpus** (`largo` 5, `pad` 4, `copia`/`cuenta`/`envia`/`es_vacia`/`junta`/`primero`/
+  `util.marca` 2, `eco`/`guion` 1). «Ningún caso pide una tercera» es cierto caso por caso
+  y falso como cota global: las dos lecturas de «máximo 2 por definición» no son la misma
+  regla cuando se escriben como tope.
+- Escalera medida: anchos `[1, 2, 3, 4, 6, 7, 8, 10, 16, 64]`, retornos `[4, 8, 16]`. El
+  censo incluye los 3 casos con módulos (`408`, `421`, `440`), que un glob de `.isy`
+  pierde — `421` es justamente el de `util.marca.3` y `util.marca.4`.
+
+Con la forma del crecimiento medida además del censo: K anchos en una ranura dan **K**
+clones, W anchos por cada una de dos ranuras dan **W²** y de tres **W³**, y 20 sitios de
+llamada con el mismo ancho dan **1** clon (el registro cuenta resoluciones, no llamadas).
+No hay techo ni error nombrado hasta 2048 clones. P4 sigue sin tope fijado — la cifra es
+de Danny — pero ya no con la base en prosa.
 
 ## Diferencial sellado
 

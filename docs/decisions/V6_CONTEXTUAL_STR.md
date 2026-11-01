@@ -123,14 +123,25 @@ COBOL `146/212` con los 66 `UNSUPPORTED` nombrados. Recibo
 
 ## Medición (base de P4, sin límite fijado)
 
-`tools/v05_v6_probe.py` cuenta, por caso, cuántas especializaciones crea el checker y
-cuántas funciones llegan a la IR. Medido en la corrida sellada
-(`evidence/v05_v6/run_20261031T103514Z.json`): **22 clones en todo el corpus**, máximo **2
-copias por definición** (`pad`, `copia`, `envia`, `largo`, `cuenta`, `doble`,
-`util.marca`) y máximo **4 copias por programa** —`413`, que tiene dos definiciones
-contextuales y dos llamados cada una—. ningún caso pide una tercera copia de la misma
-definición. No se fija ningún tope: P4 pide medir antes de poner número, y la escalera
-completa de anchos está en el corpus para poder medir cuando crezca.
+**Corregida 2026-11-01.** La cifra que había aquí —«22 clones en todo el corpus, máximo 2
+copias por definición»— se atribuyó a `evidence/v05_v6/run_20261031T103514Z.json`, y ese
+recibo no la contiene: la sonda V6 guarda el resultado de cada backend por caso, nunca el
+registro de clones del checker. El censo está ahora recalculado desde el instrumento y
+sellado en `evidence/v05_p4/run_20261101T062234Z.json` (sha `26af3945…`, `RELEASE_GATE`
+sobre `52f5564`), sobre la población del gate —los 42 casos de
+`programs/conformance_v0.5`, incluidos los 3 con módulos—:
+
+- **32 clones** en 18 programas (26 sin retorno pelado, 6 con él); máximo **4 por
+  programa** (`413`).
+- Máximo **2 por definición dentro de un programa**, pero **7 de `doble` en todo el
+  corpus**: la frase «ningún caso pide una tercera copia» no es una cota global.
+- Anchos instanciados `[1, 2, 3, 4, 6, 7, 8, 10, 16, 64]`; retornos `[4, 8, 16]`.
+- Forma medida: una ranura con K anchos → K clones; dos ranuras con W → W²; tres → W³;
+  20 sitios con el mismo ancho → 1 clon. Sin techo ni error nombrado hasta 2048 clones.
+
+El detalle y los controles están en `docs/decisions/V6B_CONTEXTUAL_RETURN.md` §Medición
+(y en la propia sonda: `python3 tools/v05_p4_probe.py`). No se fija ningún tope: P4 pide
+medir antes de poner número, y eso es lo que hay ahora — medido, no afirmado.
 
 ## Diferencial sellado
 
