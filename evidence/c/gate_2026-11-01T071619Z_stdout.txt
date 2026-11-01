@@ -1,0 +1,9 @@
+corpus gcc/plain: 212/212 (unsupported 0)
+corpus gcc/sanitized: 212/212 (unsupported 0)
+corpus clang/plain: 212/212 (unsupported 0)
+corpus clang/sanitized: 212/212 (unsupported 0)
+difftest gcc/plain: 24612 corridas, 0 diferencias
+difftest gcc/sanitized: 6468 corridas, 0 diferencias
+sabotaje half_even_as_half_up: detectado=True
+sabotaje div_floor: detectado=True
+{"out": "evidence/c/gate_2026-11-01T071619Z.json", "verdict": "PASS", "sha256": "bc1326213760f23f844363aedccae37d9609a9ae1f0069da7c8fa310e5aa32a3"}
