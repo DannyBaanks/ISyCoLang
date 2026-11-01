@@ -83,6 +83,13 @@ corridas con el mismo `corpus_hash` `b446fea8bf5e…` sobre los mismos 118 módu
   `str`, `struct` y `emit_array`, así que sus capacidades no dependen de la etiqueta
   (UNSUPPORTED 0 → 0 en cada uno). COBOL: 63 → 48 en esta población.
 
+**Nota 2026-11-01:** «congelado» es la población de estos recibos —los cuatro corpus anteriores
+a v0.5, 170 casos, `corpus_hash` `b446fea8…`— y **no** `CORPORA`, que desde `57f38bc` tiene 212.
+La sonda y la suite nombran la población a propósito (`FROZEN` + `cargar_congelado()` en
+`tools/v7_capability_probe.py:55,144`, `CONGELADO` en `tests/test_backends.py:31`) para que
+ensanchar el gate no reescriba estos números: con los 212 actuales dan 90 por etiqueta / 66 por
+contenido, y eso queda registrado en el docstring del test, no aquí.
+
 El brazo viejo no es un espantajo: se lee el `features_of` real del commit previo
 (`git show f856d55:isyco/backends/base.py`), se ejecuta en el mismo proceso y se compara
 contra la simulación caso por caso — **FIEL en los 118 módulos**, cero divergencias. Con eso

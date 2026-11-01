@@ -67,5 +67,10 @@ hoy 12 `CONTROL FALSO` en la sonda y ninguna evidencia sellada.
 - Revalidación V1/V2 (tres vías, gemelos, no regresión, auto-falsación, forma de la IR):
   `python3 tools/v05_revalida_probe.py --casos 401,402,403,404,405,406 --write` →
   `evidence/v05_revalida/`
-- El directorio sigue **fuera de `CORPORA`** (`isyco/conformance.py:13`); entra con el
-  gate de backends en cuanto V3–V5 queden documentados.
+- El directorio **está dentro de `CORPORA`** (`isyco/conformance.py:13`) desde `57f38bc`
+  (2026-11-01): los 42 casos forman parte del gate de backends, que pasó de 170 a **212**.
+  Referencia `212/212`; C, Rust, Zig y pydecimal `212/212`; COBOL `146/212` con 66
+  `UNSUPPORTED` que nombran la capacidad que exige cada programa. Los 170 de siempre no se
+  movieron: de esos 66, **21** son casos ≥`401` y **45** son exactamente los que declaraba
+  COBOL con el corpus de 170 (`gate_2026-10-31T200602Z.json`: 125/170, 45 `UNSUPPORTED`).
+  Recibo `evidence/backends/gate_2026-11-01T015245Z.json`.

@@ -69,6 +69,10 @@ parámetro y un `let` que fija el retorno) y seis rechazos (`431` estático, `43
 sin expectativa, `434` ciclo expectativa↔parámetro pelado, `436` `main`, `437` cabecera
 0.4). El directorio sigue **fuera de `CORPORA`** hasta que V1–V5 estén implementados.
 
+**Corrección 2026-11-01:** V1–V5 quedaron implementados y el directorio entró **completo** en
+`CORPORA` (`57f38bc`): el gate de backends cubre los 212 casos, con los 18 de V6 y V6-bis
+dentro. Recibo `evidence/backends/gate_2026-11-01T015245Z.json`.
+
 ## Medición (base de P4, sin límite fijado)
 
 `tools/v05_v6_probe.py` sobre los 28 casos 411–438: **28 clones en todo el corpus** (22 de

@@ -141,6 +141,12 @@ Suite: **165** tests OK (148 + 17 de `ForAzucar`). Con los 42 casos del corpus p
 directorio entra en `CORPORA` (`isyco/conformance.py:13`) en el commit siguiente, y el gate de
 backends pasa de 170 a 212 casos.
 
+**Corrección 2026-11-01:** ese commit siguiente es `57f38bc`. La suite es hoy **166** tests y el
+gate de backends corre los **212** casos con el corpus v0.5 dentro: referencia `212/212` y C,
+Rust, Zig y pydecimal `212/212`, COBOL `146/212` con 66 `UNSUPPORTED` nombrados, cero diferencias
+en las 8 484 corridas diferenciales. Recibo `evidence/backends/gate_2026-11-01T015245Z.json`
+(`verdict=PASS`, árbol de código limpio).
+
 ## Claims
 
 | claim | estado | dónde |
@@ -154,4 +160,4 @@ backends pasa de 170 a 212 casos.
 | P2: `for` sobre una expresión no se permite | **DEMONSTRATED** | literal y llamada → `SYNTAX` (más estricto que la recomendación) |
 | Los canarios ejercitan el azúcar (no pasan por otro lado) | **DEMONSTRATED** | brazo viejo sobre `lexer`+`parser`+`checker` → `INVALID_PROGRAM(SYNTAX)` |
 | El azúcar sabotiado se detecta | **DEMONSTRATED** | incremento abajo ⇒ 12 `CONTROL FALSO`, `--write` no sella (medido y revertido) |
-| V2 está dentro del gate de release de backends | **PENDIENTE** | el corpus entra en `CORPORA` en el commit siguiente |
+| V2 está dentro del gate de release de backends | **DEMONSTRATED** desde 2026-11-01 (antes **PENDIENTE**) | el corpus entró en `CORPORA` con `57f38bc`; gate `212/212` con los 42 casos incluidos, recibo `gate_2026-11-01T015245Z.json` |

@@ -115,6 +115,12 @@ entre módulos (`421`); uno que entra por stdin (`428`); tres rechazos estático
 directorio sigue **fuera de `CORPORA`** hasta que V1–V5 estén implementados: `401`–`406`
 todavía fallan, y meter el directorio a medias bajaría la cobertura del gate.
 
+**Corrección 2026-11-01:** V1–V5 quedaron implementados, los 42 casos coinciden con su
+`expected` y el directorio entró **completo** en `CORPORA` (`57f38bc`). El gate de backends
+pasó de 170 a **212** casos: referencia `212/212`, C, Rust, Zig y pydecimal `212/212`,
+COBOL `146/212` con los 66 `UNSUPPORTED` nombrados. Recibo
+`evidence/backends/gate_2026-11-01T015245Z.json`.
+
 ## Medición (base de P4, sin límite fijado)
 
 `tools/v05_v6_probe.py` cuenta, por caso, cuántas especializaciones crea el checker y

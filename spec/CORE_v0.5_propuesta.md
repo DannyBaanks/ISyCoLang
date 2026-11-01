@@ -169,6 +169,14 @@ fechas de commit son hora local (`-06:00`) y la evidencia se sella en UTC: por e
 fuera de `CORPORA` (`isyco/conformance.py:13`) hasta que F2.4 se apruebe: el gate de
 170 casos no se mueve.
 
+**Corrección 2026-11-01:** F2.4 se aprobó y el directorio entró en `CORPORA` con `57f38bc`,
+ya con los 42 casos (401–438 y gemelos). El gate pasó de 170 a **212**: referencia `212/212`,
+C, Rust, Zig y pydecimal `212/212`, COBOL `146/212` con 66 `UNSUPPORTED` que nombran la
+capacidad que exige cada programa. Recibo `evidence/backends/gate_2026-11-01T015245Z.json`
+(`verdict=PASS`). En los 170 casos de siempre no cambió ningún resultado: la referencia y C,
+Rust, Zig y pydecimal pasan los 212. COBOL amplió dominio antes de entrar el corpus, y eso es
+otra decisión (V7): 113 → 125 de 170, medido en `evidence/v05_v7/run_20261031T200146Z.json`.
+
 La columna «cuerpo a 0.4» es la medición de ese mismo cuerpo con **solo la línea 1
 reescrita** a `isyco 0.4` (`tools/v05_proposal_probe.py`): así el rechazo registrado
 es el de la regla que falta, no el de la versión. Corrida
@@ -290,6 +298,16 @@ inalcanzable; se convierte en test en el momento de declarar `0.5`.
 > versión desconocida no trae ninguna (`has` devuelve False: fail-closed). El riesgo de los
 > sitios 8, 9 y 10 —igualdades que no se activan con una versión mayor— deja de existir: no
 > quedan igualdades literales que olvidar.
+
+> **Corrección medida 2026-11-01.** Esos «once» son el árbol de V7 (`a66689c`). Con V1, V2 y el
+> léxico de V3 dentro son **trece** los sitios que llaman al predicado —`lexer` 3, `parser` 4,
+> `checker` 3, `ir` 1, `modules` 1, `__main__` 1— más `parser.py:15 SUPPORTED_VERSIONS =
+> set(SUPPORTED)` (el número de línea también se movió: era `:13`). Los dos nuevos son la
+> familia `v05` en el lexer (reservar `for` solo desde `0.5`) y la familia `v05` en el checker
+> (`len` de arreglo resuelto en el frontend). Las líneas de este documento han derivado todas:
+> `str_binary`, citado abajo como `checker.py:377-379`, es hoy `checker.py:435-448`. La tabla
+> con los trece sitios —qué habilita cada uno y qué test rechaza la recaída— queda en
+> `spec/CORE_v0.5.md` §0.
 
 ## 8. Corrección (2026-10-30, la misma noche) — el objetivo es una librería de texto
 

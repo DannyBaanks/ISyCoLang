@@ -1,8 +1,13 @@
 """`isyco/versions.py`: un solo sitio fija las versiones y sus familias de reglas.
 
-El segundo test es el que evita la recaída que midió
-`spec/CORE_v0.5_propuesta.md` §7: diez comparaciones literales repartidas en seis
-archivos, ninguna activada por una versión mayor.
+`NoHayLiteralesSueltos` es el que evita la recaída que midió
+`spec/CORE_v0.5_propuesta.md` §7: comparaciones de versión escritas a mano, repartidas
+en seis archivos que no se consultaban entre sí y ninguna activada por una versión
+mayor. La cuenta de §7 («diez») quedó corregida a doce el 2026-10-31 y a **trece**
+llamadas a `has()` el 2026-11-01 (lexer 3, parser 4, checker 3, ir 1, modules 1,
+__main__ 1, más `parser.py:15`); lo que no cambia es el invariante que fija este test:
+no sobrevive ningún literal, así que el número de sitios no es una cifra que haya que
+re-contar para que la protección sea real.
 """
 from __future__ import annotations
 

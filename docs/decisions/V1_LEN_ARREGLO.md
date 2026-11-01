@@ -86,6 +86,11 @@ Suite: 148 OK en el commit de V1 (138 + 10); con V2 son 165. El corpus v0.5 esta
 cuando el gate de backends (hasta entonces 170 casos) lo cubre. Mientras tanto la evidencia de
 V1 y V2 es la sonda `tools/v05_revalida_probe.py`, no el gate.
 
+**Corrección 2026-11-01:** ese commit siguiente ocurrió. El directorio está en `CORPORA` y el
+gate de backends pasó de 170 a **212** casos: referencia `212/212` y C, Rust, Zig y pydecimal
+`212/212`, con COBOL en `146/212`. Recibo `evidence/backends/gate_2026-11-01T015245Z.json`
+(`verdict=PASS`, `git_head=57f38bc`, árbol de código limpio). La suite es 166 tests.
+
 ## Claims
 
 | claim | estado | dónde |
@@ -95,4 +100,4 @@ V1 y V2 es la sonda `tools/v05_revalida_probe.py`, no el gate.
 | La IR no cambia (ningún nodo `len` nuevo) | **DEMONSTRATED** | 0 nodos en 401/406; control `len(str)` = 1 |
 | Ningún programa 0.1–0.4 cambia de significado | **DEMONSTRATED** | recabezados: `UNKNOWN_NAME` (0.1/0.2), `TYPE_MISMATCH` (0.3/0.4) |
 | Los canarios ejercitan la regla nueva (no pasan por otro lado) | **DEMONSTRATED** | brazo viejo apagando `v05` → `INVALID_PROGRAM` |
-| V1 está dentro del gate de release de backends | **NOT_DEMONSTRATED** a propósito | el corpus v0.5 aún no entra en `CORPORA`; entra con V2 |
+| V1 está dentro del gate de release de backends | **DEMONSTRATED** desde 2026-11-01 (hasta entonces **NOT_DEMONSTRATED** a propósito) | el corpus v0.5 entró en `CORPORA`; gate `212/212` con los 42 casos incluidos, recibo `gate_2026-11-01T015245Z.json` |

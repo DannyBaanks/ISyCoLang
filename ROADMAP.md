@@ -138,13 +138,15 @@ decisiones numeradas **V1–V7** con su corpus `programs/conformance_v0.5/` (401
 y los `expected` escritos a mano **antes** de implementar. A 2026-10-30 nada de v0.5 estaba
 aprobado ni implementado; los bloques fechados debajo lo superan: **V1, V2, V6, V6-bis y V7 están
 implementados y sellados; V3–V5 no tienen texto normativo nuevo todavía** (V3 ya era cierto en
-el código y con V2 quedó medido). El directorio sigue fuera de `CORPORA`, así que los 170
-casos de F2.3 no se mueven. Dos medidas que sí entran hoy: el azúcar del `for`
+el código y con V2 quedó medido). **Corrección 2026-11-01:** el directorio **sí entró**
+en `CORPORA` (`isyco/conformance.py:13`) y el gate de backends pasó de 170 a **212**
+casos; la referencia da 212/212 y los cuatro backends completos 212/212, con COBOL en
+146/212 y 66 `UNSUPPORTED` nombrados. Dos medidas que sí entran hoy: el azúcar del `for`
 con el incremento al final del cuerpo es **incorrecto** (`continue` no avanza →
 `LIMIT_REACHED`, control negativo en el corpus) y añadir la cabecera `0.5` toca
 **diez** sitios con la versión fijada en código (`evidence/v05_propuesta/`) — cifra
-**corregida a doce** el 2026-10-31 al implementar V6/V7: ver la nota de §7 en
-`spec/CORE_v0.5_propuesta.md` y el bloque de V7 más abajo.
+**corregida a doce** el 2026-10-31 al implementar V6/V7 y **a trece** el 2026-11-01 al entrar
+V1/V2/V3: ver la nota de §7 en `spec/CORE_v0.5_propuesta.md` y el bloque de V7 más abajo.
 
 **Gate F2.4:** los seis ítems de `spec/CORE_v0.5_propuesta.md` §5, incluida la
 igualdad de `steps` contra los `while` gemelo (23 / 38 / 20) y la corrida COBOL
@@ -167,7 +169,9 @@ que falsifica V7.
 > 22 clones en el corpus, máximo 2 por definición, sin tope fijado (base de P4).
 > Decisión y controles: `docs/decisions/V6_CONTEXTUAL_STR.md`;
 > `evidence/v05_v6/run_20261031T103514Z.json`. Quedan V6-bis, V7, revalidar V1–V5 y P1–P4;
-> el directorio sigue fuera de `CORPORA` hasta que `401`–`410` pasen.
+> el directorio sigue fuera de `CORPORA` hasta que `401`–`410` pasen —**ocurrió el
+> 2026-11-01**: entró con sus 42 casos y el gate pasó a 212, sin mover ningún resultado
+> de los 170 anteriores.
 
 > **V6-bis implementado y sellado 2026-10-31.** `-> str` pelado resuelto por la capacidad
 > **esperada en el sitio de llamada**: `429`–`438` (4 ejecutables, 6 rechazos) con los
@@ -232,8 +236,13 @@ que falsifica V7.
 > **Los 42 casos del corpus coinciden con su `expected` a mano (42/42).** Decisión:
 > `docs/decisions/V2_FOR_AZUCAR.md`; gate de release `evidence/v05_revalida/run_20261101T001608Z`
 > (`RELEASE_GATE`, `arbol_sucio_codigo=false`, mismos números que la corrida `EVIDENCE_ONLY`
-> `run_20261031T235253Z`). Quedan los textos normativos V3–V5, meter el corpus en
-> `CORPORA`, y P1–P4.
+> `run_20261031T235253Z`). Quedan los textos normativos V3–V5 y P1–P4; **meter el corpus
+> en `CORPORA` ocurrió el 2026-11-01** (commit `57f38bc`): los 42 casos entran al gate, que
+> pasa de 170 a **212** — referencia `212/212`, C/Rust/Zig/pydecimal `212/212`, COBOL
+> `146/212` con 66 `UNSUPPORTED` nombrados, cero fallos y cero diferencias en las 8 484
+> corridas diferenciales; IR `424/424` con 145 programas bajados. Recibos
+> `evidence/backends/gate_2026-11-01T015245Z.json` (`verdict=PASS`, `git_head=57f38bc`) y
+> `evidence/ir/gate_2026-11-01T013721Z.json`.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
