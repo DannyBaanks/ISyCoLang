@@ -1,0 +1,12 @@
+isyco 0.5
+# N1 + V4: la variable del `for` sobre un `str` es una COPIA `u8`; reasignarla no toca el str.
+# Los tres bytes de "aaa" salen como 65 y `s[0]` sigue dando 97.
+fn main() -> i64 !emit {
+    let s: str<4> = "aaa";
+    for c in s {
+        c = 65;
+        emit c;
+    }
+    emit s[0];
+    return len(s);
+}

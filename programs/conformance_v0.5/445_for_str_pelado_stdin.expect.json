@@ -1,0 +1,16 @@
+{
+  "claim": "N1 x V6: emite(str pelado) sobre \"mundo\" por stdin emite sus 5 bytes y len devuelve 5",
+  "input": ["mundo"],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "109",
+      "117",
+      "110",
+      "100",
+      "111"
+    ],
+    "return": "5"
+  }
+}

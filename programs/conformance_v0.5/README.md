@@ -35,9 +35,28 @@ mismo par de archivos y solo la cabecera cambiada:
 Los cuatro casos con módulos —`408_qname_arreglo/`, `421_marca_entre_modulos/`,
 `440_llamada_calificada_void/` y `443_m4_modulo_v04/`— tienen que leerse con
 `load_corpus`, que arma el `Bundle` del directorio: tomar `main.isy` como bytes sueltos
-devuelve un falso `UNKNOWN_MODULE`. La población del directorio es 39 programas a un
-archivo + 4 carpetas = **43**; un `glob("4*.isy")` sobre la raíz se queda en 39 y esa es
-la cuenta que el censo de P4 hizo mal la primera vez (`docs/EVIDENCE_MATRIX.md`, hallazgo 2).
+devuelve un falso `UNKNOWN_MODULE`. La población del directorio es 42 programas a un
+archivo + 4 carpetas = **46** (los 43 de `443` más los tres de N1); un `glob("4*.isy")`
+sobre la raíz se queda en 42 y esa es la cuenta que el censo de P4 hizo mal la primera vez
+(`docs/EVIDENCE_MATRIX.md`, hallazgo 2).
+
+**Alta de los casos `444`–`446` (2026-11-01, N1).** `for` sobre un `str` pasa a ser
+normativa con tres casos y sus gemelos (`docs/decisions/N1_FOR_SOBRE_STR.md`); con ellos el
+directorio tiene 46 casos y el mismo bucle de arriba da **46/46 IGUAL**. El `expected` está
+transcrito de la regla —«`len(s)` vueltas, la variable es `u8` copia»— y no del stdout: la
+conducta ya existía en la referencia y se midió antes de escribir los casos.
+
+| caso | qué fija | gemelo | pasos medidos |
+|---|---|---|---|
+| `444_for_sobre_str` | la cota es la **longitud del valor**, no la capacidad: `str<8>` con `"hola"` emite 4 bytes, no 8 | `gemelos/444_while.isy` (`0.4`) | 22 y 22 |
+| `445_for_str_pelado_stdin` | N1 × V6: un `str` pelado recorre lo que le llega por stdin (`"mundo"` → 5 bytes, `len` 5) | `gemelos/445_while.isy` (`0.5`) | 27 y 27 |
+| `446_for_copia_str` | la variable del `for` sobre `str` es copia: `65 65 65` y `s[0]` sigue dando `97` | `gemelos/446_while.isy` (`0.4`) | 22 y 22 |
+
+El gemelo de `445` lleva cabecera `0.5` porque el `str` pelado en parámetro es V6 y en `0.4`
+no existe; los otros dos se escriben en `0.4` porque `len` de un `str` y `s[i]` son de v0.3.
+Trazas `stmt` e IR podada: idénticas caso por caso (21, 26 y 21 filas). En `445` la cadena
+completa tiene que declarar `!emit` —si `main` no lo declara el checker tira
+`UNDECLARED_EFFECT` nombrando a `main`— y eso ya era regla antes de N1.
 
 | archivo | qué fija | decisión | hoy (referencia) |
 |---|---|---|---|
@@ -55,19 +74,23 @@ la cuenta que el censo de P4 hizo mal la primera vez (`docs/EVIDENCE_MATRIX.md`,
 `411`–`428` (V6), `429`–`438` (V6-bis), `439`–`442` (V7) y `443` (M4 generalizada, N2 en
 `docs/OPEN_QUESTIONS_P1_P4.md`) se agregaron con sus propias
 decisiones: `docs/decisions/V6_CONTEXTUAL_STR.md`, `docs/decisions/V6B_CONTEXTUAL_RETURN.md`
-y `docs/decisions/V7_CONTENT_CAPABILITIES.md`.
+y `docs/decisions/V7_CONTENT_CAPABILITIES.md`. `444`–`446` son N1 (`for` sobre `str`),
+decidida y sellada el 2026-11-01 en `docs/decisions/N1_FOR_SOBRE_STR.md`.
 
 ## `gemelos/`
 
 `403_while.isy`, `404_while_incremento_arriba.isy`, `404_while_incremento_abajo.isy`
-y `405_while.isy` están escritos con la cabecera `isyco 0.4` y **corren hoy**. Sirven
+y `405_while.isy` están escritos con la cabecera `isyco 0.4` y **corren hoy**. A ellos se
+les sumaron el 2026-11-01 `444_while.isy` y `446_while.isy` (también `0.4`) y
+`445_while.isy`, que es el único gemelo con cabecera `0.5`. Sirven
 a dos cosas:
 
 1. son la prueba ejecutable de que los esperados `17`, `2 3 7 → 3` y `1 3 → 2` no se
    copiaron de ningún resultado nuevo, y
 2. fijan los `steps` que el azúcar V2 reproduce: medidos el 2026-10-31, el `for` gasta
    **23, 38 y 20** — los mismos que su gemelo — y su IR es idéntica a la del gemelo tras
-   podar posiciones y el nombre del índice sintético.
+   podar posiciones y el nombre del índice sintético. Lo mismo, medido el 2026-11-01 sobre
+   los tres gemelos de N1: **22, 27 y 22** pasos, trazas e IR podada iguales.
 
 `404_while_incremento_abajo.isy` es el **control negativo**: es el azúcar V2 escrito
 como «`while` con el incremento al final del cuerpo», y su `continue` salta el avance.

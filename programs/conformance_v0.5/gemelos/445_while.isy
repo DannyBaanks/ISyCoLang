@@ -1,0 +1,17 @@
+isyco 0.5
+
+# Gemelo del 445 con la forma larga. Cabecera 0.5: el `str` pelado en parámetro es V6,
+# así que aquí el gemelo no puede escribirse en 0.4.
+fn emite(s: str) -> i64 !emit {
+    let i: i64 = -1;
+    while i + 1 < len(s) {
+        i = i + 1;
+        let c: u8 = s[i];
+        emit c;
+    }
+    return len(s);
+}
+
+fn main(s: str<16>) -> i64 !emit {
+    return emite(s);
+}

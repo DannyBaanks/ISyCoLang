@@ -1,0 +1,15 @@
+{
+  "claim": "N1: asignar a la variable del for sobre un str no muta el str (copia u8, sin aliasing)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "65",
+      "65",
+      "65",
+      "97"
+    ],
+    "return": "3"
+  }
+}

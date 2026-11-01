@@ -1,0 +1,10 @@
+isyco 0.5
+# N1: `for` sobre un `str` recorre `len(s)` bytes, no la capacidad declarada.
+# Con `str<8>` y "hola" son 4 emisiones (104 111 108 97), no 8.
+fn main() -> i64 !emit {
+    let s: str<8> = "hola";
+    for c in s {
+        emit c;
+    }
+    return len(s);
+}

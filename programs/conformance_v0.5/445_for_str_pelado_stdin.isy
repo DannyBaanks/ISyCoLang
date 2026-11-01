@@ -1,0 +1,14 @@
+isyco 0.5
+# N1 x V6: una utilidad con el `str` pelado recorre el valor que le llega por stdin.
+# Ojo: el efecto tiene que declararse en toda la cadena de llamadas — si `main` no
+# declara `!emit`, el checker tira UNDECLARED_EFFECT nombrando a `main`.
+fn emite(s: str) -> i64 !emit {
+    for c in s {
+        emit c;
+    }
+    return len(s);
+}
+
+fn main(s: str<16>) -> i64 !emit {
+    return emite(s);
+}

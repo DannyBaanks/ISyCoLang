@@ -1,0 +1,15 @@
+{
+  "claim": "N1: for sobre str<8> con \"hola\" emite los 4 bytes del valor y len devuelve 4 (la cota es la longitud, no la capacidad)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "104",
+      "111",
+      "108",
+      "97"
+    ],
+    "return": "4"
+  }
+}
