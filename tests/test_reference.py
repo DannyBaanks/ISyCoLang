@@ -44,9 +44,10 @@ class Conformance(unittest.TestCase):
                 self.assertEqual(hashlib.sha256(data).hexdigest(), digest, f"{corpus}/{name}")
 
     def test_corpus_passes(self):
-        # 170 congelados (v0.1–v0.4) + 43 de v0.5: entra con V1/V2 sellados (2026-10-31)
-        # y sube a 43 con `443` (2026-11-01, diagonal 0.5 de M4).
-        self.assertGreaterEqual(len(CORPUS), 213)
+        # 170 congelados (v0.1–v0.4) + 43 de v0.5: entra con V1/V2 sellados (2026-10-31),
+        # sube a 43 con `443` (2026-11-01, diagonal 0.5 de M4) y a 46 con `444`–`446`
+        # (2026-11-01, N1: `for` sobre un `str`).
+        self.assertGreaterEqual(len(CORPUS), 216)
         self.assertEqual(failing(), [])
 
     def test_superseded_cases_are_explicit(self):
@@ -112,6 +113,25 @@ class Sabotage(unittest.TestCase):
                 return (self.eval(e.left) + self.eval(e.right))[:e.ty.n]
             return orig(self, e)
         self.assertIn("203_str_concat_overflow", self.mutated("binary", interp.Interpreter, truncating))
+
+    # --- CORE v0.5 -----------------------------------------------------------
+    def test_len_de_str_se_hace_estatico(self):
+        """N1: plegar `len` de un `str` a su capacidad, como V1 hace con los arreglos.
+
+        `444_for_sobre_str` es un `str<8>` con `"hola"`: si la cota del azúcar fuera la
+        capacidad declarada, el `while` sintético daría 8 vueltas y el índice se saldría del
+        valor — `INDEX_OUT_OF_BOUNDS` después de los cuatro bytes. Que la cota sea la longitud
+        del valor es justo lo que fija el expected del corpus.
+        """
+        orig = interp.Interpreter.eval
+
+        def static_str_len(self, e):
+            if (isinstance(e, interp.A.Len)
+                    and isinstance(getattr(e.expr, "ty", None), interp.StrT)):
+                return e.expr.ty.n
+            return orig(self, e)
+        self.assertIn("444_for_sobre_str",
+                      self.mutated("eval", interp.Interpreter, static_str_len))
 
 
 class RoundingOracle(unittest.TestCase):

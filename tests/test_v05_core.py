@@ -12,6 +12,10 @@ resultado: el AST que recibe la referencia es el `while` gemelo escrito a mano, 
 es la misma salvo las posiciones y el nombre del índice sintético, los `steps` son los del
 gemelo (23 / 38 / 20, exigidos por el gate F2.4) y `features_of` no gana ningún átomo. `for`
 queda reservada solo desde `0.5`; `in` sigue siendo contextual (V3).
+
+N1 (CORE v0.5 §4.4, adoptada el 2026-11-01): el mismo azúcar recorre un lugar de tipo `str` —
+`len(s)` vueltas con variable `u8` copia, y la cota es la longitud del valor, no la capacidad—.
+Casos `444`–`446` con sus gemelos en `GEMELOS` y su forma propia en `ForSobreStr`.
 """
 from __future__ import annotations
 
@@ -77,9 +81,11 @@ def caso(numero: str) -> dict:
     return next(c for c in load_corpus(V05) if c["name"].startswith(f"{numero}_"))
 
 
-#: número -> forma larga del `for`. Los tres archivos corren HOY con cabecera `0.4` y son
+#: número -> forma larga del `for`. `403`, `404` y `405` corren HOY con cabecera `0.4` y son
 #: la predicción medida de los `steps`; el de 402 está aquí porque el corpus congeló solo
-#: los gemelos que ya se habían medido el 2026-10-30.
+#: los gemelos que ya se habían medido el 2026-10-30. Los tres de N1 (`444`–`446`) se
+#: escribieron a mano el 2026-11-01 desde la regla de §4.4: `444` y `446` van en `0.4`
+#: porque `len` de un `str` y `s[i]` son de v0.3, y `445` en `0.5` porque el `str` pelado es V6.
 GEMELOS = {
     "402": ("inline", """isyco 0.5
 
@@ -99,10 +105,13 @@ fn main(items: [Item; 3]) -> dec<8,2> {
     "403": ("archivo", "gemelos/403_while.isy"),
     "404": ("archivo", "gemelos/404_while_incremento_arriba.isy"),
     "405": ("archivo", "gemelos/405_while.isy"),
+    "444": ("archivo", "gemelos/444_while.isy"),
+    "445": ("archivo", "gemelos/445_while.isy"),
+    "446": ("archivo", "gemelos/446_while.isy"),
 }
 
 #: pasos de los gemelos medidos con la forma larga a mano: gate F2.4, ítem 2
-PASOS_EXIGIDOS = {"403": 23, "404": 38, "405": 20}
+PASOS_EXIGIDOS = {"403": 23, "404": 38, "405": 20, "444": 22, "445": 27, "446": 22}
 
 
 def fuente_gemelo(numero: str) -> bytes:
@@ -268,7 +277,8 @@ class ForAzucar(unittest.TestCase):
         """La cola del ítem 2 del gate: no solo los pasos, la traza `stmt` evento por evento.
 
         Medido: 17, 22, 35 y 19 filas idénticas en `402`, `403`, `404` y `405`, una vez fuera
-        las posiciones y con el índice sintético llamado como el gemelo ([P1]).
+        las posiciones y con el índice sintético llamado como el gemelo ([P1]). Con los tres
+        gemelos de N1, medidos el 2026-11-01: 21, 26 y 21 filas en `444`, `445` y `446`.
         """
         for numero in GEMELOS:
             case = caso(numero)
@@ -384,7 +394,7 @@ class ForAzucar(unittest.TestCase):
 
     def test_los_canones_coinciden_en_cada_backend(self):
         """Diferencial de V2: referencia == expected == cada backend instalado, pasos incluidos."""
-        for numero in ("402", "403", "404", "405"):
+        for numero in ("402", "403", "404", "405", "444", "445", "446"):
             case = caso(numero)
             ref = ejecuta(case["program"], case["input"])
             for name, backend in sorted(AVAILABLE.items()):
@@ -414,6 +424,126 @@ class ForAzucar(unittest.TestCase):
                                             otro.get("limits"))[0]
             with self.subTest(caso=otro["name"]):
                 self.assertNotEqual(salida["status"], "UNSUPPORTED")
+
+
+class ForSobreStr(unittest.TestCase):
+    """N1 (CORE v0.5 §4.4, adoptada el 2026-11-01): `for c in s` sobre un `str`.
+
+    Es la misma fórmula del azúcar V2 con un lugar de `str`: `len(s)` vueltas y variable `u8`
+    copia. No es una operación nueva —`len(s)` y `s[i]` son de v0.3—, así que la igualdad de
+    pasos, traza e IR con el gemelo la cubren los tests de `ForAzucar`, que iteran `GEMELOS`.
+    Lo que se fija aquí es la forma propia del `str`: la cota es la LONGITUD del valor y no la
+    capacidad declarada, la variable es `u8` y copia, y el lugar puede ser un campo, un `str`
+    pelado de V6 o un arreglo de cadenas. Los números están medidos el 2026-11-01.
+    """
+
+    def fuente(self, capacidad: int) -> str:
+        return ('isyco 0.5\nfn main() -> i64 !emit {\n'
+                f'    let s: str<{capacidad}> = "hola";\n'
+                '    for c in s { emit c; }\n    return len(s);\n}\n')
+
+    def test_los_tres_casos_coinciden_con_su_expected(self):
+        """El expected de `444`–`446` está transcrito de la regla, no del stdout."""
+        esperados = {"444": {"status": "HALTED", "code": None,
+                             "emits": ["104", "111", "108", "97"], "return": "4"},
+                     "445": {"status": "HALTED", "code": None,
+                             "emits": ["109", "117", "110", "100", "111"], "return": "5"},
+                     "446": {"status": "HALTED", "code": None,
+                             "emits": ["65", "65", "65", "97"], "return": "3"}}
+        for numero, esperado in esperados.items():
+            case = caso(numero)
+            with self.subTest(caso=case["name"]):
+                self.assertEqual({k: ejecuta(case["program"], case["input"])[k]
+                                  for k in COMPARED}, esperado, case["name"])
+                self.assertEqual(case["expected"], esperado, "el expected se movió")
+
+    def test_la_cota_es_la_longitud_no_la_capacidad(self):
+        """El corazón de N1: con `"hola"`, `str<4>`, `str<8>` y `str<16>` dan los mismos 4 bytes."""
+        for capacidad in (4, 8, 16):
+            with self.subTest(capacidad=capacidad):
+                self.assertEqual(clave(self.fuente(capacidad)),
+                                 {"status": "HALTED", "code": None,
+                                  "emits": ["104", "111", "108", "97"],
+                                  "return": "4", "steps": 22})
+
+    def test_la_cadena_vacia_no_da_vueltas(self):
+        got = clave('isyco 0.5\nfn main() -> i64 !emit {\n    let s: str<1> = "";\n'
+                    '    for c in s { emit c; }\n    return len(s);\n}\n')
+        self.assertEqual((got["status"], got["emits"], got["return"], got["steps"]),
+                         ("HALTED", [], "0", 6))
+
+    def test_la_variable_es_u8(self):
+        """`c` es `u8`: sumarla a un `i64` sin cast es `TYPE_MISMATCH`; con `as i64` cierra 420."""
+        codigo = ('isyco 0.5\nfn main() -> i64 {\n    let s: str<8> = "hola";\n'
+                  '    let n: i64 = 0;\n    for c in s { n = n + c; }\n    return n;\n}\n')
+        with self.assertRaises(InvalidProgram) as raised:
+            compile_ir(codigo.encode())
+        self.assertEqual(raised.exception.code, "TYPE_MISMATCH")
+        self.assertEqual(ejecuta(codigo.replace("n + c", "n + (c as i64)").encode())["return"],
+                         "420")
+
+    def test_la_variable_no_escapa_del_bucle(self):
+        codigo = ('isyco 0.5\nfn main() -> i64 {\n    let s: str<4> = "abc";\n'
+                  '    for c in s { }\n    return c;\n}\n')
+        self.assertEqual(ejecuta(codigo.encode())["code"], "UNKNOWN_NAME")
+
+    def test_el_lugar_puede_ser_un_campo(self):
+        got = clave('isyco 0.5\nstruct L { texto: str<6> }\nfn main() -> i64 !emit {\n'
+                    '    let l: L = L { texto: "abc" };\n    for c in l.texto { emit c; }\n'
+                    '    return len(l.texto);\n}\n')
+        self.assertEqual((got["status"], got["emits"], got["return"], got["steps"]),
+                         ("HALTED", ["97", "98", "99"], "3", 18))
+
+    def test_arreglo_de_cadenas_anida_los_dos_azucares(self):
+        """`for s in ss { for c in s { … } }`: el lugar del interior es un elemento de arreglo."""
+        got = clave('isyco 0.5\nfn main() -> i64 !emit {\n'
+                    '    let ss: [str<4>; 2] = ["ab", "cde"];\n'
+                    '    for s in ss { for c in s { emit c; } }\n    return 0;\n}\n')
+        self.assertEqual((got["status"], got["emits"], got["steps"]),
+                         ("HALTED", ["97", "98", "99", "100", "101"], 38))
+
+    def test_for_sobre_un_indice_de_str_sigue_sin_ser_lugar(self):
+        with self.assertRaises(InvalidProgram) as raised:
+            compile_ir(('isyco 0.5\nfn main() -> i64 {\n    let s: str<4> = "abc";\n'
+                        '    for c in s[0] { }\n    return 0;\n}\n').encode())
+        self.assertEqual(raised.exception.code, "SYNTAX")
+
+    def test_con_cabecera_04_el_for_sobre_str_se_rechaza(self):
+        """No regresión: `for` es reservada solo desde 0.5 (V3), también sobre un `str`."""
+        with self.assertRaises(InvalidProgram) as raised:
+            compile_ir(self.fuente(8).replace("isyco 0.5", "isyco 0.4", 1).encode())
+        self.assertEqual(raised.exception.code, "SYNTAX")
+
+    def test_poner_la_capacidad_como_cota_rompe_igual_que_en_el_gemelo(self):
+        """Control de la regla: el `while` escrito a mano con `8` en vez de `len(s)` recorre los
+        4 bytes y falla en el quinto — así se ve el sabotaje `test_len_de_str_se_hace_estatico`."""
+        cap = ('isyco 0.4\nfn main() -> i64 !emit {\n    let s: str<8> = "hola";\n'
+               '    let i: i64 = -1;\n    while i + 1 < 8 { i = i + 1; let c: u8 = s[i];'
+               ' emit c; }\n    return len(s);\n}\n')
+        got = ejecuta(cap.encode(), [])
+        self.assertEqual((got["status"], got["code"], got["emits"], got["steps"]),
+                         ("ERROR", "INDEX_OUT_OF_BOUNDS", ["104", "111", "108", "97"], 23))
+        suelto = ejecuta(('isyco 0.5\nfn main() -> i64 !emit {\n    let s: str<8> = "hola";\n'
+                          '    emit s[7];\n    return 0;\n}\n').encode(), [])
+        self.assertEqual((suelto["status"], suelto["code"], suelto["steps"]),
+                         ("ERROR", "INDEX_OUT_OF_BOUNDS", 3))
+
+    def test_cobol_rechaza_los_tres_por_contenido_no_por_el_for(self):
+        """El UNSUPPORTED de N1 es la regla de V7: a COBOL le falta `str`, no el azúcar."""
+        if "cobol" not in AVAILABLE:
+            self.skipTest("no hay cobc")
+        for numero in ("444", "445", "446"):
+            case = caso(numero)
+            gemelo = fuente_gemelo(numero)
+            faltan = missing_features(AVAILABLE["cobol"], case["program"])
+            with self.subTest(caso=case["name"]):
+                self.assertEqual(faltan, ["ir0.2", "str"])
+                self.assertEqual(faltan, missing_features(AVAILABLE["cobol"], gemelo),
+                                 "el azúcar exige un átomo que el gemelo no exige")
+                got, _ = AVAILABLE["cobol"].run(case["program"], case["input"],
+                                                case.get("limits"))
+                self.assertEqual((got["status"], got["code"]),
+                                 ("UNSUPPORTED", ",".join(faltan)))
 
 
 if __name__ == "__main__":
