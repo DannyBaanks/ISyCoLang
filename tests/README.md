@@ -13,10 +13,13 @@ Tests: `python3 -m unittest discover -s tests -v`
 | `test_specialize.py` | V6 y V6-bis: la capacidad diferida en parámetro y en retorno se resuelve por el sitio de llamada — sin centinela, inyectiva en los nombres, fail-closed en las dos direcciones y paso-neutral contra el gemelo escrito a mano |
 
 Tiempos (12 núcleos, 2026-10-30): ~3 min (197.0 s medidos, 91 tests) con la
-caché `build/` llena. **Re-medido 2026-11-01: 166 tests en 200,2 s, 191,6 s, 191,3 s y
-329,6 s** con la caché llena y los 212 casos dentro del gate — el último con `build/` en
-3,3 G y justo después de `tools/v05_p4_probe.py`, que compila programas de 256 a 2048
-funciones; no se ha atribuido la causa, solo medido el rango. En frío
+caché `build/` llena. **Re-medido 2026-11-01: 166 tests en 191,3 s, 191,6 s, 200,2 s,
+251,9 s y 329,6 s** (rango 191,3–329,6 s) con la caché llena y los 212 casos dentro del
+gate — el 329,6 con `build/` en 3,3 G y justo después de `tools/v05_p4_probe.py`, que
+compila programas de 256 a 2048 funciones, y el 251,9 después de una corrida completa de
+`tools/c_gate.py` (cuatro combinaciones × 212 casos más el diferencial y los sabotajes);
+no se ha atribuido la causa, solo medido
+el rango. En frío
 casi todo es compilar Zig; para no esperar:
 
 ```bash

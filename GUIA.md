@@ -190,7 +190,7 @@ Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 
 ```bash
 python3 tools/warm_build_cache.py              # opcional: precompila en paralelo (la primera vez tarda)
-python3 -m unittest discover -s tests          # suite completa: 166 tests; medidos hoy 2026-11-01: 191,3-200,2 s con la caché llena y 329,6 s en la corrida siguiente a `tools/v05_p4_probe.py` (los 206,7 s eran de la suite de 165 tests con 170 casos, y los 379,5 s de la de 138 en frío)
+python3 -m unittest discover -s tests          # suite completa: 166 tests; rango medido 2026-11-01: 191,3-329,6 s con la caché llena (cinco corridas: 191,3 / 191,6 / 200,2 / 251,9 / 329,6; la última después de `tools/v05_p4_probe.py` y la de 251,9 después de `tools/c_gate.py`; los 206,7 s eran de la suite de 165 tests con 170 casos, y los 379,5 s de la de 138 en frío)
 python3 tools/backend_gate.py                  # gate de backends: escribe evidence/backends/gate_<UTC>.json
 ```
 
