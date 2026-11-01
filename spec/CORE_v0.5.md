@@ -98,7 +98,7 @@ Sobre `struct` u otro tipo no-arreglo sigue siendo `TYPE_MISMATCH`.
 
 ```ebnf
 stmt  = … | "for" IDENT "in" lugar block ;
-lugar = IDENT { "." IDENT } ;          (* de tipo [T; N], ver 4.4 *)
+lugar = IDENT { "." IDENT } ;          (* de tipo [T; N] o str, ver 4.4 *)
 ```
 
 ### 4.1 Significado exacto
@@ -158,6 +158,7 @@ Medido, con cabecera `0.5`:
 | `for x in xs` | `HALTED`, recorre `xs` | lugar |
 | `for x in p.xs`, `for x in p.q.ys` | `HALTED` | lugar con campos |
 | `for x in xs[0]` | `SYNTAX` | el índice no es lugar |
+| `for c in s`, `for c in l.texto` (`s`, `l.texto` de tipo `str`) | `HALTED` | lugar de `str`: recorre sus bytes, **[N1]** §4.4 |
 | `for x in id(xs)` | `SYNTAX` | evaluar la cota y el índice dos veces duplicaría efectos |
 | `for x in (xs)` | `SYNTAX` | idem |
 | `for x in [1, 2, 3]` | `SYNTAX` | **[P2] resuelto: no.** Un literal de arreglo sin tipo esperado es `AMBIGUOUS_LITERAL` (v0.3 §3.5) y el `for` no aporta ninguno |
@@ -165,15 +166,52 @@ Medido, con cabecera `0.5`:
 Que `xs {` no se lea como un literal de struct es la razón por la que el parser toma
 el iterando con `ident()`/`Field` en vez de `expr()`: `p.xs { … }` sería ambiguo.
 
-### 4.4 `for` sobre un `str` recorre sus bytes **[D]**
+### 4.4 `for` sobre un `str` recorre sus bytes **[N1: adoptada, 2026-11-01]**
 
-`for c in s` con `s: str<N>` **funciona hoy** y emite los bytes: sobre
-`str<4> = "hola"` da `104 111 108 97`. No es una operación nueva — es `len(s)` de
-v0.3 §2.4 más `s[i]`—, y su `while` gemelo escrito a mano cuesta lo mismo
-(**24 pasos** los dos, medido con la misma forma). La propuesta §2 escribía
-«`expr` de tipo `[T; N]`», así que esta puerta está **sin decidir**: adoptarla como
-normativa es lo que necesita una librería de texto (`cuenta_letra`, `mayus`), pero
-ningún caso del corpus la fija. Se decide al congelar, con su caso y su gemelo.
+Regla normativa: todo **lugar** de tipo `str` —local `str<N>`, campo calificado, parámetro
+`str` pelado (§7 / V6) y el valor que entra por stdin— se recorre **`len(s)` veces**, y la
+variable del `for` es `u8` **copia**. La cota es la **longitud del valor, no la capacidad
+declarada**: `str<8>` con `"hola"` emite 4 bytes, no 8. Es la misma fórmula de §4.1 con
+`<lugar>` de `str`, así que no añade operación ni capacidad — medido: `features_of` del `for`
+y de su gemelo dan el mismo conjunto (`bool, emit, int64, int8, ir0.2, ovf:trap, str,
+unsigned, while`).
+
+Fijado por tres casos con su gemelo escrito a mano (`programs/conformance_v0.5/README.md`):
+
+| caso | qué fija | pasos `for` / gemelo |
+|---|---|---|
+| `444_for_sobre_str` | la cota es longitud y no capacidad (`str<8>` = `"hola"` → `104 111 108 97`, `len` 4) | 22 / 22 |
+| `445_for_str_pelado_stdin` | N1 × V6: `fn emite(s: str)` recorre lo que llega por stdin → 5 bytes y `len` 5 | 27 / 27 |
+| `446_for_copia_str` | copia sin alias: `c = 65` dentro del cuerpo y `s[0]` sigue dando `97` | 22 / 22 |
+
+Bordes medidos el 2026-11-01, con cabecera `0.5` salvo donde se dice lo contrario:
+
+| forma | observado |
+|---|---|
+| `str<1> = ""` | `HALTED`, 0 emisiones, `len` 0, 6 pasos |
+| `for c in l.texto` con `L { texto: str<6> }` y `"abc"` | `HALTED`, `97 98 99`, `return 3`, 18 pasos |
+| `c` después del bucle | `INVALID_PROGRAM(UNKNOWN_NAME)` |
+| `n = n + c` con `n: i64` | `INVALID_PROGRAM(TYPE_MISMATCH)` — `c` es `u8` y hace falta cast (§1.2 de CORE) |
+| `for c in s[0]` | `INVALID_PROGRAM(SYNTAX)` — un índice no es lugar (§4.3) |
+| cabecera `0.4` | `INVALID_PROGRAM(SYNTAX)` — `for` es reservada solo desde `0.5` (V3) |
+| `s[7]` con `str<8> = "hola"` | `ERROR(INDEX_OUT_OF_BOUNDS)` a los 3 pasos — la regla de rango es la de v0.3 §2.4, y el `while` gemelo falla igual |
+
+Por qué se adopta y no se rechaza: el desugaring vive en el parser (`parser.py:317-351`) y no
+mira tipos; el checker solo ve un `let` sintético sin anotación (§4.1). Rechazar el `str`
+obligaría a etiquetar los nodos sintéticos, y el `while` gemelo escrito a mano seguiría siendo
+legal — o sea el `for` dejaría de ser azúcar, que es la invariantе que V2 fijó con pasos,
+traza e IR iguales (§4.7).
+
+**Corrección sobre lo que decía esta sección.** Hasta hoy afirmaba «su `while` gemelo escrito
+a mano cuesta lo mismo (**24 pasos** los dos)» y «sobre `str<4> = "hola"` da
+`104 111 108 97`». El segundo dato es cierto y verificado (con capacidad exacta `str<4>` el
+literal entra y salen los cuatro bytes), pero el primero estaba mal atribuido: los 24 pasos
+son los de la matriz de *forma constante* de `tools/v05_spec_probe.py` §4 —cuatro programas
+`for`/`while` con ancho fijo y con `str` pelado, cada uno 24—, no los del programa que la
+misma sección citaba. Medido hoy con ese programa, `for` y gemelo gastan **22** pasos. La
+igualdad con el gemelo se mantiene; lo que estaba transcrito de memoria era el número, y es el
+hallazgo 1 de `docs/EVIDENCE_MATRIX.md` reproduciéndose dentro del spec. De ahí que los
+números de arriba estén citados por corrida.
 
 ### 4.5 La variable del `for`
 
@@ -201,7 +239,8 @@ que comparar la traza de un `for` con la de su gemelo exige normalizarlo; el tes
 Para cada `for` del corpus, el `while` gemelo de
 `programs/conformance_v0.5/gemelos/` debe coincidir en `status`, `code`, `emits`,
 `return`, **`steps`** y en la traza `stmt` línea a línea salvo los `at`. Pasos
-medidos: `402` 18, `403` 23, `404` 38, `405` 20, cada uno igual a su gemelo. La prueba
+medidos: `402` 18, `403` 23, `404` 38, `405` 20 y —con los casos de N1— `444` 22, `445` 27,
+`446` 22, cada uno igual a su gemelo. La prueba
 fija `23`, `38` y `20` como número (`PASOS_EXIGIDOS` en `tests/test_v05_core.py:105`) y
 `402` entra solo por la igualdad con su gemelo inline — que es la exigencia real, porque
 el número absoluto no es normativa. El azúcar no añade capacidades: la IR del `for` es
@@ -301,8 +340,9 @@ corrientes de v0.3. Ningún backend conoce V6.
   cinco columnas y en `steps`). La calificación importa: el primer gemelo de `429` se
   escribió con una forma distinta —`emit f(…)` directo en vez de `let` + `emit`— y
   daba 7 pasos contra 9. La diferencia eran los `let`, no la especialización.
-  `for c in s` volvió a caer en la misma trampa (§4.4: 24 = 24 solo con la forma
-  igual).
+  `for c in s` volvió a caer en la misma trampa: la igualdad de pasos solo vale con
+  la forma igual, y el número que §4.4 citaba estaba mal atribuido a esta matriz (hoy
+  `444` y su gemelo dan **22 = 22**, medido el 2026-11-01).
 
 ## 8. V7 — capacidades por contenido, no por etiqueta
 
@@ -382,7 +422,7 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 | P2 (`for` sobre un literal de arreglo) | **cerrado: no** | — (`SYNTAX`, §4.3) |
 | P3 (nombre de la especialización y su efecto en `program_sha256` y las trazas) | **cerrado por medición** | `program_sha256` es el SHA del archivo principal (v0.4 §6 P6) y **no se mueve**: medido en `411`, `417` y `420`, los tres iguales al `sha256sum` del `.isy`. Lo que sí cambia es la traza: `411` muestra `main`, `pad.2`, `pad.7` y nunca `pad` a secas — la especialización es visible en el nombre, no en la identidad. Los nombres viajan por la codificación inyectiva de `fn_ident` (longitud prefijada), que no colisiona con un nombre de usuario |
 | P4 (cota de especializaciones por programa) | **abierto a propósito, con la base sellada** | falta la decisión (el número y su nombre), no la medición. `tools/v05_p4_probe.py` recalcula el censo desde `Checker.specs` sobre la población del gate y mide la forma: **32 clones** en 18 de los 43 casos (26 V6 + 6 V6-bis), 4 por programa, 2 por definición **dentro de un programa** pero 7 de `doble` **en el corpus**; una ranura con K anchos da K clones, dos ranuras W², tres W³, y 20 sitios con el mismo ancho dan 1 clon. Sin techo ni error nombrado hasta 2048 clones: el crecimiento es silencioso. Recibo `evidence/v05_p4/run_20261101T154040Z.json` (`RELEASE_GATE` sobre `2938c01`), que **re-mide** el censo con `443` dentro: mismos 32 clones, mismos 18 programas con clones y las tres curvas byte a byte iguales; `443` aporta 0 clones y pasa a engrosar los 12 casos que rechaza el frontend. La corrida anterior, sobre 42, es `run_20261101T062234Z.json` (`RELEASE_GATE` sobre `52f5564`) y sigue válida para su población |
-| **[D-new]** `for` sobre `str` (N1) | **abierto** | decidir §4.4 y fijarlo con un caso + su gemelo de forma idéntica |
+| **[D-new]** `for` sobre `str` (N1) | **cerrada el 2026-11-01: adoptada, por caso y por texto** | §4.4 tiene la regla escrita (lugar de `str` ⇒ `len(s)` vueltas, variable `u8` copia, cota = longitud del valor y no la capacidad) y tres casos con su gemelo: `444_for_sobre_str` (22/22), `445_for_str_pelado_stdin` (27/27, N1 × V6 con el `str` pelado) y `446_for_copia_str` (22/22, copia sin alias); trazas `stmt` e IR podada idénticas y `features_of` sin átomo nuevo. La población del corpus pasa de 43 a 46 casos y la del gate de 213 a 216. Decisión: `docs/decisions/N1_FOR_SOBRE_STR.md` |
 | **[D-new]** diagonal `0.5` de M4 (N2) | **cerrado por caso: `443`** | `programs/conformance_v0.5/443_m4_modulo_v04/` (raíz `0.5` + módulo `0.4` ⇒ `INVALID_PROGRAM(VERSION_MISMATCH)`), con sus dos controles medidos en el README del directorio: `0.5/0.5` con los mismos archivos da `HALTED` `return 2` en 4 pasos —lo único defectuoso es la cabecera— y `0.4/0.5` da `VERSION_MISMATCH`, o sea que la regla sigue siendo simétrica. Alta el 2026-11-01; la población del corpus pasa de 42 a 43 casos |
 | **[D-new]** el `let` sin anotación (N3) | **cerrado por texto** | escrito en §4.1 como excepción acotada al `let` con anotación de CORE §4: solo el `let x` sintético del `for`, y toma el tipo del **elemento** (`checker.py:205-209`). No es inferencia general, medido: `let x = 1;` es `SYNTAX` con `0.4` y con `0.5`. Las cuatro formas están en la sonda §3 (`let_anotacion`) con sus tres sabotajes |
 | congelar | — | aprobación explícita de Danny (rito de v0.3 y v0.4), agregar `CORE_v0.5.md` a `spec/SHA256SUMS.txt`, y decidir qué `expected` del corpus se superan al congelar (precedente: `SUPERSEDED.json`) |
@@ -396,7 +436,7 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 | La versión se decide en un solo sitio | **DEMONSTRATED** — `versions.py`; 13 llamadas a `has()`, cero literales de versión como decisión (`grep` de §0) |
 | M4 generalizada: misma versión que la raíz, en las dos direcciones | **DEMONSTRATED** — por sonda en las 8 combinaciones (§0) **y** por corpus: `308_version_mismatch` (raíz `0.4`, módulo `0.3`) y `443_m4_modulo_v04` (raíz `0.5`, módulo `0.4`), alta 2026-11-01 con sus dos controles medidos |
 | El `let` sin anotación existe solo como azúcar del `for`, y toma el tipo del elemento | **DEMONSTRATED** — `checker.py:205-209` en un solo sitio; `let x = 1;` es `SYNTAX` con `0.4` y con `0.5` (cuatro formas en la sonda §3), y `402` ejerce el tipo del elemento (`dec<8,2>` sobre `[dec<8,2>; 2]`) |
-| `for` sobre un `str` es correcto y barato | **NOT_DEMONSTRATED** — funciona y su gemelo cuesta lo mismo (medido, §4.4), pero ningún caso del corpus lo fija y la propuesta no lo adoptaba |
+| `for` sobre un `str` es correcto y barato | **DEMONSTRATED** el 2026-11-01 — era `NOT_DEMONSTRATED` porque ningún caso lo fijaba; ahora son `444`–`446` con sus gemelos (22/27/22 pasos, trazas e IR iguales, ninguna capacidad nueva) y la regla escrita en §4.4 |
 | Ningún programa `0.1`–`0.4` cambia de resultado, schema ni traza | **DEMONSTRATED** — §9 (recabezados, brazo viejo FIEL en 118 módulos, gate de backends sin diferencias) |
 | Los cinco backends ejecutan el corpus v0.5 con sus capacidades declaradas | **DEMONSTRATED** para los casos que no piden `str`/`struct`/`emit_array`; COBOL responde `UNSUPPORTED` nombrando la capacidad que falta, medido en `tools/v7_capability_probe.py` |
 | P4 (límite de especializaciones) tiene número | **NOT_DEMONSTRATED** a propósito — el censo y la forma del crecimiento están medidos y sellados (`evidence/v05_p4/run_20261101T062234Z.json`); la cota es decisión de Danny |
