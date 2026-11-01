@@ -132,8 +132,13 @@ Qué encontró esta matriz al cotejar prose contra recibos:
    viejo, donde §4 es *pasos a forma constante* y no *el iterando*. Arreglado moviendo la
    cita al recibo que sí tiene esa numeración (`run_20261101T153344Z.json`). De paso la
    re-sello sirve de control de no-regresión sobre la propia sonda: comparando los dos
-   `.txt` sección por sección (mismo script, mismo día), las cinco matrices viejas salen
+   `.txt` sección por sección, las cinco matrices viejas salen
    **byte a byte iguales** sobre los cabezales `a9a17bc` → `a4ef362`, y la sexta es la nueva.
+   La comparación la hizo un script de un solo uso que no está versionado; se puede rehacer
+   porque los dos `.txt` están sellados (trocear por las cabeceras `^\d) ` y cotejar los
+   cuerpos con la numeración mapeada 1→1, 2→2, 3→4, 4→5, 5→6). Lo mismo vale para el cotejo
+   del censo de P4 entre `run_20261101T062234Z.json` y `run_20261101T154040Z.json`, que se
+   hizo campo por campo sobre los dos JSON.
    Un sello no es una foto inmóvil: re-correr la sonda y obtener lo mismo es parte del
    control.
 

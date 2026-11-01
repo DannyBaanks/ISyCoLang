@@ -14,13 +14,14 @@ Tests: `python3 -m unittest discover -s tests -v`
 
 Tiempos (12 núcleos, 2026-10-30): ~3 min (197.0 s medidos, 91 tests) con la
 caché `build/` llena. **Re-medido 2026-11-01: 166 tests en 191,3 s, 191,6 s, 200,2 s,
-251,9 s y 329,6 s** (rango 191,3–329,6 s) con la caché llena y los 212 casos dentro del
+251,9 s y 329,6 s** (ventana de esas cinco: 191,3–329,6 s) con la caché llena y los 212 casos dentro del
 gate — el 329,6 con `build/` en 3,3 G y justo después de `tools/v05_p4_probe.py`, que
 compila programas de 256 a 2048 funciones, y el 251,9 después de una corrida completa de
 `tools/c_gate.py` (cuatro combinaciones × 212 casos más el diferencial y los sabotajes);
 no se ha atribuido la causa, solo medido
-el rango. **Sexta corrida el mismo día, ya con los 213 casos y el test nuevo del gate C:
-167 tests en 199,8 s** (200,1 s de pared), dentro del rango medido. En frío
+el rango. **Sexta y séptima corrida del día, ya con los 213 casos, el test nuevo del gate
+C y el censo de P4 re-medido: 167 tests en 199,8 s y en 187,1 s** (200,1 s y 187,3 s de
+pared). 187,1 es el mínimo del día y **amplía el rango a 187,1–329,6 s**. En frío
 casi todo es compilar Zig; para no esperar:
 
 ```bash
