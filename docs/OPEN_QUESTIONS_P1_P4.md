@@ -105,12 +105,18 @@ El enunciado decía: *«se decide midiendo el primer corpus, no inventando un n�
 medición está hecha y sellada en `evidence/v05_p4/run_20261101T062234Z.json` (sha
 `26af3945…`, `RELEASE_GATE` sobre `52f5564`, `arbol_sucio_codigo=false`), recalculada
 desde el instrumento — `Checker.specs` en `isyco/checker.py` — y sobre **la población del
-gate** (`load_corpus`: los 42 casos de `programs/conformance_v0.5`, incluidos los 3 con
-módulos, que un glob de `.isy` se llevaba por delante). **Alta posterior:** `443` entró el
-2026-11-01 con `a4f608c` y la población del gate es **43**; el censo de abajo es el del
-recibo sellado sobre 42 y **no se re-midió** — `443` no tiene parámetros `str`, así que lo
-esperable es que el número de clones no se mueva, pero eso es una predicción, no una
-medición.
+gate** (`load_corpus`: los 42 casos de `programs/conformance_v0.5` que había al sellar,
+incluidos los 3 con
+módulos, que un glob de `.isy` se llevaba por delante). **Re-medido el 2026-11-01 con `443`
+dentro** — `evidence/v05_p4/run_20261101T154040Z.json` (sha `101e2cfc…`, `RELEASE_GATE`
+sobre `2938c01`, `arbol_sucio_codigo=false`), sobre los **43** casos y los 4 directorios de
+módulos: **los mismos 32 clones en los mismos 18 programas**, las tres curvas y el control
+negativo byte a byte iguales, y en `costo` los mismos `fuente_bytes`, `ir_bytes`,
+`ir_funciones` y `pasos` en los siete tamaños (solo difieren `ref_ms` y `c_ms`, que son de
+una corrida suelta). La diferencia del censo es un renglón: `443` aparece con **0 clones** y
+su `VERSION_MISMATCH`, y los casos que rechaza el frontend pasan de 11 a **12**. La
+predicción que estaba escrita aquí («lo esperable es que el número no se mueva») quedó
+confirmada por medición, no por lectura del caso.
 
 | magnitud | medido |
 |---|---|
@@ -124,7 +130,7 @@ medición.
 | dos ranuras, W anchos cada una | **W²** clones (W = 2, 3, 4, 6, 8) |
 | tres ranuras | **W³** clones (W = 2, 3) |
 | 20 sitios de llamada con el MISMO ancho | **1** clon — el registro cuenta resoluciones, no llamadas |
-| techo encontrado | **ninguno hasta 2048 clones**: 2.139.231 B de fuente, 3.228.420 B de IR (2049 funciones), `ref_ms` 508,7 / `c_ms` 1037,0, `HALTED` y EQUIV contra la referencia |
+| techo encontrado | **ninguno hasta 2048 clones**: 2.139.231 B de fuente, 3.228.420 B de IR (2049 funciones), `ref_ms` 508,7 / `c_ms` 1037,0 en `run_20261101T062234Z.json` y 458,9 / 986,1 en `run_20261101T154040Z.json` — los bytes y los pasos son iguales en las dos, los milisegundos no; `HALTED` y EQUIV contra la referencia en ambas |
 
 **Corregida 2026-11-01, segunda pasada.** La fila del techo traía «474 ms de referencia,
 3,7 s de `c_ms`», que no son los valores del recibo (`508,7` y `1037,0`): los escribí de

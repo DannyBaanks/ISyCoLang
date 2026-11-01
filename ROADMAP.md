@@ -201,6 +201,14 @@ que falsifica V7.
 > son los 42 casos que había al sellar; `443` entró el 2026-11-01 con `a4f608c` y el gate quedó
 > en 43. El caso nuevo no tiene parámetros `str`, así que lo esperable es que los 32 clones no
 > se muevan, pero **no se re-midió**: es predicción, no medición.
+>
+> **Re-medido el 2026-11-01** (`evidence/v05_p4/run_20261101T154040Z.json`, `RELEASE_GATE`
+> sobre `2938c01`, 3,2 s de corrida): censo sobre los **43** casos y sus 4 directorios de
+> módulos — los mismos **32 clones** en los mismos **18 programas**, mismos máximos (4 por
+> programa, 2 por definición dentro de un programa, 7 de `doble` en el corpus), curvas
+> K/W²/W³ y control negativo byte a byte iguales. `443` entra con 0 clones y su
+> `VERSION_MISMATCH`: los casos que rechaza el frontend pasan de 11 a 12. La predicción de
+> arriba se confirmó midiendo.
 
 > **V7 implementado 2026-10-31.** La capacidad la exige el **programa**, no su cabecera:
 > `features_of` camina los tipos bajados y las sentencias, `ir0.2` solo aparece si hay `str` o

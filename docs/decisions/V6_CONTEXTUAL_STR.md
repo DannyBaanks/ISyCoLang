@@ -129,7 +129,10 @@ recibo no la contiene: la sonda V6 guarda el resultado de cada backend por caso,
 registro de clones del checker. El censo está ahora recalculado desde el instrumento y
 sellado en `evidence/v05_p4/run_20261101T062234Z.json` (sha `26af3945…`, `RELEASE_GATE`
 sobre `52f5564`), sobre la población del gate —los 42 casos de
-`programs/conformance_v0.5`, incluidos los 3 con módulos—:
+`programs/conformance_v0.5`, incluidos los 3 con módulos—. El censo se re-midió el mismo
+día sobre los **43** casos con `443` dentro (`run_20261101T154040Z.json`, sha `101e2cfc…`,
+`RELEASE_GATE` sobre `2938c01`): **los mismos 32 clones en los mismos 18 programas** y las
+mismas curvas; `443` aporta 0 clones:
 
 - **32 clones** en 18 programas (26 sin retorno pelado, 6 con él); máximo **4 por
   programa** (`413`).

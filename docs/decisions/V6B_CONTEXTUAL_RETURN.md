@@ -86,6 +86,8 @@ clones del checker. `tools/v05_p4_probe.py` lo recalcula desde el instrumento
 
 - **32 clones** en 18 de los 42 casos de `programs/conformance_v0.5`: 26 sin retorno pelado
   (V6) y 6 con él (V6-bis). Los 6 de V6-bis son lo único de la cifra vieja que se sostiene.
+  Re-medido el 2026-11-01 sobre los **43** casos (`run_20261101T154040Z.json`, sha
+  `101e2cfc…`, `RELEASE_GATE` sobre `2938c01`): siguen siendo 32 clones en 18 programas.
 - Máximo **4 copias por programa** —`413_encadenar_contextuales`—, como se afirmaba.
 - Máximo **2 copias por definición dentro de un programa**, pero **7 de `doble` en todo el
   corpus** (`largo` 5, `pad` 4, `copia`/`cuenta`/`envia`/`es_vacia`/`junta`/`primero`/

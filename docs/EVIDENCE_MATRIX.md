@@ -55,7 +55,7 @@ fija; lo que cambió es el más reciente.
 | V6 y V6-bis (`str` contextual) | `evidence/v05_v6/run_20261031T184709Z.json` | `f856d55` | `RELEASE_GATE` | 28 casos `411`–`438` diferenciales: 123 EQUIV, 17 `UNSUPPORTED` (COBOL por etiqueta), cero DIVERGENT |
 | V7 (capacidades por contenido) | `evidence/v05_v7/run_20261031T200146Z.json` | `a66689c` | `RELEASE_GATE` | 118 módulos del corpus congelado en dos brazos, brazo viejo FIEL, conteos 113→125 en COBOL, canario `439` |
 | Borrador normativo v0.5 | `evidence/v05_spec/run_20261101T153344Z.json` | `a4ef362` | `RELEASE_GATE` | las 6 matrices de aristas que el corpus no fija — las 5 de `run_20261101T043007Z.json` (`a9a17bc`, siguen válidas para su corrida) más la nueva del `let` sin anotación (§3, N3) |
-| Censo y forma de P4 | `evidence/v05_p4/run_20261101T062234Z.json` | `52f5564` | `RELEASE_GATE` | 32 clones en 18/42 casos; curvas K, W², W³; control de 20 sitios → 1 clon; sin techo hasta 2048 |
+| Censo y forma de P4 | `evidence/v05_p4/run_20261101T154040Z.json` | `2938c01` | `RELEASE_GATE` | 32 clones en 18/43 casos; curvas K, W², W³; control de 20 sitios → 1 clon; sin techo hasta 2048. Primera versión, sobre 42: `run_20261101T062234Z.json` (`52f5564`) |
 
 ## Preguntas y puntos nuevos
 
@@ -64,7 +64,7 @@ fija; lo que cambió es el más reciente.
 | P1 (`at` del azúcar) | cerrada | `evidence/v05_revalida/run_20261101T001608Z.json` + test `ForAzucar` |
 | P2 (`for` sobre literal de arreglo) | cerrada: no | `evidence/v05_spec/run_20261101T153344Z.json` §4 |
 | P3 (nombres e identidad) | cerrada | el mismo recibo §6 (`411`/`417`/`420`) + `tests/test_specialize.py` |
-| P4 (cota de especializaciones) | **abierta — decisión, no medición** | base sellada en `evidence/v05_p4/run_20261101T062234Z.json`; falta elegir granularidad, número y el error nombrado |
+| P4 (cota de especializaciones) | **abierta — decisión, no medición** | base sellada en `evidence/v05_p4/run_20261101T154040Z.json` (43 casos); falta elegir granularidad, número y el error nombrado |
 | N1 (`for` sobre `str`) | abierta — decisión | medido en `evidence/v05_spec/…` §4; ningún caso del corpus lo fija |
 | N2 (diagonal `0.5` de M4) | abierta — decisión | medido en `evidence/v05_spec/…` §1 (8 combinaciones); el corpus no cubre ningún cruce con raíz `0.5` |
 | N3 (`let` sin anotación) | cerrada: por texto y por sonda | la regla estaba en `checker.py:205-209` y en el docstring; ya está en `spec/CORE_v0.5.md` §4.1 y medida en `evidence/v05_spec/run_20261101T153344Z.json` §3 (cuatro formas, tres sabotajes) |
@@ -98,12 +98,14 @@ Qué encontró esta matriz al cotejar prose contra recibos:
    `V6B_CONTEXTUAL_RETURN.md` atribuían «22 clones» y «28 clones, máximo 2 por definición»
    a `evidence/v05_v6/run_*`, y esos recibos solo guardan el resultado de cada backend
    por caso. Medido desde el instrumento (`Checker.specs`): **32** clones en 18 de los 42
-   casos, 26 V6 + 6 V6-bis, máximo 4 por programa, 2 por definición **dentro de un
+   casos (hoy 43, y la re-medición sobre los 43 da los mismos 32 clones en los mismos 18:
+   `run_20261101T154040Z.json`), 26 V6 + 6 V6-bis, máximo 4 por programa, 2 por definición **dentro de un
    programa** pero **7 de `doble` en todo el corpus**. Las dos secciones y `ROADMAP.md`
    llevan la corrección fechada; el dato nuevo está sellado arriba.
 2. **Contar la población equivocada.** El primer censo usaba `glob("4*.isy")` y perdía los
    tres casos con módulos (`408`, `421`, `440`) — `421` es justo el de `util.marca.3` y
-   `util.marca.4`. La sonda ahora itera `load_corpus`, la misma población del gate. Es el
+   `util.marca.4`; hoy son cuatro, con `443`. La sonda ahora itera `load_corpus`, la misma
+   población del gate. Es el
    mismo clase de bug de deriva de población que V7 ya había cazado con el «corpus
    congelado» de 118.
 3. **F4 con 170 mientras F5 tiene 212.** No era un error: era un gate que no se re-corré.
