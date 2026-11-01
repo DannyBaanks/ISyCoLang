@@ -4,7 +4,9 @@
 **abierta a propósito**: el enunciado pedía cerrar midiendo, no inventando un número, y la
 medición ya está hecha y sellada — lo que falta es la decisión, ahora con dos lecturas
 posibles que la medición distingue. Aparecieron además tres puntos que la propuesta no
-preveía (N1–N3) y que son decisión de Danny antes de congelar `spec/CORE_v0.5.md`.
+preveía (N1–N3). **N2 se cerró el 2026-11-01 con el caso `443`** y **N3 con el texto de
+§4.1 más su matriz en la sonda**; quedan como decisión de Danny antes de congelar
+`spec/CORE_v0.5.md` **N1 y P4**.
 
 Las preguntas vienen de `spec/CORE_v0.5_propuesta.md` §2, donde se marcaron **[P]**.
 Las pruebas se pueden re-correr: `tools/v05_revalida_probe.py`, `tools/v05_v6_probe.py`,
@@ -17,6 +19,9 @@ dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no
 | P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §4 |
 | P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
 | P4 | ¿cuántas especializaciones puede crear un programa? | **abierto**, con censo y forma sellados | `evidence/v05_p4/run_20261101T062234Z.json` |
+| N1 | ¿`for c in s` con `s: str<N>` es normativo? | **abierto — decisión**; medido: funciona y su gemelo `while` cuesta lo mismo | `tools/v05_spec_probe.py` §4 |
+| N2 | ¿algún caso fija el cruce con raíz `0.5` de M4? | **cerrada el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` + `tools/v05_spec_probe.py` §1 |
+| N3 | ¿el `let` sin anotación es inferencia? | **cerrada el 2026-11-01**: no, es solo el sintético del `for` | `spec/CORE_v0.5.md` §4.1 + `evidence/v05_spec/run_20261101T153344Z.json` §3 |
 
 ## P1 — las posiciones del azúcar `[CERRADA]`
 
@@ -165,7 +170,7 @@ texto necesita (`cuenta_letra`, `mayus`). Opción recomendada: adoptarlo como no
 con su caso y su gemelo. Lo contrario: rechazarlo en el checker para que el azúcar sea
 solo de arreglos.
 
-## N2 — M4 generalizada, sin caso de corpus `[NUEVA, medición sin corpus]`
+## N2 — M4 generalizada, sin caso de corpus `[CERRADA el 2026-11-01 — por caso]`
 
 La regla es ahora «todo módulo tiene la **misma versión** que la raíz»
 (`modules.py:48`). Medido en las ocho combinaciones raíz ∈ {0.4, 0.5} × módulo ∈
@@ -174,7 +179,22 @@ seis restantes son `VERSION_MISMATCH` (`tools/v05_spec_probe.py` §1). El corpus
 diagonal `0.5/0.5` (`408`) pero **no** cubre ningún cruce con raíz `0.5`, que es el
 renglón nuevo de la regla. Falta un caso (`4xx`) que lo fije antes de congelar.
 
-## N3 — el `let` sin anotación `[NUEVA, regla que hace falta escribir]`
+**Cerrada el 2026-11-01:** entra `443_m4_modulo_v04` (raíz `0.5`, módulo `0.4` →
+`VERSION_MISMATCH`); la población sube de 42 a **43** casos y del gate de 212 a **213**.
+Los cuatro gates se re-corrieron sobre `a4f608c` y quedaron sellados:
+`evidence/conformance/run_2026-11-01T074055Z.json` (`213/213`),
+`evidence/ir/gate_2026-11-01T074055Z.json` (`426/426`),
+`evidence/c/gate_2026-11-01T074655Z.json` (`PASS`) y
+`evidence/backends/gate_2026-11-01T082046Z.json` (`PASS`). Qué cruce fija cada caso, leído
+en su `expected`: `0.4/0.4` en `301` y compañía (`HALTED`), `0.4/0.3` en `308`
+(`VERSION_MISMATCH`), `0.5/0.5` en `408` y ahora `0.5/0.4` en `443`. Con raíz `0.3` no hay
+cruce que fijar: ahí `import` ni siquiera existe y `319` da `SYNTAX`, así que M4 nunca se
+evalúa. **Siguen sin caso propio** `0.5/0.2`, `0.5/0.3` y `0.4/0.5`: los cubre la sonda (§1,
+las ocho combinaciones) y `0.4/0.5` además está corrido como control al alta de `443`, con
+su tabla en `programs/conformance_v0.5/README.md`. Añadir los tres sería repetir el mismo
+renglón de `modules.py:48`.
+
+## N3 — el `let` sin anotación `[CERRADA el 2026-11-01 — por texto y por sonda]`
 
 `let x = a[i];` no es legal en el lenguaje (CORE §4 exige anotación); la única
 excepción es el `let` que inyecta el azúcar del `for` (`checker.py:205-209`), que toma
@@ -182,3 +202,14 @@ el tipo del elemento. La implementación ya lo hace así y `402`–`405` lo ejer
 **el texto no lo dice**: hay que escribirlo en la spec para que la excepción no se lea
 como un `let` inferencial general. Lo contrario sería una regla nueva (inferencia de
 tipos) que v0.5 no pretende.
+
+**Cerrada el 2026-11-01:** el texto está en `spec/CORE_v0.5.md` §4.1 — y corrige lo que la
+versión anterior del borrador afirmaba, que el `let` sintético tomaba el tipo del **índice**
+(toma el del **elemento**, `checker.py:205-209`). Medido en la sonda nueva, sección 3
+(`let_anotacion`): cuatro formas, `let x = 1;` escrito a mano en `0.5` y en `0.4` (los dos
+`SYNTAX`), `let x: i32 = 1;` (`HALTED`, `1`) y el `for x` sobre `[dec<8,2>; 2]` (`HALTED`,
+`3.85`, o sea el tipo del elemento). Sello
+`evidence/v05_spec/run_20261101T153344Z.json` (sha `067fbf1b…`, `RELEASE_GATE` sobre
+`a4ef362`). La matriz trae tres controles de sabotaje: si un `let x = 1;` escrito a mano
+llegara a correr, si las dos formas del `let` dieran el mismo `status`, o si una fila se
+desvía de su predicho, la sonda se auto-falsifica y no sella.

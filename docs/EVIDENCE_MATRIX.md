@@ -54,7 +54,7 @@ fija; lo que cambió es el más reciente.
 | V3, V4, V5 (léxico, parámetro reasignable, forma del `elem_type`) | `evidence/v05_spec/run_20261101T043007Z.json` | `a9a17bc` | `RELEASE_GATE` | 4 cabeceras del léxico; 11 formas del iterando; 4 programas a forma constante (24 pasos) con su control de forma (20) |
 | V6 y V6-bis (`str` contextual) | `evidence/v05_v6/run_20261031T184709Z.json` | `f856d55` | `RELEASE_GATE` | 28 casos `411`–`438` diferenciales: 123 EQUIV, 17 `UNSUPPORTED` (COBOL por etiqueta), cero DIVERGENT |
 | V7 (capacidades por contenido) | `evidence/v05_v7/run_20261031T200146Z.json` | `a66689c` | `RELEASE_GATE` | 118 módulos del corpus congelado en dos brazos, brazo viejo FIEL, conteos 113→125 en COBOL, canario `439` |
-| Borrador normativo v0.5 | `evidence/v05_spec/run_20261101T043007Z.json` | `a9a17bc` | `RELEASE_GATE` | las 5 matrices de aristas que el corpus no fija |
+| Borrador normativo v0.5 | `evidence/v05_spec/run_20261101T153344Z.json` | `a4ef362` | `RELEASE_GATE` | las 6 matrices de aristas que el corpus no fija — las 5 de `run_20261101T043007Z.json` (`a9a17bc`, siguen válidas para su corrida) más la nueva del `let` sin anotación (§3, N3) |
 | Censo y forma de P4 | `evidence/v05_p4/run_20261101T062234Z.json` | `52f5564` | `RELEASE_GATE` | 32 clones en 18/42 casos; curvas K, W², W³; control de 20 sitios → 1 clon; sin techo hasta 2048 |
 
 ## Preguntas y puntos nuevos
@@ -62,12 +62,12 @@ fija; lo que cambió es el más reciente.
 | id | estado | recibo o falta |
 |---|---|---|
 | P1 (`at` del azúcar) | cerrada | `evidence/v05_revalida/run_20261101T001608Z.json` + test `ForAzucar` |
-| P2 (`for` sobre literal de arreglo) | cerrada: no | `evidence/v05_spec/run_20261101T043007Z.json` §4 |
+| P2 (`for` sobre literal de arreglo) | cerrada: no | `evidence/v05_spec/run_20261101T153344Z.json` §4 |
 | P3 (nombres e identidad) | cerrada | el mismo recibo §6 (`411`/`417`/`420`) + `tests/test_specialize.py` |
 | P4 (cota de especializaciones) | **abierta — decisión, no medición** | base sellada en `evidence/v05_p4/run_20261101T062234Z.json`; falta elegir granularidad, número y el error nombrado |
 | N1 (`for` sobre `str`) | abierta — decisión | medido en `evidence/v05_spec/…` §4; ningún caso del corpus lo fija |
 | N2 (diagonal `0.5` de M4) | abierta — decisión | medido en `evidence/v05_spec/…` §1 (8 combinaciones); el corpus no cubre ningún cruce con raíz `0.5` |
-| N3 (`let` sin anotación) | abierta — texto | la regla vive en `checker.py:205-209` y en el docstring; hay que escribirla en la spec |
+| N3 (`let` sin anotación) | cerrada: por texto y por sonda | la regla estaba en `checker.py:205-209` y en el docstring; ya está en `spec/CORE_v0.5.md` §4.1 y medida en `evidence/v05_spec/run_20261101T153344Z.json` §3 (cuatro formas, tres sabotajes) |
 
 ## Evidencia de contexto (no es gate)
 
@@ -123,6 +123,17 @@ Qué encontró esta matriz al cotejar prose contra recibos:
    tras la corrida sin re-leer el JSON. Corregido allí mismo con nota fechada. Es el
    hallazgo 1 reproduciéndose a sí mismo, y por eso el cotejo es un paso de la matriz, no
    una confianza: la fila nueva cita bytes y milisegundos exactos del `costo`.
+
+5. **Renumerar la sonda rompe las citas a los recibos sellados.** Al meter la matriz del
+   `let` como sección 3, las secciones viejas 3/4/5 pasaron a 4/5/6, y varias filas del docs
+   citaban «`run_20261101T043007Z.json` §4» con la numeración nueva: apuntaban al recibo
+   viejo, donde §4 es *pasos a forma constante* y no *el iterando*. Arreglado moviendo la
+   cita al recibo que sí tiene esa numeración (`run_20261101T153344Z.json`). De paso la
+   re-sello sirve de control de no-regresión sobre la propia sonda: comparando los dos
+   `.txt` sección por sección (mismo script, mismo día), las cinco matrices viejas salen
+   **byte a byte iguales** sobre los cabezales `a9a17bc` → `a4ef362`, y la sexta es la nueva.
+   Un sello no es una foto inmóvil: re-correr la sonda y obtener lo mismo es parte del
+   control.
 
 Nada de lo anterior cambia un `expected`, un hash congelado ni un resultado de gate: son
 correcciones de *atribución* (una cifra que no tenía recibo) y una re-medición.
