@@ -1,0 +1,3 @@
+### run_conformance ###
+{"out": "evidence/conformance/run_2026-11-01T210445Z.json", "verdict": "PASS", "sha256": "62da1207c9d6330d8258bce13a9295be7c2e0e17312693f5589571c00951ef02", "total": 216, "passed": 216}
+EXIT_run_conformance=0
