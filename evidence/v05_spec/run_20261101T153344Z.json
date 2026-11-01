@@ -1,0 +1,403 @@
+{
+  "iterando": [
+    {
+      "code": null,
+      "emits": [
+        "1",
+        "2",
+        "3"
+      ],
+      "forma": "for x in xs",
+      "predicho": [
+        "1",
+        "2",
+        "3"
+      ],
+      "status": "HALTED"
+    },
+    {
+      "code": null,
+      "emits": [
+        "1",
+        "2",
+        "3"
+      ],
+      "forma": "for x in p.xs",
+      "predicho": [
+        "1",
+        "2",
+        "3"
+      ],
+      "status": "HALTED"
+    },
+    {
+      "code": null,
+      "emits": [
+        "4",
+        "5"
+      ],
+      "forma": "for x in p.q.ys",
+      "predicho": [
+        "4",
+        "5"
+      ],
+      "status": "HALTED"
+    },
+    {
+      "code": "SYNTAX",
+      "emits": [],
+      "forma": "for x in xs[0]",
+      "predicho": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": "SYNTAX",
+      "emits": [],
+      "forma": "for x in id(xs)",
+      "predicho": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": "SYNTAX",
+      "emits": [],
+      "forma": "for x in (xs)",
+      "predicho": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": "SYNTAX",
+      "emits": [],
+      "forma": "for x in [1,2,3]  [P2]",
+      "predicho": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": "DUPLICATE_NAME",
+      "emits": [],
+      "forma": "for x con x visible",
+      "predicho": "DUP",
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": null,
+      "emits": [
+        "2",
+        "3",
+        "3",
+        "4"
+      ],
+      "forma": "for anidado",
+      "predicho": [
+        "2",
+        "3",
+        "3",
+        "4"
+      ],
+      "status": "HALTED"
+    },
+    {
+      "code": null,
+      "emits": [],
+      "forma": "continue en for (el incremento avanza)",
+      "predicho": [],
+      "status": "HALTED"
+    },
+    {
+      "code": null,
+      "emits": [
+        "8",
+        "9"
+      ],
+      "forma": "foridx elegido fuera de los nombres del módulo",
+      "predicho": [
+        "8",
+        "9"
+      ],
+      "status": "HALTED"
+    }
+  ],
+  "let_anotacion": [
+    {
+      "cabecera": "0.5",
+      "code": "SYNTAX",
+      "forma": "let x = 1; (escrito a mano)",
+      "observado": [
+        "INVALID_PROGRAM",
+        "SYNTAX",
+        null
+      ],
+      "predicho": [
+        "INVALID_PROGRAM",
+        "SYNTAX",
+        null
+      ],
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "cabecera": "0.4",
+      "code": "SYNTAX",
+      "forma": "let x = 1; (escrito a mano)",
+      "observado": [
+        "INVALID_PROGRAM",
+        "SYNTAX",
+        null
+      ],
+      "predicho": [
+        "INVALID_PROGRAM",
+        "SYNTAX",
+        null
+      ],
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "cabecera": "0.5",
+      "code": null,
+      "forma": "let x: i32 = 1; (con anotación)",
+      "observado": [
+        "HALTED",
+        null,
+        "1"
+      ],
+      "predicho": [
+        "HALTED",
+        null,
+        "1"
+      ],
+      "return": "1",
+      "status": "HALTED"
+    },
+    {
+      "cabecera": "0.5",
+      "code": null,
+      "forma": "for x en [dec<8,2>; 2] (el sintético, tipo del elemento)",
+      "observado": [
+        "HALTED",
+        null,
+        "3.85"
+      ],
+      "predicho": [
+        "HALTED",
+        null,
+        "3.85"
+      ],
+      "return": "3.85",
+      "status": "HALTED"
+    }
+  ],
+  "lexico": [
+    {
+      "cabecera": "0.4",
+      "code": null,
+      "identificador": "for",
+      "predicho": 5,
+      "return": "5",
+      "status": "HALTED"
+    },
+    {
+      "cabecera": "0.5",
+      "code": "SYNTAX",
+      "identificador": "for",
+      "predicho": null,
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "cabecera": "0.4",
+      "code": null,
+      "identificador": "in",
+      "predicho": 5,
+      "return": "5",
+      "status": "HALTED"
+    },
+    {
+      "cabecera": "0.5",
+      "code": null,
+      "identificador": "in",
+      "predicho": 5,
+      "return": "5",
+      "status": "HALTED"
+    }
+  ],
+  "m4": [
+    {
+      "code": "VERSION_MISMATCH",
+      "diagonal": false,
+      "modulo": "0.2",
+      "raiz": "0.4",
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": "VERSION_MISMATCH",
+      "diagonal": false,
+      "modulo": "0.3",
+      "raiz": "0.4",
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": null,
+      "diagonal": true,
+      "modulo": "0.4",
+      "raiz": "0.4",
+      "return": "7",
+      "status": "HALTED"
+    },
+    {
+      "code": "VERSION_MISMATCH",
+      "diagonal": false,
+      "modulo": "0.5",
+      "raiz": "0.4",
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": "VERSION_MISMATCH",
+      "diagonal": false,
+      "modulo": "0.2",
+      "raiz": "0.5",
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": "VERSION_MISMATCH",
+      "diagonal": false,
+      "modulo": "0.3",
+      "raiz": "0.5",
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": "VERSION_MISMATCH",
+      "diagonal": false,
+      "modulo": "0.4",
+      "raiz": "0.5",
+      "return": null,
+      "status": "INVALID_PROGRAM"
+    },
+    {
+      "code": null,
+      "diagonal": true,
+      "modulo": "0.5",
+      "raiz": "0.5",
+      "return": "7",
+      "status": "HALTED"
+    }
+  ],
+  "milestone": "Borrador CORE v0.5 — aristas normativas sin caso de corpus",
+  "p3": {
+    "fn_en_traza_411": [
+      "main",
+      "pad.2",
+      "pad.7"
+    ],
+    "programas": [
+      {
+        "caso": "411_pad_dos_anchos",
+        "igual": true,
+        "sha_archivo": "f7a57b7420337e42db87ad7561b2dfe17b60285b7c43394e555160fb1b787625",
+        "sha_resultado": "f7a57b7420337e42db87ad7561b2dfe17b60285b7c43394e555160fb1b787625"
+      },
+      {
+        "caso": "417_junta_dos_contextuales",
+        "igual": true,
+        "sha_archivo": "981c7953d1a2cab7f06f3a67c3f5a27a23215de372b3debd87c43bbdb403a7b6",
+        "sha_resultado": "981c7953d1a2cab7f06f3a67c3f5a27a23215de372b3debd87c43bbdb403a7b6"
+      },
+      {
+        "caso": "420_recursion_contextual",
+        "igual": true,
+        "sha_archivo": "b1684ab5973e8365c6ea41cbdf06f67a0de959ccaca832320d6890207db055fc",
+        "sha_resultado": "b1684ab5973e8365c6ea41cbdf06f67a0de959ccaca832320d6890207db055fc"
+      }
+    ],
+    "resumen_411": {
+      "emits": [
+        "hi---",
+        "unohola!!"
+      ],
+      "status": "HALTED",
+      "steps": 30
+    }
+  },
+  "pasos_forma_constante": [
+    {
+      "code": null,
+      "emits": [
+        "104",
+        "111",
+        "108",
+        "97"
+      ],
+      "programa": "A for / str<4>",
+      "return": "4",
+      "status": "HALTED",
+      "steps": 24
+    },
+    {
+      "code": null,
+      "emits": [
+        "104",
+        "111",
+        "108",
+        "97"
+      ],
+      "programa": "B while / str<4>",
+      "return": "4",
+      "status": "HALTED",
+      "steps": 24
+    },
+    {
+      "code": null,
+      "emits": [
+        "104",
+        "111",
+        "108",
+        "97"
+      ],
+      "programa": "C while / str pelado (V6)",
+      "return": "4",
+      "status": "HALTED",
+      "steps": 24
+    },
+    {
+      "code": null,
+      "emits": [
+        "104",
+        "111",
+        "108",
+        "97"
+      ],
+      "programa": "D for / str pelado (V2+V6)",
+      "return": "4",
+      "status": "HALTED",
+      "steps": 24
+    },
+    {
+      "code": null,
+      "emits": [
+        "104",
+        "111",
+        "108",
+        "97"
+      ],
+      "programa": "Z while / str<4> SIN el let (forma distinta)",
+      "return": "4",
+      "status": "HALTED",
+      "steps": 20
+    }
+  ],
+  "receipt": {
+    "arbol_sucio_codigo": false,
+    "comando": "--write",
+    "corpus": "programs/conformance_v0.5",
+    "fuente_normativa": "spec/CORE_v0.5.md (BORRADOR) §0, §2, §4.1, §4.3, §4.4, §7, §11",
+    "git_head": "a4ef36238942fd9a6cf211a75dfe9c5db52fb6cd",
+    "python": "3.12.3",
+    "utc": "2026-11-01T15:33:44Z",
+    "veredicto_arbol": "RELEASE_GATE"
+  },
+  "schema": "isyco.evidence/0.1"
+}
