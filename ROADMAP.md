@@ -136,8 +136,9 @@ Nace del dogfood (`docs/DOGFOOD_2026-10-30.md`): los cinco programas reales midi
 qué no se puede escribir. `spec/CORE_v0.5_propuesta.md` convierte eso en siete
 decisiones numeradas **V1–V7** con su corpus `programs/conformance_v0.5/` (401–410)
 y los `expected` escritos a mano **antes** de implementar. A 2026-10-30 nada de v0.5 estaba
-aprobado ni implementado; los bloques fechados debajo lo superan: **V6, V6-bis y V7 están
-implementados y sellados, V1–V5 no.** El directorio sigue fuera de `CORPORA`, así que los 170
+aprobado ni implementado; los bloques fechados debajo lo superan: **V1, V2, V6, V6-bis y V7 están
+implementados y sellados; V3–V5 no tienen texto normativo nuevo todavía** (V3 ya era cierto en
+el código y con V2 quedó medido). El directorio sigue fuera de `CORPORA`, así que los 170
 casos de F2.3 no se mueven. Dos medidas que sí entran hoy: el azúcar del `for`
 con el incremento al final del cuerpo es **incorrecto** (`continue` no avanza →
 `LIMIT_REACHED`, control negativo en el corpus) y añadir la cabecera `0.5` toca
@@ -211,6 +212,27 @@ que falsifica V7.
 > casos vuelven a rechazarse, y si no lo hicieran el EQUIV sería vacuo
 > (`tools/v05_revalida_probe.py --casos 401,406`). Decisión:
 > `docs/decisions/V1_LEN_ARREGLO.md`. Quedan V2 (`402`–`405`), V3–V5 y P1–P4.
+
+> **V2 implementado 2026-10-31 (revalidación de V1–V5).** `for x in a { … }` se expande en el
+> **parser** (`isyco/parser.py:317` `for_stmt`) exactamente en el `while` gemelo con la cota
+> `len(a)` de V1: `let i#k: i64 = -1; while i#k + 1 < len(a) { i#k = i#k + 1; let x = a[i#k]; … }`.
+> `for` se reserva solo desde `0.5` (`isyco/lexer.py:19`) y `in` **no** se reserva (V3, que así
+> queda medido). Los cuatro casos `402`–`405` pasan de `SYNTAX` a coincidir en `expected` ↔
+> referencia ↔ backends (**29 EQUIV + 1 UNSUPPORTED**, el único atribuido a la regla de
+> contenido de V7 sobre un programa con `struct`/`str`, no al `for`). Cumple el ítem 2 del gate
+> al paso: **23 / 38 / 20** pasos idénticos a sus gemelos, y la **IR también es idéntica** a la
+> del gemelo tras podar posiciones y el nombre del local sintético (`402 671bc2b4781e4a39`,
+> `403 8ca576e4d581ebdb`, `404 ef194bcb295b580b`, `405 f70c73fcc5544b3a`) — control que cazó un
+> `{"k": "neg"}` de más que los pasos no veían. El iterando es un **lugar**, no una expresión:
+> `for x in [1, 2, 3]` es `SYNTAX` (P2 respondido por medición, más estricto que la
+> recomendación del borrador). No regresión: recabezados a 0.1–0.4 siguen `SYNTAX`, y con `0.4`
+> `let for: i32 = 5;` compila. La sonda se apaga de verdad parchando `has` en **los tres**
+> módulos (`lexer`, `parser`, `checker`) — parchar solo el checker habría mentido — y el
+> sabotaje del incremento al final produce 12 `CONTROL FALSO`, exit 1 y cero evidencia sellada.
+> **Los 42 casos del corpus coinciden con su `expected` a mano (42/42).** Decisión:
+> `docs/decisions/V2_FOR_AZUCAR.md` (`evidence/v05_revalida/run_20261031T235253Z`,
+> `EVIDENCE_ONLY` por árbol sucio). Quedan los textos normativos V3–V5, meter el corpus en
+> `CORPORA`, y P1–P4.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 

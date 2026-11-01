@@ -202,6 +202,11 @@ class Checker:
 
     def stmt(self, s) -> None:
         if isinstance(s, A.Let):
+            if s.type is None:
+                # CORE v0.5 V2: el `let x` sintético del `for` no trae anotación — su tipo es
+                # el del elemento. Desde aquí es un `let` igual que el escrito a mano.
+                self.typeof(s.expr, None)
+                s.type = s.expr.ty
             if self.v03:
                 s.type = self.resolve(s.type)
                 self.size_ok(s.type, s.at)

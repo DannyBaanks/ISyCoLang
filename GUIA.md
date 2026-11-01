@@ -30,14 +30,15 @@ fn main(precio: dec<12,2>, piezas: i32) -> dec<12,2> !emit {
 }
 ```
 
-- La primera línea elige las reglas: `isyco 0.4` (la más nueva), `0.3`, `0.2` o `0.1`.
+- La primera línea elige las reglas: `isyco 0.5` (la más nueva), `0.4`, `0.3`, `0.2` o `0.1`.
 - Tipos: `bool`, enteros `i8`…`i64` / `u8`…`u64` (desborde = error), o
   `int<N,signed|unsigned,trap|wrap|sat>` para elegir qué pasa al desbordar;
   decimales `dec<p,s>` (redondeo `half_even` por defecto) o
   `dec<p,s,half_up|down|exact>`; arreglos `[T; N]` (se copian al pasarlos).
 - Una función que usa `emit` lo declara con `!emit`.
 - Strings y structs existen desde `isyco 0.3` (§2b) y los módulos desde
-  `isyco 0.4` (§2c). No hay lectura de archivos (todavía).
+  `isyco 0.4` (§2c); el azúcar `for` y `len` de un arreglo existen desde
+  `isyco 0.5` (§2d). No hay lectura de archivos (todavía).
 
 ## 2. Correrlo
 
@@ -118,6 +119,32 @@ python3 -m isyco run proyecto/main.isy          # return "42"; el resultado list
 - Un error dentro de un módulo dice el archivo: `at: "util.isy:2:38"`.
 - Los seis ejecutores (`ast`, `ir`, `c`, `rust`, `zig`, `pydecimal`) corren programas con módulos.
 
+## 2d. Recorrer un arreglo (`isyco 0.5`)
+
+```text
+isyco 0.5
+fn total(item: [dec<8,2>; 3]) -> dec<8,2> {
+    let s: dec<8,2> = 0.00;
+    for precio in item {
+        s = s + precio;
+    }
+    return s;              // len(item) vale 3: la capacidad la sabe el tipo
+}
+```
+
+- `len(a)` con `a: [T; N]` devuelve `N` en `i64`. Lo resuelve el compilador: no es una
+  operación nueva, no gasta ni un paso más que escribir `3` a mano.
+- `for x in a { … }` es azúcar del `while` gemelo (`let i: i64 = -1;` …
+  `while i + 1 < len(a) { i = i + 1; let x = a[i]; … }`). Los `steps`, los límites y las
+  trazas son exactamente los del `while` escrito a mano.
+- Se recorre un **lugar** (`xs` o `p.xs`), no una expresión: `for x in [1, 2, 3]` y
+  `for x in f()` son `SYNTAX`.
+- `x` es una **copia** del elemento y muere al salir del bucle; reasignarla no toca el
+  arreglo, y usarla después da `UNKNOWN_NAME`. `break` y `continue` valen lo mismo que
+  en el `while`.
+- `for` es palabra reservada **solo** desde `0.5`; en `0.4` y anteriores sigue siendo un
+  nombre normal, y `in` nunca se reservó (puedes tener una variable `in`).
+
 ## 3. Elegir quién lo ejecuta (`--via`)
 
 | `--via` | qué es |
@@ -163,7 +190,7 @@ Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 
 ```bash
 python3 tools/warm_build_cache.py              # opcional: precompila en paralelo (la primera vez tarda)
-python3 -m unittest discover -s tests          # suite completa: 148 tests, 183,6-185,6 s con la caché llena (los 379,5 s en frío son de la suite de 138)
+python3 -m unittest discover -s tests          # suite completa: 165 tests, 206,7 s con la caché llena (los 183,6-185,6 s eran de la suite de 148 y los 379,5 s en frío de la de 138)
 python3 tools/backend_gate.py                  # gate de backends: escribe evidence/backends/gate_<UTC>.json
 ```
 

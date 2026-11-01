@@ -15,6 +15,8 @@ KEYWORDS = {
 
 KEYWORDS_V03 = {"str", "struct", "len", "slice", "chr"}
 KEYWORDS_V04 = {"import", "pub"}
+#: CORE v0.5 V2: `for` se reserva; `in` NO (V3) — sigue siendo un IDENT contextual.
+KEYWORDS_V05 = {"for"}
 ESCAPES = {'"': '"', "\\": "\\", "n": "\n", "t": "\t"}
 
 # Más largos primero para que "->" gane a "-".
@@ -66,6 +68,8 @@ def tokenize(source: str, prefix: str = "") -> list[Token]:
     keywords = KEYWORDS | KEYWORDS_V03 if v03 else KEYWORDS
     if has(version, "v04"):
         keywords = keywords | KEYWORDS_V04
+    if has(version, "v05"):
+        keywords = keywords | KEYWORDS_V05
     tokens: list[Token] = []
     i, line, col = 0, 1, 1
     n = len(source)

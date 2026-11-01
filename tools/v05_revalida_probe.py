@@ -3,20 +3,26 @@
 La pregunta: ¿los casos 401..410 del corpus v0.5 hacen lo que su `expected` escrito a mano
 dice, en la referencia Y en cada backend, sin mover ningún programa anterior?
 
-Hace cuatro cosas, en este orden:
+Hace siete cosas, en este orden:
 
 1. **Tres vías** por caso: `expected` (a mano) ↔ referencia ↔ cada backend instalado.
    EQUIV exige coincidir con las dos primeras.
 2. **Gemelos**: el mismo programa con la forma larga escrita a mano (para V1, la capacidad
-   literal en lugar de `len(a)`; para V2, el `while` equivalente). Los `steps` tienen que
-   coincidir: es la prueba de que el azúcar es estático y no una operación nueva.
+   literal en lugar de `len(a)`; para V2, el `while` equivalente), corridos con LA MISMA
+   entrada. Los `steps` tienen que coincidir: es la prueba de que el azúcar es estático y
+   no una operación nueva.
 3. **No regresión**: la misma fuente recabezada a 0.1..0.4 tiene que seguir siendo
    `INVALID_PROGRAM`. `steps` y códigos se registran, no se embellecen.
-4. **Intenta falsarse a sí misma**: si el V1/V2 simulado se apaga (el `has(...,"v05")` del
-   checker devolviendo False para esa familia, que es exactamente el estado previo), los
-   casos tienen que rechazoarse de verdad — si ejecutaran, el PASS de arriba sería vacuo.
-   Y una variante del programa (capacidad 5 -> 6, o el `for` con un elemento más) tiene que
-   mover la salida: el valor sale del tipo, no de un constante escrita en el sonda.
+4. **Intenta falsarse a sí misma**: si V1/V2/V3 se apagan —la familia `v05` fuera del
+   léxico, del parser y del checker, que es exactamente el estado previo— los casos tienen
+   que rechazoarse de verdad; si ejecutaran, el PASS de arriba sería vacuo. Apagar solo el
+   checker no serviría: V2 es azúcar del parser.
+5. Y una variante del programa (capacidad 5 -> 6, o el `for` con un elemento más) tiene que
+   mover la salida: el valor sale del tipo, no de un constante escrita en la sonda.
+6. **La IR no gana nodos**: ningún `len` de arreglo llega a bajar, y `len(s)` sí.
+7. **La IR del azúcar es la IR del gemelo** (sin posiciones ni el nombre del índice
+   sintético). Es el control que cazó que construir `-1` como `Unary` restaba un `neg` que
+   el `while` escrito a mano no tiene: los `steps` no lo habrían delatado, la forma sí.
 
 Un PASS con el árbol sucio de código es `EVIDENCE_ONLY`, nunca gate de release.
 
@@ -37,6 +43,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 import isyco.checker as checker_mod                                   # noqa: E402
+import isyco.lexer as lexer_mod                                        # noqa: E402
+import isyco.parser as parser_mod                                      # noqa: E402
 from isyco import run                                                 # noqa: E402
 from isyco.backends import available                                  # noqa: E402
 from isyco.conformance import COMPARED, load_corpus                   # noqa: E402
@@ -76,6 +84,99 @@ fn main() -> i64 !emit {
 }
 """),
         "variante_esperada": {"emits": ["6"], "return": "6"},
+    },
+    "402": {
+        "gemelo": ("inline", """isyco 0.5
+
+struct Item { nombre: str<8>, precio: dec<8,2> }
+
+fn main(items: [Item; 3]) -> dec<8,2> {
+    let total: dec<8,2> = 0.00;
+    let i: i64 = -1;
+    while i + 1 < len(items) {
+        i = i + 1;
+        let it: Item = items[i];
+        total = total + it.precio;
+    }
+    return total;
+}
+"""),
+        "variante": ("inline", """isyco 0.5
+
+struct Item { nombre: str<8>, precio: dec<8,2> }
+
+fn main(items: [Item; 4]) -> dec<8,2> {
+    let total: dec<8,2> = 0.00;
+    for it in items {
+        total = total + it.precio;
+    }
+    return total;
+}
+"""),
+        "variante_entrada": [[
+            {"nombre": "a", "precio": "1.50"},
+            {"nombre": "b", "precio": "2.25"},
+            {"nombre": "c", "precio": "0.10"},
+            {"nombre": "d", "precio": "5.00"},
+        ]],
+        #: 1.50 + 2.25 + 0.10 + 5.00, escrito a mano antes de correr
+        "variante_esperada": {"emits": [], "return": "8.85"},
+    },
+    "403": {
+        "gemelo": ("archivo", "gemelos/403_while.isy"),
+        "variante": ("inline", """isyco 0.5
+
+fn main() -> i32 {
+    let xs: [i32; 5] = [2, 3, 5, 7, 9];
+    let total: i32 = 0;
+    for x in xs {
+        total = total + x;
+    }
+    return total;
+}
+"""),
+        #: 2+3+5+7+9, escrito a mano antes de correr
+        "variante_esperada": {"emits": [], "return": "26"},
+    },
+    "404": {
+        "gemelo": ("archivo", "gemelos/404_while_incremento_arriba.isy"),
+        "variante": ("inline", """isyco 0.5
+
+fn main() -> i32 !emit {
+    let xs: [i32; 6] = [2, 3, 5, 7, 6, 9];
+    let contados: i32 = 0;
+    for x in xs {
+        if x == 5 {
+            continue;
+        }
+        if x > 7 {
+            break;
+        }
+        emit x;
+        contados = contados + 1;
+    }
+    return contados;
+}
+"""),
+        #: 2, 3, 7 y 6 se emiten; el 5 se salta con `continue`; el 9 corta con `break`
+        "variante_esperada": {"emits": ["2", "3", "7", "6"], "return": "4"},
+    },
+    "405": {
+        "gemelo": ("archivo", "gemelos/405_while.isy"),
+        "variante": ("inline", """isyco 0.5
+
+fn main() -> i32 !emit {
+    let xs: [i32; 3] = [4, 5, 6];
+    for x in xs {
+        x = x * 10;
+    }
+    emit xs[0];
+    emit xs[2];
+    return xs[1];
+}
+"""),
+        #: la copia se reasigna, el arreglo no se toca: queda [4, 5, 6]
+        "variante_esperada": {"emits": ["4", "6"], "return": "5"},
     },
     "406": {
         "gemelo": ("inline", """isyco 0.5
@@ -172,14 +273,18 @@ def clasificar(expected: dict, ref: dict, got: dict | None, excepcion: str | Non
     return "DIVERGENT"
 
 
-def referenciar(codigo: bytes):
+def referenciar(codigo: bytes, entrada: list | None = None):
     """(observado, pasos, rechazo) de la referencia.
 
     La referencia no lanza: un programa rechazado vuelve como resultado
     `INVALID_PROGRAM(code)`, así que ahí —y no en una excepción— se lee el rechazo.
+
+    `entrada` no es opcional por descuido: `402` recibe su arreglo por stdin, y comparar
+    su azúcar contra un gemelo corrido con entrada vacía sería un pase vacuo — los dos
+    fallarían igual por la razón equivocada.
     """
     try:
-        res, _ = run(codigo, [], None)
+        res, _ = run(codigo, entrada or [], None)
     except InvalidProgram as exc:
         return None, None, f"INVALID_PROGRAM({exc.code})"
     if res["status"] == "INVALID_PROGRAM":
@@ -190,7 +295,7 @@ def referenciar(codigo: bytes):
 def tres_vias(casos: list[dict], backends: dict) -> list[dict]:
     filas = []
     for case in casos:
-        ref, pasos_ref, exc_ref = referenciar(case["program"])
+        ref, pasos_ref, exc_ref = referenciar(case["program"], case["input"])
         fila = {"caso": case["name"], "claim": case["claim"], "expected": case["expected"],
                 "referencia": ref, "pasos_referencia": pasos_ref,
                 "rechazo_referencia": exc_ref, "backends": {}}
@@ -223,8 +328,8 @@ def gemelos(casos: list[dict]) -> list[dict]:
         if not espe:
             filas.append({"caso": case["name"], "estado": "SIN_GEMELO", "pasos": None})
             continue
-        obs_a, pasos_a, _ = referenciar(case["program"])
-        obs_g, pasos_g, exc_g = referenciar(fuente(espe["gemelo"]))
+        obs_a, pasos_a, _ = referenciar(case["program"], case["input"])
+        obs_g, pasos_g, exc_g = referenciar(fuente(espe["gemelo"]), case["input"])
         if exc_g:
             estado = "FALTA_GEMELO"
         elif obs_a != obs_g:
@@ -255,17 +360,29 @@ def no_regresion(casos: list[dict]) -> list[dict]:
 
 
 def brazo_viejo(casos: list[dict]) -> list[dict]:
-    """V1/V2 apagados: el checker ve la familia v05 como antes. Si ejecutara, el PASS es vacuo."""
-    real = checker_mod.has
+    """V1/V2/V3 apagados de verdad: el estado previo es la familia v05 fuera del léxico,
+    del parser y del checker a la vez. Si aun así el caso ejecutara, el PASS de arriba es
+    vacuo — y esa es exactamente la grieta que esta sección busca.
+
+    No basta con el checker: V2 es azúcar del parser, así que apagar solo `checker.has`
+    dejaría el azúcar puesto y el control mentiría.
+    """
+    reales = {m: m.has for m in (lexer_mod, parser_mod, checker_mod)}
+    original = reales[checker_mod]
     filas = []
     try:
-        checker_mod.has = lambda version, family: (
-            False if family == "v05" and version in ("0.5",) else real(version, family))
+        def apagada(version: str, family: str) -> bool:
+            if family == "v05" and version == "0.5":
+                return False
+            return original(version, family)
+        for modulo in reales:
+            modulo.has = apagada
         for case in casos:
-            _, _, exc = referenciar(case["program"])
+            _, _, exc = referenciar(case["program"], case["input"])
             filas.append({"caso": case["name"], "sin_la_regla": exc or "EJECUTA"})
     finally:
-        checker_mod.has = real
+        for modulo, real in reales.items():
+            modulo.has = real
     return filas
 
 
@@ -281,8 +398,9 @@ def hace_el_trabajo(casos: list[dict]) -> list[dict]:
         espe = ESPECIFICACION.get(numero)
         if not espe:
             continue
-        obs_v, pasos_v, exc_v = referenciar(fuente(espe["variante"]))
-        obs_base, _, _ = referenciar(case["program"])
+        obs_v, pasos_v, exc_v = referenciar(fuente(espe["variante"]),
+                                            espe.get("variante_entrada"))
+        obs_base, _, _ = referenciar(case["program"], case["input"])
         esperado = {"status": "HALTED", "code": None, **espe["variante_esperada"]}
         filas.append({"caso": case["name"], "observado": obs_v, "pasos": pasos_v,
                       "esperado": esperado, "rechazo": exc_v,
@@ -308,6 +426,45 @@ def ir_sin_nuevos_nodos(casos: list[dict]) -> dict:
     return out
 
 
+def podar(nodo):
+    """IR sin `at`, sin `source_sha256` y sin el nombre de la tabla de locales."""
+    if isinstance(nodo, dict):
+        return {k: podar(v) for k, v in nodo.items()
+                if k not in ("at", "source_sha256")
+                and not (k == "name" and set(nodo) == {"name", "ty"})}
+    if isinstance(nodo, list):
+        return [podar(v) for v in nodo]
+    return nodo
+
+
+def ir_igual_al_gemelo(casos: list[dict]) -> list[dict]:
+    """V2 no añade ninguna construcción: la IR del `for` es la IR del `while` gemelo.
+
+    Se quitan las posiciones, el hash de la fuente (son dos fuentes distintas por
+    construcción) y el nombre del local sintético — nada más. Si el azúcar introdujera
+    una operación, un slot o un orden distinto, aquí se ve.
+    """
+    filas = []
+    for case in casos:
+        numero = case["name"].split("_")[0]
+        espe = ESPECIFICACION.get(numero)
+        if not espe:
+            continue
+        try:
+            azucar = podar(compile_ir(case["program"]))
+        except InvalidProgram as exc:
+            azucar = f"INVALID_PROGRAM({exc.code})"
+        try:
+            gemelo = podar(compile_ir(fuente(espe["gemelo"])))
+        except InvalidProgram as exc:
+            gemelo = f"INVALID_PROGRAM({exc.code})"
+        digest = lambda forma: hashlib.sha256(                       # noqa: E731
+            json.dumps(forma, sort_keys=True).encode()).hexdigest()[:16]
+        filas.append({"caso": case["name"], "igual": azucar == gemelo,
+                      "sha_ir": {"azucar": digest(azucar), "gemelo": digest(gemelo)}})
+    return filas
+
+
 def main(argv: list[str]) -> int:
     write = "--write" in argv
     if "--casos" not in argv:
@@ -327,6 +484,7 @@ def main(argv: list[str]) -> int:
     viejo = brazo_viejo(casos)
     trabajo = hace_el_trabajo(casos)
     ir = ir_sin_nuevos_nodos(casos)
+    misma = ir_igual_al_gemelo(casos)
 
     sucio = dirty_codigo()
     rec = {"comando": " ".join(argv), "utc": datetime.now(timezone.utc)
@@ -339,7 +497,8 @@ def main(argv: list[str]) -> int:
                  "milestone": "Revalidación CORE v0.5 (V1/V2) — corpus 401..410",
                  "receipt": rec, "tres_vias": filas, "gemelos": gem,
                  "no_regresion": regres, "brazo_viejo": viejo,
-                 "hace_el_trabajo": trabajo, "ir": ir}
+                 "hace_el_trabajo": trabajo, "ir": ir,
+                 "ir_igual_al_gemelo": misma}
 
     conteo: dict[str, int] = {}
     for fila in filas:
@@ -371,10 +530,10 @@ def main(argv: list[str]) -> int:
     for fila in regres:
         lineas.append(f"   {fila['caso']:28s} " + "  ".join(
             f"{v}={c}" for v, c in sorted(fila["rechazos"].items())))
-    lineas += ["", "4) brazo viejo (la regla v05 apagada en el checker)"]
+    lineas += ["", "4) brazo viejo (la familia v05 apagada en léxico, parser y checker)"]
     for fila in viejo:
         lineas.append(f"   {fila['caso']:28s} {fila['sin_la_regla']}")
-    lineas += ["", "5) el valor viene del tipo (variante de capacidad)"]
+    lineas += ["", "5) el valor viene del programa (variante: otra capacidad o un elemento más)"]
     for fila in trabajo:
         lineas.append(f"   {fila['caso']:28s} observado={fila['observado']}")
         lineas.append(f"   {'':28s} predicho={fila['esperado']} "
@@ -386,6 +545,10 @@ def main(argv: list[str]) -> int:
         lineas.append(f"   {fila['caso']:28s} nodos_len={fila['nodos_len']} "
                       f"schema={fila['schema']}")
     lineas.append(f"   control len(str) = {ir['control_len_de_str']} nodos_len (debe ser 1)")
+    lineas += ["", "7) la IR del azucar es la IR del gemelo (sin posiciones ni nombre de local)"]
+    for fila in misma:
+        lineas.append(f"   {fila['caso']:28s} igual={str(fila['igual']):5s} "
+                      f"azucar={fila['sha_ir']['azucar']} gemelo={fila['sha_ir']['gemelo']}")
     lineas += ["", f"conteo por clase: {conteo or 'ningun backend instalado'}"]
 
     # ---- auto-falsación: cualquier grieta impide sellar
@@ -426,6 +589,10 @@ def main(argv: list[str]) -> int:
         if fila["nodos_len"]:
             falsos.append(f"{fila['caso']}: la IR lleva {fila['nodos_len']} nodos len "
                           f"(V1/V2 prometen const, no una operación nueva)")
+    for fila in misma:
+        if not fila["igual"]:
+            falsos.append(f"{fila['caso']}: su IR no es la del gemelo ({fila['sha_ir']}) "
+                          f"— el azúcar introduce forma nueva")
     for mensaje in falsos:
         print(f"CONTROL FALSO: {mensaje}")
     if write and falsos:

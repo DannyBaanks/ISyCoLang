@@ -1,0 +1,110 @@
+Revalidación CORE v0.5 — tres vías, gemelos estáticos, no regresión, auto-falsación
+utc=2026-10-31T23:52:53Z  git_head=f5e16b70105e85bf4f462a8814edc9751dc09179  arbol=EVIDENCE_ONLY (sucio_codigo=True)
+comando: --casos 401,402,403,404,405,406 --write   casos=['401', '402', '403', '404', '405', '406']   backends=['c', 'cobol', 'pydecimal', 'rust', 'zig']
+
+1) tres vias (expected a mano <-> referencia <-> backend)
+   401_len_arreglo  claim=len de un arreglo devuelve su capacidad, sin contar paso (
+     esperado: {'status': 'HALTED', 'code': None, 'emits': ['5'], 'return': '5'}
+     referencia: {'status': 'HALTED', 'code': None, 'emits': ['5'], 'return': '5'}  pasos=6
+     c         EQUIV        HALTED  pasos=6
+     cobol     EQUIV        HALTED  pasos=6
+     pydecimal EQUIV        HALTED  pasos=6
+     rust      EQUIV        HALTED  pasos=6
+     zig       EQUIV        HALTED  pasos=6
+   402_for_decimales  claim=for recorre un arreglo de structs y suma un campo dec
+     esperado: {'status': 'HALTED', 'code': None, 'emits': [], 'return': '3.85'}
+     referencia: {'status': 'HALTED', 'code': None, 'emits': [], 'return': '3.85'}  pasos=18
+     c         EQUIV        HALTED  pasos=18
+     cobol     UNSUPPORTED  UNSUPPORTED(ir0.2,str,struct)  pasos=None
+     pydecimal EQUIV        HALTED  pasos=18
+     rust      EQUIV        HALTED  pasos=18
+     zig       EQUIV        HALTED  pasos=18
+   403_for_enteros  claim=for suma un arreglo de enteros (2+3+5+7)
+     esperado: {'status': 'HALTED', 'code': None, 'emits': [], 'return': '17'}
+     referencia: {'status': 'HALTED', 'code': None, 'emits': [], 'return': '17'}  pasos=23
+     c         EQUIV        HALTED  pasos=23
+     cobol     EQUIV        HALTED  pasos=23
+     pydecimal EQUIV        HALTED  pasos=23
+     rust      EQUIV        HALTED  pasos=23
+     zig       EQUIV        HALTED  pasos=23
+   404_for_break_continue  claim=continue salta 5, break corta en 9: emite 2 3 7 y cuenta 3
+     esperado: {'status': 'HALTED', 'code': None, 'emits': ['2', '3', '7'], 'return': '3'}
+     referencia: {'status': 'HALTED', 'code': None, 'emits': ['2', '3', '7'], 'return': '3'}  pasos=38
+     c         EQUIV        HALTED  pasos=38
+     cobol     EQUIV        HALTED  pasos=38
+     pydecimal EQUIV        HALTED  pasos=38
+     rust      EQUIV        HALTED  pasos=38
+     zig       EQUIV        HALTED  pasos=38
+   405_for_copia  claim=asignar a la variable del for no muta el arreglo (sin alia
+     esperado: {'status': 'HALTED', 'code': None, 'emits': ['1', '3'], 'return': '2'}
+     referencia: {'status': 'HALTED', 'code': None, 'emits': ['1', '3'], 'return': '2'}  pasos=20
+     c         EQUIV        HALTED  pasos=20
+     cobol     EQUIV        HALTED  pasos=20
+     pydecimal EQUIV        HALTED  pasos=20
+     rust      EQUIV        HALTED  pasos=20
+     zig       EQUIV        HALTED  pasos=20
+   406_len_parametro  claim=len(a) dentro de una función sirve como cota del while (1+
+     esperado: {'status': 'HALTED', 'code': None, 'emits': [], 'return': '21'}
+     referencia: {'status': 'HALTED', 'code': None, 'emits': [], 'return': '21'}  pasos=27
+     c         EQUIV        HALTED  pasos=27
+     cobol     EQUIV        HALTED  pasos=27
+     pydecimal EQUIV        HALTED  pasos=27
+     rust      EQUIV        HALTED  pasos=27
+     zig       EQUIV        HALTED  pasos=27
+
+2) gemelos estaticos (los mismos pasos que la forma larga a mano)
+   401_len_arreglo              IGUAL        {'azucar': 6, 'gemelo': 6}
+   402_for_decimales            IGUAL        {'azucar': 18, 'gemelo': 18}
+   403_for_enteros              IGUAL        {'azucar': 23, 'gemelo': 23}
+   404_for_break_continue       IGUAL        {'azucar': 38, 'gemelo': 38}
+   405_for_copia                IGUAL        {'azucar': 20, 'gemelo': 20}
+   406_len_parametro            IGUAL        {'azucar': 27, 'gemelo': 27}
+
+3) no regresion (la misma fuente recabezada a versiones anteriores)
+   401_len_arreglo              0.1=INVALID_PROGRAM(UNKNOWN_NAME)  0.2=INVALID_PROGRAM(UNKNOWN_NAME)  0.3=INVALID_PROGRAM(TYPE_MISMATCH)  0.4=INVALID_PROGRAM(TYPE_MISMATCH)
+   402_for_decimales            0.1=INVALID_PROGRAM(SYNTAX)  0.2=INVALID_PROGRAM(SYNTAX)  0.3=INVALID_PROGRAM(SYNTAX)  0.4=INVALID_PROGRAM(SYNTAX)
+   403_for_enteros              0.1=INVALID_PROGRAM(SYNTAX)  0.2=INVALID_PROGRAM(SYNTAX)  0.3=INVALID_PROGRAM(SYNTAX)  0.4=INVALID_PROGRAM(SYNTAX)
+   404_for_break_continue       0.1=INVALID_PROGRAM(SYNTAX)  0.2=INVALID_PROGRAM(SYNTAX)  0.3=INVALID_PROGRAM(SYNTAX)  0.4=INVALID_PROGRAM(SYNTAX)
+   405_for_copia                0.1=INVALID_PROGRAM(SYNTAX)  0.2=INVALID_PROGRAM(SYNTAX)  0.3=INVALID_PROGRAM(SYNTAX)  0.4=INVALID_PROGRAM(SYNTAX)
+   406_len_parametro            0.1=INVALID_PROGRAM(UNKNOWN_NAME)  0.2=INVALID_PROGRAM(UNKNOWN_NAME)  0.3=INVALID_PROGRAM(TYPE_MISMATCH)  0.4=INVALID_PROGRAM(TYPE_MISMATCH)
+
+4) brazo viejo (la familia v05 apagada en léxico, parser y checker)
+   401_len_arreglo              INVALID_PROGRAM(TYPE_MISMATCH)
+   402_for_decimales            INVALID_PROGRAM(SYNTAX)
+   403_for_enteros              INVALID_PROGRAM(SYNTAX)
+   404_for_break_continue       INVALID_PROGRAM(SYNTAX)
+   405_for_copia                INVALID_PROGRAM(SYNTAX)
+   406_len_parametro            INVALID_PROGRAM(TYPE_MISMATCH)
+
+5) el valor viene del programa (variante: otra capacidad o un elemento más)
+   401_len_arreglo              observado={'status': 'HALTED', 'code': None, 'emits': ['6'], 'return': '6'}
+                                predicho={'status': 'HALTED', 'code': None, 'emits': ['6'], 'return': '6'} coincide=True mueve_la_salida=True pasos=6
+   402_for_decimales            observado={'status': 'HALTED', 'code': None, 'emits': [], 'return': '8.85'}
+                                predicho={'status': 'HALTED', 'code': None, 'emits': [], 'return': '8.85'} coincide=True mueve_la_salida=True pasos=22
+   403_for_enteros              observado={'status': 'HALTED', 'code': None, 'emits': [], 'return': '26'}
+                                predicho={'status': 'HALTED', 'code': None, 'emits': [], 'return': '26'} coincide=True mueve_la_salida=True pasos=27
+   404_for_break_continue       observado={'status': 'HALTED', 'code': None, 'emits': ['2', '3', '7', '6'], 'return': '4'}
+                                predicho={'status': 'HALTED', 'code': None, 'emits': ['2', '3', '7', '6'], 'return': '4'} coincide=True mueve_la_salida=True pasos=45
+   405_for_copia                observado={'status': 'HALTED', 'code': None, 'emits': ['4', '6'], 'return': '5'}
+                                predicho={'status': 'HALTED', 'code': None, 'emits': ['4', '6'], 'return': '5'} coincide=True mueve_la_salida=True pasos=20
+   406_len_parametro            observado={'status': 'HALTED', 'code': None, 'emits': [], 'return': '28'}
+                                predicho={'status': 'HALTED', 'code': None, 'emits': [], 'return': '28'} coincide=True mueve_la_salida=True pasos=30
+
+6) la IR no gana nodos nuevos (V1: len de arreglo es const)
+   401_len_arreglo              nodos_len=0 schema=isy-ir/0.2
+   402_for_decimales            nodos_len=0 schema=isy-ir/0.2
+   403_for_enteros              nodos_len=0 schema=isy-ir/0.2
+   404_for_break_continue       nodos_len=0 schema=isy-ir/0.2
+   405_for_copia                nodos_len=0 schema=isy-ir/0.2
+   406_len_parametro            nodos_len=0 schema=isy-ir/0.2
+   control len(str) = 1 nodos_len (debe ser 1)
+
+7) la IR del azucar es la IR del gemelo (sin posiciones ni nombre de local)
+   401_len_arreglo              igual=True  azucar=ac64471411f4a3cd gemelo=ac64471411f4a3cd
+   402_for_decimales            igual=True  azucar=671bc2b4781e4a39 gemelo=671bc2b4781e4a39
+   403_for_enteros              igual=True  azucar=8ca576e4d581ebdb gemelo=8ca576e4d581ebdb
+   404_for_break_continue       igual=True  azucar=ef194bcb295b580b gemelo=ef194bcb295b580b
+   405_for_copia                igual=True  azucar=f70c73fcc5544b3a gemelo=f70c73fcc5544b3a
+   406_len_parametro            igual=True  azucar=f7134aff33db4b14 gemelo=f7134aff33db4b14
+
+conteo por clase: {'c:EQUIV': 6, 'cobol:EQUIV': 5, 'pydecimal:EQUIV': 6, 'rust:EQUIV': 6, 'zig:EQUIV': 6, 'cobol:UNSUPPORTED': 1}

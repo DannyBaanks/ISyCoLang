@@ -1,6 +1,8 @@
 """Parser de descenso recursivo para la gramática de spec §2.1."""
 from __future__ import annotations
 
+import copy
+
 from . import ast as A
 from .errors import InvalidProgram
 from .lexer import Token
@@ -19,6 +21,9 @@ class Parser:
         self.pos = 0
         self.version = "0.1"
         self.no_struct_lit = False   # en condiciones de if/while (CORE v0.3 §3.2, P4)
+        #: V2: nombres ya escritos en este módulo, para que el índice sintético no choque
+        self.usados = {t.text for t in tokens if t.kind in ("IDENT", "KW")}
+        self.for_n = 0
 
     @property
     def v03(self) -> bool:
@@ -236,7 +241,11 @@ class Parser:
         while not self.is_("}"):
             if self.tok.kind == "EOF":
                 self.fail("bloque sin cerrar")
-            stmts.append(self.stmt())
+            sentencia = self.stmt()
+            if isinstance(sentencia, list):    # V2: el azúcar `for` expande a dos sentencias
+                stmts.extend(sentencia)
+            else:
+                stmts.append(sentencia)
         self.expect("}")
         return A.Block(stmts)
 
@@ -255,6 +264,8 @@ class Parser:
         if self.accept("while"):
             cond = self.cond()
             return A.While(at, cond, self.block())
+        if self.v05 and self.accept("for"):
+            return self.for_stmt(at)
         if self.accept("break"):
             self.expect(";")
             return A.Break(at)
@@ -301,6 +312,52 @@ class Parser:
         if self.accept("else"):
             els = self.if_stmt() if self.is_("if") else self.block()
         return A.If(at, cond, then, els)
+
+    # --- azúcar CORE v0.5 ------------------------------------------------------
+    def for_stmt(self, at) -> list:
+        """CORE v0.5 V2: `for x in a { … }` se expande aquí, no en el lowering.
+
+        El AST que recibe la referencia es el `while` gemelo escrito a mano en
+        `programs/conformance_v0.5/gemelos/`, así que `steps`, límites y trazas quedan
+        definidos sin regla nueva. El incremento va ANTES del cuerpo porque es medido: con
+        el incremento abajo, el `continue` salta el avance —
+        `gemelos/404_while_incremento_abajo.isy` (cabecera `0.4`, corre hoy) termina en
+        `LIMIT_REACHED(max_steps)` con `emits=["2","3"]`. La cota se escribe `len(a)` y la
+        resuelve V1 en el checker: el azúcar no pide ninguna capacidad nueva.
+        """
+        variable = self.ident().text
+        if not (self.tok.kind == "IDENT" and self.tok.text == "in"):
+            self.fail("se esperaba 'in' en el for")     # V3: `in` es contextual, no KW
+        self.take()
+        # un LUGAR (`xs`, `p.xs`), no `expr()`: `xs {` es la sintaxis de un literal de struct,
+        # y una llamada o un literal evaluados dos veces (cota e índice) cambiarían los efectos.
+        lugar = A.Name(self.tok.at, self.ident().text)
+        while self.is_(".") and self.peek().kind == "IDENT":
+            self.take()
+            lugar = A.Field(lugar.at, lugar, self.ident().text)
+        cuerpo = self.block()
+        i = self.fresh_index()
+        cond = A.Binary(at, "<", A.Binary(at, "+", A.Name(at, i), A.IntLit(at, 1)),
+                        A.Len(at, copy.deepcopy(lugar)))
+        # Las llaves del `while` gemelo son notacionales: el lenguaje no tiene sentencias-bloque,
+        # así que las dos sentencias se escriben en el bloque contenedor. Eso es seguro porque
+        # `fresh_index` produce un nombre que ningún fuente de este módulo puede contener.
+        # El `-1` es `IntLit`, no `Unary`: CORE v0.2 C2 ya define `-1` como un solo literal, y
+        # construirlo con el operador restaba un `neg` en la IR que el gemelo escrito a mano no tiene.
+        return [A.Let(at, i, INT_ALIASES["i64"], A.IntLit(at, -1)),
+                A.While(at, cond, A.Block([
+                    A.Assign(at, i, None, A.Binary(at, "+", A.Name(at, i), A.IntLit(at, 1))),
+                    A.Let(at, variable, None, A.Index(at, copy.deepcopy(lugar), A.Name(at, i))),
+                    *cuerpo.stmts]))]
+
+    def fresh_index(self) -> str:
+        """Índice sintético del `for`: no puede chocar con un nombre escrito, porque se
+        elige fuera del conjunto de identificadores del módulo y el contador avanza."""
+        while f"foridx{self.for_n}" in self.usados:
+            self.for_n += 1
+        nombre = f"foridx{self.for_n}"
+        self.for_n += 1
+        return nombre
 
     # --- expresiones ----------------------------------------------------------
     def cond(self):

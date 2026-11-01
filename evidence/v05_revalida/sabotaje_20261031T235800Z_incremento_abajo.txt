@@ -1,0 +1,21 @@
+# control de sabotaje V2 — salida CRUDA de la sonda, sin embellecer
+# comando: python3 tools/v05_revalida_probe.py --casos 401,402,403,404,405,406 --write
+# git_head=f5e16b70105e85bf4f462a8814edc9751dc09179 (modificado en el árbol de trabajo)
+# python=3.12.3   utc=2026-10-31   exit_status=1
+# mutación: isyco/parser.py:for_stmt con el incremento AL FINAL del cuerpo (la forma que
+#   declara incorrecta programs/conformance_v0.5/gemelos/404_while_incremento_abajo.isy);
+#   se restauró el archivo después, verificado por md5.
+# lo que sigue debajo es stdout+stderr de la corrida, literal:
+CONTROL FALSO: 404_for_break_continue en c: DIVERGENT (LIMIT_REACHED(max_steps))
+CONTROL FALSO: 404_for_break_continue en cobol: DIVERGENT (LIMIT_REACHED(max_steps))
+CONTROL FALSO: 404_for_break_continue en pydecimal: DIVERGENT (LIMIT_REACHED(max_steps))
+CONTROL FALSO: 404_for_break_continue en rust: DIVERGENT (LIMIT_REACHED(max_steps))
+CONTROL FALSO: 404_for_break_continue en zig: DIVERGENT (LIMIT_REACHED(max_steps))
+CONTROL FALSO: 404_for_break_continue: el gemelo a mano da otra salida {'azucar': {'status': 'LIMIT_REACHED', 'code': 'max_steps', 'emits': ['2', '3'], 'return': None}, 'gemelo': {'status': 'HALTED', 'code': None, 'emits': ['2', '3', '7'], 'return': '3'}}
+CONTROL FALSO: variante de 404_for_break_continue: {'status': 'LIMIT_REACHED', 'code': 'max_steps', 'emits': ['2', '3'], 'return': None} != predicho a mano {'status': 'HALTED', 'code': None, 'emits': ['2', '3', '7', '6'], 'return': '4'}
+CONTROL FALSO: variante de 404_for_break_continue no mueve la salida: la capacidad no viene del tipo
+CONTROL FALSO: 402_for_decimales: su IR no es la del gemelo ({'azucar': 'cba386cf6aa743e4', 'gemelo': '671bc2b4781e4a39'}) — el azúcar introduce forma nueva
+CONTROL FALSO: 403_for_enteros: su IR no es la del gemelo ({'azucar': 'eccfabdd65e05b40', 'gemelo': '8ca576e4d581ebdb'}) — el azúcar introduce forma nueva
+CONTROL FALSO: 404_for_break_continue: su IR no es la del gemelo ({'azucar': 'e6e9263cd281f602', 'gemelo': 'ef194bcb295b580b'}) — el azúcar introduce forma nueva
+CONTROL FALSO: 405_for_copia: su IR no es la del gemelo ({'azucar': '6ddf394a135dc6c8', 'gemelo': 'f70c73fcc5544b3a'}) — el azúcar introduce forma nueva
+no se sella: hay controles falsos
