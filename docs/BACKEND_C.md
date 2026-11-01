@@ -56,9 +56,14 @@ llamar al binario: `BAD_INPUT` lo decide el frontend, igual que en la referencia
 3. **Sabotajes:** `half_even_as_half_up` y `div_floor` tienen que fallar el
    corpus **y** el diferencial.
 
-**Última corrida (2026-11-01, head `422719a`):** `evidence/c/gate_2026-11-01T071619Z.json`
-(`PASS`) — 212/212 en las cuatro combinaciones con cero `UNSUPPORTED` y cero fallos, 24 612
+**Última corrida (2026-11-01, head `a4f608c`):** `evidence/c/gate_2026-11-01T074655Z.json`
+(`PASS`) — 213/213 en las cuatro combinaciones con cero `UNSUPPORTED` y cero fallos, 24 612
 corridas diferenciales en `gcc/plain` y 6 468 con sanitizers sin diferencias, y los dos
-sabotajes detectados. La población que cubre el gate creció 58 → 78 → 170 → **212** en
+sabotajes detectados. La población que cubre el gate creció 58 → 78 → 170 → 212 → **213** en
 `gate_2026-10-29T005211Z.json`, `gate_2026-10-29T011246Z.json`,
-`gate_2026-10-30T220800Z.json` y la actual, todas `PASS`.
+`gate_2026-10-30T220800Z.json`, `gate_2026-11-01T071619Z.json` y la actual; son las cinco
+`gate_*.json` que hay en `evidence/c/`, contadas renglón por renglón del campo `cases`, y
+las cinco son `PASS` con las cuatro combinaciones. Desde esta entrega el número está atado a
+la suite:
+`tests/test_evidence.py::DocsMatchLatestEvidence::test_c_gate_figure` lee el recibo más
+nuevo y exige que el README cite su población.

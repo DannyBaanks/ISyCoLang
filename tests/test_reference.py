@@ -44,8 +44,9 @@ class Conformance(unittest.TestCase):
                 self.assertEqual(hashlib.sha256(data).hexdigest(), digest, f"{corpus}/{name}")
 
     def test_corpus_passes(self):
-        # 170 congelados (v0.1–v0.4) + 42 de v0.5, que entra con V1/V2 sellados (2026-10-31).
-        self.assertGreaterEqual(len(CORPUS), 212)
+        # 170 congelados (v0.1–v0.4) + 43 de v0.5: entra con V1/V2 sellados (2026-10-31)
+        # y sube a 43 con `443` (2026-11-01, diagonal 0.5 de M4).
+        self.assertGreaterEqual(len(CORPUS), 213)
         self.assertEqual(failing(), [])
 
     def test_superseded_cases_are_explicit(self):

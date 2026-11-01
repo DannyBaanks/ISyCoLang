@@ -9,7 +9,7 @@ comentario de cierre de la lista de pulido).
 
 **Estado: `EXECUTABLE`** (core v0.4 congelado más las decisiones v0.5 —V1, V2, V6,
 V6-bis y V7 implementadas y selladas; `spec/CORE_v0.5.md` en `BORRADOR`—; fase F5,
-olas 1 y 2 PASS, y el corpus v0.5 dentro del gate: 212 casos): intérprete de referencia
+olas 1 y 2 PASS, y el corpus v0.5 dentro del gate: 213 casos): intérprete de referencia
 conforme a los corpus v0.1–v0.5, IR canónica (ISY-IR) y backends nativos C, Rust y Zig —
 más los backends `pydecimal` y `cobol` de la ola 2, con sustratos `decimal` y GnuCOBOL —
 verificados contra la referencia bajo el contrato `ISY_BACKEND/1` (`cobol` en el
@@ -25,7 +25,7 @@ no por su cabecera — CORE v0.5 V7).
 | ¿Formato? | `.isy`; spec congelada en `spec/CORE.md` (v0.1) + `spec/CORE_v0.2.md` + `spec/CORE_v0.3.md` (strings y structs) + `spec/CORE_v0.4.md` (módulos); la cabecera `isyco 0.1`/`0.2`/`0.3`/`0.4` elige. `isyco 0.5` ya corre en el engine (V1, V2, V6, V6-bis, V7) y su texto está en `spec/CORE_v0.5.md` como `BORRADOR`, sin congelar. |
 | ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c`, `--via rust`, `--via zig`, `--via pydecimal` o `--via cobol` para compilado). Guía para personas: `GUIA.md`. |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia en Python, semántica normativa). |
-| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.5 (212/212), IR que preserva la semántica (424/424 comparaciones iguales, 145 programas bajados a IR), backends C, Rust, Zig y pydecimal iguales a la referencia (212/212 y 8 484 corridas diferenciales sin diferencias cada uno, más 1 270 del diferencial de strings; C además con las cuatro combinaciones gcc/clang × plain/sanitized sobre los 212 — gate F4, `evidence/c/gate_2026-11-01T071619Z.json`); COBOL igual dentro de su dominio declarado (146/212, 66 UNSUPPORTED nombrando la capacidad que exige cada programa —`str`/`struct`/`emit_array`; las capacidades las exige el programa, no su cabecera: CORE v0.5 V7—, 8 484 corridas diferenciales sin diferencias). Ver claim table. |
+| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.5 (213/213), IR que preserva la semántica (426/426 comparaciones iguales, 145 programas bajados a IR — los rechazados por el frontend se comparan por su rechazo), backends C, Rust, Zig y pydecimal iguales a la referencia (213/213 y 8 484 corridas diferenciales sin diferencias cada uno, más 1 270 del diferencial de strings; C además con las cuatro combinaciones gcc/clang × plain/sanitized sobre los 213 — gate F4, `evidence/c/gate_2026-11-01T074655Z.json`); COBOL igual dentro de su dominio declarado (147/213, 66 UNSUPPORTED nombrando la capacidad que exige cada programa —`str`/`struct`/`emit_array`; las capacidades las exige el programa, no su cabecera: CORE v0.5 V7—, 8 484 corridas diferenciales sin diferencias). Ver claim table. |
 | ¿Qué NO está demostrado? | Todo lo demás; ver la claim table en `ROADMAP.md` §6. |
 | ¿Tests? | `python3 -m unittest discover -s tests -v` |
 | ¿Evidencia? | `evidence/`, inventariada en `docs/EVIDENCE_MATRIX.md` |
@@ -65,7 +65,7 @@ programs/conformance/              corpus v0.1 (expected previos al intérprete;
 programs/conformance_v0.2/         corpus v0.2 (expected previos a implementar v0.2)
 programs/conformance_v0.3/         corpus v0.3 (strings y structs)
 programs/conformance_v0.4/         corpus v0.4 (módulos)
-programs/conformance_v0.5/         corpus v0.5 (401–442, decisiones V1–V7) + gemelos escritos a mano
+programs/conformance_v0.5/         corpus v0.5 (401–443, decisiones V1–V7) + gemelos escritos a mano
 programs/dogfood/                  programas que Danny quiere escribir; fuera del gate, miden dolor real
 tests/                             conformidad, determinismo, sabotaje, oráculo
 tools/run_conformance.py           corre el corpus y guarda evidencia nueva
@@ -89,7 +89,7 @@ tools/dogfood_wall_probe.py        el «muro de cabecera» del dogfood: víctima
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 166 tests (3,2-5,5 min con build/ llena; ver tests/README.md)
+python3 -m unittest discover -s tests -v       # 167 tests (3,2-5,5 min con build/ llena; ver tests/README.md)
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)

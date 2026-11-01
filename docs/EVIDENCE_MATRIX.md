@@ -20,15 +20,21 @@ re-produce o es prosa.
   `programs/dogfood/` no tiene lista (no es corpus congelado) y `tests/test_evidence.py`
   resuelve las rutas él mismo, por eso no depende del `cwd`.
 - `git_head` se abrevia a 7. Un recibo viejo sigue siendo válido para el árbol que fija.
+- Los cuatro recibos de la población **213** (`a4f608c`, el commit que metió `443`) salen de
+  **una sola corrida en lote**, en ese orden: `run_conformance`, `ir_gate`, `c_gate`,
+  `backend_gate`. El stdout sellado de cada uno es la **sección verbatim** de ese log —
+  incluye la línea `### herramienta ###` y su `EXIT_<herramienta>=N`, que son del lote y no
+  de la herramienta, y son el registro del código de salida. El log completo vivió en `/tmp`
+  y no es evidencia canónica; lo canónico son los cuatro `_stdout.txt` sellados.
 
 ## Gates
 
 | gate | recibo más reciente | head | veredicto | cifras |
 |---|---|---|---|---|
-| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-01T033345Z.json` | `57f38bc` | `PASS` | 212/212 en los cinco corpus |
-| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-01T013721Z.json` | `57f38bc` | — | 424/424 comparaciones iguales, 145 programas bajados |
-| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-01T071619Z.json` | `422719a` | `PASS` | 212 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 212/212, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers; los dos sabotajes detectados; `missing_compilers: []`. stdout crudo sellado al lado: `gate_2026-11-01T071619Z_stdout.txt` |
-| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-01T015245Z.json` | `57f38bc` | `PASS` | c/rust/zig/pydecimal 212/212; cobol 146/212 con 66 `UNSUPPORTED` nombrados; 8 484 corridas diferenciales por backend; `missing_toolchains: []` |
+| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-01T074055Z.json` | `a4f608c` | `PASS` | 213/213 en los cinco corpus |
+| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-01T074055Z.json` | `a4f608c` | — | 426/426 comparaciones iguales, 145 programas bajados (`443` no baja: se comparan sus dos rechazos) |
+| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-01T074655Z.json` | `a4f608c` | `PASS` | 213 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 213/213, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers; los dos sabotajes detectados; `missing_compilers: []`. stdout crudo sellado al lado: `gate_2026-11-01T074655Z_stdout.txt` |
+| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-01T082046Z.json` | `a4f608c` | `PASS` | c/rust/zig/pydecimal 213/213; cobol 147/213 con 66 `UNSUPPORTED` nombrados; 8 484 corridas diferenciales por backend y 1 270 de strings en los cuatro completos; `missing_toolchains: []`. stdout crudo sellado al lado: `gate_2026-11-01T082046Z_stdout.txt` |
 
 **Hueco de F4 — CERRADO el 2026-11-01.** Existió así: F4 no se había re-corrido desde que
 `conformance_v0.5` entró en `CORPORA`, así que su recibo más reciente (`ec6b823`) fijaba 170
@@ -56,8 +62,8 @@ fija; lo que cambió es el más reciente.
 | id | estado | recibo o falta |
 |---|---|---|
 | P1 (`at` del azúcar) | cerrada | `evidence/v05_revalida/run_20261101T001608Z.json` + test `ForAzucar` |
-| P2 (`for` sobre literal de arreglo) | cerrada: no | `evidence/v05_spec/run_20261101T043007Z.json` §3 |
-| P3 (nombres e identidad) | cerrada | el mismo recibo §5 (`411`/`417`/`420`) + `tests/test_specialize.py` |
+| P2 (`for` sobre literal de arreglo) | cerrada: no | `evidence/v05_spec/run_20261101T043007Z.json` §4 |
+| P3 (nombres e identidad) | cerrada | el mismo recibo §6 (`411`/`417`/`420`) + `tests/test_specialize.py` |
 | P4 (cota de especializaciones) | **abierta — decisión, no medición** | base sellada en `evidence/v05_p4/run_20261101T062234Z.json`; falta elegir granularidad, número y el error nombrado |
 | N1 (`for` sobre `str`) | abierta — decisión | medido en `evidence/v05_spec/…` §4; ningún caso del corpus lo fija |
 | N2 (diagonal `0.5` de M4) | abierta — decisión | medido en `evidence/v05_spec/…` §1 (8 combinaciones); el corpus no cubre ningún cruce con raíz `0.5` |
@@ -80,7 +86,7 @@ tienen recibo porque un recibo de ellas sería una foto de un día:
 
 | afirmación | comando |
 |---|---|
-| «166 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
+| «167 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
 | «sha256sum -c de `docs/origin/` coincide» | `sha256sum -c docs/origin/SHA256SUMS.txt` desde la raíz del repo |
 | conteos de `SUPPORTED`, llamadas a `has()` y sitios de versión | `grep -n` de `spec/CORE_v0.5.md` §0, fijados como test en `tests/test_versions.py` |
 
@@ -102,11 +108,15 @@ Qué encontró esta matriz al cotejar prose contra recibos:
    congelado» de 118.
 3. **F4 con 170 mientras F5 tiene 212.** No era un error: era un gate que no se re-corré.
    Quedó escrito arriba en vez de suponerse, y **se cerró el mismo día** con 212/212 en las
-   cuatro combinaciones (arriba, «Hueco de F4»). Lo que no se cerró: este gate no tiene
-   cifra atada a la suite. `DocsMatchLatestEvidence` (`tests/test_evidence.py`) ata el
-   README a los recibos de `conformance/`, `ir/` y `backends/`, pero **no** a los de
-   `evidence/c/`, así que un F4 vencido solo lo detecta esta matriz, a mano. Atar el `corpus`
-   de `evidence/c/gate_*.json` a la matriz es tarea pendiente, no hallazgo.
+   cuatro combinaciones (arriba, «Hueco de F4»). Lo que sí quedaba abierto —que este gate no
+   tenía cifra atada a la suite— **se cerró el 2026-11-01**: `DocsMatchLatestEvidence` ya no
+   se detiene en `conformance/`, `ir/` y `backends/`; `test_c_gate_figure`
+   (`tests/test_evidence.py`) lee `latest("c", "gate_")`, exige `verdict=PASS`, cero fallos,
+   cero `UNSUPPORTED` y las tres vías completas en cada combinación presente, exige cero
+   diferencias en el diferencial y que los dos sabotajes se detecten, y reclama que el README
+   cite la **población** del recibo más nuevo. Su primera mordida fue real y documentada: con
+   `443` en el corpus el README seguía diciendo «sobre los 212» y el gate decía 213, así que
+   la prueba enrojeció sola — es el control negativo, sin tocar ninguna evidencia.
 4. **La segunda pasada encontró su propio fallo.** La fila «techo encontrado» de
    `docs/OPEN_QUESTIONS_P1_P4.md` decía «474 ms de referencia, 3,7 s de `c_ms`» citando el
    recibo `v05_p4`, y el recibo dice `ref_ms=508,7` y `c_ms=1037,0`: lo escribí de memoria

@@ -90,3 +90,12 @@ hoy 12 `CONTROL FALSO` en la sonda y ninguna evidencia sellada.
   movieron: de esos 66, **21** son casos ≥`401` y **45** son exactamente los que declaraba
   COBOL con el corpus de 170 (`gate_2026-10-31T200602Z.json`: 125/170, 45 `UNSUPPORTED`).
   Recibo `evidence/backends/gate_2026-11-01T015245Z.json`.
+- **Segunda corrida el mismo día (`443`, commit `a4f608c`):** con el caso nuevo la población
+  es **43 / 213** y los cuatro gates se re-corrieron sobre el árbol commiteado, en un solo
+  lote y todos `PASS`: referencia `213/213` (`evidence/conformance/run_2026-11-01T074055Z.json`),
+  IR `426/426` sobre 145 programas bajados (`evidence/ir/gate_2026-11-01T074055Z.json`),
+  F4 `213/213` en las cuatro combinaciones con sanitizers (`evidence/c/gate_2026-11-01T074655Z.json`)
+  y F5 con c/rust/zig/pydecimal `213/213` y COBOL `147/213` con los mismos 66 `UNSUPPORTED`
+  nombrados (`evidence/backends/gate_2026-11-01T082046Z.json`): `443` se rechaza en el
+  frontend, así que no suma capacidad ni resta ninguna y COBOL lo cuenta como pasado. Ninguno
+  de los 170 anteriores se movió.

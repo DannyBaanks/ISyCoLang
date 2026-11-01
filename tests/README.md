@@ -2,12 +2,12 @@ Tests: `python3 -m unittest discover -s tests -v`
 
 | archivo | qué prueba |
 |---|---|
-| `test_reference.py` | intérprete de referencia contra los cinco corpus (v0.1–v0.5, 212 casos), hashes congelados, sabotajes de la semántica (F2, v0.2, v0.3) |
+| `test_reference.py` | intérprete de referencia contra los cinco corpus (v0.1–v0.5, 213 casos), hashes congelados, sabotajes de la semántica (F2, v0.2, v0.3) |
 | `test_ir.py` | ISY-IR v0.1/v0.2: resultado y traza iguales a la referencia, validador de mundo cerrado (F3) |
 | `test_backend_c.py` | backend C: tres vías, diferencial numérico, sabotajes (F4) |
 | `test_modules.py` | módulos (v0.4): identificadores seguros en backends, CLI con módulos, sabotaje del enlazador |
 | `test_backends.py` | contrato ISY_BACKEND/1 en C, Rust, Zig, pydecimal y cobol: corpus, UNSUPPORTED, diferenciales, sabotajes por testigos, costo (F5) |
-| `test_evidence.py` | `evidence/*/SHA256SUMS.txt` verificadas dentro de la suite y cifras del README contra la evidencia más reciente (PL-02); control negativo con `ISYCO_EVIDENCE_ROOT=<copia>` |
+| `test_evidence.py` | `evidence/*/SHA256SUMS.txt` verificadas dentro de la suite y cifras del README contra la evidencia más reciente (PL-02), ahora también la población y los diferenciales del gate C (F4); control negativo con `ISYCO_EVIDENCE_ROOT=<copia>` |
 | `test_versions.py` | `isyco/versions.py` como única fuente de la versión: familias monotónicas, fail-closed con versiones desconocidas, y ningún literal de versión suelto en `isyco/` |
 | `test_v05_core.py` | V1 (`len` de arreglo resuelto en el frontend, cero nodos de IR, cero pasos) y V2 (`for x in a` como azúcar del parser): forma, gemelos, trazas, nombres sintéticos y rechazos en 0.1–0.4 |
 | `test_specialize.py` | V6 y V6-bis: la capacidad diferida en parámetro y en retorno se resuelve por el sitio de llamada — sin centinela, inyectiva en los nombres, fail-closed en las dos direcciones y paso-neutral contra el gemelo escrito a mano |
@@ -19,7 +19,8 @@ gate — el 329,6 con `build/` en 3,3 G y justo después de `tools/v05_p4_probe.
 compila programas de 256 a 2048 funciones, y el 251,9 después de una corrida completa de
 `tools/c_gate.py` (cuatro combinaciones × 212 casos más el diferencial y los sabotajes);
 no se ha atribuido la causa, solo medido
-el rango. En frío
+el rango. **Sexta corrida el mismo día, ya con los 213 casos y el test nuevo del gate C:
+167 tests en 199,8 s** (200,1 s de pared), dentro del rango medido. En frío
 casi todo es compilar Zig; para no esperar:
 
 ```bash

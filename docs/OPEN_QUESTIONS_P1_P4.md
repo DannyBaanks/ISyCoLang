@@ -14,8 +14,8 @@ dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no
 | id | pregunta | respuesta | dónde está la prueba |
 |---|---|---|---|
 | P1 | ¿qué `at` llevan las sentencias sintéticas del `for`? | el del `for` | gate F2.4 ítem 2 + `tests/test_v05_core.py:ForAzucar` |
-| P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §3 |
-| P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §5, `tests/test_specialize.py` |
+| P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §4 |
+| P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
 | P4 | ¿cuántas especializaciones puede crear un programa? | **abierto**, con censo y forma sellados | `evidence/v05_p4/run_20261101T062234Z.json` |
 
 ## P1 — las posiciones del azúcar `[CERRADA]`
@@ -47,7 +47,7 @@ cuerpo o del iterando; o un `for` cuyo índice sea visible en un mensaje de erro
 El enunciado recomendaba **no**, porque un literal de arreglo sin tipo esperado es
 `AMBIGUOUS_LITERAL` (v0.3 §3.5) y el `for` no aporta tipo esperado. Faltaba probarlo.
 
-**Medición** (`tools/v05_spec_probe.py` §3, siete formas más): la posición del iterando
+**Medición** (`tools/v05_spec_probe.py` §4, siete formas más): la posición del iterando
 no es una expresión, es un **lugar** (`IDENT ("." IDENT)*`):
 
 | forma | observado |
@@ -101,7 +101,11 @@ medición está hecha y sellada en `evidence/v05_p4/run_20261101T062234Z.json` (
 `26af3945…`, `RELEASE_GATE` sobre `52f5564`, `arbol_sucio_codigo=false`), recalculada
 desde el instrumento — `Checker.specs` en `isyco/checker.py` — y sobre **la población del
 gate** (`load_corpus`: los 42 casos de `programs/conformance_v0.5`, incluidos los 3 con
-módulos, que un glob de `.isy` se llevaba por delante).
+módulos, que un glob de `.isy` se llevaba por delante). **Alta posterior:** `443` entró el
+2026-11-01 con `a4f608c` y la población del gate es **43**; el censo de abajo es el del
+recibo sellado sobre 42 y **no se re-midió** — `443` no tiene parámetros `str`, así que lo
+esperable es que el número de clones no se mueva, pero eso es una predicción, no una
+medición.
 
 | magnitud | medido |
 |---|---|

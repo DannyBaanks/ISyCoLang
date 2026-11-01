@@ -171,7 +171,10 @@ que falsifica V7.
 > `evidence/v05_v6/run_20261031T103514Z.json`. Quedan V6-bis, V7, revalidar V1–V5 y P1–P4;
 > el directorio sigue fuera de `CORPORA` hasta que `401`–`410` pasen —**ocurrió el
 > 2026-11-01**: entró con sus 42 casos y el gate pasó a 212, sin mover ningún resultado
-> de los 170 anteriores.
+> de los 170 anteriores. **Y subió otra vez el mismo día:** `443_m4_modulo_v04` (`a4f608c`)
+> fija la diagonal `0.5` de M4 con su `expected` escrito antes de correr, y lleva la
+> población del gate a **43 / 213** — los recibos más recientes de F2, F3, F4 y F5 son de esa
+> población y están en `docs/EVIDENCE_MATRIX.md`; ninguno de los 170 de siempre se movió.
 
 > **V6-bis implementado y sellado 2026-10-31.** `-> str` pelado resuelto por la capacidad
 > **esperada en el sitio de llamada**: `429`–`438` (4 ejecutables, 6 rechazos) con los
@@ -194,7 +197,10 @@ que falsifica V7.
 > **dentro de un programa** pero **7 de `doble` en todo el corpus**. La forma también está
 > medida: K anchos en una ranura → K clones, dos ranuras → W², tres → W³, y 20 sitios con el
 > mismo ancho → 1 clon. Ningún techo ni error nombrado hasta 2048 clones: **P4 sigue
-> abierta**, con la base numérica en evidencia en lugar de en prosa.
+> abierta**, con la base numérica en evidencia en lugar de en prosa. **Población del censo:**
+> son los 42 casos que había al sellar; `443` entró el 2026-11-01 con `a4f608c` y el gate quedó
+> en 43. El caso nuevo no tiene parámetros `str`, así que lo esperable es que los 32 clones no
+> se muevan, pero **no se re-midió**: es predicción, no medición.
 
 > **V7 implementado 2026-10-31.** La capacidad la exige el **programa**, no su cabecera:
 > `features_of` camina los tipos bajados y las sentencias, `ir0.2` solo aparece si hay `str` o

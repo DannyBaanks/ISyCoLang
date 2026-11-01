@@ -92,6 +92,29 @@ class DocsMatchLatestEvidence(unittest.TestCase):
         self.assertEqual(gate["equal"], gate["comparisons"], "el último gate IR no es 100%")
         self.assertIn(norm(f"{gate['equal']}/{gate['comparisons']}"), self.readme())
 
+    def test_c_gate_figure(self):
+        # F4 no estaba atado a nada: era el único gate cuyo recibo más reciente el
+        # README podía dejar atrás sin que la suite se enterara (hallazgo 3 de
+        # docs/EVIDENCE_MATRIX.md — F4 con 170 mientras F5 tenía 212).
+        gate = json.loads(latest("c", "gate_").read_text(encoding="utf-8"))
+        self.assertEqual(gate["verdict"], "PASS", "el último gate de C no es PASS")
+        self.assertTrue(gate["corpus"], "evidence/c: el gate no cubrió ninguna combinación")
+        readme = self.readme()
+        for combo, entrada in sorted(gate["corpus"].items()):
+            self.assertEqual(entrada["failures"], [], f"C {combo}: fallos")
+            self.assertEqual(entrada["unsupported"], [], f"C {combo}: UNSUPPORTED sin dominio")
+            self.assertEqual(entrada["expected_vs_reference_ok"], entrada["cases"],
+                             f"C {combo}: expected ↔ referencia incompleto")
+            self.assertEqual(entrada["reference_vs_backend_ok"], entrada["cases"],
+                             f"C {combo}: referencia ↔ binario incompleto")
+            self.assertIn(norm(f"sobre los {entrada['cases']}"), readme,
+                          f"C {combo}: el README no cita la población {entrada['cases']} "
+                          f"del gate más reciente")
+        for combo, entrada in sorted(gate["difftest"].items()):
+            self.assertEqual(entrada["diff_count"], 0, f"C {combo}: diferencial con diferencias")
+        for nombre, entrada in sorted(gate["sabotage"].items()):
+            self.assertTrue(entrada["detected"], f"el sabotaje {nombre} no se detecta")
+
     def test_backend_figures(self):
         # `--only X` escribe un gate parcial: cada backend se ata a su entrada
         # más reciente en cualquier gate, no solo al último archivo, para que un

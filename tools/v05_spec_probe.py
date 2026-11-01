@@ -1,19 +1,22 @@
 """Mide las aristas que `spec/CORE_v0.5.md` (borrador) afirma y que ningún caso del
-corpus fija: la M4 generalizada, el léxico de V3, los bordes del iterando de V2, `for`
-sobre `str` con su gemelo de forma idéntica, y P3 (identidad y nombres de la
+corpus fija del todo: la M4 generalizada en las dos direcciones (el caso `443` fija la
+diagonal 0.5), el léxico de V3, la excepción de `let` de §4.1, los bordes del iterando de
+V2, `for` sobre `str` con su gemelo de forma idéntica, y P3 (identidad y nombres de la
 especialización).
 
-Corpus: 401–442 de `programs/conformance_v0.5/` cubren otras cosas. Aquí no se mide
+Corpus: 401–443 de `programs/conformance_v0.5/` cubren otras cosas. Aquí no se mide
 cobertura del corpus sino las frases del borrador que hoy solo estaban en prosa, así
 que la sonda lleva sus propios programas en el fuente y sus controles:
 
   1. M4 (misma versión que la raíz): matriz 2 × 4; solo las dos diagonales ejecutan.
   2. V3 (`for` reservada solo desde 0.5; `in` nunca reservada): cuatro cabeceras.
-  3. V2 §4.3 (el iterando es un LUGAR): cuatro formas aceptadas, cuatro rechazadas.
-  4. V2 §4.4 + V6 §7 (neutralidad de pasos **a forma constante**): cuatro programas
+  3. §4.1 (el `let` sin anotación es solo el sintético del `for`): dos formas escritas
+     a mano y dos que sí corren, y el renglón que falsifica la palabra «elemento».
+  4. V2 §4.3 (el iterando es un LUGAR): cuatro formas aceptadas, cuatro rechazadas.
+  5. V2 §4.4 + V6 §7 (neutralidad de pasos **a forma constante**): cuatro programas
      que deben dar los mismos 24 pasos, más el control de la forma equivocada —el
      gemelo sin `let`, que da 20 y que la sonda reporta como trampa, no como fallo.
-  5. P3: `program_sha256` no se mueve con la especialización y la traza muestra el
+  6. P3: `program_sha256` no se mueve con la especialización y la traza muestra el
      nombre resuelto (`pad.2`), nunca la definición pelada.
 
 Un PASS con el árbol sucio de código es `EVIDENCE_ONLY`, nunca gate de release.
@@ -102,7 +105,42 @@ def matriz_lexico():
     return filas
 
 
-# --- 3. el iterando es un lugar (V2 §4.3) --------------------------------------------
+# --- 3. el `let` sin anotación es solo el del `for` (N3, §4.1) -----------------------
+#: `predicho` es el trío (status, code, return) que la regla de CORE §4 más la excepción
+#: de §4.1 imponen. El cuarto renglón es el que falsifica la palabra «elemento»: si el
+#: `let` sintético tomara el tipo del índice (i64), `s + x` sería TYPE_MISMATCH y el
+#: programa no llegaría a 3.85.
+LET = [
+    ("0.5", "let x = 1; (escrito a mano)",
+     "isyco 0.5\nfn main() -> i32 { let x = 1; return x; }",
+     ("INVALID_PROGRAM", "SYNTAX", None)),
+    ("0.4", "let x = 1; (escrito a mano)",
+     "isyco 0.4\nfn main() -> i32 { let x = 1; return x; }",
+     ("INVALID_PROGRAM", "SYNTAX", None)),
+    ("0.5", "let x: i32 = 1; (con anotación)",
+     "isyco 0.5\nfn main() -> i32 { let x: i32 = 1; return x; }",
+     ("HALTED", None, "1")),
+    ("0.5", "for x en [dec<8,2>; 2] (el sintético, tipo del elemento)",
+     "isyco 0.5\nfn main() -> dec<8,2> {\n"
+     "    let items: [dec<8,2>; 2] = [1.25, 2.60];\n"
+     "    let s: dec<8,2> = 0.00;\n"
+     "    for x in items { s = s + x; }\n    return s;\n}",
+     ("HALTED", None, "3.85")),
+]
+
+
+def matriz_let():
+    filas = []
+    for version, forma, fuente, predicho in LET:
+        r, _ = run(fuente.encode(), [])
+        filas.append({"cabecera": version, "forma": forma, "status": r["status"],
+                      "code": r["code"], "return": r["return"],
+                      "observado": (r["status"], r["code"], r["return"]),
+                      "predicho": predicho})
+    return filas
+
+
+# --- 4. el iterando es un lugar (V2 §4.3) --------------------------------------------
 PRE = ("struct Q { ys: [i32; 2] }\n"
        "struct P { xs: [i32; 3], q: Q }\n"
        "fn id(a: [i32; 3]) -> [i32; 3] { return a; }\n")
@@ -143,7 +181,7 @@ def matriz_iterando():
     return filas
 
 
-# --- 4. `for` sobre str y la forma del gemelo (§4.4, §7) ------------------------------
+# --- 5. `for` sobre str y la forma del gemelo (§4.4, §7) ------------------------------
 CUATRO = {
     "A for / str<4>": ("isyco 0.5\nfn recorre(s: str<4>) -> i64 !emit { for c in s { emit c; }"
                        " return len(s); }\nfn main() -> i64 !emit { let t: str<4> = \"hola\";"
@@ -177,7 +215,7 @@ def matriz_pasos():
     return filas
 
 
-# --- 5. P3: identidad y nombres de la especialización ---------------------------------
+# --- 6. P3: identidad y nombres de la especialización ---------------------------------
 P3 = ("411_pad_dos_anchos", "417_junta_dos_contextuales", "420_recursion_contextual")
 
 
@@ -198,6 +236,7 @@ def main(argv: list[str]) -> int:
     write = "--write" in argv
     m4 = matriz_m4()
     lex = matriz_lexico()
+    lt = matriz_let()
     it = matriz_iterando()
     pasos = matriz_pasos()
     p3, nombres_traza, res411 = matriz_p3()
@@ -209,10 +248,12 @@ def main(argv: list[str]) -> int:
            "veredicto_arbol": "EVIDENCE_ONLY" if sucio else "RELEASE_GATE",
            "python": platform.python_version(),
            "corpus": str(V05.relative_to(ROOT)),
-           "fuente_normativa": "spec/CORE_v0.5.md (BORRADOR) §0, §2, §4.3, §4.4, §7, §11"}
+           "fuente_normativa": "spec/CORE_v0.5.md (BORRADOR) §0, §2, §4.1, §4.3, §4.4, "
+                               "§7, §11"}
     documento = {"schema": "isyco.evidence/0.1",
                  "milestone": "Borrador CORE v0.5 — aristas normativas sin caso de corpus",
-                 "receipt": rec, "m4": m4, "lexico": lex, "iterando": it,
+                 "receipt": rec, "m4": m4, "lexico": lex, "let_anotacion": lt,
+                 "iterando": it,
                  "pasos_forma_constante": pasos, "p3": {"programas": p3,
                                                         "fn_en_traza_411": nombres_traza,
                                                         "resumen_411": res411}}
@@ -234,15 +275,20 @@ def main(argv: list[str]) -> int:
         lineas.append(f"   {fila['cabecera']}: let {fila['identificador']}: i32 = 5  ->  "
                       f"{fila['status']}({fila['code']})  return={fila['return']}  "
                       f"predicho={fila['predicho']}")
-    lineas += ["", "3) el iterando del `for` es un LUGAR (V2 §4.3), no una expresion"]
+    lineas += ["", "3) el `let` sin anotacion es SOLO el sintético del `for` (§4.1, N3)"]
+    for fila in lt:
+        lineas.append(f"   {fila['cabecera']}: {fila['forma']:46s} -> {fila['status']}"
+                      f"({fila['code']})  return={fila['return']}  "
+                      f"predicho={fila['predicho']}")
+    lineas += ["", "4) el iterando del `for` es un LUGAR (V2 §4.3), no una expresion"]
     for fila in it:
         lineas.append(f"   {fila['forma']:46s} -> {fila['status']}({fila['code']}) "
                       f"emits={fila['emits']}  predicho={fila['predicho']}")
-    lineas += ["", "4) pasos a FORMA CONSTANTE (V2 §4.4 y V6 §7) — y el control de forma"]
+    lineas += ["", "5) pasos a FORMA CONSTANTE (V2 §4.4 y V6 §7) — y el control de forma"]
     for fila in pasos:
         lineas.append(f"   {fila['programa']:44s} -> {fila['status']}({fila['code']}) "
                       f"pasos={fila['steps']}  emits={fila['emits']}  return={fila['return']}")
-    lineas += ["", "5) P3: la especializacion no mueve program_sha256 y si se ve en la traza"]
+    lineas += ["", "6) P3: la especializacion no mueve program_sha256 y si se ve en la traza"]
     for fila in p3:
         lineas.append(f"   {fila['caso']:30s} sha_resultado==sha_archivo={fila['igual']}  "
                       f"{fila['sha_archivo'][:16]}")
@@ -268,6 +314,19 @@ def main(argv: list[str]) -> int:
             falsos.append(f"léxico: `let {fila['identificador']}` con {fila['cabecera']} "
                           f"da {fila['status']}({fila['code']}), se esperaba HALTED "
                           f"{fila['predicho']}")
+    for fila in lt:
+        if (fila["status"], fila["code"], fila["return"]) != fila["predicho"]:
+            falsos.append(f"let (§4.1): {fila['cabecera']} — {fila['forma']} da "
+                          f"{fila['status']}({fila['code']}) return={fila['return']}, "
+                          f"la regla predice {fila['predicho']}")
+    if any(f["status"] == "HALTED" for f in lt if "escrito a mano" in f["forma"]):
+        falsos.append("let (§4.1): un `let x = 1;` escrito a mano corre — la excepción "
+                      "dejó de ser acotada: el lenguaje inferiría tipos")
+    anot = next((f for f in lt if "con anotación" in f["forma"]), None)
+    mano = next((f for f in lt if "escrito a mano" in f["forma"]), None)
+    if anot and mano and anot["status"] == mano["status"]:
+        falsos.append("let (§4.1): `let x = 1;` y `let x: i32 = 1;` dan el mismo status "
+                      "— la sonda no distingue la anotación y su PASS no prueba nada")
     for fila in it:
         if fila["predicho"] == "DUP":
             if (fila["status"], fila["code"]) != ("INVALID_PROGRAM", "DUPLICATE_NAME"):

@@ -116,11 +116,24 @@ while foridx{n} + 1 < len(<lugar>) {
 ```
 
 (`parser.py:317-351`; la expansión está en el **parser**, no en el lowering, para que
-`steps`, límites y trazas queden definidos sin regla nueva. El `let x` sin anotación
-de la última fila es el único caso en que el lenguaje lo admite: `checker.py:204-209`
-le pone el tipo del índice. El `-1` es `IntLit`, no `Unary` — CORE v0.2 C2 ya define
-`-1` como un solo literal, y construirlo con el operador dejaba un `{"k": "neg"}` en
-la IR que el `while` escrito a mano no tiene.)
+`steps`, límites y trazas queden definidos sin regla nueva. El `-1` es `IntLit`, no
+`Unary` — CORE v0.2 C2 ya define `-1` como un solo literal, y construirlo con el operador
+dejaba un `{"k": "neg"}` en la IR que el `while` escrito a mano no tiene.)
+
+**El `let` sin anotación es una excepción acotada, no inferencia [N3].** CORE §4 exige
+anotación en todo `let`, y v0.5 no la afloja: la única sentencia del lenguaje que puede
+llevar `let` sin tipo escrito es el `let x = <lugar>[foridx{n}];` que inyecta el azúcar de
+arriba. La regla normativa es «el `let` sintético del `for` toma el tipo del
+**elemento** del iterando», y vive en un solo sitio: `checker.py:205-209` — si `Let.type`
+es `None`, se chequea la expresión y se le copia el tipo; desde ahí es un `let` igual que
+el escrito a mano. No hay inferencia general, medido: `let x = 1;` sin anotación es
+`INVALID_PROGRAM(SYNTAX)` con cabecera `0.4` **y** con `0.5` (el parser la exige antes de
+que el checker vea nada), mientras que `let x: i32 = 1;` da `HALTED` con `return 1`. Que el
+tipo sea el del elemento y no el del índice lo ejerce `402_for_decimales`: sobre
+`[dec<8,2>; 2]`, `x` es `dec<8,2>` y la suma cierra en `3.85`. La excepción entera está
+medida y sellada por sonda — `tools/v05_spec_probe.py`, sección 3 (`let_anotacion`) — con
+tres controles de sabotaje: el `let` a mano que corriera, una sonda que no distinguiera
+la anotación y el sintético con el tipo del índice.
 
 Las llaves del `while` son notacionales: el lenguaje no tiene sentencias-bloque, así
 que las dos sentencias sintéticas se escriben en el bloque contenedor
@@ -317,16 +330,25 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 
 ## 9. Corpus, gate y no regresión
 
-- `programs/conformance_v0.5/` tiene **42 casos** (401–442), con los `expected`
-  escritos a mano entre el 2026-10-30 y el 2026-10-31, **antes** de tocar `isyco/` en
-  cada decisión. El directorio está en `CORPORA` (`isyco/conformance.py:13`) desde
-  `57f38bc`, así que el gate de backends pasó de 170 a **212** casos. Recibos de esa
-  corrida, los tres con `git_head=57f38bc`: referencia `212/212`
+- `programs/conformance_v0.5/` tiene **43 casos** (401–443, 39 de archivo suelto y 4
+  directorios de módulos), con los `expected` escritos a mano entre el 2026-10-30 y el
+  2026-11-01, **antes** de tocar `isyco/` en cada decisión. El directorio está en
+  `CORPORA` (`isyco/conformance.py:13`) desde `57f38bc`, así que el gate de backends pasó
+  de 170 a **212** casos; `443` (alta 2026-11-01) sube la población del gate a **213**.
+  Recibos de la corrida de 212, los tres con `git_head=57f38bc`: referencia `212/212`
   (`evidence/conformance/run_2026-11-01T033345Z.json`), IR `424/424` comparaciones
   iguales sobre 145 programas bajados (`evidence/ir/gate_2026-11-01T013721Z.json`) y
   backends `verdict=PASS` (`evidence/backends/gate_2026-11-01T015245Z.json`): C, Rust,
   Zig y pydecimal `212/212` con `8 484` corridas diferenciales y cero diferencias más
   `1 270` del diferencial de strings; COBOL `146/212` con 66 `UNSUPPORTED` nombrados.
+  Recibos de la corrida de 213, los cuatro con `git_head=a4f608c` y en una sola corrida en
+  lote, todos `PASS`: referencia `213/213`
+  (`evidence/conformance/run_2026-11-01T074055Z.json`), IR `426/426` sobre los mismos 145
+  programas bajados —`443` no baja: se comparan sus dos rechazos—
+  (`evidence/ir/gate_2026-11-01T074055Z.json`), C en las cuatro combinaciones con sanitizers
+  `213/213` (`evidence/c/gate_2026-11-01T074655Z.json`) y backends con C, Rust, Zig y
+  pydecimal `213/213` y COBOL `147/213` con los mismos 66 `UNSUPPORTED`
+  (`evidence/backends/gate_2026-11-01T082046Z.json`).
 - **No regresión:** ningún programa `0.1`–`0.4` cambia. Medido por recabezado
   (`401`/`406` siguen en `UNKNOWN_NAME` en 0.1/0.2 y `TYPE_MISMATCH` en 0.3/0.4;
   `402`–`405` siguen en `SYNTAX`; `426`/`437` siguen en `SYNTAX`), por el brazo viejo
@@ -359,9 +381,10 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 | P1 (`at` de las sentencias sintéticas del `for`) | **cerrado por medición** | — (es la línea del `for`; el gate compara trazas salvos `at`) |
 | P2 (`for` sobre un literal de arreglo) | **cerrado: no** | — (`SYNTAX`, §4.3) |
 | P3 (nombre de la especialización y su efecto en `program_sha256` y las trazas) | **cerrado por medición** | `program_sha256` es el SHA del archivo principal (v0.4 §6 P6) y **no se mueve**: medido en `411`, `417` y `420`, los tres iguales al `sha256sum` del `.isy`. Lo que sí cambia es la traza: `411` muestra `main`, `pad.2`, `pad.7` y nunca `pad` a secas — la especialización es visible en el nombre, no en la identidad. Los nombres viajan por la codificación inyectiva de `fn_ident` (longitud prefijada), que no colisiona con un nombre de usuario |
-| P4 (cota de especializaciones por programa) | **abierto a propósito, con la base sellada** | falta la decisión (el número y su nombre), no la medición. `tools/v05_p4_probe.py` recalcula el censo desde `Checker.specs` sobre la población del gate y mide la forma: **32 clones** en 18 de los 42 casos (26 V6 + 6 V6-bis), 4 por programa, 2 por definición **dentro de un programa** pero 7 de `doble` **en el corpus**; una ranura con K anchos da K clones, dos ranuras W², tres W³, y 20 sitios con el mismo ancho dan 1 clon. Sin techo ni error nombrado hasta 2048 clones: el crecimiento es silencioso. Recibo `evidence/v05_p4/run_20261101T062234Z.json` (`RELEASE_GATE` sobre `52f5564`) |
-| **[D-new]** `for` sobre `str` | **abierto** | decidir §4.4 y fijarlo con un caso + su gemelo de forma idéntica |
-| **[D-new]** diagonal `0.5` de M4 | **abierto** | la regla está medida (§0) pero ningún caso del corpus la fija; falta `4xx` raíz `0.5` + módulo `0.4` ⇒ `VERSION_MISMATCH` |
+| P4 (cota de especializaciones por programa) | **abierto a propósito, con la base sellada** | falta la decisión (el número y su nombre), no la medición. `tools/v05_p4_probe.py` recalcula el censo desde `Checker.specs` sobre la población del gate y mide la forma: **32 clones** en 18 de los 42 casos (26 V6 + 6 V6-bis), 4 por programa, 2 por definición **dentro de un programa** pero 7 de `doble` **en el corpus**; una ranura con K anchos da K clones, dos ranuras W², tres W³, y 20 sitios con el mismo ancho dan 1 clon. Sin techo ni error nombrado hasta 2048 clones: el crecimiento es silencioso. Recibo `evidence/v05_p4/run_20261101T062234Z.json` (`RELEASE_GATE` sobre `52f5564`). El censo es sobre los 42 casos de esa corrida; con `443` la población es 43 y **no se re-midió** |
+| **[D-new]** `for` sobre `str` (N1) | **abierto** | decidir §4.4 y fijarlo con un caso + su gemelo de forma idéntica |
+| **[D-new]** diagonal `0.5` de M4 (N2) | **cerrado por caso: `443`** | `programs/conformance_v0.5/443_m4_modulo_v04/` (raíz `0.5` + módulo `0.4` ⇒ `INVALID_PROGRAM(VERSION_MISMATCH)`), con sus dos controles medidos en el README del directorio: `0.5/0.5` con los mismos archivos da `HALTED` `return 2` en 4 pasos —lo único defectuoso es la cabecera— y `0.4/0.5` da `VERSION_MISMATCH`, o sea que la regla sigue siendo simétrica. Alta el 2026-11-01; la población del corpus pasa de 42 a 43 casos |
+| **[D-new]** el `let` sin anotación (N3) | **cerrado por texto** | escrito en §4.1 como excepción acotada al `let` con anotación de CORE §4: solo el `let x` sintético del `for`, y toma el tipo del **elemento** (`checker.py:205-209`). No es inferencia general, medido: `let x = 1;` es `SYNTAX` con `0.4` y con `0.5`. Las cuatro formas están en la sonda §3 (`let_anotacion`) con sus tres sabotajes |
 | congelar | — | aprobación explícita de Danny (rito de v0.3 y v0.4), agregar `CORE_v0.5.md` a `spec/SHA256SUMS.txt`, y decidir qué `expected` del corpus se superan al congelar (precedente: `SUPERSEDED.json`) |
 
 ## 12. Tabla de claims de este borrador
@@ -371,7 +394,8 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 | V1, V2, V6, V6-bis y V7 están implementados, con gate y evidencia | **DEMONSTRATED** — `docs/decisions/` de cada uno, cada uno con su recibo `RELEASE_GATE` sobre su commit |
 | V3 y V4 y V5 son texto sobre comportamiento ya medido | **DEMONSTRATED** el comportamiento (`402`–`405` recabezados, `407`, `408` y las aristas de §6); el texto es este documento |
 | La versión se decide en un solo sitio | **DEMONSTRATED** — `versions.py`; 13 llamadas a `has()`, cero literales de versión como decisión (`grep` de §0) |
-| M4 generalizada: misma versión que la raíz, en las dos direcciones | **DEMONSTRATED** por sonda (8 combinaciones, §0) / **NOT_DEMONSTRATED** en el corpus — falta el caso |
+| M4 generalizada: misma versión que la raíz, en las dos direcciones | **DEMONSTRATED** — por sonda en las 8 combinaciones (§0) **y** por corpus: `308_version_mismatch` (raíz `0.4`, módulo `0.3`) y `443_m4_modulo_v04` (raíz `0.5`, módulo `0.4`), alta 2026-11-01 con sus dos controles medidos |
+| El `let` sin anotación existe solo como azúcar del `for`, y toma el tipo del elemento | **DEMONSTRATED** — `checker.py:205-209` en un solo sitio; `let x = 1;` es `SYNTAX` con `0.4` y con `0.5` (cuatro formas en la sonda §3), y `402` ejerce el tipo del elemento (`dec<8,2>` sobre `[dec<8,2>; 2]`) |
 | `for` sobre un `str` es correcto y barato | **NOT_DEMONSTRATED** — funciona y su gemelo cuesta lo mismo (medido, §4.4), pero ningún caso del corpus lo fija y la propuesta no lo adoptaba |
 | Ningún programa `0.1`–`0.4` cambia de resultado, schema ni traza | **DEMONSTRATED** — §9 (recabezados, brazo viejo FIEL en 118 módulos, gate de backends sin diferencias) |
 | Los cinco backends ejecutan el corpus v0.5 con sus capacidades declaradas | **DEMONSTRATED** para los casos que no piden `str`/`struct`/`emit_array`; COBOL responde `UNSUPPORTED` nombrando la capacidad que falta, medido en `tools/v7_capability_probe.py` |
