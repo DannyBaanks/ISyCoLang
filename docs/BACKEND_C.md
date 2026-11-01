@@ -55,3 +55,10 @@ llamar al binario: `BAD_INPUT` lo decide el frontend, igual que en la referencia
    redondeo) + parejas aleatorias con semilla fija.
 3. **Sabotajes:** `half_even_as_half_up` y `div_floor` tienen que fallar el
    corpus **y** el diferencial.
+
+**Última corrida (2026-11-01, head `422719a`):** `evidence/c/gate_2026-11-01T071619Z.json`
+(`PASS`) — 212/212 en las cuatro combinaciones con cero `UNSUPPORTED` y cero fallos, 24 612
+corridas diferenciales en `gcc/plain` y 6 468 con sanitizers sin diferencias, y los dos
+sabotajes detectados. La población que cubre el gate creció 58 → 78 → 170 → **212** en
+`gate_2026-10-29T005211Z.json`, `gate_2026-10-29T011246Z.json`,
+`gate_2026-10-30T220800Z.json` y la actual, todas `PASS`.

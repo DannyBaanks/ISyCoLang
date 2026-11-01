@@ -11,8 +11,14 @@ re-produce o es prosa.
 - Un recibo `RELEASE_GATE` significa `arbol_sucio_codigo=false`: ni el engine, ni el
   corpus, ni las pruebas estaban modificados cuando corrió. `EVIDENCE_ONLY` es el mismo
   dato con el árbol de código sucio — sirve como referencia, no como gate.
-- Las rutas de recibo son relativas al repo; cada directorio tiene su `SHA256SUMS.txt` y
-  se verifica desde la raíz: `sha256sum -c evidence/<dir>/SHA256SUMS.txt`.
+- Las rutas de recibo son relativas al repo. Cada `evidence/<dir>/SHA256SUMS.txt` guarda
+  nombres **sin carpeta**, así que se verifica **desde adentro** del directorio:
+  `(cd evidence/c && sha256sum -c SHA256SUMS.txt)`. Desde la raíz falla con «No existe el
+  archivo». Verificado el 2026-11-01 sobre los **20** listados que hay (14 en `evidence/`,
+  `spec/` y los cinco `programs/conformance*/`): los 20 pasan desde adentro y todos fallan
+  desde la raíz. La única lista que sí corre desde la raíz es `docs/origin/SHA256SUMS.txt`.
+  `programs/dogfood/` no tiene lista (no es corpus congelado) y `tests/test_evidence.py`
+  resuelve las rutas él mismo, por eso no depende del `cwd`.
 - `git_head` se abrevia a 7. Un recibo viejo sigue siendo válido para el árbol que fija.
 
 ## Gates
@@ -21,13 +27,17 @@ re-produce o es prosa.
 |---|---|---|---|---|
 | F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-01T033345Z.json` | `57f38bc` | `PASS` | 212/212 en los cinco corpus |
 | F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-01T013721Z.json` | `57f38bc` | — | 424/424 comparaciones iguales, 145 programas bajados |
-| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-10-30T220800Z.json` | `ec6b823` | `PASS` | 170 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario ok y cero fallos; diferencial 24 612 corridas en `gcc/plain` (semilla 20261028) |
+| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-01T071619Z.json` | `422719a` | `PASS` | 212 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 212/212, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers; los dos sabotajes detectados; `missing_compilers: []`. stdout crudo sellado al lado: `gate_2026-11-01T071619Z_stdout.txt` |
 | F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-01T015245Z.json` | `57f38bc` | `PASS` | c/rust/zig/pydecimal 212/212; cobol 146/212 con 66 `UNSUPPORTED` nombrados; 8 484 corridas diferenciales por backend; `missing_toolchains: []` |
 
-**Hueco conocido (2026-11-01):** F4 no se re-corré desde que `conformance_v0.5` entró en
-`CORPORA`, así que su recibo más reciente fija 170 casos, no 212. Los 42 nuevos están
-cubiertos por F5, que incluye a C sobre los 212 — pero la vía de F4 con sanitizers
-(`gcc/sanitized`) no se ha corrido sobre ellos. Re-correrlo es `python3 tools/c_gate.py`.
+**Hueco de F4 — CERRADO el 2026-11-01.** Existió así: F4 no se había re-corrido desde que
+`conformance_v0.5` entró en `CORPORA`, así que su recibo más reciente (`ec6b823`) fijaba 170
+casos, no 212; los 42 nuevos estaban cubiertos por F5, que incluye a C sobre los 212, pero
+la vía de F4 con sanitizers (`gcc/sanitized`) no había corrido sobre ellos. Se cerró con
+`python3 tools/c_gate.py` sobre el commiteado `422719a`, árbol limpio: **212/212 en las
+cuatro combinaciones**, 0 `UNSUPPORTED`, 0 diferencias en las 31 080 corridas diferenciales
+y los dos sabotajes detectados. El recibo anterior sigue siendo válido para el árbol que
+fija; lo que cambió es el más reciente.
 
 ## Decisiones de CORE v0.5
 
@@ -90,8 +100,13 @@ Qué encontró esta matriz al cotejar prose contra recibos:
    `util.marca.4`. La sonda ahora itera `load_corpus`, la misma población del gate. Es el
    mismo clase de bug de deriva de población que V7 ya había cazado con el «corpus
    congelado» de 118.
-3. **F4 con 170 mientras F5 tiene 212.** No es un error: es un gate que no se re-corré.
-   Queda escrito arriba en vez de suponerse.
+3. **F4 con 170 mientras F5 tiene 212.** No era un error: era un gate que no se re-corré.
+   Quedó escrito arriba en vez de suponerse, y **se cerró el mismo día** con 212/212 en las
+   cuatro combinaciones (arriba, «Hueco de F4»). Lo que no se cerró: este gate no tiene
+   cifra atada a la suite. `DocsMatchLatestEvidence` (`tests/test_evidence.py`) ata el
+   README a los recibos de `conformance/`, `ir/` y `backends/`, pero **no** a los de
+   `evidence/c/`, así que un F4 vencido solo lo detecta esta matriz, a mano. Atar el `corpus`
+   de `evidence/c/gate_*.json` a la matriz es tarea pendiente, no hallazgo.
 4. **La segunda pasada encontró su propio fallo.** La fila «techo encontrado» de
    `docs/OPEN_QUESTIONS_P1_P4.md` decía «474 ms de referencia, 3,7 s de `c_ms`» citando el
    recibo `v05_p4`, y el recibo dice `ref_ms=508,7` y `c_ms=1037,0`: lo escribí de memoria
