@@ -1,7 +1,8 @@
-isyco 0.5
+isyco 0.4
 
 # Gemelo del 444 escrito a mano con la forma larga (sin `for`). Cabecera 0.4: no necesita
-# nada de 0.5, y sirve de control de que `len` de un `str` es de v0.3.
+# nada de 0.5, y sirve de control de que `len` de un `str` es de v0.3 (de hecho corre igual
+# con `0.3`, medido: 22 pasos y la misma traza en las tres cabeceras).
 fn main() -> i64 !emit {
     let s: str<8> = "hola";
     let i: i64 = -1;
