@@ -230,8 +230,9 @@ que falsifica V7.
 > módulos (`lexer`, `parser`, `checker`) — parchar solo el checker habría mentido — y el
 > sabotaje del incremento al final produce 12 `CONTROL FALSO`, exit 1 y cero evidencia sellada.
 > **Los 42 casos del corpus coinciden con su `expected` a mano (42/42).** Decisión:
-> `docs/decisions/V2_FOR_AZUCAR.md` (`evidence/v05_revalida/run_20261031T235253Z`,
-> `EVIDENCE_ONLY` por árbol sucio). Quedan los textos normativos V3–V5, meter el corpus en
+> `docs/decisions/V2_FOR_AZUCAR.md`; gate de release `evidence/v05_revalida/run_20261101T001608Z`
+> (`RELEASE_GATE`, `arbol_sucio_codigo=false`, mismos números que la corrida `EVIDENCE_ONLY`
+> `run_20261031T235253Z`). Quedan los textos normativos V3–V5, meter el corpus en
 > `CORPORA`, y P1–P4.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`

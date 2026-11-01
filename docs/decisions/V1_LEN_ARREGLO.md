@@ -80,9 +80,11 @@ define semántica en un backend (la referencia sigue siendo normativa, `AGENTS.m
 activa `len` sobre `struct` ni sobre ninguna otra cosa: sobre un `StructT` sigue siendo
 `TYPE_MISMATCH`.
 
-Suite: 148 OK (138 + 10 nuevos en `tests/test_v05_core.py`). El corpus v0.5 sigue **fuera** de
-`CORPORA` (`isyco/conformance.py:13`) hasta que `402`–`405` pasen con V2; por eso el gate de
-backends (170 casos) no se mueve y la evidencia de V1 es la sonda, no el gate.
+Suite: 148 OK en el commit de V1 (138 + 10); con V2 son 165. El corpus v0.5 estaba **fuera** de
+`CORPORA` (`isyco/conformance.py:13`) hasta que `402`–`405` pasaran con V2 —ocurrió el
+2026-10-31, los 42 casos coinciden con su `expected`— y entra en el commit siguiente, que es
+cuando el gate de backends (hasta entonces 170 casos) lo cubre. Mientras tanto la evidencia de
+V1 y V2 es la sonda `tools/v05_revalida_probe.py`, no el gate.
 
 ## Claims
 

@@ -57,9 +57,13 @@ Cinco decisiones están escondidas ahí dentro, y ninguna es estética:
 ## Medición
 
 `tools/v05_revalida_probe.py --casos 401,402,403,404,405,406 --write`, recibo
-`isyco.evidence/0.1` `evidence/v05_revalida/run_20261031T235253Z` (`git_head=f5e16b7`,
-`arbol_sucio_codigo=true` ⇒ `EVIDENCE_ONLY`; el `RELEASE_GATE` va en su propio recibo sobre el
-árbol limpio).
+`isyco.evidence/0.1`, sellado **dos veces con los mismos números**:
+`evidence/v05_revalida/run_20261031T235253Z` con el árbol de trabajo sucio
+(`veredicto_arbol=EVIDENCE_ONLY`, `git_head=f5e16b7`) y
+`evidence/v05_revalida/run_20261101T001608Z` ya con `HEAD` en el commit de V2 y
+`git status` vacío (`RELEASE_GATE`, `arbol_sucio_codigo=false`, `git_head=dcd6880`). Las dos
+corridas dan el mismo conteo (29 EQUIV + 1 UNSUPPORTED), los mismos pasos y los mismos
+SHA-256 de IR.
 
 - **Tres vías:** 29 EQUIV (`expected` ↔ referencia ↔ backend) y 1 UNSUPPORTED. Los `steps` por
   caso: `401` 6, `402` 18, `403` 23, `404` 38, `405` 20, `406` 27.
@@ -141,7 +145,7 @@ backends pasa de 170 a 212 casos.
 
 | claim | estado | dónde |
 |---|---|---|
-| `for x in a` coincide con su `expected` en la referencia y en los cinco backends | **DEMONSTRATED** | 29 EQUIV + 1 UNSUPPORTED atribuido a V7, recibo `run_20261031T235253Z` |
+| `for x in a` coincide con su `expected` en la referencia y en los cinco backends | **DEMONSTRATED** (RELEASE_GATE) | 29 EQUIV + 1 UNSUPPORTED atribuido a V7, recibo limpio `run_20261101T001608Z` sobre `dcd6880` |
 | El azúcar no cuesta pasos: 23 / 38 / 20 como el `while` gemelo | **DEMONSTRATED** | seis gemelos IGUAL, medidos |
 | La IR del `for` es la IR del gemelo (ninguna forma nueva) | **DEMONSTRATED** | SHA-256 de IR idéntico tras podar posiciones y el nombre sintético |
 | Ningún programa `0.1`–`0.4` cambia de significado | **DEMONSTRATED** | recabezados: `SYNTAX` en 402–405; `for` sigue siendo IDENT en `0.4` |
