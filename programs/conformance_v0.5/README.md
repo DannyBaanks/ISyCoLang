@@ -1,4 +1,4 @@
-# `programs/conformance_v0.5/` — corpus **activo**: 43/43 coinciden con su `expected`
+# `programs/conformance_v0.5/` — corpus **activo**: 46/46 coinciden con su `expected`
 
 Los `expected` de este directorio se escribieron a mano el **2026-10-30** (commits
 `dd561c6` y `0e9ca79`, que no tocan ningún archivo de `isyco/`), antes de implementar
@@ -122,3 +122,19 @@ hoy 12 `CONTROL FALSO` en la sonda y ninguna evidencia sellada.
   nombrados (`evidence/backends/gate_2026-11-01T082046Z.json`): `443` se rechaza en el
   frontend, así que no suma capacidad ni resta ninguna y COBOL lo cuenta como pasado. Ninguno
   de los 170 anteriores se movió.
+- **Tercera corrida el mismo día (N1, commits `00bc5a3`/`0224002`):** con `444`–`446` la
+  población es **46 / 216** y los cuatro gates se corrieron sobre el árbol commiteado `2499fae`
+  (el sello de la sonda con la matriz de N1) en un solo lote: referencia `216/216`
+  (`evidence/conformance/run_2026-11-01T210445Z.json`), IR `432/432` sobre **148** programas
+  bajados —los tres nuevos sí bajan; su IR es la de su gemelo—
+  (`evidence/ir/gate_2026-11-01T210450Z.json`), F4 `216/216` en las cuatro combinaciones con
+  sanitizers (`evidence/c/gate_2026-11-01T211424Z.json`) y F5 `PASS` con c/rust/zig/pydecimal
+  `216/216` y COBOL `147/216` con **69** `UNSUPPORTED` (`evidence/backends/gate_2026-11-01T225011Z.json`,
+  sha `63d7a9b4…`, `git_head=6c00225`): los tres casos entran en la lista de COBOL con
+  `ir0.2,str` —la regla de contenido de V7 sobre un programa con `str`, no un rechazo del
+  azúcar— y suben el conteo de 66 a 69 tal como estaba predicho. Los 213 anteriores no se
+  movieron: las filas del recibo de referencia salen byte a byte iguales.
+  F5 es el único que no comparte head con el resto del lote: su corrida en `2499fae` dio
+  `FAIL` por un `TIMEOUT` del arnés en el diferencial de strings de pydecimal, el recibo se
+  preservó (`gate_2026-11-01T215718Z.json`) y el `PASS` de arriba es la re-corrida sola, con
+  la misma pasada de 1 270 casos en 0 diferencias.

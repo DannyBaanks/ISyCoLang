@@ -372,11 +372,13 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 
 ## 9. Corpus, gate y no regresión
 
-- `programs/conformance_v0.5/` tiene **43 casos** (401–443, 39 de archivo suelto y 4
+- `programs/conformance_v0.5/` tiene **46 casos** (401–446, 42 de archivo suelto y 4
   directorios de módulos), con los `expected` escritos a mano entre el 2026-10-30 y el
   2026-11-01, **antes** de tocar `isyco/` en cada decisión. El directorio está en
   `CORPORA` (`isyco/conformance.py:13`) desde `57f38bc`, así que el gate de backends pasó
-  de 170 a **212** casos; `443` (alta 2026-11-01) sube la población del gate a **213**.
+  de 170 a **212** casos; `443` (alta 2026-11-01) sube la población del gate a **213** y
+  `444`–`446` (N1, alta el mismo día) a **216**. Los tres nuevos van con su `while` gemelo
+  en `gemelos/`, que `load_corpus` no cuenta (`isyco/conformance.py:17-41`).
   Recibos de la corrida de 212, los tres con `git_head=57f38bc`: referencia `212/212`
   (`evidence/conformance/run_2026-11-01T033345Z.json`), IR `424/424` comparaciones
   iguales sobre 145 programas bajados (`evidence/ir/gate_2026-11-01T013721Z.json`) y
@@ -391,6 +393,19 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
   `213/213` (`evidence/c/gate_2026-11-01T074655Z.json`) y backends con C, Rust, Zig y
   pydecimal `213/213` y COBOL `147/213` con los mismos 66 `UNSUPPORTED`
   (`evidence/backends/gate_2026-11-01T082046Z.json`).
+  Recibos de la corrida de **216**, los tres primeros en un solo lote con
+  `git_head=2499fae` (el sello de la sonda con la matriz de N1): referencia `216/216`
+  (`evidence/conformance/run_2026-11-01T210445Z.json`, sha
+  `62da1207c9d6330d…`), IR `432/432` sobre **148**
+  programas bajados —los tres casos nuevos sí bajan—
+  (`evidence/ir/gate_2026-11-01T210450Z.json`, sha `8473534c44e35c5c…`) y C `PASS` con
+  `216/216` en las cuatro combinaciones
+  (`evidence/c/gate_2026-11-01T211424Z.json`, sha `3ba9864e0714c69f…`); F5 `PASS` con
+  C, Rust, Zig y pydecimal `216/216` y COBOL `147/216` **con 69 `UNSUPPORTED`** —los tres
+  de N1 entran con `ir0.2,str`— (`evidence/backends/gate_2026-11-01T225011Z.json`, sha
+  `63d7a9b4954c468d…`, `git_head=6c00225`; su corrida gemela en `2499fae` salió `FAIL` por
+  un `TIMEOUT` del arnés y el recibo queda preservado). Cada uno con su stdout crudo
+  sellado al lado y sus hashes en el `SHA256SUMS.txt` del directorio.
 - **No regresión:** ningún programa `0.1`–`0.4` cambia. Medido por recabezado
   (`401`/`406` siguen en `UNKNOWN_NAME` en 0.1/0.2 y `TYPE_MISMATCH` en 0.3/0.4;
   `402`–`405` siguen en `SYNTAX`; `426`/`437` siguen en `SYNTAX`), por el brazo viejo

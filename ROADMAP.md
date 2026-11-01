@@ -269,6 +269,38 @@ que falsifica V7.
 > `evidence/backends/gate_2026-11-01T015245Z.json` (`verdict=PASS`, `git_head=57f38bc`) y
 > `evidence/ir/gate_2026-11-01T013721Z.json`.
 
+> **N1 adoptada y sellada 2026-11-01 — `for` sobre un `str` es normativa.** El iterando del
+> azúcar puede ser un **lugar** de tipo `str` (local `str<N>`, campo calificado, parámetro `str`
+> pelado de V6, entrada por stdin): se recorre **`len(s)` veces** y la variable del bucle es
+> **`u8`, copia**. La cota es la **longitud del valor**, no la capacidad declarada. **No hizo
+> falta tocar `isyco/`** — `parser.py:334-350` construye un lugar sin saber su tipo,
+> `checker.py:204-209` da al `let` sintético el tipo de `s[foridx]`, que sobre `StrT` es `u8`
+> (`checker.py:348-352`), y `interp.py:238` resuelve `len` en tiempo de ejecución. Tres casos con
+> su `while` gemelo escrito a mano: `444_for_sobre_str` (un `str<8>` con `"hola"` emite
+> `104 111 108 97` y devuelve `4`), `445_for_str_pelado_stdin` (N1 × V6: `"mundo"` por stdin,
+> cinco bytes y `return 5`) y `446_for_copia_str` (`c = 65` dentro del bucle emite `65 65 65` y
+> `s[0]` sigue dando `97`). Población **43 → 46** casos y gate **213 → 216**, con los 213
+> `expected` sin moverse (recibo-vs-recibo: cero diferencias). El azúcar no cuesta nada:
+> **22 / 27 / 22** pasos idénticos a los de su gemelo, pinneados en `PASOS_EXIGIDOS`; la IR del
+> `for` es la IR del gemelo (F3 **432/432** sobre **148** programas bajados) y `features_of` no
+> cambia — a los tres y a sus gemelos les falta `ir0.2,str`, que es la regla de contenido de V7,
+> no un rechazo del azúcar. Rechazarla habría dejado de ser azúcar: el `while` gemelo sigue
+> siendo legal. Recibos: F2 `evidence/conformance/run_2026-11-01T210445Z.json`, F4
+> `evidence/c/gate_2026-11-01T211424Z.json` (`PASS`, 216/216 en las cuatro combinaciones con
+> sanitizers) y F5 `evidence/backends/gate_2026-11-01T225011Z.json` (`PASS`; COBOL **147/216 con
+> 69 `UNSUPPORTED`**, la cifra predicha antes de correr). La primera corrida de F5 sobre este
+> árbol salió **FAIL** por un `TIMEOUT` del arnés en el diferencial de strings de pydecimal y el
+> recibo queda preservado (`gate_2026-11-01T215718Z.json`): con el host en carga de otros
+> agentes; la reproduccion determinista (`evidence/f5_flake/run_20261101T220854Z.json`: 500
+> llamadas aisladas y dos pasadas completas de 1 270 casos, 0 diferencias) y la re-corrida del
+> gate dicen que no fue divergencia semántica. No se tocó el arnés dentro del alcance de N1.
+> Falsificación: `tests/test_reference.py::Sabotage.test_len_de_str_se_hace_estatico` — plegar
+> `len` de un `str` a su capacidad, que es lo que V1 hace con los arreglos, rompe `444`— y la
+> sección nueva **§7** de `tools/v05_spec_probe.py` con sus doce formas (`evidence/v05_spec/`
+> `run_20261101T210009Z.json`, `RELEASE_GATE`; seis `CONTROL FALSO` y cero sello cuando se
+> parcheó el engine). Decisión: `docs/decisions/N1_FOR_SOBRE_STR.md`. §4.4 del spec pierde el
+> `[D]`. **Queda P4** como única decisión abierta del borrador.
+
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
 - IR tipada, cerrada, serializada a JSON canónico con SHA-256 (patrón Code IR).

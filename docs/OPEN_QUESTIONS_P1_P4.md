@@ -4,9 +4,10 @@
 **abierta a propósito**: el enunciado pedía cerrar midiendo, no inventando un número, y la
 medición ya está hecha y sellada — lo que falta es la decisión, ahora con dos lecturas
 posibles que la medición distingue. Aparecieron además tres puntos que la propuesta no
-preveía (N1–N3). **N2 se cerró el 2026-11-01 con el caso `443`** y **N3 con el texto de
-§4.1 más su matriz en la sonda**; quedan como decisión de Danny antes de congelar
-`spec/CORE_v0.5.md` **N1 y P4**.
+preveía (N1–N3). **N2 se cerró el 2026-11-01 con el caso `443`**, **N3 con el texto de
+§4.1 más su matriz en la sonda** y **N1 el mismo día, adoptada, con tres casos y sus
+gemelos y el texto de §4.4 sin el `[D]`**. Queda como decisión de Danny antes de congelar
+`spec/CORE_v0.5.md` **solo P4**.
 
 Las preguntas vienen de `spec/CORE_v0.5_propuesta.md` §2, donde se marcaron **[P]**.
 Las pruebas se pueden re-correr: `tools/v05_revalida_probe.py`, `tools/v05_v6_probe.py`,
@@ -19,7 +20,7 @@ dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no
 | P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §4 |
 | P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
 | P4 | ¿cuántas especializaciones puede crear un programa? | **abierto**, con censo y forma sellados | `evidence/v05_p4/run_20261101T062234Z.json` |
-| N1 | ¿`for c in s` con `s: str<N>` es normativo? | **abierto — decisión**; medido: funciona y su gemelo `while` cuesta lo mismo | `tools/v05_spec_probe.py` §4 |
+| N1 | ¿`for c in s` con `s: str<N>` es normativo? | **cerrada el 2026-11-01 — adoptado**: la regla de §4.4 ya no tiene `[D]` y tres casos la fijan | `programs/conformance_v0.5/444`–`446` + sus gemelos, `tools/v05_spec_probe.py` §7 |
 | N2 | ¿algún caso fija el cruce con raíz `0.5` de M4? | **cerrada el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` + `tools/v05_spec_probe.py` §1 |
 | N3 | ¿el `let` sin anotación es inferencia? | **cerrada el 2026-11-01**: no, es solo el sintético del `for` | `spec/CORE_v0.5.md` §4.1 + `evidence/v05_spec/run_20261101T153344Z.json` §3 |
 
@@ -164,7 +165,7 @@ límite que la fije en el corpus.
 **Permanece mientras:** no exista un programa real (la librería de texto del dogfood) que
 produzca más copias de las que el corpus produce hoy.
 
-## N1 — `for` sobre un `str` `[NUEVA, decisión pendiente]`
+## N1 — `for` sobre un `str` `[CERRADA el 2026-11-01 — por caso y por texto]`
 
 `for c in s` con `s: str<N>` funciona: emite los bytes (`104 111 108 97` sobre
 `"hola"`). No es una operación nueva — es `len(s)` y `s[i]` de v0.3— y su `while` gemelo
@@ -175,6 +176,56 @@ adoptado**, y ningún caso del corpus lo fija. Es exactamente lo que una librer�
 texto necesita (`cuenta_letra`, `mayus`). Opción recomendada: adoptarlo como normativo
 con su caso y su gemelo. Lo contrario: rechazarlo en el checker para que el azúcar sea
 solo de arreglos.
+
+**Cerrada el 2026-11-01, adoptada.** Danny eligió adoptarla con tres casos y sus gemelos, y la
+regla quedó escrita en `spec/CORE_v0.5.md` §4.4 sin el `[D]`: **todo lugar de tipo `str`**
+(local `str<N>`, campo calificado, parámetro `str` pelado de V6, entrada por stdin) se recorre
+`len(s)` veces y la variable es `u8` **copia**; la cota es la **longitud del valor**, no la
+capacidad declarada. Los tres casos, en `programs/conformance_v0.5/`: `444_for_sobre_str`
+(`str<8>` con `"hola"` emite `104 111 108 97` y devuelve `4` — fija longitud ≠ capacidad),
+`445_for_str_pelado_stdin` (N1 × V6: `fn emite(s: str)` sobre `"mundo"` por stdin, cinco bytes
+y `return 5`) y `446_for_copia_str` (`c = 65` dentro del bucle emite `65 65 65` y `s[0]` sigue
+dando `97` — copia, sin aliasing). Cada uno con su gemelo `while` escrito a mano en `gemelos/`,
+misma salida y misma traza `stmt` e IR. La población sube de 43 a **46** casos y del gate de
+213 a **216**; ningún `expected` de los 213 anteriores se movió y **no hizo falta tocar
+`isyco/`**: el azúcar es agnóstico del tipo del lugar — `parser.py:334-350` construye un lugar
+y `interp.py:238` resuelve `len` en tiempo de ejecución.
+
+Los cuatro recibos de la corrida de 216: referencia `216/216`
+(`evidence/conformance/run_2026-11-01T210445Z.json`, sha `62da1207…`), IR `432/432` sobre 148
+programas bajados (`evidence/ir/gate_2026-11-01T210450Z.json`, sha `8473534c…`), F4 `PASS` con
+`216/216` en las cuatro combinaciones (`evidence/c/gate_2026-11-01T211424Z.json`, sha
+`3ba9864e…`) y F5 `PASS` con c/rust/zig/pydecimal `216/216` y COBOL `147/216` con 69
+`UNSUPPORTED` (`evidence/backends/gate_2026-11-01T225011Z.json`, sha `63d7a9b4…`). Los tres
+primeros en un solo lote con `git_head=2499fae`; F5 se re-corrió solo porque su corrida en
+`2499fae` dio `FAIL` por un `TIMEOUT` del arnés en el diferencial de strings de pydecimal —
+recibo preservado con su diagnóstico en `evidence/f5_flake/run_20261101T220854Z.json`— y en la
+re-corrida esa misma pasada de 1 270 casos salió con 0 diferencias. Ninguna de las 213 filas
+anteriores se movió.
+
+Rechazarla era lo contrario de lo que fija V2: el desugaring no ve tipos y el checker solo ve
+un `let` sintético sin anotación (`checker.py:204-209`), así que negar el `str` exigía etiquetar
+los nodos sintéticos — y el `while` gemelo escrito a mano seguiría siendo legal, o sea el `for`
+dejaría de ser azúcar.
+
+**Corrección al párrafo de arriba.** «24 pasos los cuatro programas de la matriz: … medido en
+`tools/v05_spec_probe.py` §4» mezcla dos cosas. La matriz de forma constante está en **§5**, no
+en §4, y sus 24 pasos son de un recorrido **dentro de una función**; el programa de la forma de
+`444` —todo dentro de `main`— gasta **22**, y su gemelo lo mismo. Medido y pinneado en
+`tests/test_v05_core.py:PASOS_EXIGIDOS`: 444 → 22/22, 445 → 27/27, 446 → 22/22 (`for` vs
+gemelo). Es el mismo fallo de citación que el hallazgo 1 de `docs/EVIDENCE_MATRIX.md`, y la
+misma corrección quedó en el spec. La sonda tiene ahora sección propia para N1 (**§7**) con los
+bordes que el corpus no fija (`str<1>` vacío, `for c in s[0]`, campo calificado, anidado) y el
+espejo del sabotaje.
+
+**Cómo se falsifica.** `tests/test_reference.py::Sabotage.test_len_de_str_se_hace_estatico`
+pliega `len` de un `str` a su capacidad declarada —lo que V1 hace con los arreglos— y rompe
+`444_for_sobre_str` (`INDEX_OUT_OF_BOUNDS` en el quinto byte). Decisión y controles completos:
+`docs/decisions/N1_FOR_SOBRE_STR.md`.
+
+**Lo que N1 NO abre:** no hace legal `for x in [1, 2, 3]` (P2 sigue siendo `SYNTAX`), no da
+soporte de `str` a ningún backend (COBOL pasa los tres casos como `UNSUPPORTED`), y no toca `len`
+de `str`, que ya era de v0.3.
 
 ## N2 — M4 generalizada, sin caso de corpus `[CERRADA el 2026-11-01 — por caso]`
 
