@@ -115,7 +115,14 @@ módulos, que un glob de `.isy` se llevaba por delante).
 | dos ranuras, W anchos cada una | **W²** clones (W = 2, 3, 4, 6, 8) |
 | tres ranuras | **W³** clones (W = 2, 3) |
 | 20 sitios de llamada con el MISMO ancho | **1** clon — el registro cuenta resoluciones, no llamadas |
-| techo encontrado | **ninguno hasta 2048 clones**: 2,1 MB de fuente, 3,2 MB de IR, 474 ms de referencia, 3,7 s de `c_ms` en C, `HALTED` y EQUIV contra la referencia |
+| techo encontrado | **ninguno hasta 2048 clones**: 2.139.231 B de fuente, 3.228.420 B de IR (2049 funciones), `ref_ms` 508,7 / `c_ms` 1037,0, `HALTED` y EQUIV contra la referencia |
+
+**Corregida 2026-11-01, segunda pasada.** La fila del techo traía «474 ms de referencia,
+3,7 s de `c_ms`», que no son los valores del recibo (`508,7` y `1037,0`): los escribí de
+memoria tras la corrida sin re-leer el JSON. Es el mismo fallo que esta sección denuncia —
+una cifra en prosa que no está en el recibo que la nombra —, así que la fila cita ahora
+los bytes y los milisegundos exactos de `censo`/`costo`. Nada de lo demás cambia: el techo
+sigue sin aparecer y los 2048 clones siguen dando `HALTED` y EQUIV.
 
 Los recibos anteriores de V6 y V6-bis (`evidence/v05_v6/run_20261031T104749Z.json` y
 `run_20261031T184709Z.json`, ambos `RELEASE_GATE`) sí sellan el diferencial por backend,

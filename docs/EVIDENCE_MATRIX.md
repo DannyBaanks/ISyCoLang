@@ -80,7 +80,7 @@ Qué encontró esta matriz al cotejar prose contra recibos:
 
 1. **El censo de P4 no estaba en ningún recibo.** `V6_CONTEXTUAL_STR.md` y
    `V6B_CONTEXTUAL_RETURN.md` atribuían «22 clones» y «28 clones, máximo 2 por definición»
-   a `evidence/v05_v6/run_*` , y esos recibos solo guardan el resultado de cada backend
+   a `evidence/v05_v6/run_*`, y esos recibos solo guardan el resultado de cada backend
    por caso. Medido desde el instrumento (`Checker.specs`): **32** clones en 18 de los 42
    casos, 26 V6 + 6 V6-bis, máximo 4 por programa, 2 por definición **dentro de un
    programa** pero **7 de `doble` en todo el corpus**. Las dos secciones y `ROADMAP.md`
@@ -92,6 +92,12 @@ Qué encontró esta matriz al cotejar prose contra recibos:
    congelado» de 118.
 3. **F4 con 170 mientras F5 tiene 212.** No es un error: es un gate que no se re-corré.
    Queda escrito arriba en vez de suponerse.
+4. **La segunda pasada encontró su propio fallo.** La fila «techo encontrado» de
+   `docs/OPEN_QUESTIONS_P1_P4.md` decía «474 ms de referencia, 3,7 s de `c_ms`» citando el
+   recibo `v05_p4`, y el recibo dice `ref_ms=508,7` y `c_ms=1037,0`: lo escribí de memoria
+   tras la corrida sin re-leer el JSON. Corregido allí mismo con nota fechada. Es el
+   hallazgo 1 reproduciéndose a sí mismo, y por eso el cotejo es un paso de la matriz, no
+   una confianza: la fila nueva cita bytes y milisegundos exactos del `costo`.
 
 Nada de lo anterior cambia un `expected`, un hash congelado ni un resultado de gate: son
 correcciones de *atribución* (una cifra que no tenía recibo) y una re-medición.
