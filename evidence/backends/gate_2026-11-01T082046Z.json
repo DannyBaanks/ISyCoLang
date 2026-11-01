@@ -1,0 +1,672 @@
+{
+  "schema": "isycolang.backend_gate/1",
+  "pairs_per_op": 8,
+  "git_head": "a4f608c51ded8470c5d20ed3604ac3629b3bd3b8",
+  "registered": [
+    "c",
+    "cobol",
+    "pydecimal",
+    "rust",
+    "zig"
+  ],
+  "backends": {
+    "c": {
+      "toolchain": "gcc: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "emit_array",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 213,
+        "passed": 213,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 141,
+          "wall_ms_total": 496.014,
+          "user_ms_total": 68.384,
+          "sys_ms_total": 349.218,
+          "max_rss_kb_max": 1752,
+          "rss_measured_runs": 141
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 3,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "rust": {
+      "toolchain": "rustc 1.98.1 (48a229cea 2026-09-01)",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "emit_array",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 213,
+        "passed": 213,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 141,
+          "wall_ms_total": 857.715,
+          "user_ms_total": 87.335,
+          "sys_ms_total": 401.573,
+          "max_rss_kb_max": 2280,
+          "rss_measured_runs": 141
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 3,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "zig": {
+      "toolchain": "zig 0.16.0",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "emit_array",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 213,
+        "passed": 213,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 141,
+          "wall_ms_total": 1191.211,
+          "user_ms_total": 111.872,
+          "sys_ms_total": 425.758,
+          "max_rss_kb_max": 444,
+          "rss_measured_runs": 141
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 3,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "pydecimal": {
+      "toolchain": "/usr/bin/python3: Python 3.12.3",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "emit_array",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 213,
+        "passed": 213,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 141,
+          "wall_ms_total": 3969.226,
+          "user_ms_total": 2456.996,
+          "sys_ms_total": 1244.032,
+          "max_rss_kb_max": 14412,
+          "rss_measured_runs": 141
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 3,
+          "difftest_diffs": 15,
+          "detected": true
+        }
+      },
+      "conformant": true
+    },
+    "cobol": {
+      "toolchain": "cobc: cobc (GnuCOBOL) 3.1.2.0",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "unsigned",
+        "while"
+      ],
+      "corpus": {
+        "cases": 213,
+        "passed": 147,
+        "unsupported": [
+          {
+            "name": "201_str_literal",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "202_str_widen_concat",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "203_str_concat_overflow",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "204_str_concat_no_context",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "207_str_as_narrow",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "208_str_compare",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "209_str_index_byte",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "210_str_index_oob",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "212_str_slice",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "213_str_slice_oob",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "214_str_slice_past_len",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "215_str_chr",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "216_str_chr_bad",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "217_str_chr_newline",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "218_str_escapes",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "221_num_as_str",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "222_num_as_str_overflow",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "223_str_as_int",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "224_str_as_int_ovf",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "225_str_as_int_leading_zero",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "226_str_as_int_minus_zero",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "227_str_as_dec",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "228_str_as_dec_wrong_scale",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "229_str_as_bool",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "230_struct_copy",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "231_struct_emit",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "232_struct_equality",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "233_struct_param_copy",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "234_struct_nested",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "235_struct_array",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "243_input_struct_str",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "250_struct_field_order",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "251_struct_lit_in_if_parens",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "253_emit_array",
+            "missing": "emit_array"
+          },
+          {
+            "name": "254_lvalue_order",
+            "missing": "emit_array,ir0.2,struct"
+          },
+          {
+            "name": "255_lvalue_oob_after_rhs",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "256_str_widen_arg",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "258_str_cmp_capacities",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "259_struct_json_escape",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "261_main_returns_struct",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "263_str_concat_limit_ctx",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "302_nested_path",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "303_struct_from_module",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "311_diamond",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "325_input_struct_from_module",
+            "missing": "ir0.2,struct"
+          },
+          {
+            "name": "402_for_decimales",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "409_str_cualquier_capacidad",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "410_str_vacia_reutilizable",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "411_pad_dos_anchos",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "412_borde_capacidad_literal",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "413_encadenar_contextuales",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "414_largo_ocho_y_dos",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "415_largo_dos_y_ocho",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "416_cast_mas_estrecho",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "417_junta_dos_contextuales",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "418_junta_desborda",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "420_recursion_contextual",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "423_ancho_grande_doble",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "428_str_pelado_desde_stdin",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "429_retorno_pelado_dos_expectativas",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "430_retorno_pelado_desborda",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "435_transmision_pelado_a_pelado",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "438_retorno_pelado_desde_stdin",
+            "missing": "ir0.2,str"
+          },
+          {
+            "name": "441_emit_arreglo_v03",
+            "missing": "emit_array"
+          },
+          {
+            "name": "408_qname_arreglo",
+            "missing": "ir0.2,str,struct"
+          },
+          {
+            "name": "421_marca_entre_modulos",
+            "missing": "ir0.2,str"
+          }
+        ],
+        "failures": [],
+        "cost": {
+          "runs_measured": 75,
+          "wall_ms_total": 997.837,
+          "user_ms_total": 299.21,
+          "sys_ms_total": 689.056,
+          "max_rss_kb_max": 14216,
+          "rss_measured_runs": 75
+        }
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": []
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true
+        }
+      },
+      "conformant": true
+    }
+  },
+  "missing_toolchains": [],
+  "generated_utc": "2026-11-01T082046Z",
+  "verdict": "PASS"
+}
