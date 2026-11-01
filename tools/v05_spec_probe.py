@@ -4,7 +4,7 @@ diagonal 0.5), el léxico de V3, la excepción de `let` de §4.1, los bordes del
 V2, `for` sobre `str` con su gemelo de forma idéntica, y P3 (identidad y nombres de la
 especialización).
 
-Corpus: 401–443 de `programs/conformance_v0.5/` cubren otras cosas. Aquí no se mide
+Corpus: 401–446 de `programs/conformance_v0.5/` cubren otras cosas. Aquí no se mide
 cobertura del corpus sino las frases del borrador que hoy solo estaban en prosa, así
 que la sonda lleva sus propios programas en el fuente y sus controles:
 
@@ -18,6 +18,10 @@ que la sonda lleva sus propios programas en el fuente y sus controles:
      gemelo sin `let`, que da 20 y que la sonda reporta como trampa, no como fallo.
   6. P3: `program_sha256` no se mueve con la especialización y la traza muestra el
      nombre resuelto (`pad.2`), nunca la definición pelada.
+  7. N1 §4.4 (`for` sobre un `str`): la cota es la LONGITUD del valor y no la capacidad,
+     la variable es `u8` copia, y los bordes se rechazan con el nombre que les toca. Los
+     renglones `str<4>` / `str<8>` / `str<16>` con el mismo valor son el control de la
+     palabra «longitud»: si la cota fuera la capacidad, no darían igual.
 
 Un PASS con el árbol sucio de código es `EVIDENCE_ONLY`, nunca gate de release.
 
@@ -232,6 +236,73 @@ def matriz_p3():
     return filas, nombres, {"status": r["status"], "emits": r["emits"], "steps": r["steps"]}
 
 
+# --- 7. N1 §4.4: `for` sobre un `str` -------------------------------------------------
+#: `predicho` es el trío (status, code, emits) que impone la regla de §4.4: `len(s)` vueltas
+#: y variable `u8` copia. Los tres renglones de capacidad distinta con el mismo valor llevan
+#: `cota=True`: son el control de que la cota es la LONGITUD y no la capacidad declarada. El
+#: penúltimo renglón es el espejo del sabotaje —el `while` escrito a mano con `8` en la cota—,
+#: que recorre los cuatro bytes y se sale del valor en el quinto.
+N1 = [
+    ("for c en str<4> con \"hola\"", False,
+     "isyco 0.5\nfn main() -> i64 !emit { let s: str<4> = \"hola\";"
+     " for c in s { emit c; } return len(s); }",
+     ("HALTED", None, ["104", "111", "108", "97"])),
+    ("for c en str<8> con \"hola\"", True,
+     "isyco 0.5\nfn main() -> i64 !emit { let s: str<8> = \"hola\";"
+     " for c in s { emit c; } return len(s); }",
+     ("HALTED", None, ["104", "111", "108", "97"])),
+    ("for c en str<16> con \"hola\"", True,
+     "isyco 0.5\nfn main() -> i64 !emit { let s: str<16> = \"hola\";"
+     " for c in s { emit c; } return len(s); }",
+     ("HALTED", None, ["104", "111", "108", "97"])),
+    ("str<1> vacia: cero vueltas", False,
+     "isyco 0.5\nfn main() -> i64 !emit { let s: str<1> = \"\";"
+     " for c in s { emit c; } return len(s); }",
+     ("HALTED", None, [])),
+    ("campo calificado l.texto", False,
+     "isyco 0.5\nstruct L { texto: str<6> }\nfn main() -> i64 !emit {"
+     " let l: L = L { texto: \"abc\" }; for c in l.texto { emit c; }"
+     " return len(l.texto); }",
+     ("HALTED", None, ["97", "98", "99"])),
+    ("arreglo de cadenas, for anidado", False,
+     "isyco 0.5\nfn main() -> i64 !emit { let ss: [str<4>; 2] = [\"ab\", \"cde\"];"
+     " for s in ss { for c in s { emit c; } } return 0; }",
+     ("HALTED", None, ["97", "98", "99", "100", "101"])),
+    ("str pelado V6 (fn recorre(s: str))", False,
+     "isyco 0.5\nfn recorre(s: str) -> i64 !emit { for c in s { emit c; } return len(s); }"
+     "\nfn main() -> i64 !emit { let t: str<8> = \"hola\"; return recorre(t); }",
+     ("HALTED", None, ["104", "111", "108", "97"])),
+    ("c es u8: n + c sin cast", False,
+     "isyco 0.5\nfn main() -> i64 { let s: str<8> = \"hola\"; let n: i64 = 0;"
+     " for c in s { n = n + c; } return n; }",
+     ("INVALID_PROGRAM", "TYPE_MISMATCH", [])),
+    ("c no escapa del bucle", False,
+     "isyco 0.5\nfn main() -> i64 { let s: str<4> = \"abc\"; for c in s { } return c; }",
+     ("INVALID_PROGRAM", "UNKNOWN_NAME", [])),
+    ("for c en s[0]: no es lugar", False,
+     "isyco 0.5\nfn main() -> i64 { let s: str<4> = \"abc\"; for c in s[0] { } return 0; }",
+     ("INVALID_PROGRAM", "SYNTAX", [])),
+    ("cabecera 0.4: for reservada solo desde 0.5", False,
+     "isyco 0.4\nfn main() -> i64 !emit { let s: str<8> = \"hola\";"
+     " for c in s { emit c; } return len(s); }",
+     ("INVALID_PROGRAM", "SYNTAX", [])),
+    ("control: while gemelo con la CAPACIDAD en la cota", False,
+     "isyco 0.4\nfn main() -> i64 !emit { let s: str<8> = \"hola\"; let i: i64 = -1;"
+     " while i + 1 < 8 { i = i + 1; let c: u8 = s[i]; emit c; } return len(s); }",
+     ("ERROR", "INDEX_OUT_OF_BOUNDS", ["104", "111", "108", "97"])),
+]
+
+
+def matriz_n1():
+    filas = []
+    for forma, control, fuente, predicho in N1:
+        r, _ = run(fuente.encode(), [])
+        filas.append({"forma": forma, "control_capacidad": control, "status": r["status"],
+                      "code": r["code"], "emits": r["emits"], "steps": r["steps"],
+                      "predicho": predicho})
+    return filas
+
+
 def main(argv: list[str]) -> int:
     write = "--write" in argv
     m4 = matriz_m4()
@@ -240,6 +311,7 @@ def main(argv: list[str]) -> int:
     it = matriz_iterando()
     pasos = matriz_pasos()
     p3, nombres_traza, res411 = matriz_p3()
+    n1 = matriz_n1()
 
     sucio = dirty_codigo()
     rec = {"comando": " ".join(argv) or "v05_spec_probe.py",
@@ -254,6 +326,7 @@ def main(argv: list[str]) -> int:
                  "milestone": "Borrador CORE v0.5 — aristas normativas sin caso de corpus",
                  "receipt": rec, "m4": m4, "lexico": lex, "let_anotacion": lt,
                  "iterando": it,
+                 "for_sobre_str": n1,
                  "pasos_forma_constante": pasos, "p3": {"programas": p3,
                                                         "fn_en_traza_411": nombres_traza,
                                                         "resumen_411": res411}}
@@ -294,6 +367,11 @@ def main(argv: list[str]) -> int:
                       f"{fila['sha_archivo'][:16]}")
     lineas.append(f"   fn en la traza de 411: {nombres_traza}   (la definicion pelada "
                   f"no aparece)")
+    lineas += ["", "7) N1 (§4.4): `for` sobre un `str` recorre len(s) bytes, variable u8 copia"]
+    for fila in n1:
+        lineas.append(f"   {fila['forma']:46s} -> {fila['status']}({fila['code']}) "
+                      f"pasos={fila['steps']} emits={fila['emits']}  "
+                      f"predicho={fila['predicho']}")
 
     # ---- auto-falsación
     falsos = []
@@ -356,6 +434,19 @@ def main(argv: list[str]) -> int:
     if not any("." in n for n in nombres_traza):
         falsos.append(f"P3: la traza de 411 no muestra ninguna especialización "
                       f"({nombres_traza}) — el control es vacío")
+    for fila in n1:
+        if (fila["status"], fila["code"], fila["emits"]) != fila["predicho"]:
+            falsos.append(f"N1 (§4.4): {fila['forma']} da {fila['status']}({fila['code']}) "
+                          f"emits={fila['emits']}, la regla predice {fila['predicho']}")
+    por_capacidad = {f["forma"]: (f["status"], tuple(f["emits"]), f["steps"]) for f in n1
+                     if f["control_capacidad"]}
+    if len(por_capacidad) < 2:
+        falsos.append("N1 (§4.4): ninguna fila declara una capacidad mayor que la longitud "
+                      "del valor — el control de «longitud y no capacidad» sería vacío")
+    elif len(set(por_capacidad.values())) != 1:
+        falsos.append(f"N1 (§4.4): lo recorrido cambia con la capacidad declarada "
+                      f"{por_capacidad}: la cota del azúcar sería la capacidad, no la "
+                      "longitud del valor")
 
     for mensaje in falsos:
         print(f"CONTROL FALSO: {mensaje}")
