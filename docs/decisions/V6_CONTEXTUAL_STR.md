@@ -176,3 +176,15 @@ la cabecera:
 - `does_the_work`: en `423` la cadena de 32 bytes que se emite NO está en el código
   generado (la arma el engine con `s + s`), y en `428` cambiar la entrada por stdin
   (`adios`) cambia la salida (`5` en vez de `4`). El trabajo lo hace el engine.
+
+## Deriva de citas (2026-11-01)
+
+Arriba se citan dos líneas que ya no son lo que decían. Nada de esto cambia lo medido, y la
+fuente es el símbolo, no el número:
+
+- `features_of` es hoy `isyco/backends/base.py:97` (se citó `:96`).
+- El conjunto de COBOL se escribe `FEATURES = ALL_FEATURES - V03_FEATURES` en
+  `isyco/backends/cobol.py:41`, con `V03_FEATURES = frozenset({"ir0.2","str","struct",
+  "emit_array"})` en `base.py:43`. La línea `:1504` que se citaba es ahora
+  `class CobolBackend`, y el literal ya no lista los miembros a mano: `emit_array` se
+  sumó con V7, que es el documento que decide esa ampliación.

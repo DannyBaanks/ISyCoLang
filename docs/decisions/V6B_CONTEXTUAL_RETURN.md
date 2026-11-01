@@ -107,3 +107,11 @@ antes de poner número.
 - `does_the_work` sigue pasando: la cadena de 32 bytes de `423` y la de 8 bytes que emite
   `429` (`"abcdabcd"`) **no están escritas en el código generado** — las arma el engine —,
   y cambiar la entrada de `428` (`adios`) cambia la salida (`5` en vez de `4`).
+
+## Deriva de citas (2026-11-01)
+
+`features_of` es hoy `isyco/backends/base.py:97` (se citó `:96`), y el conjunto que deja a
+COBOL fuera del 0.2 se escribe `FEATURES = ALL_FEATURES - V03_FEATURES` en
+`isyco/backends/cobol.py:41` — `V03_FEATURES` está en `base.py:43` y ya incluye
+`emit_array` desde V7. La línea `:1504` citada arriba es hoy `class CobolBackend`. Lo
+medido no se mueve: esos 17 UNSUPPORTED eran de la etiqueta, y V7 los separó.

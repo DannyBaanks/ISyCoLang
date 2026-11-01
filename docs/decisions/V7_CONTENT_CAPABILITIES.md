@@ -155,3 +155,12 @@ mismos 60 módulos conservan su `schema`.
 | Ningún otro backend cambia su dominio | **DEMONSTRATED** | UNSUPPORTED 0 → 0 en c, rust, zig y pydecimal (aritmética de conjuntos sobre 118 módulos) |
 | El dominio declarado de COBOL sube de 113 a 125 de 170 sin divergencias | **DEMONSTRATED** (RELEASE_GATE) | `gate_2026-10-31T200602Z.json` (sha `f24c8f0c…`, HEAD `a66689c`, árbol limpio), que reproduce `gate_2026-10-31T193053Z.json`; sonda `run_20261031T200146Z.json` con `veredicto_arbol=RELEASE_GATE` |
 | COBOL puede imprimir arreglos | **NOT_DEMONSTRATED** a propósito | es el hueco que el átomo declara |
+
+## Deriva de citas (2026-11-01)
+
+`features_of` es hoy `isyco/backends/base.py:97` (arriba se citó `:96`) y sus dos reglas
+siguen en `:130` (`emit_array`) y `:134` (`ir0.2`). El conjunto de COBOL no está escrito a
+mano en la clase: es `FEATURES = ALL_FEATURES - V03_FEATURES` (`isyco/backends/cobol.py:41`)
+con `V03_FEATURES = frozenset({"ir0.2","str","struct","emit_array"})` (`base.py:43`). La
+línea `:1504` que citan los documentos de V6 y V6-bis es hoy `class CobolBackend`. Lo que
+está medido no cambia; se comprueba con `grep -n 'def features_of' isyco/backends/base.py`.

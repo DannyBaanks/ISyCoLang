@@ -147,10 +147,10 @@ y guarda la evidencia en `evidence/backends/`.
 ### 6.1 Límites del backend COBOL
 
 - **Transporte por STDIN hexadecimal.** Cada argumento se decodifica en
-  `WS-ARG PIC X(64)` (`isyco/backends/cobol.py:982`, `:997`) sin `ON OVERFLOW`:
+  `WS-ARG PIC X(64)` (`isyco/backends/cobol.py:1000`) sin `ON OVERFLOW`:
   caben 64 bytes y lo que exceda se trunca en silencio (sonda con `cobc` 3.1.2:
   64 caracteres llenan el campo, el 65 se descarta). El flujo hexadecimal entra
-  en `WS-HEX PIC X(65536)` (`:974`) ⇒ 64 KiB de STDIN como máximo.
+  en `WS-HEX PIC X(65536)` (`:977`) ⇒ 64 KiB de STDIN como máximo.
 - **Puntos y ámbitos.** Un punto en COBOL cierra *todos* los ámbitos abiertos
   (IF/ELSE/PERFORM) y no puede haber etiqueta de párrafo dentro de un IF; el
   emisor lo resuelve con heurísticas en `Unit.put`/`end_sentence` (`:632`,

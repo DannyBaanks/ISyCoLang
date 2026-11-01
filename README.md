@@ -41,7 +41,9 @@ tools/inventory_assembly.py        inventario de solo lectura de workspace/assem
 evidence/inventory/                salidas del inventario y de toolchains
 spec/CORE.md                       semántica v0.1 congelada (+ ERRATA_v0.1.md)
 spec/CORE_v0.2.md … CORE_v0.4.md   cambios congelados de v0.2, v0.3 (str<N>, structs) y v0.4 (módulos)
-spec/IR.md                         forma de ISY-IR v0.1 (lo que reciben los backends)
+spec/CORE_v0.5_propuesta.md        propuesta V1–V7 (2026-10-30) con sus correcciones fechadas
+spec/CORE_v0.5.md                  texto normativo de v0.5 — BORRADOR, sin congelar ni sellar
+spec/IR.md                         forma de ISY-IR v0.1 y v0.2 (lo que reciben los backends)
 GUIA.md                            guía para personas: escribir, correr y leer un resultado
 spec/BACKEND.md                    contrato ISY_BACKEND/1 (capacidades, protocolo, conformidad, costo)
 docs/decisions/                    decisiones registradas (p. ej. no reusar Code IR)
@@ -51,10 +53,18 @@ isyco/backends/c.py                ISY-IR -> C -> binario nativo
 isyco/backends/rust.py             ISY-IR -> Rust -> binario nativo
 isyco/backends/zig.py              ISY-IR -> Zig -> binario nativo
 isyco/backends/cobol.py            ISY-IR -> GnuCOBOL -> binario nativo (núcleo numérico)
+isyco/backends/pydecimal.py        ISY-IR -> Python 3 con `decimal` (ola 2: otro sustrato, mismo contrato)
+isyco/versions.py                  única fuente de la versión: SUPPORTED, INTRODUCED, has()
+isyco/specialize.py                V6/V6-bis: las copias acotadas de una definición `str` pelado
+isyco/modules.py                   enlazado de módulos (v0.4) y la regla «misma versión que la raíz»
 isyco/difftest.py                  diferencial por tipo numérico en valores frontera
 isyco/                             intérprete de referencia y CLI
 programs/conformance/              corpus v0.1 (expected previos al intérprete; SUPERSEDED.json)
 programs/conformance_v0.2/         corpus v0.2 (expected previos a implementar v0.2)
+programs/conformance_v0.3/         corpus v0.3 (strings y structs)
+programs/conformance_v0.4/         corpus v0.4 (módulos)
+programs/conformance_v0.5/         corpus v0.5 (401–442, decisiones V1–V7) + gemelos escritos a mano
+programs/dogfood/                  programas que Danny quiere escribir; fuera del gate, miden dolor real
 tests/                             conformidad, determinismo, sabotaje, oráculo
 tools/run_conformance.py           corre el corpus y guarda evidencia nueva
 tools/ir_gate.py                   compara IR vs referencia y guarda evidencia
@@ -62,6 +72,13 @@ tools/c_gate.py                    gate F4 (tres vías, gcc/clang, sanitizers, s
 tools/c_sanitize_v03.py            backend C con UBSan+ASan sobre v0.3 (corpus + strings)
 tools/backend_gate.py              gate F5 (corpus, capacidades, diferencial, stub) por backend
 tools/warm_build_cache.py          precompila en paralelo los binarios del corpus y diferenciales
+tools/v05_proposal_probe.py        qué dice el core HOY del corpus y los gemelos de la propuesta
+tools/v05_revalida_probe.py        revalidación de V1 y V2: tres vías, gemelos, no regresión
+tools/v05_v6_probe.py              diferencial de V6/V6-bis: referencia, IR ida y vuelta, backends
+tools/v05_spec_probe.py            aristas que `spec/CORE_v0.5.md` afirma y ningún caso fija
+tools/v7_capability_probe.py       V7: capacidades por contenido vs por etiqueta, con brazo viejo
+tools/textlib_probe.py             ¿librería de texto hoy? tres vías sobre `programs/dogfood/`
+tools/dogfood_wall_probe.py        el «muro de cabecera» del dogfood: víctimas de la etiqueta o del programa
 ```
 
 ## Reproducir lo que existe
@@ -75,6 +92,8 @@ python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
 python3 tools/backend_gate.py                  # gate F5: C, Rust, Zig, pydecimal y cobol + evidencia nueva
 python3 tools/run_conformance.py               # corpus + evidencia nueva
+python3 tools/v05_spec_probe.py                # aristas del borrador v0.5: mide y reporta
+python3 tools/v05_spec_probe.py --write        # …y sella en evidence/v05_spec/ (árbol limpio = RELEASE_GATE)
 ```
 
 ## Relación con el monorepo
