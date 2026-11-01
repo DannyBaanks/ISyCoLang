@@ -1,0 +1,50 @@
+{
+ "schema": "isycolang.f5_flake_probe/1",
+ "utc": "2026-11-01T220854Z",
+ "motivo": "evidence/backends/gate_2026-11-01T215718Z.json: pydecimal difftest_str 1 diferencia en 1 270 (status=TIMEOUT)",
+ "caso": [
+  "0",
+  "xxxxxxxxxxxx",
+  "yyyyyyyy",
+  "0",
+  "0",
+  "0.00"
+ ],
+ "solo_caso": {
+  "llamadas": 500,
+  "timeouts": 0,
+  "wall_ms_p50": 38.428,
+  "wall_ms_p99": 49.973,
+  "wall_ms_max": 51.622,
+  "segundos": 20.2
+ },
+ "diferencial_reps": [
+  {
+   "runs": 1270,
+   "diffs": 0,
+   "segundos": 59.7,
+   "load": {
+    "load1": 8.15,
+    "load5": 8.02,
+    "load15": 10.29
+   }
+  },
+  {
+   "runs": 1270,
+   "diffs": 0,
+   "segundos": 48.0,
+   "load": {
+    "load1": 9.92,
+    "load5": 8.62,
+    "load15": 10.39
+   }
+  }
+ ],
+ "host": {
+  "load_antes": {
+   "load1": 9.92,
+   "load5": 8.62,
+   "load15": 10.39
+  }
+ }
+}
