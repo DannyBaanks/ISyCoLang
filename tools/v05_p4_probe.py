@@ -8,7 +8,7 @@ sellado — las sondas V6 y V7 guardan resultados por backend, no el registro de
 así que esta sonda lo recalcula desde el instrumento (`isyco/checker.py`: `Checker.specs`)
 y le añade las dos curvas que faltaban:
 
-  1. **Censo del corpus** — la población del gate (`load_corpus`: 43 casos de
+  1. **Censo del corpus** — la población del gate (`load_corpus`: 46 casos de
      `programs/conformance_v0.5`, incluidos los 4 con módulos): clones por programa,
      total, máximo por definición dentro de un programa y en todo el corpus, escalera de
      anchos instanciados.
@@ -364,8 +364,8 @@ def main(argv: list[str]) -> int:
         f"comando: {rec['comando']}   python={rec['python']}",
         f"instrumento: {rec['instrumento']}",
         "",
-        "1) censo de la poblacion del gate en conformance_v0.5 (load_corpus: 43 casos, "
-        "4 con modulos; 443 alta el 2026-11-01)",
+        f"1) censo de la poblacion del gate en conformance_v0.5 (load_corpus: "
+        f"{resumen['programas']} casos, 4 con modulos; 443-446 alta el 2026-11-01)",
     ]
     for fila in filas_censo:
         if fila["n"]:
