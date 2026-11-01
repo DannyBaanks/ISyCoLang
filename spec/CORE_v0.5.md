@@ -205,13 +205,15 @@ traza e IR iguales (§4.7).
 **Corrección sobre lo que decía esta sección.** Hasta hoy afirmaba «su `while` gemelo escrito
 a mano cuesta lo mismo (**24 pasos** los dos)» y «sobre `str<4> = "hola"` da
 `104 111 108 97`». El segundo dato es cierto y verificado (con capacidad exacta `str<4>` el
-literal entra y salen los cuatro bytes), pero el primero estaba mal atribuido: los 24 pasos
-son los de la matriz de *forma constante* de `tools/v05_spec_probe.py` §4 —cuatro programas
-`for`/`while` con ancho fijo y con `str` pelado, cada uno 24—, no los del programa que la
-misma sección citaba. Medido hoy con ese programa, `for` y gemelo gastan **22** pasos. La
-igualdad con el gemelo se mantiene; lo que estaba transcrito de memoria era el número, y es el
-hallazgo 1 de `docs/EVIDENCE_MATRIX.md` reproduciéndose dentro del spec. De ahí que los
-números de arriba estén citados por corrida.
+literal entra y salen los cuatro bytes), pero el primero estaba mal atribuido, y la razón es
+medible: los 24 son de la matriz de *forma constante* de `tools/v05_spec_probe.py` **§5**, cuyo
+programa recorre dentro de una **función** (`fn recorre(s: str<4>)` llamada desde `main`, con
+su marco y su `return len(s)`). El programa que esta sección citaba —el recorrido todo dentro
+de `main`, que es la forma de `444`— gasta **22** pasos, y su gemelo también. Medido el mismo
+día en las dos formas: `24` con llamada, `22` sin ella, misma salida y misma traza en el par de
+cada forma. La igualdad con el gemelo se mantiene; lo que estaba transcrito de memoria era el
+número, y es el hallazgo 1 de `docs/EVIDENCE_MATRIX.md` reproduciéndose dentro del spec. De ahí
+que los números de arriba estén citados por corrida.
 
 ### 4.5 La variable del `for`
 
