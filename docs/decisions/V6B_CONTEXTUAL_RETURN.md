@@ -104,6 +104,11 @@ llamada con el mismo ancho dan **1** clon (el registro cuenta resoluciones, no l
 No hay techo ni error nombrado hasta 2048 clones. P4 sigue sin tope fijado — la cifra es
 de Danny — pero ya no con la base en prosa.
 
+**Corregida 2026-11-02 por P4, sin reescribir lo de arriba.** P4 quedó cerrada ese día: **256
+resoluciones por definición dentro del programa**, `SPEC_LIMIT` en la 257, y los programas de
+2048 clones de aquella sección ya no son construibles con la cota puesta. Decisión:
+`docs/decisions/P4_SPEC_LIMIT.md`; medición: `evidence/v05_p4/run_20261102T081925Z.json`.
+
 ## Diferencial sellado
 
 `evidence/v05_v6/run_20261031T183542Z.json` (recibo `isyco.evidence/0.1`, 28 casos,

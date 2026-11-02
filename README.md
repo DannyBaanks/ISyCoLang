@@ -8,9 +8,9 @@ repo: `git bundle create ../ISyCoLang-<fecha>.bundle --all` y `git bundle verify
 comentario de cierre de la lista de pulido).
 
 **Estado: `EXECUTABLE`** (core v0.4 congelado más las decisiones v0.5 —V1, V2, V6,
-V6-bis y V7 implementadas y selladas, y N1 adoptada el 2026-11-01; `spec/CORE_v0.5.md`
-en `BORRADOR`—; fase F5,
-olas 1 y 2 PASS, y el corpus v0.5 dentro del gate: 216 casos): intérprete de referencia
+V6-bis y V7 implementadas y selladas, N1 adoptada el 2026-11-01 y P4 cerrada el
+2026-11-02; `spec/CORE_v0.5.md` en `BORRADOR`—; fase F5,
+olas 1 y 2 PASS, y el corpus v0.5 dentro del gate: 218 casos): intérprete de referencia
 conforme a los corpus v0.1–v0.5, IR canónica (ISY-IR) y backends nativos C, Rust y Zig —
 más los backends `pydecimal` y `cobol` de la ola 2, con sustratos `decimal` y GnuCOBOL —
 verificados contra la referencia bajo el contrato `ISY_BACKEND/1` (`cobol` en el
@@ -26,7 +26,7 @@ no por su cabecera — CORE v0.5 V7).
 | ¿Formato? | `.isy`; spec congelada en `spec/CORE.md` (v0.1) + `spec/CORE_v0.2.md` + `spec/CORE_v0.3.md` (strings y structs) + `spec/CORE_v0.4.md` (módulos); la cabecera `isyco 0.1`/`0.2`/`0.3`/`0.4` elige. `isyco 0.5` ya corre en el engine (V1, V2, V6, V6-bis, V7) y su texto está en `spec/CORE_v0.5.md` como `BORRADOR`, sin congelar. |
 | ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c`, `--via rust`, `--via zig`, `--via pydecimal` o `--via cobol` para compilado). Guía para personas: `GUIA.md`. |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia en Python, semántica normativa). |
-| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.5 (216/216), IR que preserva la semántica (432/432 comparaciones iguales, 148 programas bajados a IR — los rechazados por el frontend se comparan por su rechazo), backends C, Rust, Zig y pydecimal iguales a la referencia (216/216 y 8 484 corridas diferenciales sin diferencias cada uno, más 1 270 del diferencial de strings; C además con las cuatro combinaciones gcc/clang × plain/sanitized sobre los 216 — gate F4, `evidence/c/gate_2026-11-01T211424Z.json`); COBOL igual dentro de su dominio declarado (147/216, 69 UNSUPPORTED nombrando la capacidad que exige cada programa —`str`/`struct`/`emit_array`; las capacidades las exige el programa, no su cabecera: CORE v0.5 V7—, 8 484 corridas diferenciales sin diferencias). Ver claim table. |
+| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.5 (218/218), IR que preserva la semántica (436/436 comparaciones iguales, 149 programas bajados a IR — los rechazados por el frontend se comparan por su rechazo), backends C, Rust, Zig y pydecimal iguales a la referencia (218/218 y 8 484 corridas diferenciales sin diferencias cada uno, más 1 270 del diferencial de strings; C además con las cuatro combinaciones gcc/clang × plain/sanitized sobre los 218 — gate F4, `evidence/c/gate_2026-11-02T072103Z.json`); COBOL igual dentro de su dominio declarado (148/218, 70 UNSUPPORTED nombrando la capacidad que exige cada programa —`str`/`struct`/`emit_array`; las capacidades las exige el programa, no su cabecera: CORE v0.5 V7—, 8 484 corridas diferenciales sin diferencias). Ver claim table. |
 | ¿Qué NO está demostrado? | Todo lo demás; ver la claim table en `ROADMAP.md` §6. |
 | ¿Tests? | `python3 -m unittest discover -s tests -v` |
 | ¿Evidencia? | `evidence/`, inventariada en `docs/EVIDENCE_MATRIX.md` |
@@ -48,7 +48,7 @@ spec/IR.md                         forma de ISY-IR v0.1 y v0.2 (lo que reciben l
 GUIA.md                            guía para personas: escribir, correr y leer un resultado
 spec/BACKEND.md                    contrato ISY_BACKEND/1 (capacidades, protocolo, conformidad, costo)
 docs/decisions/                    decisiones registradas (p. ej. no reusar Code IR)
-docs/OPEN_QUESTIONS_P1_P4.md       qué respondieron P1–P4 y qué dejó abierto la implementación
+docs/OPEN_QUESTIONS_P1_P4.md       qué respondieron P1–P4 —P4 cerrada 2026-11-02— y qué abrió: Z1
 docs/EVIDENCE_MATRIX.md            qué está sellado, con qué árbol, y qué afirmación no tiene recibo
 docs/BACKEND_C.md                  backend C: garantías, protocolo, límites
 isyco/backends/base.py             driver común: validación, capacidades, caché, ejecución
@@ -79,7 +79,7 @@ tools/v05_proposal_probe.py        qué dice el core HOY del corpus y los gemelo
 tools/v05_revalida_probe.py        revalidación de V1 y V2: tres vías, gemelos, no regresión
 tools/v05_v6_probe.py              diferencial de V6/V6-bis: referencia, IR ida y vuelta, backends
 tools/v05_spec_probe.py            aristas que `spec/CORE_v0.5.md` afirma y ningún caso fija
-tools/v05_p4_probe.py              censo de especializaciones (P4) y forma del crecimiento
+tools/v05_p4_probe.py              censo de clones (P4), costo y frontera de Zig (Z1)
 tools/v7_capability_probe.py       V7: capacidades por contenido vs por etiqueta, con brazo viejo
 tools/textlib_probe.py             ¿librería de texto hoy? tres vías sobre `programs/dogfood/`
 tools/dogfood_wall_probe.py        el «muro de cabecera» del dogfood: víctimas de la etiqueta o del programa
@@ -90,7 +90,7 @@ tools/dogfood_wall_probe.py        el «muro de cabecera» del dogfood: víctima
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 180 tests (3,1-5,5 min con build/ llena; ver tests/README.md)
+python3 -m unittest discover -s tests -v       # 194 tests (3,1-8,2 min con build/ llena; ver tests/README.md)
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
@@ -98,7 +98,8 @@ python3 tools/backend_gate.py                  # gate F5: C, Rust, Zig, pydecima
 python3 tools/run_conformance.py               # corpus + evidencia nueva
 python3 tools/v05_spec_probe.py                # aristas del borrador v0.5: mide y reporta
 python3 tools/v05_spec_probe.py --write        # …y sella en evidence/v05_spec/ (árbol limpio = RELEASE_GATE)
-python3 tools/v05_p4_probe.py                  # censo de especializaciones (P4): K, W2, W3 y costo
+python3 tools/v05_p4_probe.py                  # censo (P4): K, W2, W3, costo y techo de toolchain
+python3 tools/v05_p4_probe.py --bisect-zig --write   # …+ frontera de Zig (Z1), y sella en evidence/v05_p4/
 ```
 
 ## Relación con el monorepo

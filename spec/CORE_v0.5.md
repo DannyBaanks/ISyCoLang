@@ -346,6 +346,28 @@ corrientes de v0.3. Ningún backend conoce V6.
   `for c in s` volvió a caer en la misma trampa: la igualdad de pasos solo vale con
   la forma igual, y el número que §4.4 citaba estaba mal atribuido a esta matriz (hoy
   `444` y su gemelo dan **22 = 22**, medido el 2026-11-01).
+- **Tope P4 (cerrada el 2026-11-02).** La monomorfización es **silenciosa** sin
+  cota, y el conteo es **multiplicativo en las ranuras**: dos parámetros con ocho
+  anchos cada uno son 64 copias. La regla es **256 resoluciones por definición
+  dentro de un programa** (`specialize.py:MAX_CLONES_PER_DEFINITION`, contado en
+  `checker.py:spec_counts`): la resolución 257 se rechaza en tiempo estático con
+  `SPEC_LIMIT`, el programa no baja a IR y ningún backend lo ve (`447`; `448`
+  fija el piso legal con 16 = 4×4). La granularidad es por definición y no por
+  programa porque el conteo es multiplicativo: un tope por programa castiga a
+  quien escribe una función de dos parámetros contextuales frente a quien
+  escribe diez de una.
+- **El techo del toolchain no es el techo del idioma.** Con el tope puesto, C y
+  Rust compilan todas las filas que la sonda genera antes del tope —256 copias
+  con una y con dos ranuras, 216 con tres, 256 con cuatro—; **Zig no**: su
+  evaluación en tiempo de compilación agota un tope interno y aborta (`error:
+  evaluation exceeded 1000 backwards branches`), y la frontera depende de la
+  **aridad** de la definición, no solo del número de copias. Medido por
+  bisección (`tools/v05_p4_probe.py --bisect-zig`): aridad 1 no falla dentro
+  del tope, aridad 2 compila 250 y revienta en 252, aridad 3 en 164/168,
+  aridad 4 en 120/128. O sea hay programas **legales** para v0.5 que un backend
+  concreto no puede construir; P4 no afirma que 256 copias compilen en todas
+  partes, afirma que el frontend no las acepta sin decir por qué. La pregunta
+  abierta que esto deja es **Z1** (`docs/OPEN_QUESTIONS_P1_P4.md`).
 
 ## 8. V7 — capacidades por contenido, no por etiqueta
 
@@ -373,12 +395,13 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 
 ## 9. Corpus, gate y no regresión
 
-- `programs/conformance_v0.5/` tiene **46 casos** (401–446, 42 de archivo suelto y 4
+- `programs/conformance_v0.5/` tiene **48 casos** (401–448, 44 de archivo suelto y 4
   directorios de módulos), con los `expected` escritos a mano entre el 2026-10-30 y el
-  2026-11-01, **antes** de tocar `isyco/` en cada decisión. El directorio está en
+  2026-11-02, **antes** de tocar `isyco/` en cada decisión. El directorio está en
   `CORPORA` (`isyco/conformance.py:13`) desde `57f38bc`, así que el gate de backends pasó
-  de 170 a **212** casos; `443` (alta 2026-11-01) sube la población del gate a **213** y
-  `444`–`446` (N1, alta el mismo día) a **216**. Los tres nuevos van con su `while` gemelo
+  de 170 a **212** casos; `443` (alta 2026-11-01) sube la población del gate a **213**,
+  `444`–`446` (N1, alta el mismo día) a **216** y `447`/`448` (P4, alta 2026-11-02) a
+  **218**. Los tres de N1 van con su `while` gemelo
   en `gemelos/`, que `load_corpus` no cuenta (`isyco/conformance.py:17-41`).
   Recibos de la corrida de 212, los tres con `git_head=57f38bc`: referencia `212/212`
   (`evidence/conformance/run_2026-11-01T033345Z.json`), IR `424/424` comparaciones
@@ -407,6 +430,18 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
   `63d7a9b4954c468d…`, `git_head=6c00225`; su corrida gemela en `2499fae` salió `FAIL` por
   un `TIMEOUT` del arnés y el recibo queda preservado). Cada uno con su stdout crudo
   sellado al lado y sus hashes en el `SHA256SUMS.txt` del directorio.
+  Recibos del lote de **218** (P4), los cuatro gates con `git_head=14b19a9` y todos `PASS`:
+  referencia `218/218` (`evidence/conformance/run_2026-11-02T070428Z.json`), IR `436/436`
+  sobre **149** programas bajados —`448` baja, `447` se compara por su rechazo—
+  (`evidence/ir/gate_2026-11-02T070428Z.json`), C `218/218` en las cuatro combinaciones
+  (`evidence/c/gate_2026-11-02T072103Z.json`) y backends con c, rust, zig y pydecimal
+  `218/218` y COBOL `148/218` con 70 `UNSUPPORTED` nombrados
+  (`evidence/backends/gate_2026-11-02T081912Z.json`). No regresión medida hoja por hoja
+  contra el lote de 216: las 2 727 hojas compartidas de F2 salen idénticas salvo
+  `total`/`passed`, y las 1 734 de F3 salvo los tres contadores. La sonda de P4
+  (`evidence/v05_p4/run_20261102T081925Z.json`) es el recibo que fija la regla y el techo
+  del toolchain; sale `EVIDENCE_ONLY` porque la documentación de este lote estaba a medio
+  editar mientras corría —`isyco/` y `tools/` no tenían ninguna modificación—.
 - **No regresión:** ningún programa `0.1`–`0.4` cambia. Medido por recabezado
   (`401`/`406` siguen en `UNKNOWN_NAME` en 0.1/0.2 y `TYPE_MISMATCH` en 0.3/0.4;
   `402`–`405` siguen en `SYNTAX`; `426`/`437` siguen en `SYNTAX`), por el brazo viejo
@@ -439,7 +474,8 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 | P1 (`at` de las sentencias sintéticas del `for`) | **cerrado por medición** | — (es la línea del `for`; el gate compara trazas salvos `at`) |
 | P2 (`for` sobre un literal de arreglo) | **cerrado: no** | — (`SYNTAX`, §4.3) |
 | P3 (nombre de la especialización y su efecto en `program_sha256` y las trazas) | **cerrado por medición** | `program_sha256` es el SHA del archivo principal (v0.4 §6 P6) y **no se mueve**: medido en `411`, `417` y `420`, los tres iguales al `sha256sum` del `.isy`. Lo que sí cambia es la traza: `411` muestra `main`, `pad.2`, `pad.7` y nunca `pad` a secas — la especialización es visible en el nombre, no en la identidad. Los nombres viajan por la codificación inyectiva de `fn_ident` (longitud prefijada), que no colisiona con un nombre de usuario |
-| P4 (cota de especializaciones por programa) | **abierto a propósito, con la base sellada** | falta la decisión (el número y su nombre), no la medición. `tools/v05_p4_probe.py` recalcula el censo desde `Checker.specs` sobre la población del gate y mide la forma: **33 clones** en 19 de los 46 casos (27 V6 + 6 V6-bis, 13 definiciones), 4 por programa, 2 por definición **dentro de un programa** pero 7 de `doble` **en el corpus**; una ranura con K anchos da K clones, dos ranuras W², tres W³, y 20 sitios con el mismo ancho dan 1 clon. Sin techo ni error nombrado hasta 2048 clones: el crecimiento es silencioso. Recibo `evidence/v05_p4/run_20261101T234407Z.json` (`RELEASE_GATE` sobre `6ebb00d`), que **re-mide** el censo con N1 dentro: el clon extra es `emite.16` de `445_for_str_pelado_stdin`, y `444`/`446` aportan **0** — el azúcar del `for` no clona. Las 43 filas compartidas con la corrida anterior son idénticas en nombres y conteos y las tres curvas y el control salen byte a byte iguales; solo difieren `ref_ms` y `c_ms`. Correcciones fechadas en la misma línea: con `443` dentro eran 32 clones en 18 de los 43 (`run_20261101T154040Z.json`, `2938c01`) y la primera versión, sobre 42, es `run_20261101T062234Z.json` (`52f5564`) |
+| P4 (cota de especializaciones por programa) | **cerrada el 2026-11-02: 256 por definición dentro del programa, `SPEC_LIMIT`** | La regla está en §7 y la decisión con su evidencia en `docs/decisions/P4_SPEC_LIMIT.md`. La base con la que se eligió el número quedó sellada antes: `tools/v05_p4_probe.py` recalculaba el censo desde `Checker.specs` sobre la población del gate y medía la forma — **33 clones** en 19 de los 46 casos (27 V6 + 6 V6-bis, 13 definiciones), 4 por programa, 2 por definición **dentro de un programa** pero 7 de `doble` **en el corpus**; una ranura con K anchos da K clones, dos W², tres W³, 20 sitios con el mismo ancho dan 1 clon (`evidence/v05_p4/run_20261101T234407Z.json`, `RELEASE_GATE` sobre `6ebb00d`; las dos corridas anteriores siguen válidas para su población: `run_20261101T154040Z.json` —`2938c01`, 32 en 18/43— y `run_20261101T062234Z.json` —`52f5564`, sobre 42—). Con la decisión dentro, la sonda re-mide sobre **48** casos: **49 clones en 20 programas**, 14 definiciones, y el máximo **sin** los casos de tope sigue en **2** (`evidence/v05_p4/run_20261102T081925Z.json`). Los dos casos que la fijan: `447` (la 257 se rechaza en el frontend, no baja a IR) y `448` (16 = 4×4 copias, legal). Lo que la medición **no** compró: techo de toolchain — Zig revienta con 256 copias de una definición de dos ranuras mientras C y Rust las compilan, y **Z1** pregunta si eso es frontera del idioma o del backend |
+| Z1 (¿el techo de un toolchain es parte del idioma?) | **abierta desde 2026-11-02 — no es decisión de semántica** | Medida la frontera (`evidence/v05_p4/run_20261102T081925Z.json` §6 y su bisección): aridad 2 compila 250 y revienta en 252, aridad 3 en 164/168, aridad 4 en 120/128, aridad 1 no falla dentro de la cota. Lo que falta es decidir si la cota de una capacidad es del idioma, del backend o de los dos con un `UNSUPPORTED` por plataforma; hoy `PROGRAM_REQUIRES` (V7) describe contenido, no coste de compilación. §7 tiene la limitación escrita |
 | **[D-new]** `for` sobre `str` (N1) | **cerrada el 2026-11-01: adoptada, por caso y por texto** | §4.4 tiene la regla escrita (lugar de `str` ⇒ `len(s)` vueltas, variable `u8` copia, cota = longitud del valor y no la capacidad) y tres casos con su gemelo: `444_for_sobre_str` (22/22), `445_for_str_pelado_stdin` (27/27, N1 × V6 con el `str` pelado) y `446_for_copia_str` (22/22, copia sin alias); trazas `stmt` e IR podada idénticas y `features_of` sin átomo nuevo. La población del corpus pasa de 43 a 46 casos y la del gate de 213 a 216. Decisión: `docs/decisions/N1_FOR_SOBRE_STR.md` |
 | **[D-new]** diagonal `0.5` de M4 (N2) | **cerrado por caso: `443`** | `programs/conformance_v0.5/443_m4_modulo_v04/` (raíz `0.5` + módulo `0.4` ⇒ `INVALID_PROGRAM(VERSION_MISMATCH)`), con sus dos controles medidos en el README del directorio: `0.5/0.5` con los mismos archivos da `HALTED` `return 2` en 4 pasos —lo único defectuoso es la cabecera— y `0.4/0.5` da `VERSION_MISMATCH`, o sea que la regla sigue siendo simétrica. Alta el 2026-11-01; la población del corpus pasa de 42 a 43 casos |
 | **[D-new]** el `let` sin anotación (N3) | **cerrado por texto** | escrito en §4.1 como excepción acotada al `let` con anotación de CORE §4: solo el `let x` sintético del `for`, y toma el tipo del **elemento** (`checker.py:205-209`). No es inferencia general, medido: `let x = 1;` es `SYNTAX` con `0.4` y con `0.5`. Las cuatro formas están en la sonda §3 (`let_anotacion`) con sus tres sabotajes |
@@ -457,6 +493,6 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 | `for` sobre un `str` es correcto y barato | **DEMONSTRATED** el 2026-11-01 — era `NOT_DEMONSTRATED` porque ningún caso lo fijaba; ahora son `444`–`446` con sus gemelos (22/27/22 pasos, trazas e IR iguales, ninguna capacidad nueva) y la regla escrita en §4.4 |
 | Ningún programa `0.1`–`0.4` cambia de resultado, schema ni traza | **DEMONSTRATED** — §9 (recabezados, brazo viejo FIEL en 118 módulos, gate de backends sin diferencias) |
 | Los cinco backends ejecutan el corpus v0.5 con sus capacidades declaradas | **DEMONSTRATED** para los casos que no piden `str`/`struct`/`emit_array`; COBOL responde `UNSUPPORTED` nombrando la capacidad que falta, medido en `tools/v7_capability_probe.py` |
-| P4 (límite de especializaciones) tiene número | **NOT_DEMONSTRATED** a propósito — el censo y la forma del crecimiento están medidos y sellados (`evidence/v05_p4/run_20261101T062234Z.json`); la cota es decisión de Danny |
-| El corpus v0.5 está dentro del gate de release | **DEMONSTRATED** — `gate_2026-11-01T015245Z.json` (`verdict=PASS`, `git_head=57f38bc`, árbol de código limpio) |
+| P4 (límite de especializaciones) tiene número y error | **DEMONSTRATED** el 2026-11-02 — era `NOT_DEMONSTRATED` a propósito porque la cota es decisión. Regla fijada por `447`/`448` en el gate de 218, por los nueve tests de `tests/test_specialize.py::TopePorDefinicion` (255 y 256 legales, 257 `SPEC_LIMIT`, conteo por definición y no por programa) y por dos sabotajes en `tests/test_reference.py`. **No** está demostrado que 256 sea el óptimo: lo que la sonda mide es la población con la que se decidió (2 por definición sin los casos de tope) y el techo del toolchain, que no coincide — ver Z1 |
+| El corpus v0.5 está dentro del gate de release | **DEMONSTRATED** — el lote más reciente, `evidence/backends/gate_2026-11-02T081912Z.json` (`verdict=PASS`, 218 casos); la entrada original fue `gate_2026-11-01T015245Z.json` (`verdict=PASS`, `git_head=57f38bc`, árbol de código limpio) y sigue válida para su población |
 | Las aristas que el corpus no fija están medidas, no en prosa | **DEMONSTRATED** por sonda — `tools/v05_spec_probe.py`: M4 en 8 combinaciones (§0), léxico de V3 en 4 (§2), el `let` sin anotación en 4 formas (§4.1), 11 formas del iterando (§4.3), cuatro programas a forma constante y su control de forma (§4.4 y §7), P3 sobre `411`/`417`/`420` (§11). Sello `evidence/v05_spec/run_20261101T153344Z.json` (sha `067fbf1b…`, `RELEASE_GATE` sobre `a4ef362`, árbol de código limpio); la primera versión, sin la matriz del `let`, es `run_20261101T043007Z.json` (sha `ad8d7c29…`, `RELEASE_GATE` sobre `a9a17bc`) y las cinco matrices comunes dan **byte a byte iguales** al comparar los dos `.txt`; un PASS con el árbol sucio se registraría como `EVIDENCE_ONLY` |

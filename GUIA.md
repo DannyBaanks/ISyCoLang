@@ -171,7 +171,7 @@ python3 -m isyco ir  precio.isy          # ver la IR canónica
 | status | código de salida | ejemplo |
 |---|---|---|
 | `HALTED` | 0 | terminó bien |
-| `INVALID_PROGRAM` | 2 | error de tipos, o entrada mala: `"19.999"` en un `dec<12,2>` da `code: BAD_INPUT` |
+| `INVALID_PROGRAM` | 2 | error de tipos, o entrada mala: `"19.999"` en un `dec<12,2>` da `code: BAD_INPUT`. Con `code: SPEC_LIMIT` (v0.5) el programa pide más de **256** resoluciones de una misma definición `str` contextual dentro de un solo programa: se corta en el frontend, antes de la IR y de cualquier backend |
 | `ERROR` | 3 | `OVERFLOW`, `DIV_ZERO`, `INEXACT` (con `exact`), índice fuera de rango, `BAD_FORMAT`/`BAD_CHAR` (v0.3) |
 | `LIMIT_REACHED` | 4 | `code: max_steps` / `max_emits` / `max_call_depth` |
 | `TIMEOUT` | 5 | pasó `--timeout-ms` (lo decide el reloj, no la semántica) |
@@ -190,7 +190,7 @@ Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 
 ```bash
 python3 tools/warm_build_cache.py              # opcional: precompila en paralelo (la primera vez tarda)
-python3 -m unittest discover -s tests          # suite completa: 180 tests; rango medido 2026-11-01: 187,1-329,6 s con la caché llena (diez corridas: 191,3 / 191,6 / 200,2 / 251,9 / 329,6 / 199,8 / 187,1 / 228,9 / 188,3 / 189,0 — las tres últimas ya con los 216 casos de N1, las dos de 179 tests y la de 189,0 con 180; las de 199,8 y 187,1 con los 213; la de 329,6 después de `tools/v05_p4_probe.py` y la de 251,9 después de `tools/c_gate.py`; los 206,7 s eran de la suite de 165 tests con 170 casos, y los 379,5 s de la de 138 en frío)
+python3 -m unittest discover -s tests          # suite completa: 194 tests; rango medido 2026-11-01/02: 187,1-491,1 s con la caché llena (once corridas: 191,3 / 191,6 / 200,2 / 251,9 / 329,6 / 199,8 / 187,1 / 228,9 / 188,3 / 189,0 / 491,1 — las tres anteriores ya con los 216 casos de N1 y la once con los 218 de P4; las dos de 179 tests, la de 189,0 con 180 y la de 491,1 con 194; las de 199,8 y 187,1 con los 213; la de 329,6 después de `tools/v05_p4_probe.py`, la de 491,1 después del gate de backends y de `--bisect-zig` — es el máximo y la causa del salto no está atribuida, solo medida — y la de 251,9 después de `tools/c_gate.py`; los 206,7 s eran de la suite de 165 tests con 170 casos, y los 379,5 s de la de 138 en frío)
 python3 tools/backend_gate.py                  # gate de backends: escribe evidence/backends/gate_<UTC>.json
 ```
 

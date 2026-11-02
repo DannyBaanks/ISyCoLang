@@ -1,13 +1,15 @@
 # Preguntas del CORE v0.5: P1–P4 y lo que abrió la implementación
 
-**Estado (2026-11-01).** P1, P2 y P3 están **cerradas por medición**. P4 queda
-**abierta a propósito**: el enunciado pedía cerrar midiendo, no inventando un número, y la
-medición ya está hecha y sellada — lo que falta es la decisión, ahora con dos lecturas
-posibles que la medición distingue. Aparecieron además tres puntos que la propuesta no
+**Estado (2026-11-02).** P1, P2, P3 y **P4** están **cerradas**. P4 se cerró el 2026-11-02 con
+la decisión de Danny —**256 resoluciones por definición dentro del programa**, rechazadas con
+`SPEC_LIMIT`— sobre la base sellada que este documento ya tenía; la regla está en
+`spec/CORE_v0.5.md` §7 y la decisión en `docs/decisions/P4_SPEC_LIMIT.md`. Cerrar P4 abrió una
+pregunta que la decisión no puede responder: **Z1**, si el techo de un toolchain concreto forma
+parte del idioma. Aparecieron además tres puntos que la propuesta no
 preveía (N1–N3). **N2 se cerró el 2026-11-01 con el caso `443`**, **N3 con el texto de
 §4.1 más su matriz en la sonda** y **N1 el mismo día, adoptada, con tres casos y sus
-gemelos y el texto de §4.4 sin el `[D]`**. Queda como decisión de Danny antes de congelar
-`spec/CORE_v0.5.md` **solo P4**.
+gemelos y el texto de §4.4 sin el `[D]`**. No queda ninguna decisión abierta antes de congelar
+`spec/CORE_v0.5.md`; lo que queda es Z1, que es una pregunta de toolchain y no de semántica.
 
 Las preguntas vienen de `spec/CORE_v0.5_propuesta.md` §2, donde se marcaron **[P]**.
 Las pruebas se pueden re-correr: `tools/v05_revalida_probe.py`, `tools/v05_v6_probe.py`,
@@ -19,7 +21,8 @@ dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no
 | P1 | ¿qué `at` llevan las sentencias sintéticas del `for`? | el del `for` | gate F2.4 ítem 2 + `tests/test_v05_core.py:ForAzucar` |
 | P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §4 |
 | P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
-| P4 | ¿cuántas especializaciones puede crear un programa? | **abierto**, con censo y forma sellados | `evidence/v05_p4/run_20261101T234407Z.json` (46 casos; las dos corridas anteriores siguen válidas para su población) |
+| P4 | ¿cuántas especializaciones puede crear un programa? | **cerrada el 2026-11-02**: **256 resoluciones por definición dentro del programa**, la 257 es `SPEC_LIMIT` estático | `docs/decisions/P4_SPEC_LIMIT.md`, `447`/`448`, `tests/test_specialize.py::TopePorDefinicion`, `evidence/v05_p4/run_20261102T081925Z.json` |
+| Z1 | ¿el techo de un toolchain forma parte del idioma? | **abierta**: con P4 puesto hay programas legales que Zig no compila (frontera medida por aridad) | `evidence/v05_p4/run_20261102T081925Z.json` §6/§6b, `spec/CORE_v0.5.md` §7 |
 | N1 | ¿`for c in s` con `s: str<N>` es normativo? | **cerrada el 2026-11-01 — adoptado**: la regla de §4.4 ya no tiene `[D]` y tres casos la fijan | `programs/conformance_v0.5/444`–`446` + sus gemelos, `tools/v05_spec_probe.py` §7 |
 | N2 | ¿algún caso fija el cruce con raíz `0.5` de M4? | **cerrada el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` + `tools/v05_spec_probe.py` §1 |
 | N3 | ¿el `let` sin anotación es inferencia? | **cerrada el 2026-11-01**: no, es solo el sintético del `for` | `spec/CORE_v0.5.md` §4.1 + `evidence/v05_spec/run_20261101T153344Z.json` §3 |
@@ -100,7 +103,19 @@ sha `ad8d7c29…`, `RELEASE_GATE` sobre `a9a17bc`):
 el nombre, o que `program_sha256` pase a hashar el AST enlazado (ahí las copias entrarían
 en la identidad por la puerta).
 
-## P4 — cota de especializaciones por programa `[ABIERTA, base sellada]`
+## P4 — cota de especializaciones por programa `[CERRADA el 2026-11-02 — regla, número y error]`
+
+**Decisión (2026-11-02, de Danny): 256 resoluciones por definición dentro del programa, y la
+257 se rechaza con `SPEC_LIMIT`.** Las tres cosas a la vez —granularidad, número y error
+nombrado— porque un número sin error es crecimiento silencioso y un error sin número no es una
+cota. Regla y limitación honesta en `spec/CORE_v0.5.md` §7; decisión completa, evidencia y
+falsificación en `docs/decisions/P4_SPEC_LIMIT.md`; los dos casos que la fijan son `447` (la
+resolución 257 → `INVALID_PROGRAM/SPEC_LIMIT`) y `448` (16 = 4×4 copias de una definición de dos
+ranuras, legal). Lo que la decisión **no** compra es techo de toolchain: con el tope puesto Zig
+sigue reventando antes, y eso es la pregunta **Z1** más abajo.
+
+Todo lo que sigue debajo de esta línea es la base **sellada antes** de decidir, conservada tal
+cual: el enunciado pedía cerrar midiendo y esa medición es la que Danny tenía delante.
 
 El enunciado decía: *«se decide midiendo el primer corpus, no inventando un número»*. La
 medición está hecha y sellada en `evidence/v05_p4/run_20261101T062234Z.json` (sha
@@ -132,7 +147,21 @@ salen byte a byte iguales. En `costo` las siete filas conservan `fuente_bytes`, 
 `ir_funciones`, `pasos`, `c_equiv`, `control`, `chequeo` y `status`; solo difieren `ref_ms` y
 `c_ms` (para `K=2048`: `458,9`/`986,1` entonces, `470,8`/`989,8` ahora).
 
-| magnitud | medido |
+**Re-medido el 2026-11-02 con la decisión dentro** —
+`evidence/v05_p4/run_20261102T081925Z.json` (`EVIDENCE_ONLY` sobre `203f579`,
+`arbol_sucio_codigo=true`: la documentación del lote estaba a medio editar mientras corría, con
+`isyco/` y `tools/` intactos), sobre los **48** casos y los cuatro directorios de módulos:
+**49 clones en 20 programas**, 14 definiciones únicas. Los 16
+clones nuevos son los de `dim` en `448` (4×4), y `447` aporta **0** porque se rechaza antes de
+especializar. La tabla de abajo es la **base de 46 casos**, la que Danny tenía delante para
+elegir; sobre ella el máximo por definición dentro de un programa era 2 y por eso la sonda
+reporta ahora aparte `casos_de_tope` y `max_por_definicion_en_un_programa_sin_casos_de_tope`
+(**sigue en 2**): con `448` dentro, el «máximo por definición» del corpus lo pondría el caso que
+prueba la cota, que es morderse la cola. `casos_con_error` pasa de 12 a **13** (`447`). La
+escalera de anchos de parámetro gana el **5** —`448` usa 5, 6, 7 y 8— y queda
+`[1, 2, 3, 4, 5, 6, 7, 8, 10, 16, 64]`; la de retornos (V6-bis) no se mueve: 4, 8, 16.
+
+| magnitud | medido (base de 46 casos, sellada el 2026-11-01) |
 |---|---|
 | clones en el corpus v0.5 | **33** en 19 programas sobre los 46 casos (27 sin retorno pelado = V6, 6 con él = V6-bis); sobre 43 eran 32 en 18 |
 | definiciones únicas especializadas | **13** (antes 12; la que entra es `emite` de `445`, con 1 copia) |
@@ -154,6 +183,16 @@ una cifra en prosa que no está en el recibo que la nombra —, así que la fila
 los bytes y los milisegundos exactos de `censo`/`costo`. Nada de lo demás cambia: el techo
 sigue sin aparecer y los 2048 clones siguen dando `HALTED` y EQUIV.
 
+**Corregida 2026-11-02 por la decisión.** Esa fila del techo **ya no es construible**: con P4
+dentro, `512`, `1024` y `2048` anchos distintos de una misma definición se cortan en el
+frontend —el recibo nuevo los reporta como `chequeo=SPEC_LIMIT`, `resoluciones_max=257` y
+`clones=0`, y conserva las fuentes de 141 663 / 545 375 / 2 139 231 B para que el renglón de
+arriba siga comprobable—. Lo que la fila afirmaba para su población sigue siendo verdad en el
+recibo que la nombra: antes del tope no aparecía ningún techo del *lenguaje*. Lo que no sabía es
+que había un techo del *toolchain* por debajo, y eso se midió aparte: **Zig** aborta la
+evaluación en tiempo de compilación con 256 copias de una definición de dos ranuras mientras C y
+Rust las compilan (sección 6 del recibo y **Z1** abajo).
+
 Los recibos anteriores de V6 y V6-bis (`evidence/v05_v6/run_20261031T104749Z.json` y
 `run_20261031T184709Z.json`, ambos `RELEASE_GATE`) sí sellan el diferencial por backend,
 pero **no contienen ningún censo de clones**: lo que `docs/decisions/V6_CONTEXTUAL_STR.md`
@@ -167,17 +206,53 @@ peor caso es 4); como cota **global del corpus** ya está rota — `doble` tiene
 como el conteo es **multiplicativo en las ranuras**, un tope por programa castiga a quien
 escribe una función de dos parámetros contextuales frente a quien escribe diez de una.
 
-**Por qué sigue abierta.** Fijar el número sin estas curvas era una ocurrencia; con ellas
-sigue siendo decisión de Danny, y el costo de equivocarse es asimétrico: un tope bajo rompe
-librerías que hoy funcionan (la de texto usa `pad`, `doble`, `junta`), un tope alto no
-protege de nada — medido: hasta 2048 copias no hay fallo, solo crecimiento silencioso.
-Lo que falta para cerrarla es elegir **granularidad** (por definición en un programa / por
-programa / por módulo), **número**, y el **error nombrado** que se lanza al superarlo
-(`SPEC_LIMIT` u otro) en lugar del crecimiento silencioso. Con esa decisión hay un caso de
-límite que la fije en el corpus.
+**Cómo se decidió, dicho con las curvas delante.** El costo de equivocarse es asimétrico y la
+asimetría no se deshizo con la medición: un tope bajo rompe librerías que hoy funcionan (la de
+texto usa `pad`, `doble`, `junta`) y un tope alto, mientras el error no exista, no protege de
+nada. Danny eligió **por definición dentro del programa** porque el conteo es multiplicativo en
+las ranuras —una ranura con K anchos da K clones, dos W², tres W³— y un tope por programa
+castigaría a quien escribe una función de dos parámetros contextuales frente a quien escribe
+diez de una; eligió **256** sobre la base de 46 casos (peor definición: 2) y porque a dos ranuras
+es una cuadrícula 16×16; y eligió el **error nombrado** `SPEC_LIMIT` en lugar del crecimiento
+silencioso, estático y antes de la IR. La decisión está sellada con sus dos casos, sus nueve
+tests de checker y su matriz de toolchain en `docs/decisions/P4_SPEC_LIMIT.md`.
 
-**Permanece mientras:** no exista un programa real (la librería de texto del dogfood) que
-produzca más copias de las que el corpus produce hoy.
+**Permanece mientras:** la condición del enunciado —«no exista un programa real que produzca más
+copias de las que el corpus produce hoy»— no ocurrió: la librería del dogfood, sintetizada en la
+forma real de tres módulos, llega a **58** clones con ocho anchos por pool y **ninguna definición
+pasa de 6**, a un mundo de distancia de la cota. P4 se cerró con la población real delante.
+
+## Z1 — ¿el techo de un toolchain forma parte del idioma? `[ABIERTA desde 2026-11-02]`
+
+Z1 no existía antes de P4: la cerró y abrió esta. Con la cota de 256 puesta, el frontend ya no
+deja pasar más copias, así que ningún backend recibe programas fuera de la cota — pero **dentro**
+de ella hay programas que un backend concreto no puede construir. Medido en
+`evidence/v05_p4/run_20261102T081925Z.json` (sección 6 de la forma `aridad × ancho`, y su
+bisección con `--bisect-zig`):
+
+| aridad | escalera de la sonda (clones) | frontera de Zig (biseccionada, bordes compilados) | C y Rust |
+|---|---|---|---|
+| 1 ranura | 8 · 16 · 32 · 64 · 96 · 128 · **256** — todas OK | `SIN_FALLO_DENTRO_DEL_TOPE` | OK |
+| 2 ranuras | 16 · 64 · 144 OK, **256** (W=16) FALLO | **250 OK / 252 FALLO** | OK |
+| 3 ranuras | 64 · 125 OK, **216** (W=6) FALLO | **164 OK / 168 FALLO** | OK |
+| 4 ranuras | 81 OK, **256** (W=4) FALLO | **120 OK / 128 FALLO** | OK |
+
+El fallo es de evaluación en tiempo de compilación (`error: evaluation exceeded 1000 backwards
+branches`), no de enlaces ni de memoria, y la bisección barre una forma **parcial**: fija en 2 las
+ranuras primeras y suelta la última, así que el umbral es de esa forma (paso de 2^(n-1) clones por
+ranura) y no de la escalera de anchos iguales. Lo que Z1 pregunta, en términos de decisión: ¿es
+aceptable que un programa legal de v0.5 compile en C y Rust y no en Zig, o el idioma tiene que
+heredar el techo del toolchain más débil?
+
+Lo que **no** es la respuesta obvia: ni subir el tope (no compra nada: el techo no es del
+frontend) ni bajarlo sin medir (compraría la ignorancia de programas que hoy sí compilan en los
+cuatro completos). Lo que falta para cerrarla es decidir si la cota de una capacidad es del
+idioma, del backend, o de los dos con un `UNSUPPORTED` nombrado por plataforma —y, si se elige lo
+último, en qué capa vive ese dato, porque hoy `PROGRAM_REQUIRES` (V7) describe **contenido**, no
+costes de compilación.
+
+**Permanece mientras:** un backend del corpus falle por volumen de especializaciones dentro de la
+cota del idioma, y nadie haya dicho si eso es un bug del backend o una frontera del lenguaje.
 
 ## N1 — `for` sobre un `str` `[CERRADA el 2026-11-01 — por caso y por texto]`
 

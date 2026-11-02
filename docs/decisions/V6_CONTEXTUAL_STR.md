@@ -146,6 +146,14 @@ El detalle y los controles están en `docs/decisions/V6B_CONTEXTUAL_RETURN.md` �
 (y en la propia sonda: `python3 tools/v05_p4_probe.py`). No se fija ningún tope: P4 pide
 medir antes de poner número, y eso es lo que hay ahora — medido, no afirmado.
 
+**Corregida 2026-11-02 por P4, sin reescribir lo de arriba.** «Sin techo ni error nombrado hasta
+2048 clones» y «no se fija ningún tope» eran el estado de aquella corrida. P4 se cerró el
+2026-11-02 con **256 resoluciones por definición dentro del programa** y `SPEC_LIMIT` como error
+nombrado, así que `512`/`1024`/`2048` anchos distintos de una misma definición ya no son
+construibles; y por debajo del tope sí hay techo de toolchain: Zig revienta con 256 copias de una
+definición de dos ranuras. Decisión: `docs/decisions/P4_SPEC_LIMIT.md`; recibo:
+`evidence/v05_p4/run_20261102T081925Z.json`.
+
 ## Diferencial sellado
 
 `evidence/v05_v6/run_*.json` (recibo `isyco.evidence/0.1`: `git_head`, `arbol_sucio`,

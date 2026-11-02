@@ -166,7 +166,9 @@ que falsifica V7.
 > sitio de llamada con una copia por resolución (`isyco/specialize.py`): los 18 casos
 > nuevos `411`–`428` coinciden en referencia, IR y cada backend —77 EQUIV, 13 UNSUPPORTED
 > (todos COBOL, y por la etiqueta `ir0.2`, no por V6), cero DIVERGENT/BUILD_FAIL—;
-> 22 clones en el corpus, máximo 2 por definición, sin tope fijado (base de P4).
+> 22 clones en el corpus, máximo 2 por definición, sin tope fijado (base de P4) **— P4 se cerró el
+> 2026-11-02 con 256 resoluciones por definición y `SPEC_LIMIT`; ver el bloque de P4 al final de
+> esta sección—**.
 > Decisión y controles: `docs/decisions/V6_CONTEXTUAL_STR.md`;
 > `evidence/v05_v6/run_20261031T103514Z.json`. Quedan V6-bis, V7, revalidar V1–V5 y P1–P4;
 > el directorio sigue fuera de `CORPORA` hasta que `401`–`410` pasen —**ocurrió el
@@ -184,7 +186,8 @@ que falsifica V7.
 > nada de truncate and continue. Diferencial extendido a los 28 casos `411`–`438`:
 > **123 EQUIV, 17 UNSUPPORTED (COBOL, otra vez por la etiqueta `ir0.2`), cero
 > DIVERGENT/BUILD_FAIL**; el sabotaje `str_concat_truncates` ahora rompe dos casos
-> (`418` y `430`). 28 clones en el corpus, máximo 4 por programa, sin tope fijado.
+> (`418` y `430`). 28 clones en el corpus, máximo 4 por programa, sin tope fijado **— cerrado el
+> 2026-11-02 con 256 resoluciones por definición; bloque de P4 al final de esta sección—**.
 > Decisión: `docs/decisions/V6B_CONTEXTUAL_RETURN.md`;
 > `evidence/v05_v6/run_20261031T183542Z.json`. Quedan V7, revalidar V1–V5 y P1–P4.
 
@@ -217,6 +220,8 @@ que falsifica V7.
 > especializa nada por sí solo. Máximos sin cambio (4 por programa, 2 por definición dentro de un
 > programa, 7 de `doble` en el corpus), y las 43 filas compartidas con la corrida de las 15:40 dan
 > idénticas en nombres y conteos, con curvas y control byte a byte iguales. **P4 sigue abierta.**
+> (Cerrada el 2026-11-02 con el bloque de P4 al final de esta misma sección de F2, que además
+> corrige la frase de «ningún techo hasta 2048 clones».)
 
 > **V7 implementado 2026-10-31.** La capacidad la exige el **programa**, no su cabecera:
 > `features_of` camina los tipos bajados y las sentencias, `ir0.2` solo aparece si hay `str` o
@@ -307,7 +312,55 @@ que falsifica V7.
 > sección nueva **§7** de `tools/v05_spec_probe.py` con sus doce formas (`evidence/v05_spec/`
 > `run_20261101T210009Z.json`, `RELEASE_GATE`; seis `CONTROL FALSO` y cero sello cuando se
 > parcheó el engine). Decisión: `docs/decisions/N1_FOR_SOBRE_STR.md`. §4.4 del spec pierde el
-> `[D]`. **Queda P4** como única decisión abierta del borrador.
+> `[D]`. **Queda P4** como única decisión abierta del borrador (se cerró el 2026-11-02, ver el
+> bloque de P4 debajo de este).
+
+> **P4 CERRADA 2026-11-02 — 256 resoluciones por definición dentro del programa, con
+> `SPEC_LIMIT`.** Decisión de Danny sobre la base sellada del censo: **granularidad** por
+> definición fuente (no por programa, no por módulo), **número** 256 y **error nombrado**, en
+> lugar del crecimiento silencioso. `specialize.MAX_CLONES_PER_DEFINITION` es literal normativo
+> del spec y el contador vive en `Checker.spec_counts`: 256 claves distintas son legales y la
+> 257 se rechaza **antes** de bajar a la IR. Dos casos nuevos — `447_tope_de_especializaciones`
+> (257 resoluciones de una sola definición por la orilla de retorno → `INVALID_PROGRAM/SPEC_LIMIT`)
+> y `448_dieciseis_clones_por_definicion` (4×4 = 16 copias de una definición de dos ranuras,
+> legal) — suben la población de **46 a 48** casos y el gate de **216 a 218**. El censo se partió,
+> no se excluyó: la sonda reporta aparte `casos_de_tope` y el máximo **sin** ellos, que sigue en
+> **2**, así que la base con la que se decidió el número sigue siendo comprobable.
+>
+> **Corrección a la frase «ningún techo ni error nombrado hasta 2048 clones», del bloque del censo
+> sellado el 2026-11-01.** Era verdad para el lenguaje **sin cota** y solo para las dos vías que la
+> sección `costo` medía —`ref_ms` y `c_ms`: la referencia y C—. Con la cota de P4 puesta, esa
+> población dejó de ser construible: `512`/`1024`/`2048` resoluciones de una misma definición se
+> cortan en el frontend con `SPEC_LIMIT`. Y Zig no estaba medido: ahí el techo **sí** existe y cae
+> por debajo de la cota.
+> Matriz `aridad × ancho` con el tope puesto —sección 6 de
+> `evidence/v05_p4/run_20261102T081925Z.json` y su bisección con `--bisect-zig`—: **una**
+> ranura con 256 copias compila en c, rust y zig; con **dos** ranuras 256 (W=16) revienta en Zig
+> (`error: evaluation exceeded 1000 backwards branches`) mientras c y rust la compilan; con
+> **tres**, 216 (W=6); con **cuatro**, 256 (W=4). Frontera biseccionada
+> sobre forma parcial (ranuras primeras fijas en 2, paso de 2^(n-1) clones) y con los dos bordes
+> compilados antes de recorrer: **250 OK / 252 FALLO** en aridad 2, **164 / 168** en 3, **120 / 128**
+> en 4, y `SIN_FALLO_DENTRO_DEL_TOPE` en 1. O sea: hay programas legales bajo P4 que un backend
+> concreto no puede construir, y la cota del idioma no protege de eso. Eso es **Z1**, pregunta nueva
+> en `docs/OPEN_QUESTIONS_P1_P4.md`. Ninguna de las dos cosas se arregla moviendo el número.
+>
+> Nada del borde se dejó a la suerte: 255/256/257 los fijan los nueve tests de
+> `tests/test_specialize.py::TopePorDefinicion`, la identidad por-definición-no-por-programa
+> también, y la asimetría está declarada en `docs/decisions/P4_SPEC_LIMIT.md`, en
+> `programs/conformance_v0.5/README.md` y aquí: **la mutación off-by-one (`>` por `>=`) no la
+> detecta ningún sabotaje de corpus**, porque un programa con 256 clones no puede entrar al gate
+> (Zig lo rompe), así que la muerde solo `test_256_es_el_ultimo_legal`. Los dos sabotajes de P4
+> sí están en la referencia: apagar el tope (`10**9`) rompe **exactamente** `447`, y bajarlo a `1`
+> rompe `411_pad_dos_anchos` y deja en verde `416_cast_mas_estrecho` — la cota muerde por encima
+> de 1, no en 1. Gates del lote: F2 `evidence/conformance/run_2026-11-02T070428Z.json`
+> (`218/218`), F3 `evidence/ir/gate_2026-11-02T070428Z.json` (`436/436` sobre **149**
+> programas bajados), F4 `evidence/c/gate_2026-11-02T072103Z.json` (`218/218` en las
+> cuatro combinaciones), F5 `evidence/backends/gate_2026-11-02T081912Z.json` (`PASS`;
+> c/rust/zig/pydecimal 218/218 y COBOL 148/218 con 70 `UNSUPPORTED`) y la sonda
+> `evidence/v05_p4/run_20261102T081925Z.json` —`EVIDENCE_ONLY`: la documentación de este lote
+> estaba a medio editar mientras corría, con `isyco/` y `tools/` intactos—. Decisión:
+> `docs/decisions/P4_SPEC_LIMIT.md`. Con esto **no queda ninguna decisión abierta** del
+> borrador de CORE v0.5; lo que queda es Z1, que es de toolchain y no de semántica.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 

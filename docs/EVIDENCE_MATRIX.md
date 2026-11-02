@@ -42,10 +42,10 @@ re-produce o es prosa.
 
 | gate | recibo más reciente | head | veredicto | cifras |
 |---|---|---|---|---|
-| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-01T210445Z.json` | `2499fae` | `PASS` | 216/216 en los cinco corpus; las 213 filas del recibo anterior (`run_2026-11-01T074055Z.json`) salen **byte a byte iguales** y las tres altas son `444`/`445`/`446` con 22, 27 y 22 pasos |
-| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-01T210450Z.json` | `2499fae` | — | 432/432 comparaciones iguales, **148** programas bajados (los tres de N1 sí bajan; `443` no: se comparan sus dos rechazos). Igualdad recibo-vs-recibo sobre las 213 filas anteriores: cero diferencias |
-| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-01T211424Z.json` | `2499fae` | `PASS` | 216 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 216/216, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers; los dos sabotajes detectados; `missing_compilers: []`. stdout crudo sellado al lado: `gate_2026-11-01T211424Z_stdout.txt` |
-| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-01T225011Z.json` | `6c00225` | `PASS` | c/rust/zig/pydecimal 216/216; cobol **147/216 con 69 `UNSUPPORTED`** nombrados —los tres de N1 entran con `ir0.2,str`, tal como estaba predicho el 2026-11-01— y 0 fallas; 8 484 corridas diferenciales por backend y 1 270 de strings en los cuatro completos, todas sin diferencias; los tres sabotajes detectados en cada uno de los cuatro; `missing_toolchains: []`. stdout crudo sellado al lado: `gate_2026-11-01T225011Z_stdout.txt`. La corrida anterior de la misma población salió `FAIL` por `TIMEOUT` del arnés en el difftest de strings de pydecimal (`gate_2026-11-01T215718Z.json`, preservado con su diagnóstico en `evidence/f5_flake/run_20261101T220854Z.json` y su reproduccion: 500 llamadas y dos pasadas de 1 270 con 0 diferencias); la de 213 es `gate_2026-11-01T082046Z.json` (`a4f608c`) |
+| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-02T070428Z.json` | `14b19a9` | `PASS` | 218/218 en los cinco corpus; las 216 filas compartidas con el recibo anterior (`run_2026-11-01T210445Z.json`) salen idénticas hoja por hoja —2 727 hojas, único cambio `total`/`passed`— y las dos altas son `447` (`INVALID_PROGRAM/SPEC_LIMIT`) y `448` (16 emisiones, `HALTED`) |
+| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-02T070428Z.json` | `14b19a9` | — | 436/436 comparaciones iguales, **149** programas bajados (`448` sí baja; `447` no: se compara su rechazo). Igualdad recibo-vs-recibo sobre las 432 anteriores: 1 734 hojas compartidas idénticas, cero diferencias salvo los tres contadores |
+| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-02T072103Z.json` | `14b19a9` | `PASS` | 218 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 218/218, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers; los dos sabotajes detectados (12 y 53 diferencias); `missing_compilers: []`. Poblaciones anteriores, todas `PASS`: 216 en `gate_2026-11-01T211424Z.json` (`2499fae`) y las seis que se enumeran renglón a renglón en `docs/BACKEND_C.md` |
+| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-02T081912Z.json` | `14b19a9` | `PASS` | c/rust/zig/pydecimal **218/218** con 0 `UNSUPPORTED`; cobol **148/218 con 70 `UNSUPPORTED`** nombrados y 0 fallas; 8 484 corridas diferenciales por backend y 1 270 de strings en los cuatro completos, todas sin diferencias; los tres sabotajes detectados en cada uno de los cuatro (cobol solo dos: no tiene `str`); `missing_toolchains: []`. stdout crudo sellado al lado: `gate_2026-11-02T081912Z_stdout.txt`. Que cobol pase de 147 a 148 **no** es una capacidad nueva: `447` es un rechazo del frontend y cuenta como `passed` en los cinco —hallazgo 12 abajo—. Anteriores en el mismo directorio: `gate_2026-11-01T225011Z.json` (`6c00225`, 216 casos, los tres de N1 entrando con `ir0.2,str` tal como estaba predicho), `gate_2026-11-01T082046Z.json` (`a4f608c`, 213) y antes `gate_2026-11-01T215718Z.json`, `FAIL` por `TIMEOUT` del arnés en el difftest de strings de pydecimal, preservado con su diagnóstico en `evidence/f5_flake/run_20261101T220854Z.json` y su reproduccion: 500 llamadas y dos pasadas de 1 270 con 0 diferencias |
 
 **Hueco de F4 — CERRADO el 2026-11-01.** Existió así: F4 no se había re-corrido desde que
 `conformance_v0.5` entró en `CORPORA`, así que su recibo más reciente (`ec6b823`) fijaba 170
@@ -67,7 +67,8 @@ fija; lo que cambió es el más reciente.
 | V7 (capacidades por contenido) | `evidence/v05_v7/run_20261031T200146Z.json` | `a66689c` | `RELEASE_GATE` | 118 módulos del corpus congelado en dos brazos, brazo viejo FIEL, conteos 113→125 en COBOL, canario `439` |
 | Borrador normativo v0.5 | `evidence/v05_spec/run_20261101T153344Z.json` | `a4ef362` | `RELEASE_GATE` | las 6 matrices de aristas que el corpus no fija — las 5 de `run_20261101T043007Z.json` (`a9a17bc`, siguen válidas para su corrida) más la nueva del `let` sin anotación (§3, N3) |
 | N1 (`for` sobre un `str`) | `evidence/v05_spec/run_20261101T210009Z.json` (sección 7) y el lote de gates `216` | `c536858` (sonda) / `2499fae` (gates) | `RELEASE_GATE` | la cota es `len(s)` del **valor** y no la capacidad (`444`: `str<8>` con `"hola"` emite 4 bytes), la variable es `u8` **copia** (`446`: `65 65 65 97`), el `str` pelado de V6 se recorre (`445` por stdin, 5 bytes); pasos e IR idénticos a su `while` gemelo (22/27/22, F3 432/432) y ninguna capacidad nueva (`features_of` igual al gemelo) |
-| Censo y forma de P4 | `evidence/v05_p4/run_20261101T234407Z.json` | `6ebb00d` | `RELEASE_GATE` | 33 clones en 19/46 casos (27 V6 + 6 V6-bis, 13 definiciones); curvas K, W², W³; control de 20 sitios → 1 clon; sin techo hasta 2048. Las dos corridas anteriores siguen válidas para su población: `run_20261101T154040Z.json` (`2938c01`, 32 en 18/43) y `run_20261101T062234Z.json` (`52f5564`, sobre 42) |
+| Censo y forma de P4 | `evidence/v05_p4/run_20261101T234407Z.json` | `6ebb00d` | `RELEASE_GATE` | 33 clones en 19/46 casos (27 V6 + 6 V6-bis, 13 definiciones); curvas K, W², W³; control de 20 sitios → 1 clon; sin techo hasta 2048 **en las dos vías que la sección `costo` medía: referencia y C**. Zig sí tenía techo por debajo de esa cota y se midió al cerrar P4 — ver la fila siguiente—. Las dos corridas anteriores siguen válidas para su población: `run_20261101T154040Z.json` (`2938c01`, 32 en 18/43) y `run_20261101T062234Z.json` (`52f5564`, sobre 42) |
+| P4 (tope de especializaciones) | `evidence/v05_p4/run_20261102T081925Z.json` + lote de gates `218` | `203f579` | `EVIDENCE_ONLY` — no como gate: `arbol_sucio_codigo=true` por la documentación de este lote, que estaba a medio editar mientras corría; `isyco/` y `tools/` intactos, y el sello limpio va appended en el ADR | 256 resoluciones por definición dentro del programa, la 257 es `SPEC_LIMIT` estático y no baja a IR; censo re-medido con la decisión dentro: **49 clones en 20/48 casos**, 14 definiciones, máximo 16 (el caso `448`) y **2** sin los casos de tope — esa sigue siendo la base del número —; `512`/`1024`/`2048` ya no son construibles (`chequeo=SPEC_LIMIT`, `resoluciones_max=257`, `clones=0`); matriz `aridad × ancho` contra c/rust/zig y su bisección; librería real sintetizada en tres módulos: 58 clones con ocho anchos por pool y ninguna definición pasa de 6 |
 
 ## Preguntas y puntos nuevos
 
@@ -76,7 +77,8 @@ fija; lo que cambió es el más reciente.
 | P1 (`at` del azúcar) | cerrada | `evidence/v05_revalida/run_20261101T001608Z.json` + test `ForAzucar` |
 | P2 (`for` sobre literal de arreglo) | cerrada: no | `evidence/v05_spec/run_20261101T153344Z.json` §4 |
 | P3 (nombres e identidad) | cerrada | el mismo recibo §6 (`411`/`417`/`420`) + `tests/test_specialize.py` |
-| P4 (cota de especializaciones) | **abierta — decisión, no medición** | base sellada en `evidence/v05_p4/run_20261101T234407Z.json` (46 casos, re-medida el 2026-11-01 con N1 dentro); falta elegir granularidad, número y el error nombrado |
+| P4 (cota de especializaciones) | **cerrada el 2026-11-02 — regla, número y error nombrado** | `docs/decisions/P4_SPEC_LIMIT.md`; `447`/`448` en el gate de 218; `tests/test_specialize.py::TopePorDefinicion` (9 tests) y los dos sabotajes de P4 en `tests/test_reference.py`; base sellada `evidence/v05_p4/run_20261101T234407Z.json` (46 casos) y re-medida con la decisión dentro en `evidence/v05_p4/run_20261102T081925Z.json` (48 casos, 49 clones) |
+| Z1 (¿el techo de un toolchain es del idioma?) | **abierta desde 2026-11-02 — medición hecha, decisión no** | sección 6 y su bisección (`--bisect-zig`) en `evidence/v05_p4/run_20261102T081925Z.json`: 256 copias de una definición de dos ranuras compilan en C y Rust y revientan en Zig; frontera medida 250/252 (aridad 2), 164/168 (3), 120/128 (4). No tiene respuesta en el corpus ni en el checker: es de Danny |
 | N1 (`for` sobre `str`) | **cerrada el 2026-11-01 — adoptada, por caso y por texto** | `programs/conformance_v0.5/444`–`446` con sus gemelos (`87bdfa7d…`, `1805ca9c…`, `b2e804e3…`); la regla escrita en `spec/CORE_v0.5.md` §4.4 y §7 sin el `[D]`; doce filas de formas en `evidence/v05_spec/run_20261101T210009Z.json` (`RELEASE_GATE` sobre `c536858`) |
 | N2 (diagonal `0.5` de M4) | **cerrada por caso el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` (`a4f608c`) con sus dos controles medidos; la matriz de 8 combinaciones sigue en `evidence/v05_spec/…` §1 |
 | N3 (`let` sin anotación) | cerrada: por texto y por sonda | la regla estaba en `checker.py:205-209` y en el docstring; ya está en `spec/CORE_v0.5.md` §4.1 y medida en `evidence/v05_spec/run_20261101T153344Z.json` §3 (cuatro formas, tres sabotajes) |
@@ -98,7 +100,7 @@ tienen recibo porque un recibo de ellas sería una foto de un día:
 
 | afirmación | comando |
 |---|---|
-| «180 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
+| «194 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
 | «sha256sum -c de `docs/origin/` coincide» | `sha256sum -c docs/origin/SHA256SUMS.txt` desde la raíz del repo |
 | conteos de `SUPPORTED`, llamadas a `has()` y sitios de versión | `grep -n` de `spec/CORE_v0.5.md` §0, fijados como test en `tests/test_versions.py` |
 
@@ -244,10 +246,25 @@ Qué encontró esta matriz al cotejar prose contra recibos:
     recibos = solo la columna de ruta. Lo que enseña: un test de integridad que compara
     *nombres* es sensible a cómo se invocó `sha256sum`, y correr la suite encima de una edición
     de docs produce falsos negativos que parecen hallazgos del cambio.
+12. **Un rechazo del frontend cuenta como `passed` en los cinco backends, y eso es un punto
+    ciego que hay que nombrar.** Al cerrar P4 con `SPEC_LIMIT` (`isyco/errors.py`, `IsyError` →
+    `interp.run:381-385` lo convierte en `{status: INVALID_PROGRAM, code: …, emits: []}`) no hizo
+    falta tocar ningún arnés: `tools/ir_gate.py:44` ya capturaba `InvalidProgram` para comparar el
+    rechazo en vez de la IR, y `tools/warm_build_cache.py:34-36` ya saltaba esos programas. Pero
+    `tools/backend_gate.py:47-61` **no distingue** quién rechazó: si los cinco devuelven el mismo
+    documento, `passed += 1`, así que `447` entra como pasado también en COBOL —no porque COBOL lo
+    soporte sino porque el frontend compartido lo mató antes de que existiera pregunta de
+    capacidad—. El número del gate no afirma nada sobre ese renglón; lo que lo fija es
+    `tests/test_backends.py::TopeFrontend` (los cinco `status`/`code` idénticos y **cero** líneas de
+    `backend_stderr`, más la salida de la CLI). Lo que enseña: cuando un error nuevo es de
+    frontend, la cobertura que hay que exigir está en el test que compara backends entre sí, no en
+    el conteo del gate.
 
 Nada de lo anterior (1–9) cambia un `expected`, un hash congelado ni un resultado de gate: son
 correcciones de *atribución* (una cifra que no tenía recibo) y una re-medición. El 10 sí cambió
 un veredicto — F5 `PASS` → `FAIL` en una corrida — y se documenta con la corrida y el
 diagnóstico, no corrigiendo el recibo; la re-corrida lo dejó en `PASS` con el `FAIL` preservado.
 El 11 es un defecto **propio** del lote de evidencia (`010e7c9`), no del lenguaje: no mueve
-ningún digest y se arregla en la convención de rutas.
+ningún digest y se arregla en la convención de rutas. El 12 tampoco cambia ninguna cifra: nombra
+lo que el conteo del gate **no** dice sobre un renglón, para que nadie lea un `218/218` de F5 como
+si COBOL ejecutara el programa que el frontend rechaza.
