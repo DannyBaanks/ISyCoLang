@@ -259,6 +259,25 @@ Qué encontró esta matriz al cotejar prose contra recibos:
     `backend_stderr`, más la salida de la CLI). Lo que enseña: cuando un error nuevo es de
     frontend, la cobertura que hay que exigir está en el test que compara backends entre sí, no en
     el conteo del gate.
+13. **Un fallo del compilador de un toolchain aborta F5 y no deja recibo.** Cerrar P4 obligó a
+    construir un programa que el idioma acepta y Zig no compila: 256 clones de una definición de
+    cuatro ranuras es legal bajo el tope, y el compilador de Zig revienta su propio límite de
+    comptime con `error: evaluation exceeded 1000 backwards branches`. De ahí que `448` lleve 16
+    clones y no 256, y de ahí que la sonda sí registre el fallo como dato
+    (`tools/v05_p4_probe.py:538`, «el fallo es el dato») mientras el gate lo propaga. Lo que no
+    estaba en ningún recibo era el arnés: `tools/backend_gate.py:51` llama a `backend.run(...)`
+    dentro del bucle de `corpus()` sin `try`, `main()` (`:115`) tampoco lo envuelve y la única
+    captura del archivo es la de `git_head()` (`:40-43`), así que el JSON se escribe solo al final
+    (`:146`): si el caso *k* rompe un compilador, no hay gate ni para los *k−1* anteriores. Medido sobre el árbol de este lote —`backend_gate.corpus(zig, [4 ranuras ×
+    4 anchos])`—: lanza `builtins.RuntimeError` («zig: el compilador falló: …») a los 2 197 ms,
+    subiendo por `backend_gate.py:51` ← `base.py:272` (`run`) ← `:238` (`_binary`) ← `:195`
+    (`build`), y **no** es `InvalidProgram`, o sea que ningún `except` del arnés lo ve.
+    `tools/warm_build_cache.py:34-36` captura solo `InvalidProgram` y solo alrededor del lowering;
+    la compilación real está en `:62`, sin guarda. **No se toca el arnés en este lote**
+    (precedente del hallazgo 10): es un hecho sobre el instrumento, no sobre el lenguaje, y
+    arreglarlo es decisión aparte con su propia evidencia. Lo que enseña: un gate puede enrojecer
+    por starvation del host (hallazgo 10) o **morirse sin enrojecer** por el toolchain, y en el
+    segundo caso no hay `gate_*.json` que discutir, solo stdout sin hashear.
 
 Nada de lo anterior (1–9) cambia un `expected`, un hash congelado ni un resultado de gate: son
 correcciones de *atribución* (una cifra que no tenía recibo) y una re-medición. El 10 sí cambió
@@ -267,4 +286,7 @@ diagnóstico, no corrigiendo el recibo; la re-corrida lo dejó en `PASS` con el 
 El 11 es un defecto **propio** del lote de evidencia (`010e7c9`), no del lenguaje: no mueve
 ningún digest y se arregla en la convención de rutas. El 12 tampoco cambia ninguna cifra: nombra
 lo que el conteo del gate **no** dice sobre un renglón, para que nadie lea un `218/218` de F5 como
-si COBOL ejecutara el programa que el frontend rechaza.
+si COBOL ejecutara el programa que el frontend rechaza. El 13 tampoco mueve una cifra ni un
+veredicto: nombra una forma de perderse el recibo que este lote **no** atravesó —en
+`gate_2026-11-02T081912Z.json` los cinco backends salen con `fallas=0`, o sea ningún programa de
+los 218 rompió un toolchain—, y queda como defecto del instrumento con su arreglo pendiente.

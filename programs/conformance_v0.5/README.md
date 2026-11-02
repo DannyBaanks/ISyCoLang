@@ -75,8 +75,11 @@ no le importa cuál llamada es la 257, solo que existan 257. El **borde exacto 2
 vive aquí** sino en `tests/test_specialize.py::TopePorDefinicion` y en la sonda, porque un
 caso de corpus con 256 clones es legal bajo el tope y **Zig no lo compila** (`evaluation
 exceeded 1000 backwards branches`, medido con 4 ranuras): el corpus fija el exceso y un piso,
-la cifra la fijan el checker y la sonda. Las cuatro altas anteriores siguen valiendo caso por
-caso —ningún `expected` ni hash congelado se reescribió.
+la cifra la fijan el checker y la sonda. Lo que pasaría si ese caso entrara aquí está medido y
+nombrado en `docs/EVIDENCE_MATRIX.md` (hallazgo 13): `tools/backend_gate.py:51` no captura el
+`RuntimeError` del backend, así que no enrojecería F5 — lo abortaría sin dejar `gate_*.json`.
+Las cuatro altas anteriores siguen valiendo caso por caso —ningún `expected` ni hash congelado
+se reescribió.
 
 | archivo | qué fija | decisión | hoy (referencia) |
 |---|---|---|---|
