@@ -1,0 +1,16 @@
+fuente: 4 ranuras x 4 anchos = 256 clones, 10906 bytes, sha256 52a2803975adf30db03bdb6cd975b4dc724faa5ebfdeddc21e5f90fc5e98c9b5
+
+ C1 DEMONSTRADO     build 256 clones en Zig deja una fila TOOLCHAIN_BUILD_FAIL con la linea error: del compilador y una build_key recomponible
+      observado: {"code": "TOOLCHAIN_BUILD_FAIL", "detail": "7443b5e8e72fb777f63cba72.zig:1635:23: error: evaluation exceeded 1000 backwards branches", "build_key": "7443b5e8e72fb777f63cba72", "key_reproducible": true
+ C4 DEMONSTRADO     el mismo fuente muerto no vuelve a invocar el compilador (cache negativa)
+      observado: {"ms_primero": 1079.283, "ms_segundo": 0.905, "stderr_igual": true}
+ C5 DEMONSTRADO     el stderr crudo del toolchain (sin la guarda en medio) dice lo mismo que la fila
+      observado: {"exit": 1, "linea": "sonda.zig:1635:23: error: evaluation exceeded 1000 backwards branches"}
+ C2 DEMONSTRADO     un rechazo del frontend sube (la guarda no se lo traga)
+      observado: "InvalidProgram: INVALID_PROGRAM(SYNTAX) at 2:12: se esperaba un tipo, llegó 'i9'"
+ C3 DEMONSTRADO     la fuente de 256 clones coincide con la referencia en los backends instalados (mientras Zig muere en su compilador)
+      observado: {"referencia": {"status": "HALTED", "return": "0", "pasos": 770}, "emits": 256, "coinciden": ["c", "pydecimal", "rust"], "estados": {"c": "HALTED", "cobol": "UNSUPPORTED", "pydecimal": "HALTED", "rust
+ C6 DEMONSTRADO     16 clones de la misma definicion si compilan en Zig (la frontera es del compilador, no del idioma)
+      observado: "build ok"
+ C7 DEMONSTRADO     una fila de arnes en cualquier pierna vuelve no-conforme aunque fallos y diferencias esten vacios
+      observado: {"limpio": true, "con_fila": false}

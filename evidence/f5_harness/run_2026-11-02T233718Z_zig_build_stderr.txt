@@ -1,0 +1,10 @@
+sonda.zig:1635:23: error: evaluation exceeded 1000 backwards branches
+    const t626: IsyStr(2) = isy_str(2, "xx");
+                ~~~~~~^~~
+sonda.zig:1635:23: note: use @setEvalBranchQuota() to raise the branch limit from 1000
+referenced by:
+    main: sonda.zig:7563:26
+    callMain [inlined]: /home/danny/.local/opt/zig-x86_64-linux-0.16.0/lib/std/start.zig:699:88
+    callMainWithArgs [inlined]: /home/danny/.local/opt/zig-x86_64-linux-0.16.0/lib/std/start.zig:638:20
+    posixCallMainAndExit: /home/danny/.local/opt/zig-x86_64-linux-0.16.0/lib/std/start.zig:590:38
+    2 reference(s) hidden; use '-freference-trace=6' to see all references
