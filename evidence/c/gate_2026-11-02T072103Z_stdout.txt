@@ -1,0 +1,11 @@
+### c_gate ###
+corpus gcc/plain: 218/218 (unsupported 0)
+corpus gcc/sanitized: 218/218 (unsupported 0)
+corpus clang/plain: 218/218 (unsupported 0)
+corpus clang/sanitized: 218/218 (unsupported 0)
+difftest gcc/plain: 24612 corridas, 0 diferencias
+difftest gcc/sanitized: 6468 corridas, 0 diferencias
+sabotaje half_even_as_half_up: detectado=True
+sabotaje div_floor: detectado=True
+{"out": "evidence/c/gate_2026-11-02T072103Z.json", "verdict": "PASS", "sha256": "48553b3c7c1cad6c6683a24194ee29c0cc874335367c2c76f4c6ad15cf57b778"}
+EXIT_c_gate=0

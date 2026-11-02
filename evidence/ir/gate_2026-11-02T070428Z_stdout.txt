@@ -1,0 +1,3 @@
+### ir_gate ###
+{"out": "evidence/ir/gate_2026-11-02T070428Z.json", "sha256": "a0ce5366beaf2819e014d89dececee05d6a111a79bff73d6fc5772ea57bc2451", "comparisons": 436, "equal": 436, "programs_lowered_to_ir": 149}
+EXIT_ir_gate=0
