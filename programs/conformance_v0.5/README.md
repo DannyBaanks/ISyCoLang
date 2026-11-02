@@ -1,4 +1,4 @@
-# `programs/conformance_v0.5/` — corpus **activo**: 46/46 coinciden con su `expected`
+# `programs/conformance_v0.5/` — corpus **activo**: 48/48 coinciden con su `expected`
 
 Los `expected` de este directorio se escribieron a mano el **2026-10-30** (commits
 `dd561c6` y `0e9ca79`, que no tocan ningún archivo de `isyco/`), antes de implementar
@@ -35,10 +35,10 @@ mismo par de archivos y solo la cabecera cambiada:
 Los cuatro casos con módulos —`408_qname_arreglo/`, `421_marca_entre_modulos/`,
 `440_llamada_calificada_void/` y `443_m4_modulo_v04/`— tienen que leerse con
 `load_corpus`, que arma el `Bundle` del directorio: tomar `main.isy` como bytes sueltos
-devuelve un falso `UNKNOWN_MODULE`. La población del directorio es 42 programas a un
-archivo + 4 carpetas = **46** (los 43 de `443` más los tres de N1); un `glob("4*.isy")`
-sobre la raíz se queda en 42 y esa es la cuenta que el censo de P4 hizo mal la primera vez
-(`docs/EVIDENCE_MATRIX.md`, hallazgo 2).
+devuelve un falso `UNKNOWN_MODULE`. La población del directorio es 44 programas a un
+archivo + 4 carpetas = **48** (los 43 de `443`, los tres de N1 y los dos de P4); un
+`glob("4*.isy")` sobre la raíz se queda en 44 y esa es la cuenta que el censo de P4 hizo
+mal la primera vez (`docs/EVIDENCE_MATRIX.md`, hallazgo 2).
 
 **Alta de los casos `444`–`446` (2026-11-01, N1).** `for` sobre un `str` pasa a ser
 normativa con tres casos y sus gemelos (`docs/decisions/N1_FOR_SOBRE_STR.md`); con ellos el
@@ -58,6 +58,26 @@ Trazas `stmt` e IR podada: idénticas caso por caso (21, 26 y 21 filas). En `445
 completa tiene que declarar `!emit` —si `main` no lo declara el checker tira
 `UNDECLARED_EFFECT` nombrando a `main`— y eso ya era regla antes de N1.
 
+**Alta de los casos `447`–`448` (2026-11-02, P4).** El tope de especializaciones por
+definición (CORE v0.5 §7, `docs/decisions/P4_SPEC_LIMIT.md`) entra con dos casos y el mismo
+bucle de arriba da **48/48 IGUAL**. El `expected` de `447` se escribió desde la regla —«256
+por definición como máximo»— antes de correr nada; lo único medido antes es una propiedad de
+`spec_name` que ya fijaron `414`/`415`: que 257 `let` con capacidades distintas son 257
+resoluciones, no una. Medidos después, ambos coinciden.
+
+| caso | qué fija | gemelo | observado (referencia) |
+|---|---|---|---|
+| `447_tope_de_especializaciones` | 257 resoluciones de **una** definición son `INVALID_PROGRAM(SPEC_LIMIT)`: 0 emits, 0 pasos, y no baja a la IR ni llega a ningún backend | no lo tiene: no hay forma equivalente sin `str` pelado | 9 106 bytes, rechazado al contar la resolución 257, 14,0 ms en la referencia |
+| `448_dieciseis_clones_por_definicion` | el piso legal, en la forma que justifica la granularidad: dos ranuras peladas × 4 anchos = **16 copias de una sola definición** (el máximo del censo era 2) | no lo tiene: un `while` escrito a mano no crea especializaciones | `HALTED`, `105…408`, 859 bytes, **49 pasos** |
+
+Los dos `expect.json` no nombran `at` (`conformance.py:9 COMPARED` no lo compara): al `447`
+no le importa cuál llamada es la 257, solo que existan 257. El **borde exacto 255/256/257 no
+vive aquí** sino en `tests/test_specialize.py::TopePorDefinicion` y en la sonda, porque un
+caso de corpus con 256 clones es legal bajo el tope y **Zig no lo compila** (`evaluation
+exceeded 1000 backwards branches`, medido con 4 ranuras): el corpus fija el exceso y un piso,
+la cifra la fijan el checker y la sonda. Las cuatro altas anteriores siguen valiendo caso por
+caso —ningún `expected` ni hash congelado se reescribió.
+
 | archivo | qué fija | decisión | hoy (referencia) |
 |---|---|---|---|
 | `401_len_arreglo` | `len([T; N])` → `N` | V1 | `HALTED`, `5`, 6 pasos |
@@ -75,7 +95,9 @@ completa tiene que declarar `!emit` —si `main` no lo declara el checker tira
 `docs/OPEN_QUESTIONS_P1_P4.md`) se agregaron con sus propias
 decisiones: `docs/decisions/V6_CONTEXTUAL_STR.md`, `docs/decisions/V6B_CONTEXTUAL_RETURN.md`
 y `docs/decisions/V7_CONTENT_CAPABILITIES.md`. `444`–`446` son N1 (`for` sobre `str`),
-decidida y sellada el 2026-11-01 en `docs/decisions/N1_FOR_SOBRE_STR.md`.
+decidida y sellada el 2026-11-01 en `docs/decisions/N1_FOR_SOBRE_STR.md`; `447`–`448` son P4
+(tope de especializaciones por definición), decidida y sellada el 2026-11-02 en
+`docs/decisions/P4_SPEC_LIMIT.md`.
 
 ## `gemelos/`
 

@@ -1,0 +1,10 @@
+{
+  "claim": "P4: la definicion numero 257 de una misma `str` pelada es SPEC_LIMIT (tope por definicion, no por programa)",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SPEC_LIMIT",
+    "emits": [],
+    "return": null
+  }
+}

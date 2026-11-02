@@ -1,0 +1,27 @@
+{
+  "claim": "P4: 16 resoluciones de una definicion de dos ranuras (4 x 4) son legales y ejecutan igual en los cuatro backends con str",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "105",
+      "106",
+      "107",
+      "108",
+      "205",
+      "206",
+      "207",
+      "208",
+      "305",
+      "306",
+      "307",
+      "308",
+      "405",
+      "406",
+      "407",
+      "408"
+    ],
+    "return": null
+  }
+}

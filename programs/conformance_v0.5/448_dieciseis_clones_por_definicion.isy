@@ -1,0 +1,26 @@
+isyco 0.5
+# P4 (CORE v0.5 S7): el crecimiento multiplicativo cae sobre UNA definicion. Dos ranuras
+# peladas por cuatro anchos son 16 copias de `dim` (el maximo del censo era 2), y 16 esta
+# muy por debajo del tope de 256: es el piso legal que fija la granularidad elegida.
+fn dim(a: str, b: str) -> i64 {
+    return len(a) * 100 + len(b);
+}
+
+fn main() !emit {
+    emit dim("a", "bbbbb");
+    emit dim("a", "bbbbbb");
+    emit dim("a", "bbbbbbb");
+    emit dim("a", "bbbbbbbb");
+    emit dim("aa", "bbbbb");
+    emit dim("aa", "bbbbbb");
+    emit dim("aa", "bbbbbbb");
+    emit dim("aa", "bbbbbbbb");
+    emit dim("aaa", "bbbbb");
+    emit dim("aaa", "bbbbbb");
+    emit dim("aaa", "bbbbbbb");
+    emit dim("aaa", "bbbbbbbb");
+    emit dim("aaaa", "bbbbb");
+    emit dim("aaaa", "bbbbbb");
+    emit dim("aaaa", "bbbbbbb");
+    emit dim("aaaa", "bbbbbbbb");
+}

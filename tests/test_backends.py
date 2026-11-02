@@ -230,6 +230,62 @@ class Cli(unittest.TestCase):
         self.assertTrue(seen)
 
 
+@unittest.skipUnless(AVAILABLE, "no hay toolchain nativo instalado")
+class TopeFrontend(unittest.TestCase):
+    """P4 (CORE v0.5 §7): el tope de especializaciones se aplica ANTES de la IR, así que
+    los cinco backends responden lo mismo sin compilar nada y sin una línea en stderr.
+
+    Es la parte diferencial del rechazo de frontend: `447` cuesta ~1 ms en cada columna
+    porque `base.py:_module` cachea el `InvalidProgram` y `run()` cae a la referencia.
+    """
+
+    def test_el_tope_llega_igual_a_los_cinco_backends(self):
+        case = by_name("447_tope_de_especializaciones")
+        ref, _ = run(case["program"], case["input"], case.get("limits"))
+        want = {k: ref[k] for k in KEYS}
+        self.assertEqual((ref["status"], ref["code"]), ("INVALID_PROGRAM", "SPEC_LIMIT"))
+        for nombre, backend in AVAILABLE.items():
+            got, _ = backend.run(case["program"], case["input"], case.get("limits"))
+            with self.subTest(backend=nombre):
+                self.assertEqual({k: got.get(k) for k in KEYS}, want, nombre)
+                self.assertFalse(got.get("backend_stderr"), nombre)
+
+    def test_los_dieciseis_clones_ejecutan_igual_que_la_referencia(self):
+        """`448` sí baja a la IR: los cuatro backends que implementan `str` lo ejecutan igual
+        que la referencia; COBOL responde `UNSUPPORTED` nombrando la capacidad que le falta."""
+        case = by_name("448_dieciseis_clones_por_definicion")
+        ref, _ = run(case["program"], case["input"], case.get("limits"))
+        want = {k: ref[k] for k in KEYS}
+        self.assertEqual(len(ref["emits"]), 16)
+        with_str = []
+        for nombre, backend in AVAILABLE.items():
+            missing = missing_features(backend, case["program"])
+            got, _ = backend.run(case["program"], case["input"], case.get("limits"))
+            with self.subTest(backend=nombre):
+                if missing:
+                    self.assertEqual(got["status"], "UNSUPPORTED", nombre)
+                    self.assertEqual(got["code"], ",".join(missing), nombre)
+                    self.assertIn("str", got["code"], nombre)
+                else:
+                    with_str.append(nombre)
+                    self.assertEqual({k: got.get(k) for k in KEYS}, want, nombre)
+                    self.assertFalse(got.get("backend_stderr"), nombre)
+        self.assertEqual(sorted(with_str), ["c", "pydecimal", "rust", "zig"],
+                         "los cuatro que implementan str ejecutan 448")
+        if "cobol" in AVAILABLE:
+            self.assertNotIn("cobol", with_str)
+
+    def test_la_salida_de_447_es_la_de_la_cli(self):
+        """El mismo rechazo por la puerta de la CLI: `INVALID_PROGRAM` con `SPEC_LIMIT` y
+        código de salida 2 (`__main__.py`, sin bajar a la IR)."""
+        program = ROOT / "programs" / "conformance_v0.5" / "447_tope_de_especializaciones.isy"
+        proc = subprocess.run([sys.executable, "-m", "isyco", "run", str(program)],
+                              cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 2, proc.stderr)
+        self.assertEqual(json.loads(proc.stdout)["code"], "SPEC_LIMIT")
+        self.assertIn("INVALID_PROGRAM", proc.stdout)
+
+
 def _make_conformance(name):
     @unittest.skipUnless(name in AVAILABLE, f"toolchain de {name} no instalado")
     class Conformance(unittest.TestCase):

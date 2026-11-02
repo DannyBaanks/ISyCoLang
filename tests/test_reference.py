@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 import isyco.interp as interp  # noqa: E402
+import isyco.specialize as specialize  # noqa: E402
 from isyco import canonical_json, run  # noqa: E402
 from isyco.conformance import load_all, run_corpus  # noqa: E402
 from isyco.errors import LimitReached, RuntimeFault  # noqa: E402
@@ -45,9 +46,10 @@ class Conformance(unittest.TestCase):
 
     def test_corpus_passes(self):
         # 170 congelados (v0.1–v0.4) + 43 de v0.5: entra con V1/V2 sellados (2026-10-31),
-        # sube a 43 con `443` (2026-11-01, diagonal 0.5 de M4) y a 46 con `444`–`446`
-        # (2026-11-01, N1: `for` sobre un `str`).
-        self.assertGreaterEqual(len(CORPUS), 216)
+        # sube a 43 con `443` (2026-11-01, diagonal 0.5 de M4), a 46 con `444`–`446`
+        # (2026-11-01, N1: `for` sobre un `str`) y a 48 con `447`/`448` (2026-11-02, P4:
+        # tope de especializaciones por definición).
+        self.assertGreaterEqual(len(CORPUS), 218)
         self.assertEqual(failing(), [])
 
     def test_superseded_cases_are_explicit(self):
@@ -132,6 +134,26 @@ class Sabotage(unittest.TestCase):
             return orig(self, e)
         self.assertIn("444_for_sobre_str",
                       self.mutated("eval", interp.Interpreter, static_str_len))
+
+    def test_el_tope_de_especializaciones_se_desactiva(self):
+        """P4: con el tope prácticamente fuera de juego, `447` tiene que quedar legal.
+        Es el testigo de que el corpus observa el tope y no solo un rechazo cualquiera."""
+        self.assertEqual(["447_tope_de_especializaciones"],
+                         self.mutated("MAX_CLONES_PER_DEFINITION", specialize, 10 ** 9))
+
+    def test_bajar_el_tope_a_uno_rompe_el_corpus(self):
+        """P4 discriminado por la unidad: con tope 1 cae `411` (dos resoluciones de `pad`) y
+        sigue en verde `416` (una sola resolución). Un tope por programa no daría con esta
+        tabla: el conteo es por definición fuente.
+
+        La asimetría declarada en `docs/decisions/P4_SPEC_LIMIT.md`: la mutación off-by-one
+        (`>` por `>=`) NO la detecta ningún sabotage de corpus, porque el corpus no tiene
+        —ni puede tener— una definición con 256 clones. La detecta
+        `tests.test_specialize.TopePorDefinicion.test_256_es_el_ultimo_legal`.
+        """
+        fails = self.mutated("MAX_CLONES_PER_DEFINITION", specialize, 1)
+        self.assertIn("411_pad_dos_anchos", fails)
+        self.assertNotIn("416_cast_mas_estrecho", fails)
 
 
 class RoundingOracle(unittest.TestCase):
