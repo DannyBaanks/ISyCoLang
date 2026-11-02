@@ -21,8 +21,8 @@ dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no
 | P1 | ¿qué `at` llevan las sentencias sintéticas del `for`? | el del `for` | gate F2.4 ítem 2 + `tests/test_v05_core.py:ForAzucar` |
 | P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §4 |
 | P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
-| P4 | ¿cuántas especializaciones puede crear un programa? | **cerrada el 2026-11-02**: **256 resoluciones por definición dentro del programa**, la 257 es `SPEC_LIMIT` estático | `docs/decisions/P4_SPEC_LIMIT.md`, `447`/`448`, `tests/test_specialize.py::TopePorDefinicion`, `evidence/v05_p4/run_20261102T081925Z.json` |
-| Z1 | ¿el techo de un toolchain forma parte del idioma? | **abierta**: con P4 puesto hay programas legales que Zig no compila (frontera medida por aridad) | `evidence/v05_p4/run_20261102T081925Z.json` §6/§6b, `spec/CORE_v0.5.md` §7 |
+| P4 | ¿cuántas especializaciones puede crear un programa? | **cerrada el 2026-11-02**: **256 resoluciones por definición dentro del programa**, la 257 es `SPEC_LIMIT` estático | `docs/decisions/P4_SPEC_LIMIT.md`, `447`/`448`, `tests/test_specialize.py::TopePorDefinicion`, `evidence/v05_p4/run_20261102T085025Z.json` (R2, `RELEASE_GATE`) |
+| Z1 | ¿el techo de un toolchain forma parte del idioma? | **abierta**: con P4 puesto hay programas legales que Zig no compila (frontera medida por aridad) | `evidence/v05_p4/run_20261102T085025Z.json` (R2) §6/§6b, `spec/CORE_v0.5.md` §7 |
 | N1 | ¿`for c in s` con `s: str<N>` es normativo? | **cerrada el 2026-11-01 — adoptado**: la regla de §4.4 ya no tiene `[D]` y tres casos la fijan | `programs/conformance_v0.5/444`–`446` + sus gemelos, `tools/v05_spec_probe.py` §7 |
 | N2 | ¿algún caso fija el cruce con raíz `0.5` de M4? | **cerrada el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` + `tools/v05_spec_probe.py` §1 |
 | N3 | ¿el `let` sin anotación es inferencia? | **cerrada el 2026-11-01**: no, es solo el sintético del `for` | `spec/CORE_v0.5.md` §4.1 + `evidence/v05_spec/run_20261101T153344Z.json` §3 |
@@ -148,9 +148,13 @@ salen byte a byte iguales. En `costo` las siete filas conservan `fuente_bytes`, 
 `c_ms` (para `K=2048`: `458,9`/`986,1` entonces, `470,8`/`989,8` ahora).
 
 **Re-medido el 2026-11-02 con la decisión dentro** —
-`evidence/v05_p4/run_20261102T081925Z.json` (`EVIDENCE_ONLY` sobre `203f579`,
-`arbol_sucio_codigo=true`: la documentación del lote estaba a medio editar mientras corría, con
-`isyco/` y `tools/` intactos), sobre los **48** casos y los cuatro directorios de módulos:
+`evidence/v05_p4/run_20261102T085025Z.json` (**R2**, `RELEASE_GATE` sobre `d363e7c`, árbol
+limpio), que repite con el árbol despejado la corrida del lote: **R1**
+`run_20261102T081925Z.json` (`EVIDENCE_ONLY` sobre `203f579`, `arbol_sucio_codigo=true`: la
+documentación del lote estaba a medio editar mientras corría, con `isyco/` y `tools/` intactos)
+sigue en su sitio y commiteada sin retocar (`5965bd2`). Hoja por hoja, R2 repite R1: de las
+1 135 hojas compartidas, las 118 distintas son 114 campos de tiempo y las 4 del propio sello.
+Sobre los **48** casos y los cuatro directorios de módulos:
 **49 clones en 20 programas**, 14 definiciones únicas. Los 16
 clones nuevos son los de `dim` en `448` (4×4), y `447` aporta **0** porque se rechaza antes de
 especializar. La tabla de abajo es la **base de 46 casos**, la que Danny tenía delante para
@@ -224,11 +228,12 @@ pasa de 6**, a un mundo de distancia de la cota. P4 se cerró con la población 
 
 ## Z1 — ¿el techo de un toolchain forma parte del idioma? `[ABIERTA desde 2026-11-02]`
 
-Z1 no existía antes de P4: la cerró y abrió esta. Con la cota de 256 puesta, el frontend ya no
-deja pasar más copias, así que ningún backend recibe programas fuera de la cota — pero **dentro**
+Z1 no existía antes de P4: cerrar P4 es lo que la abrió. Con la cota de 256 puesta, el frontend ya
+no deja pasar más copias, así que ningún backend recibe programas fuera de la cota — pero **dentro**
 de ella hay programas que un backend concreto no puede construir. Medido en
-`evidence/v05_p4/run_20261102T081925Z.json` (sección 6 de la forma `aridad × ancho`, y su
-bisección con `--bisect-zig`):
+`evidence/v05_p4/run_20261102T085025Z.json` (R2, `RELEASE_GATE`; R1 tiene los mismos valores
+no temporales) — sección 6 de la forma `aridad × ancho`, y su
+bisección con `--bisect-zig`:
 
 | aridad | escalera de la sonda (clones) | frontera de Zig (biseccionada, bordes compilados) | C y Rust |
 |---|---|---|---|

@@ -356,9 +356,12 @@ que falsifica V7.
 > (`218/218`), F3 `evidence/ir/gate_2026-11-02T070428Z.json` (`436/436` sobre **149**
 > programas bajados), F4 `evidence/c/gate_2026-11-02T072103Z.json` (`218/218` en las
 > cuatro combinaciones), F5 `evidence/backends/gate_2026-11-02T081912Z.json` (`PASS`;
-> c/rust/zig/pydecimal 218/218 y COBOL 148/218 con 70 `UNSUPPORTED`) y la sonda
-> `evidence/v05_p4/run_20261102T081925Z.json` —`EVIDENCE_ONLY`: la documentación de este lote
-> estaba a medio editar mientras corría, con `isyco/` y `tools/` intactos—. Decisión:
+> c/rust/zig/pydecimal 218/218 y COBOL 148/218 con 70 `UNSUPPORTED`) y la sonda **R2**
+> `evidence/v05_p4/run_20261102T085025Z.json` (`RELEASE_GATE`, árbol limpio sobre `d363e7c`). La
+> corrida del lote, **R1** `run_20261102T081925Z.json`, salió `EVIDENCE_ONLY`: la documentación de
+> este lote estaba a medio editar mientras corría, con `isyco/` y `tools/` intactos; se conservó
+> sin retocar y R2 la repite hoja por hoja —de 1 135 hojas compartidas, las 118 distintas son 114
+> tiempos y 4 el propio sello—. Decisión:
 > `docs/decisions/P4_SPEC_LIMIT.md`. Con esto **no queda ninguna decisión abierta** del
 > borrador de CORE v0.5; lo que queda es Z1, que es de toolchain y no de semántica.
 

@@ -108,8 +108,10 @@ sabotaje de corpus**, porque no existe ningún caso con 256 clones. Lo detecta
 ## Población y gates después de la decisión
 
 Corpus v0.5 **46 → 48** casos (44 a un archivo + 4 carpetas con módulos), gate **216 → 218**.
-Recibos del lote: los cuatro gates registran `git_head=14b19a9` y la sonda registra `203f579`
-—`isyco/` y `tools/` son idénticos en los dos árboles; entre medias solo entró evidencia—.
+Recibos del lote: los cuatro gates registran `git_head=14b19a9`, la sonda R1 registra `203f579` y
+la sonda R2 `d363e7c` —`isyco/` y `tools/` son **idénticos** en los tres árboles; entre medias
+solo entraron evidencia, documentación y el arreglo de `tests/test_backends.py` (`79670b2`): `git
+diff --name-only 14b19a9 d363e7c -- isyco/ tools/` sale vacío—.
 
 | gate | recibo | resultado |
 |---|---|---|
@@ -117,7 +119,8 @@ Recibos del lote: los cuatro gates registran `git_head=14b19a9` y la sonda regis
 | F3 IR | `evidence/ir/gate_2026-11-02T070428Z.json` | **436/436** iguales sobre **149** programas bajados |
 | F4 C | `evidence/c/gate_2026-11-02T072103Z.json` | `PASS`, **218/218** en las cuatro combinaciones gcc/clang × plain/sanitized, difftest **24 612** en `gcc/plain` y **6 468** con sanitizers, ambos con 0 diferencias |
 | F5 backends | `evidence/backends/gate_2026-11-02T081912Z.json` | `PASS`, c/rust/zig/pydecimal **218/218** con 0 `UNSUPPORTED`, COBOL **148/218** con **70** `UNSUPPORTED` nombrados; difftest **8 484** por backend y **1 270** de strings en los cuatro con `str`, todos con 0 diferencias |
-| Sonda P4 | `evidence/v05_p4/run_20261102T081925Z.{json,txt}` | censo 48 casos / 49 clones, máximo 16 (448), 2 sin los casos de tope; matriz de toolchain y librería V6 |
+| Sonda P4 — R2 (grado de gate) | `evidence/v05_p4/run_20261102T085025Z.{json,txt}` | `RELEASE_GATE`: censo 48 casos / 49 clones, máximo 16 (448), 2 sin los casos de tope; matriz de toolchain y librería V6 |
+| Sonda P4 — R1 (la del lote) | `evidence/v05_p4/run_20261102T081925Z.{json,txt}` | `EVIDENCE_ONLY` por árbol sucio en docs; mismos números que R2, divulgación abajo |
 
 El censo se partió, no se excluyó: con 447 y 448 dentro, el «máximo por definición» del corpus
 lo pone el caso que prueba la cota (se muerde la cola), así que la sonda reporta aparte
@@ -129,7 +132,8 @@ estaba esta documentación a medio editar, y la etiqueta pide árbol limpio para
 `RELEASE_GATE` sin distinguir docs de código (`isyco/` y `tools/` no tenían
 modificaciones). No se retocó el recibo: se commiteó tal cual (`5965bd2`). Con el árbol
 limpio se vuelve a sellar una corrida nueva en `evidence/v05_p4/` —sin sobrescribir
-ninguna—; su nombre y su veredicto van en el párrafo final de este archivo.
+ninguna—; su nombre y su veredicto van en la sección final de este archivo, y ya están: esa es
+**R2**, y es el recibo al que hay que ir a leer la regla y el techo del toolchain.
 
 ## Lo que P4 NO hace
 
@@ -148,7 +152,34 @@ garantía de que 256 sean baratos (medido en la sección 5: 172 718 B de IR y 25
 | El presupuesto gasta resoluciones, no sitios de llamada | **DEMONSTRATED** | control §4 de la sonda (20 sitios, 1 clon) + `448` |
 | El conteo es multiplicativo en las ranuras | **DEMONSTRATED** | curvas K, W², W³ de la sonda |
 | El rechazo es estático y llega igual a los cinco backends | **DEMONSTRATED** | `TopeFrontend` (3 tests) + F5 |
-| Con el tope puesto hay programas legales que Zig no compila | **DEMONSTRATED** | matriz §6 y bisección §6b de `run_20261102T081925Z.json` |
+| Con el tope puesto hay programas legales que Zig no compila | **DEMONSTRATED** | matriz §6 y bisección §6b de `run_20261102T085025Z.json` (R2, `RELEASE_GATE`) |
 | El número 256 está decidido con la población real delante | **DEMONSTRATED** (decisión) / **NOT_DEMONSTRATED** (que 256 sea el óptimo) | censo 48/49 con `casos_de_tope` partido |
 | Ningún programa existente cambia de significado | **DEMONSTRATED** | las 2 727 hojas compartidas de F2 y las 1 734 de F3 salen idénticas salvo los contadores (216→218, 432→436, 148→149), con 0 hojas perdidas |
 | Sabotear el tope se detecta | **DEMONSTRATED** | dos mutaciones de `tests/test_reference.py` y la lectura viva del número |
+## El sello limpio: la corrida R2, nombrada aquí
+
+Lo que anunciaba el párrafo «El sello de la sonda y su limitación» se cumple aquí.
+
+- **R2: `evidence/v05_p4/run_20261102T085025Z.{json,txt}`** — `veredicto_arbol=RELEASE_GATE`,
+  `arbol_sucio_codigo=false`, `git_head=d363e7c` (el commit de esta documentación), corrida
+  2026-11-02 08:50:25Z con `--bisect-zig --write`. Es el recibo con grado de gate para la regla
+  y para el techo del toolchain.
+- **R1 sigue donde estaba**: `run_20261102T081925Z.json` (`203f579`, `EVIDENCE_ONLY`), commiteado
+  sin retocar en `5965bd2` y verificado con `sha256sum -c` dentro del directorio. No se borró ni
+  se sobrescribió ninguna corrida: `evidence/v05_p4/` tiene las cinco (`062234`, `154040`,
+  `234407`, `081925`, `085025`).
+- **R2 no cambia nada de lo que afirma esta decisión.** Comparación hoja por hoja de los dos
+  JSON: **1 135 hojas compartidas, 1 017 idénticas**, y las **118** restantes son **114 campos de
+  tiempo** (`ms`, `chequeo_ms`, `c_ms`, `ref_ms`) y **4 del propio sello** (`utc`, `git_head`,
+  `arbol_sucio_codigo`, `veredicto_arbol`). Cero diferencias estructurales (ninguna hoja aparece
+  o desaparece) y cero diferencias en los números que se citan arriba: el censo 48/49, el máximo
+  16 en `448` y 2 sin los casos de tope, `chequeo=SPEC_LIMIT` con `clones=0` en 512/1024/2048, la
+  matriz `aridad × ancho` y las cuatro fronteras biseccionadas (250/252, 164/168, 120/128 y
+  `SIN_FALLO_DENTRO_DEL_TOPE`).
+- **Lo que R2 no compra:** sigue sin ser una demostración de que 256 sea el óptimo, ni de que Zig
+  pueda con 256 copias de dos ranuras. **Z1** sigue abierta con su medición hecha.
+
+Comprobación, desde la raíz del repo: `(cd evidence/v05_p4 && sha256sum -c SHA256SUMS.txt)` — 10
+archivos listados (los cinco `.json` con sus cinco `.txt`), todos «La suma coincide». La lista
+**no se incluye a sí misma**: `tools/v05_p4_probe.py:995` la filtra al regenerarla, y por eso se
+verifica desde adentro del directorio.
