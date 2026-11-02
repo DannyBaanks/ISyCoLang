@@ -122,22 +122,34 @@ def es_conforme(e: dict) -> bool:
     `harness` es lo que murió en el toolchain o en el arnés. Plegarla aquí es lo que hace que
     un crash no pueda heredar un verde: `tests/test_evidence.py` ya afirma `conformant`.
 
-    Las piernas se leen con `in`/`.get` porque una pierna abortada ANTES de correr se escribe
-    `{"not_run": true}` y no tiene campos numéricos: eso es no-conforme por definición, no un
-    cero que pasaría la comparación. Un `sabotage` vacío sigue siendo conforme: la cláusula del
-    spec es "cada sabotaje declarado es detectado", y vacía es la afirmación cuando no hay
-    ninguno, como en el gate de hoy.
+    Las piernas se leen con `.get` porque una pierna abortada ANTES de correr se escribe
+    `{"not_run": true}` y no tiene campos numéricos: leerla con `[]` sería un cero que pasa, y
+    leerla con `e["failures"]` reventaría el propio arnés que intenta registrar el crash. Un
+    `sabotage` vacío sigue siendo conforme: la cláusula del spec es "cada sabotaje declarado es
+    detectado", y vacía es la afirmación cuando no hay ninguno, como en el gate de hoy. Un
+    recibo sin la pierna se lee igual que vacío por el mismo motivo: la pierna llegó después de
+    esos tres primeros recibos y un `not_run` del gate actual nunca se escribe ausente, se
+    escribe `{"abortado": {"not_run": true, "detected": false}}`, que es no-conforme.
+    `completado` se lee con default `True` por la misma razón que `tests/test_evidence.py`: el
+    campo es nuevo, y los 21 recibos anteriores no pueden tenerlo. No es un default laxo — es
+    exacto: un recibo viejo del gate que abortaba a mitad **no existe**, así que todo lo que hay
+    en el registro fue escrito con las piernas terminadas. `esqueleto` escribe `False` explícito,
+    así que desde este lote una pierna inconclusa sí fuerza no-conformidad.
     """
-    if not e.get("completado"):
+    if not e.get("completado", True):
         return False
-    if any(k not in e for k in ("corpus", "difftest", "does_the_work", "sabotage")):
+    if any(k not in e for k in ("corpus", "difftest", "does_the_work")):
         return False
-    c, d, s = e["corpus"], e["difftest"], e.get("difftest_str", {})
-    return (not c["failures"] and not c.get("harness", [])
-            and not d["diffs"] and not d.get("harness", [])
-            and not s.get("diff_count") and not s.get("harness", [])
-            and e["does_the_work"]["ok"] and not e["does_the_work"].get("harness", [])
-            and all(r["detected"] and not r.get("harness", []) for r in e["sabotage"].values()))
+    c, d, w = e["corpus"], e["difftest"], e["does_the_work"]
+    s = e.get("difftest_str", {})
+    if any(leg.get("not_run") for leg in (c, d, w, s)):
+        return False
+    return (not c.get("failures") and not c.get("harness")
+            and not d.get("diffs") and not d.get("harness")
+            and not s.get("diff_count") and not s.get("harness")
+            and w.get("ok") and not w.get("harness")
+            and all(r.get("detected") and not r.get("harness")
+                    for r in e.get("sabotage", {}).values()))
 
 
 def sellar(report: dict, salidas: str | None, destino: Path, nombre: str) -> dict:
