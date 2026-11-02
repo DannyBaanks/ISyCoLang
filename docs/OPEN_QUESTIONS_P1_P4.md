@@ -19,7 +19,7 @@ dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no
 | P1 | ¿qué `at` llevan las sentencias sintéticas del `for`? | el del `for` | gate F2.4 ítem 2 + `tests/test_v05_core.py:ForAzucar` |
 | P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §4 |
 | P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
-| P4 | ¿cuántas especializaciones puede crear un programa? | **abierto**, con censo y forma sellados | `evidence/v05_p4/run_20261101T062234Z.json` |
+| P4 | ¿cuántas especializaciones puede crear un programa? | **abierto**, con censo y forma sellados | `evidence/v05_p4/run_20261101T234407Z.json` (46 casos; las dos corridas anteriores siguen válidas para su población) |
 | N1 | ¿`for c in s` con `s: str<N>` es normativo? | **cerrada el 2026-11-01 — adoptado**: la regla de §4.4 ya no tiene `[D]` y tres casos la fijan | `programs/conformance_v0.5/444`–`446` + sus gemelos, `tools/v05_spec_probe.py` §7 |
 | N2 | ¿algún caso fija el cruce con raíz `0.5` de M4? | **cerrada el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` + `tools/v05_spec_probe.py` §1 |
 | N3 | ¿el `let` sin anotación es inferencia? | **cerrada el 2026-11-01**: no, es solo el sintético del `for` | `spec/CORE_v0.5.md` §4.1 + `evidence/v05_spec/run_20261101T153344Z.json` §3 |
@@ -119,9 +119,23 @@ su `VERSION_MISMATCH`, y los casos que rechaza el frontend pasan de 11 a **12**.
 predicción que estaba escrita aquí («lo esperable es que el número no se mueva») quedó
 confirmada por medición, no por lectura del caso.
 
+**Re-medido de nuevo el 2026-11-01, ya con N1 dentro** — `evidence/v05_p4/run_20261101T234407Z.json`
+(sha `7d3bafba…`, `RELEASE_GATE` sobre `6ebb00d`, `arbol_sucio_codigo=false`), sobre los **46**
+casos y los cuatro directorios de módulos: **33 clones en 19 programas**, 27 sin retorno pelado
+y 6 con él, 13 definiciones únicas. El clon extra es `emite.16` de `445_for_str_pelado_stdin` —el
+`str` pelado de V6 recorrido por un `for`—, y `444_for_sobre_str` y `446_for_copia_str` aportan
+**0**, así que el azúcar del `for` no especializa nada por sí solo: lo que especializa es el
+`str` contextual que ya estaba. Cotejo recibo-vs-recibo con la corrida de las 15:40: las 43 filas
+compartidas son idénticas en nombres y conteos, `casos_con_error` sigue con los mismos 12, y las
+secciones `curva_una_ranura`, `curva_dos_ranuras`, `curva_tres_ranuras` y `control_mismo_ancho`
+salen byte a byte iguales. En `costo` las siete filas conservan `fuente_bytes`, `ir_bytes`,
+`ir_funciones`, `pasos`, `c_equiv`, `control`, `chequeo` y `status`; solo difieren `ref_ms` y
+`c_ms` (para `K=2048`: `458,9`/`986,1` entonces, `470,8`/`989,8` ahora).
+
 | magnitud | medido |
 |---|---|
-| clones en el corpus v0.5 | **32** en 18 programas (26 sin retorno pelado = V6, 6 con él = V6-bis) |
+| clones en el corpus v0.5 | **33** en 19 programas sobre los 46 casos (27 sin retorno pelado = V6, 6 con él = V6-bis); sobre 43 eran 32 en 18 |
+| definiciones únicas especializadas | **13** (antes 12; la que entra es `emite` de `445`, con 1 copia) |
 | máximo de copias por programa | **4** (`413_encadenar_contextuales`) |
 | máximo de copias por definición **dentro de un programa** | **2** (12 pares caso+definición lo alcanzan) |
 | máximo de copias por definición **en todo el corpus** | **7** (`doble`; después `largo` 5, `pad` 4) |
@@ -131,7 +145,7 @@ confirmada por medición, no por lectura del caso.
 | dos ranuras, W anchos cada una | **W²** clones (W = 2, 3, 4, 6, 8) |
 | tres ranuras | **W³** clones (W = 2, 3) |
 | 20 sitios de llamada con el MISMO ancho | **1** clon — el registro cuenta resoluciones, no llamadas |
-| techo encontrado | **ninguno hasta 2048 clones**: 2.139.231 B de fuente, 3.228.420 B de IR (2049 funciones), `ref_ms` 508,7 / `c_ms` 1037,0 en `run_20261101T062234Z.json` y 458,9 / 986,1 en `run_20261101T154040Z.json` — los bytes y los pasos son iguales en las dos, los milisegundos no; `HALTED` y EQUIV contra la referencia en ambas |
+| techo encontrado | **ninguno hasta 2048 clones**: 2.139.231 B de fuente, 3.228.420 B de IR (2049 funciones), `ref_ms` 508,7 / `c_ms` 1037,0 en `run_20261101T062234Z.json`, 458,9 / 986,1 en `run_20261101T154040Z.json` y 470,8 / 989,8 en `run_20261101T234407Z.json` — los bytes y los pasos son iguales en las tres, los milisegundos no; `HALTED` y EQUIV contra la referencia en las tres |
 
 **Corregida 2026-11-01, segunda pasada.** La fila del techo traía «474 ms de referencia,
 3,7 s de `c_ms`», que no son los valores del recibo (`508,7` y `1037,0`): los escribí de

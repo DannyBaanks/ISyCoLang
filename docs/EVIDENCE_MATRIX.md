@@ -67,7 +67,7 @@ fija; lo que cambió es el más reciente.
 | V7 (capacidades por contenido) | `evidence/v05_v7/run_20261031T200146Z.json` | `a66689c` | `RELEASE_GATE` | 118 módulos del corpus congelado en dos brazos, brazo viejo FIEL, conteos 113→125 en COBOL, canario `439` |
 | Borrador normativo v0.5 | `evidence/v05_spec/run_20261101T153344Z.json` | `a4ef362` | `RELEASE_GATE` | las 6 matrices de aristas que el corpus no fija — las 5 de `run_20261101T043007Z.json` (`a9a17bc`, siguen válidas para su corrida) más la nueva del `let` sin anotación (§3, N3) |
 | N1 (`for` sobre un `str`) | `evidence/v05_spec/run_20261101T210009Z.json` (sección 7) y el lote de gates `216` | `c536858` (sonda) / `2499fae` (gates) | `RELEASE_GATE` | la cota es `len(s)` del **valor** y no la capacidad (`444`: `str<8>` con `"hola"` emite 4 bytes), la variable es `u8` **copia** (`446`: `65 65 65 97`), el `str` pelado de V6 se recorre (`445` por stdin, 5 bytes); pasos e IR idénticos a su `while` gemelo (22/27/22, F3 432/432) y ninguna capacidad nueva (`features_of` igual al gemelo) |
-| Censo y forma de P4 | `evidence/v05_p4/run_20261101T154040Z.json` | `2938c01` | `RELEASE_GATE` | 32 clones en 18/43 casos; curvas K, W², W³; control de 20 sitios → 1 clon; sin techo hasta 2048. Primera versión, sobre 42: `run_20261101T062234Z.json` (`52f5564`) |
+| Censo y forma de P4 | `evidence/v05_p4/run_20261101T234407Z.json` | `6ebb00d` | `RELEASE_GATE` | 33 clones en 19/46 casos (27 V6 + 6 V6-bis, 13 definiciones); curvas K, W², W³; control de 20 sitios → 1 clon; sin techo hasta 2048. Las dos corridas anteriores siguen válidas para su población: `run_20261101T154040Z.json` (`2938c01`, 32 en 18/43) y `run_20261101T062234Z.json` (`52f5564`, sobre 42) |
 
 ## Preguntas y puntos nuevos
 
@@ -76,7 +76,7 @@ fija; lo que cambió es el más reciente.
 | P1 (`at` del azúcar) | cerrada | `evidence/v05_revalida/run_20261101T001608Z.json` + test `ForAzucar` |
 | P2 (`for` sobre literal de arreglo) | cerrada: no | `evidence/v05_spec/run_20261101T153344Z.json` §4 |
 | P3 (nombres e identidad) | cerrada | el mismo recibo §6 (`411`/`417`/`420`) + `tests/test_specialize.py` |
-| P4 (cota de especializaciones) | **abierta — decisión, no medición** | base sellada en `evidence/v05_p4/run_20261101T154040Z.json` (43 casos); falta elegir granularidad, número y el error nombrado |
+| P4 (cota de especializaciones) | **abierta — decisión, no medición** | base sellada en `evidence/v05_p4/run_20261101T234407Z.json` (46 casos, re-medida el 2026-11-01 con N1 dentro); falta elegir granularidad, número y el error nombrado |
 | N1 (`for` sobre `str`) | **cerrada el 2026-11-01 — adoptada, por caso y por texto** | `programs/conformance_v0.5/444`–`446` con sus gemelos (`87bdfa7d…`, `1805ca9c…`, `b2e804e3…`); la regla escrita en `spec/CORE_v0.5.md` §4.4 y §7 sin el `[D]`; doce filas de formas en `evidence/v05_spec/run_20261101T210009Z.json` (`RELEASE_GATE` sobre `c536858`) |
 | N2 (diagonal `0.5` de M4) | **cerrada por caso el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` (`a4f608c`) con sus dos controles medidos; la matriz de 8 combinaciones sigue en `evidence/v05_spec/…` §1 |
 | N3 (`let` sin anotación) | cerrada: por texto y por sonda | la regla estaba en `checker.py:205-209` y en el docstring; ya está en `spec/CORE_v0.5.md` §4.1 y medida en `evidence/v05_spec/run_20261101T153344Z.json` §3 (cuatro formas, tres sabotajes) |
@@ -98,7 +98,7 @@ tienen recibo porque un recibo de ellas sería una foto de un día:
 
 | afirmación | comando |
 |---|---|
-| «167 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
+| «179 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
 | «sha256sum -c de `docs/origin/` coincide» | `sha256sum -c docs/origin/SHA256SUMS.txt` desde la raíz del repo |
 | conteos de `SUPPORTED`, llamadas a `has()` y sitios de versión | `grep -n` de `spec/CORE_v0.5.md` §0, fijados como test en `tests/test_versions.py` |
 
@@ -114,6 +114,17 @@ Qué encontró esta matriz al cotejar prose contra recibos:
    `run_20261101T154040Z.json`), 26 V6 + 6 V6-bis, máximo 4 por programa, 2 por definición **dentro de un
    programa** pero **7 de `doble` en todo el corpus**. Las dos secciones y `ROADMAP.md`
    llevan la corrección fechada; el dato nuevo está sellado arriba.
+   **Tercera re-medición, el mismo día con N1 dentro** (`run_20261101T234407Z.json`, sha
+   `7d3bafba…`, `RELEASE_GATE` sobre `6ebb00d`, `load_corpus: 46 casos`): **33 clones en 19 de
+   los 46**, 27 V6 + 6 V6-bis. El clon extra es `emite.16` de `445_for_str_pelado_stdin` —el
+   `str` pelado que recorre—; `444` y `446` aportan **0**, así que el azúcar del `for` no clona
+   nada por sí solo. Cotejo recibo-vs-recibo de las 43 filas compartidas: **idénticas en nombres
+   y conteos**, y las secciones `curva_una_ranura`, `curva_dos_ranuras`, `curva_tres_ranuras` y
+   `control_mismo_ancho` salen **byte a byte iguales** entre los dos recibos. Lo único que
+   cambia son las dos columnas de tiempo de `costo`, fila por fila; para `K=2048` el recibo de
+   las 15:40 mide `ref_ms 458,9` / `c_ms 986,1` y el de las 23:44 `ref_ms 470,8` / `c_ms 989,8`.
+   Las columnas estructurales de esas mismas siete filas —`clones`, `fuente_bytes`, `ir_bytes`,
+   `ir_funciones`, `pasos`, `c_equiv`, `control`, `chequeo`, `status`— son idénticas en las dos.
 2. **Contar la población equivocada.** El primer censo usaba `glob("4*.isy")` y perdía los
    tres casos con módulos (`408`, `421`, `440`) — `421` es justo el de `util.marca.3` y
    `util.marca.4`; hoy son cuatro, con `443`. La sonda ahora itera `load_corpus`, la misma

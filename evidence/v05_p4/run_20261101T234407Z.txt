@@ -1,0 +1,75 @@
+P4 — censo de especializaciones y forma del crecimiento (sin fijar tope)
+utc=2026-11-01T23:44:07Z  git_head=6ebb00d8035ea8ba0e19ee00c38ce017e11e7e24  arbol=RELEASE_GATE (sucio_codigo=False)
+comando: --write   python=3.12.3
+instrumento: isyco/checker.py: Checker.specs (una entrada por resolución de capacidad, no por sitio de llamada)
+
+1) censo de la poblacion del gate en conformance_v0.5 (load_corpus: 46 casos, 4 con modulos; 443-446 alta el 2026-11-01)
+   409_str_cualquier_capacidad                  clones= 2 ['primero.10', 'primero.4']
+   410_str_vacia_reutilizable                   clones= 2 ['es_vacia.1', 'es_vacia.4']
+   411_pad_dos_anchos                           clones= 2 ['pad.2', 'pad.7']
+   412_borde_capacidad_literal                  clones= 2 ['pad.1', 'pad.6']
+   413_encadenar_contextuales                   clones= 4 ['copia.3', 'copia.8', 'envia.3', 'envia.8']
+   414_largo_ocho_y_dos                         clones= 2 ['largo.2', 'largo.8']
+   415_largo_dos_y_ocho                         clones= 2 ['largo.2', 'largo.8']
+   416_cast_mas_estrecho                        clones= 1 ['guion.3']
+   417_junta_dos_contextuales                   clones= 1 ['junta.3.2']
+   418_junta_desborda                           clones= 1 ['junta.8.16']
+   420_recursion_contextual                     clones= 2 ['cuenta.1', 'cuenta.4']
+   421_marca_entre_modulos                      clones= 2 ['util.marca.3', 'util.marca.4']
+   423_ancho_grande_doble                       clones= 2 ['doble.64', 'doble.8']
+   428_str_pelado_desde_stdin                   clones= 1 ['largo.16']
+   429_retorno_pelado_dos_expectativas          clones= 2 ['doble.2.r4', 'doble.4.r8']
+   430_retorno_pelado_desborda                  clones= 1 ['doble.4.r4']
+   435_transmision_pelado_a_pelado              clones= 2 ['doble.4.r8', 'eco.4.r8']
+   438_retorno_pelado_desde_stdin               clones= 1 ['doble.8.r16']
+   445_for_str_pelado_stdin                     clones= 1 ['emite.16']
+   TOTAL: 33 clones en 19/46 programas; 13 definiciones fuente; 27 sin retorno pelado (V6) y 6 con el (V6-bis)
+   max por programa: 4 ['413_encadenar_contextuales']
+   max por definicion EN UN PROGRAMA: 2 ['409_str_cualquier_capacidad::primero', '410_str_vacia_reutilizable::es_vacia', '411_pad_dos_anchos::pad', '412_borde_capacidad_literal::pad', '413_encadenar_contextuales::copia', '413_encadenar_contextuales::envia', '414_largo_ocho_y_dos::largo', '415_largo_dos_y_ocho::largo', '420_recursion_contextual::cuenta', '421_marca_entre_modulos::util.marca', '423_ancho_grande_doble::doble', '429_retorno_pelado_dos_expectativas::doble']
+   max por definicion EN TODO EL CORPUS: 7 ['doble']
+   por definicion (corpus): {'copia': 2, 'cuenta': 2, 'doble': 7, 'eco': 1, 'emite': 1, 'envia': 2, 'es_vacia': 2, 'guion': 1, 'junta': 2, 'largo': 5, 'pad': 4, 'primero': 2, 'util.marca': 2}
+   escalera de anchos (parametro): [1, 2, 3, 4, 6, 7, 8, 10, 16, 64]
+   escalera de retornos (V6-bis):  [4, 8, 16]
+   casos con error estatico: ['422_ancho_insuficiente_estatico', '424_main_contextual', '425_str_pelado_fuera_de_parametro', '426_str_pelado_en_v04', '427_argumento_no_str', '431_expectativa_mas_chica', '432_llamado_como_sentencia', '433_dentro_de_emit', '434_expectativa_por_parametro_pelado', '436_retorno_pelado_en_main', '437_retorno_pelado_en_v04', '443_m4_modulo_v04']
+
+2) una ranura contextual: K anchos distintos, K llamados
+   K=   1  clones=   1  fuente=116B  error=None
+   K=   2  clones=   2  fuente=138B  error=None
+   K=   4  clones=   4  fuente=185B  error=None
+   K=   8  clones=   8  fuente=291B  error=None
+   K=  16  clones=  16  fuente=551B  error=None
+   K=  32  clones=  32  fuente=1263B  error=None
+   K=  64  clones=  64  fuente=3455B  error=None
+   K= 128  clones= 128  fuente=10911B  error=None
+   K= 256  clones= 256  fuente=38111B  error=None
+
+3) dos y tres ranuras: ¿los clones son W^2 y W^3?
+   2 ranuras W=2: llamadas=  4 clones=  4  fuente=210B
+   2 ranuras W=3: llamadas=  9 clones=  9  fuente=344B
+   2 ranuras W=4: llamadas= 16 clones= 16  fuente=542B
+   2 ranuras W=6: llamadas= 36 clones= 36  fuente=1154B
+   2 ranuras W=8: llamadas= 64 clones= 64  fuente=2094B
+   3 ranuras W=2: llamadas=  8 clones=  8  fuente=380B
+   3 ranuras W=3: llamadas= 27 clones= 27  fuente=1019B
+
+4) control negativo: 20 sitios de llamada, un solo ancho
+   clones=1  nombres=['ancho.4']  error=None
+
+5) costo (IR y C) en los extremos de la escalera
+   K=8                [control] fuente=291B clones=8 ir=4673B funcs_ir=9 pasos=26 ref_ms=0.6 c_ms=8.8 equiv=True status=HALTED chequeo=OK fallo=None
+   K=64               [control] fuente=3455B clones=64 ir=36952B funcs_ir=65 pasos=194 ref_ms=4.2 c_ms=10.8 equiv=True status=HALTED chequeo=OK fallo=None
+   K=256              [control] fuente=38111B clones=256 ir=172718B funcs_ir=257 pasos=770 ref_ms=18.7 c_ms=43.2 equiv=True status=HALTED chequeo=OK fallo=None
+   K=dos ranuras 8x8  [control] fuente=2094B clones=64 ir=56288B funcs_ir=65 pasos=194 ref_ms=5.8 c_ms=14.1 equiv=True status=HALTED chequeo=OK fallo=None
+   K=512              [techo] fuente=141663B clones=512 ir=411438B funcs_ir=513 pasos=1538 ref_ms=50.5 c_ms=108.1 equiv=True status=HALTED chequeo=OK fallo=None
+   K=1024             [techo] fuente=545375B clones=1024 ir=1085700B funcs_ir=1025 pasos=3074 ref_ms=148.1 c_ms=310.2 equiv=True status=HALTED chequeo=OK fallo=None
+   K=2048             [techo] fuente=2139231B clones=2048 ir=3228420B funcs_ir=2049 pasos=6146 ref_ms=470.8 c_ms=989.8 equiv=True status=HALTED chequeo=OK fallo=None
+
+   LECTURA (lo que dicen estas cifras, no una decision):
+   - el control 4) vale: 20 sitios con el mismo ancho dan 1 clon, así que
+     el registro cuenta RESOLUCIONES y todo lo de arriba es comparable;
+   - 2) y 3) dan K, W^2 y W^3 exactos: el conteo es multiplicativo en las
+     ranuras contextuales, así que un tope 'por programa' mezcla
+     definiciones y aridad, y uno 'por definición' no ve el producto;
+   - 5) no encuentra techo hasta 2048 clones y no aparece NINGUN error
+     nombrado: hoy el crecimiento es silencioso. La cota y su nombre
+     siguen siendo decision de Danny (P4 abierta).

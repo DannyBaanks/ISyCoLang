@@ -1,0 +1,701 @@
+{
+  "censo_corpus": {
+    "filas": [
+      {
+        "caso": "401_len_arreglo",
+        "chequeo_ms": 0.34,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "402_for_decimales",
+        "chequeo_ms": 0.39,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "403_for_enteros",
+        "chequeo_ms": 0.24,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "404_for_break_continue",
+        "chequeo_ms": 0.35,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "405_for_copia",
+        "chequeo_ms": 0.25,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "406_len_parametro",
+        "chequeo_ms": 0.33,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "407_parametro_reasignable",
+        "chequeo_ms": 0.19,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "408_qname_arreglo",
+        "chequeo_ms": 0.54,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "409_str_cualquier_capacidad",
+        "chequeo_ms": 0.28,
+        "clones": [
+          "primero.10",
+          "primero.4"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "410_str_vacia_reutilizable",
+        "chequeo_ms": 0.27,
+        "clones": [
+          "es_vacia.1",
+          "es_vacia.4"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "411_pad_dos_anchos",
+        "chequeo_ms": 0.62,
+        "clones": [
+          "pad.2",
+          "pad.7"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "412_borde_capacidad_literal",
+        "chequeo_ms": 0.59,
+        "clones": [
+          "pad.1",
+          "pad.6"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "413_encadenar_contextuales",
+        "chequeo_ms": 0.4,
+        "clones": [
+          "copia.3",
+          "copia.8",
+          "envia.3",
+          "envia.8"
+        ],
+        "error": null,
+        "n": 4
+      },
+      {
+        "caso": "414_largo_ocho_y_dos",
+        "chequeo_ms": 0.2,
+        "clones": [
+          "largo.2",
+          "largo.8"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "415_largo_dos_y_ocho",
+        "chequeo_ms": 0.2,
+        "clones": [
+          "largo.2",
+          "largo.8"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "416_cast_mas_estrecho",
+        "chequeo_ms": 0.22,
+        "clones": [
+          "guion.3"
+        ],
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "417_junta_dos_contextuales",
+        "chequeo_ms": 0.21,
+        "clones": [
+          "junta.3.2"
+        ],
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "418_junta_desborda",
+        "chequeo_ms": 0.2,
+        "clones": [
+          "junta.8.16"
+        ],
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "419_definicion_sin_llamadas",
+        "chequeo_ms": 0.12,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "420_recursion_contextual",
+        "chequeo_ms": 0.41,
+        "clones": [
+          "cuenta.1",
+          "cuenta.4"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "421_marca_entre_modulos",
+        "chequeo_ms": 0.3,
+        "clones": [
+          "util.marca.3",
+          "util.marca.4"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "422_ancho_insuficiente_estatico",
+        "chequeo_ms": 0.18,
+        "clones": [],
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "423_ancho_grande_doble",
+        "chequeo_ms": 0.28,
+        "clones": [
+          "doble.64",
+          "doble.8"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "424_main_contextual",
+        "chequeo_ms": 0.09,
+        "clones": [],
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "425_str_pelado_fuera_de_parametro",
+        "chequeo_ms": 0.08,
+        "clones": [],
+        "error": "SYNTAX",
+        "n": 0
+      },
+      {
+        "caso": "426_str_pelado_en_v04",
+        "chequeo_ms": 0.08,
+        "clones": [],
+        "error": "SYNTAX",
+        "n": 0
+      },
+      {
+        "caso": "427_argumento_no_str",
+        "chequeo_ms": 0.13,
+        "clones": [],
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "428_str_pelado_desde_stdin",
+        "chequeo_ms": 0.17,
+        "clones": [
+          "largo.16"
+        ],
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "429_retorno_pelado_dos_expectativas",
+        "chequeo_ms": 0.27,
+        "clones": [
+          "doble.2.r4",
+          "doble.4.r8"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "430_retorno_pelado_desborda",
+        "chequeo_ms": 0.21,
+        "clones": [
+          "doble.4.r4"
+        ],
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "431_expectativa_mas_chica",
+        "chequeo_ms": 0.21,
+        "clones": [],
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "432_llamado_como_sentencia",
+        "chequeo_ms": 0.1,
+        "clones": [],
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "433_dentro_de_emit",
+        "chequeo_ms": 0.1,
+        "clones": [],
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "434_expectativa_por_parametro_pelado",
+        "chequeo_ms": 0.18,
+        "clones": [],
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "435_transmision_pelado_a_pelado",
+        "chequeo_ms": 0.25,
+        "clones": [
+          "doble.4.r8",
+          "eco.4.r8"
+        ],
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "436_retorno_pelado_en_main",
+        "chequeo_ms": 0.07,
+        "clones": [],
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "437_retorno_pelado_en_v04",
+        "chequeo_ms": 0.06,
+        "clones": [],
+        "error": "SYNTAX",
+        "n": 0
+      },
+      {
+        "caso": "438_retorno_pelado_desde_stdin",
+        "chequeo_ms": 0.2,
+        "clones": [
+          "doble.8.r16"
+        ],
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "439_void_en_sentencia",
+        "chequeo_ms": 0.13,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "440_llamada_calificada_void",
+        "chequeo_ms": 0.2,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "441_emit_arreglo_v03",
+        "chequeo_ms": 0.11,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "442_nucleo_03_sin_str",
+        "chequeo_ms": 0.25,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "443_m4_modulo_v04",
+        "chequeo_ms": 0.09,
+        "clones": [],
+        "error": "VERSION_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "444_for_sobre_str",
+        "chequeo_ms": 0.19,
+        "clones": [],
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "445_for_str_pelado_stdin",
+        "chequeo_ms": 0.34,
+        "clones": [
+          "emite.16"
+        ],
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "446_for_copia_str",
+        "chequeo_ms": 0.23,
+        "clones": [],
+        "error": null,
+        "n": 0
+      }
+    ],
+    "resumen": {
+      "casos_con_error": [
+        "422_ancho_insuficiente_estatico",
+        "424_main_contextual",
+        "425_str_pelado_fuera_de_parametro",
+        "426_str_pelado_en_v04",
+        "427_argumento_no_str",
+        "431_expectativa_mas_chica",
+        "432_llamado_como_sentencia",
+        "433_dentro_de_emit",
+        "434_expectativa_por_parametro_pelado",
+        "436_retorno_pelado_en_main",
+        "437_retorno_pelado_en_v04",
+        "443_m4_modulo_v04"
+      ],
+      "clones_con_retorno_contextual": 6,
+      "clones_sin_retorno_contextual": 27,
+      "definiciones_max_globales": [
+        "doble"
+      ],
+      "definiciones_max_locales": [
+        "409_str_cualquier_capacidad::primero",
+        "410_str_vacia_reutilizable::es_vacia",
+        "411_pad_dos_anchos::pad",
+        "412_borde_capacidad_literal::pad",
+        "413_encadenar_contextuales::copia",
+        "413_encadenar_contextuales::envia",
+        "414_largo_ocho_y_dos::largo",
+        "415_largo_dos_y_ocho::largo",
+        "420_recursion_contextual::cuenta",
+        "421_marca_entre_modulos::util.marca",
+        "423_ancho_grande_doble::doble",
+        "429_retorno_pelado_dos_expectativas::doble"
+      ],
+      "definiciones_unicas": 13,
+      "escalera_anchos": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        10,
+        16,
+        64
+      ],
+      "escalera_retornos": [
+        4,
+        8,
+        16
+      ],
+      "max_por_definicion_en_todo_el_corpus": 7,
+      "max_por_definicion_en_un_programa": 2,
+      "max_por_programa": 4,
+      "por_definicion_en_corpus": {
+        "copia": 2,
+        "cuenta": 2,
+        "doble": 7,
+        "eco": 1,
+        "emite": 1,
+        "envia": 2,
+        "es_vacia": 2,
+        "guion": 1,
+        "junta": 2,
+        "largo": 5,
+        "pad": 4,
+        "primero": 2,
+        "util.marca": 2
+      },
+      "programas": 46,
+      "programas_con_clones": 19,
+      "programas_max": [
+        "413_encadenar_contextuales"
+      ],
+      "total_clones": 33
+    }
+  },
+  "control_mismo_ancho": {
+    "clones": 1,
+    "error": null,
+    "nombres": [
+      "ancho.4"
+    ],
+    "sitios": 20
+  },
+  "costo": [
+    {
+      "K": 8,
+      "c_equiv": true,
+      "c_ms": 8.8,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 8,
+      "code": null,
+      "control": true,
+      "fuente_bytes": 291,
+      "ir_bytes": 4673,
+      "ir_funciones": 9,
+      "pasos": 26,
+      "ref_ms": 0.6,
+      "status": "HALTED"
+    },
+    {
+      "K": 64,
+      "c_equiv": true,
+      "c_ms": 10.8,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 64,
+      "code": null,
+      "control": true,
+      "fuente_bytes": 3455,
+      "ir_bytes": 36952,
+      "ir_funciones": 65,
+      "pasos": 194,
+      "ref_ms": 4.2,
+      "status": "HALTED"
+    },
+    {
+      "K": 256,
+      "c_equiv": true,
+      "c_ms": 43.2,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 256,
+      "code": null,
+      "control": true,
+      "fuente_bytes": 38111,
+      "ir_bytes": 172718,
+      "ir_funciones": 257,
+      "pasos": 770,
+      "ref_ms": 18.7,
+      "status": "HALTED"
+    },
+    {
+      "K": "dos ranuras 8x8",
+      "c_equiv": true,
+      "c_ms": 14.1,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 64,
+      "code": null,
+      "control": true,
+      "fuente_bytes": 2094,
+      "ir_bytes": 56288,
+      "ir_funciones": 65,
+      "pasos": 194,
+      "ref_ms": 5.8,
+      "status": "HALTED"
+    },
+    {
+      "K": 512,
+      "c_equiv": true,
+      "c_ms": 108.1,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 512,
+      "code": null,
+      "control": false,
+      "fuente_bytes": 141663,
+      "ir_bytes": 411438,
+      "ir_funciones": 513,
+      "pasos": 1538,
+      "ref_ms": 50.5,
+      "status": "HALTED"
+    },
+    {
+      "K": 1024,
+      "c_equiv": true,
+      "c_ms": 310.2,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 1024,
+      "code": null,
+      "control": false,
+      "fuente_bytes": 545375,
+      "ir_bytes": 1085700,
+      "ir_funciones": 1025,
+      "pasos": 3074,
+      "ref_ms": 148.1,
+      "status": "HALTED"
+    },
+    {
+      "K": 2048,
+      "c_equiv": true,
+      "c_ms": 989.8,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 2048,
+      "code": null,
+      "control": false,
+      "fuente_bytes": 2139231,
+      "ir_bytes": 3228420,
+      "ir_funciones": 2049,
+      "pasos": 6146,
+      "ref_ms": 470.8,
+      "status": "HALTED"
+    }
+  ],
+  "curva_dos_ranuras": [
+    {
+      "W": 2,
+      "clones": 4,
+      "error": null,
+      "fuente_bytes": 210,
+      "llamadas": 4
+    },
+    {
+      "W": 3,
+      "clones": 9,
+      "error": null,
+      "fuente_bytes": 344,
+      "llamadas": 9
+    },
+    {
+      "W": 4,
+      "clones": 16,
+      "error": null,
+      "fuente_bytes": 542,
+      "llamadas": 16
+    },
+    {
+      "W": 6,
+      "clones": 36,
+      "error": null,
+      "fuente_bytes": 1154,
+      "llamadas": 36
+    },
+    {
+      "W": 8,
+      "clones": 64,
+      "error": null,
+      "fuente_bytes": 2094,
+      "llamadas": 64
+    }
+  ],
+  "curva_tres_ranuras": [
+    {
+      "W": 2,
+      "clones": 8,
+      "error": null,
+      "fuente_bytes": 380,
+      "llamadas": 8
+    },
+    {
+      "W": 3,
+      "clones": 27,
+      "error": null,
+      "fuente_bytes": 1019,
+      "llamadas": 27
+    }
+  ],
+  "curva_una_ranura": [
+    {
+      "K": 1,
+      "clones": 1,
+      "error": null,
+      "fuente_bytes": 116
+    },
+    {
+      "K": 2,
+      "clones": 2,
+      "error": null,
+      "fuente_bytes": 138
+    },
+    {
+      "K": 4,
+      "clones": 4,
+      "error": null,
+      "fuente_bytes": 185
+    },
+    {
+      "K": 8,
+      "clones": 8,
+      "error": null,
+      "fuente_bytes": 291
+    },
+    {
+      "K": 16,
+      "clones": 16,
+      "error": null,
+      "fuente_bytes": 551
+    },
+    {
+      "K": 32,
+      "clones": 32,
+      "error": null,
+      "fuente_bytes": 1263
+    },
+    {
+      "K": 64,
+      "clones": 64,
+      "error": null,
+      "fuente_bytes": 3455
+    },
+    {
+      "K": 128,
+      "clones": 128,
+      "error": null,
+      "fuente_bytes": 10911
+    },
+    {
+      "K": 256,
+      "clones": 256,
+      "error": null,
+      "fuente_bytes": 38111
+    }
+  ],
+  "milestone": "P4 (CORE v0.5) — censo de especializaciones y forma del crecimiento",
+  "receipt": {
+    "arbol_sucio_codigo": false,
+    "comando": "--write",
+    "corpus": "programs/conformance_v0.5",
+    "decision": "P4 sigue ABIERTA: esta sonda mide la forma del crecimiento, no propone un número",
+    "git_head": "6ebb00d8035ea8ba0e19ee00c38ce017e11e7e24",
+    "instrumento": "isyco/checker.py: Checker.specs (una entrada por resolución de capacidad, no por sitio de llamada)",
+    "python": "3.12.3",
+    "utc": "2026-11-01T23:44:07Z",
+    "veredicto_arbol": "RELEASE_GATE"
+  },
+  "schema": "isyco.evidence/0.1"
+}

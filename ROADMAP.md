@@ -209,6 +209,14 @@ que falsifica V7.
 > K/W²/W³ y control negativo byte a byte iguales. `443` entra con 0 clones y su
 > `VERSION_MISMATCH`: los casos que rechaza el frontend pasan de 11 a 12. La predicción de
 > arriba se confirmó midiendo.
+>
+> **Re-medido de nuevo el 2026-11-01, con N1 dentro** (`evidence/v05_p4/run_20261101T234407Z.json`,
+> sha `7d3bafba…`, `RELEASE_GATE` sobre `6ebb00d`): censo sobre los **46** casos — **33 clones en
+> 19 programas**, 27 de V6 + 6 de V6-bis, 13 definiciones. El clon extra es `emite.16` de `445`, el
+> `str` pelado recorrido por un `for`; `444` y `446` aportan **0**, o sea que el azúcar no
+> especializa nada por sí solo. Máximos sin cambio (4 por programa, 2 por definición dentro de un
+> programa, 7 de `doble` en el corpus), y las 43 filas compartidas con la corrida de las 15:40 dan
+> idénticas en nombres y conteos, con curvas y control byte a byte iguales. **P4 sigue abierta.**
 
 > **V7 implementado 2026-10-31.** La capacidad la exige el **programa**, no su cabecera:
 > `features_of` camina los tipos bajados y las sentencias, `ir0.2` solo aparece si hay `str` o
