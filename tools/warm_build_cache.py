@@ -6,6 +6,12 @@ La caché de build/ es por hash del fuente generado, así que esto no cambia nin
 resultado: solo evita que la suite o el gate compilen uno por uno en frío. Compilar
 en paralelo es seguro: cada compilación escribe a temporales propios (pid + hilo) y los
 publica con un renombre atómico (isyco/backends/base.py, Backend.build).
+
+Un fuente que muere en el compilador del toolchain no aborta el mapa: `pool.map`
+propaga la excepción y se pierden los trabajos ya terminados, justo lo contrario de
+dejar la caché caliente. Cada trabajo devuelve su fila del arnés (o `None`) y la
+herramienta las imprime todas; sale 1 si alguno falló, para que nadie lea «N binarios
+listos» sobre M fuentes muertos.
 """
 from __future__ import annotations
 
@@ -24,6 +30,7 @@ from isyco.backends.base import missing_features  # noqa: E402
 from isyco.conformance import load_all  # noqa: E402
 from isyco.difftest import DEC_TYPES, INT_TYPES, program_for, str_program  # noqa: E402
 from isyco.errors import InvalidProgram  # noqa: E402
+from isyco.harness import intento  # noqa: E402
 from isyco.ir_interp import compile_ir  # noqa: E402
 
 
@@ -37,6 +44,14 @@ def jobs_for(backend, programs, sabotages: bool):
             continue
         for sabotage in (None, *(backend.sabotages if sabotages else ())):
             yield backend, module, sabotage
+
+
+def _uno(job):
+    """Compila un trabajo y devuelve su fila del arnés: nunca sube el fallo del toolchain."""
+    backend, source = job
+    _, fr = intento(backend.build, source, fase="warm_build",
+                    contexto={"leg": "warm_build", "backend": backend.name})
+    return fr
 
 
 def main() -> int:
@@ -59,9 +74,15 @@ def main() -> int:
                 todo.append((backend, source))
     start = time.perf_counter()
     with ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        list(pool.map(lambda job: job[0].build(job[1]), todo))
-    print(f"{len(todo)} binarios listos en {time.perf_counter() - start:.1f} s con {args.jobs} hilos")
-    return 0
+        filas = [f for f in pool.map(_uno, todo) if f is not None]
+    muertos = len(filas)
+    codigos = ", ".join(sorted({f["code"] for f in filas})) or "ninguno"
+    print(f"{len(todo) - muertos} binarios listos, {muertos} fallaron ({codigos}) en "
+          f"{time.perf_counter() - start:.1f} s con {args.jobs} hilos")
+    for f in filas:
+        print(f"  {f['backend']}: {f['code']}: {(f['detail'] or f['excerpt'])[:160]}",
+              file=sys.stderr)
+    return 1 if muertos else 0
 
 
 if __name__ == "__main__":
