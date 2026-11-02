@@ -33,6 +33,21 @@ from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 BUILD_ROOT = Path(__file__).resolve().parents[2] / "build"
 GNU_TIME = "/usr/bin/time" if Path("/usr/bin/time").exists() else None   # GNU time: pico de memoria
 
+
+class ToolchainBuildFailure(RuntimeError):
+    """El compilador del toolchain murió armando el binario: falla el instrumento, no el idioma.
+
+    Subclase de `RuntimeError` con el mensaje idéntico al que `build()` lanzaba antes, para que
+    quien ya capturaba `Exception` o imprimía `str(e)` no note el cambio. `key` es el nombre del
+    artefacto bajo `build/` (el hash de fuente+toolchain+banderas) y el stderr del compilador ya
+    lo contiene, así que la fila del arnés sale reproducible sin re-construir nada.
+    """
+
+    def __init__(self, backend: str, key: str, output: str):
+        self.backend, self.key = backend, key
+        self.output = (output or "")[:4000]
+        super().__init__(f"{backend}: el compilador falló:\n{self.output}")
+
 ALL_FEATURES = frozenset(
     {f"int{bits}" for bits in (8, 16, 32, 64)}
     | {"unsigned", "ovf:trap", "ovf:wrap", "ovf:sat", "dec", "dec:half_even", "dec:half_up",
@@ -177,6 +192,9 @@ class Backend:
         binary = directory / key
         if binary.exists():
             return binary, None
+        dead = self._dead_builds().get(key)
+        if dead is not None:
+            raise ToolchainBuildFailure(self.name, key, dead)
         directory.mkdir(parents=True, exist_ok=True)
         # Seguro con varios procesos y varios hilos a la vez: cada escritor usa nombres
         # propios (pid + hilo) y publica con os.replace, que es atómico. Dos que compilan
@@ -192,9 +210,24 @@ class Backend:
                               text=True, cwd=directory)
         compile_ms = (time.perf_counter() - start) * 1000
         if proc.returncode != 0:
-            raise RuntimeError(f"{self.name}: el compilador falló:\n{(proc.stderr or proc.stdout)[:4000]}")
+            # Se entierra la fuente fallida junto al binario exitoso: quien llame a `build` otra
+            # vez con la misma clave recibe el fallo sin volver al compilador.
+            self._dead_builds()[key] = proc.stderr or proc.stdout
+            raise ToolchainBuildFailure(self.name, key, proc.stderr or proc.stdout)
         tmp.replace(binary)
         return binary, compile_ms
+
+    def _dead_builds(self) -> dict[str, str]:
+        """Caché negativa de `build`, espejo del memo de éxito (`binary.exists()`).
+
+        Claveada por el mismo `key` —que ya lleva nombre, versión del toolchain y banderas—, así
+        que cambiar de compilador o de bandera re-intenta. Sin esto, "seguir después de un crash"
+        costaría una re-compilación muerta por caso del corpus y por corrida del diferencial.
+        Dos hilos que fallan a la vez escriben la misma línea: la dict es atómica por clave.
+        """
+        if "_dead_build_store" not in self.__dict__:
+            self._dead_build_store = {}
+        return self._dead_build_store
 
     # --- memoria por programa -------------------------------------------------
     # El diferencial ejecuta el mismo programa miles de veces con otras entradas: el
