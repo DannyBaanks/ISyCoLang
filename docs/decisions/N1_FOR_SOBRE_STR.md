@@ -128,6 +128,17 @@ Cuatro vías de igualdad con el gemelo, medidas caso por caso:
 Las dos últimas filas son el corazón del control: poner la capacidad como cota **rompe**, así
 que "la cota es la longitud" no es una forma de hablar.
 
+**Un borde que fija el test, no la sonda (añadido el 2026-11-02 01:31 UTC).** La tabla de arriba
+son las doce filas selladas en `evidence/v05_spec/run_20261101T210009Z.json`. Al escribir el test
+que el plan pedía como «copia sin alias» midió una forma que esa matriz no tiene:
+`s[0] = 66` **dentro del cuerpo** del `for` da `INVALID_PROGRAM(NOT_ASSIGNABLE)` — los `str` son
+inmutables desde v0.3 (`spec/CORE_v0.3.md:40`). Eso estrecha la regla en lugar de ensancharla: la
+dirección «mutar el lugar y ver si `c` cambia» **no es construible** en el lenguaje, así que la
+única que hay que garantizar es la de `446` (escribir `c` deja `s[0]` en `97`). Queda fijado por
+`test_es_copia_y_ademas_el_lugar_no_se_puede_escribir` y escrito en §4.4; **no se re-selló la
+sonda** para meter la fila, porque re-sellar cambiaría el `git_head` que pinan los recibos ya
+citados de F2/F3/F4 (`2499fae`) por una fila que además está en el gate.
+
 ## Hallazgo y corrección: los "24 pasos" mal atribuidos
 
 El §4.4 del borrador afirmaba que el `for` sobre `str<4> = "hola"` y su gemelo gastaban **24
@@ -164,9 +175,12 @@ enmendar encima del texto, no reescribir la historia.
   (`test_con_cabecera_04_el_for_sobre_str_se_rechaza`), así que los tres casos ejercitan
   realmente el azúcar de 0.5 y no un camino lateral.
 
-Suite: **179** tests OK, medido **188,336 s** (`python3 -m unittest discover -s tests` sobre el
-árbol con el lote de conmutadores ya conmutados, 2026-11-01 23:30 UTC; `real 188,57`). La clase
-`ForSobreStr` aporta **11** tests; el piso de población de `tests/test_reference.py` sube de 213
+Suite: **180** tests OK, medido **189,006 s** (`python3 -m unittest discover -s tests` sobre el
+árbol commiteado `5170e3b`, 2026-11-02 01:36 UTC; `real 189,27`). Las dos corridas de **179**
+tests (antes del duodécimo) fueron **188,336 s** a las 23:30 UTC del 2026-11-01 sobre `6ebb00d`
+(`real 188,57`) y **280,457 s** en la corrida iniciada a las 01:27 UTC del 2026-11-02 sobre
+`a41587e`, con el host en carga — el rango del día sigue siendo 187,1–329,6 s. La clase
+`ForSobreStr` aporta **12** tests; el piso de población de `tests/test_reference.py` sube de 213
 a **216**. Dicho sin adornos: una corrida anterior de la misma suite, a media tarde, dio **6
 fallas** y ninguna era de N1 — cuatro leyeron el `README.md` mientras se editaba (la suite y la
 edición corrieron a la vez) y dos eran un defecto propio del lote de evidencia: regenerar los

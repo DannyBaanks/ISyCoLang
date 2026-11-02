@@ -483,7 +483,7 @@ class ForSobreStr(unittest.TestCase):
                          "420")
 
     def test_es_copia_y_ademas_el_lugar_no_se_puede_escribir(self):
-        """Los dos filos de «`c` es copia» (§4.4), medidos el 2026-11-01.
+        """Los dos filos de «`c` es copia» (§4.4), medidos el 2026-11-02 01:31 UTC.
 
         Hacia adentro: escribir `c` deja `s[0]` en `97` — es lo que fija `446`, y se repite
         aquí sin corpus por si el `expected` se moviera. Hacia afuera no hay forma de probar

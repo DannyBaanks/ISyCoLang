@@ -193,6 +193,7 @@ Bordes medidos el 2026-11-01, con cabecera `0.5` salvo donde se dice lo contrari
 | `c` después del bucle | `INVALID_PROGRAM(UNKNOWN_NAME)` |
 | `n = n + c` con `n: i64` | `INVALID_PROGRAM(TYPE_MISMATCH)` — `c` es `u8` y hace falta cast (§1.2 de CORE) |
 | `for c in s[0]` | `INVALID_PROGRAM(SYNTAX)` — un índice no es lugar (§4.3) |
+| `s[0] = 66` dentro del cuerpo | `INVALID_PROGRAM(NOT_ASSIGNABLE)` — los `str` son inmutables desde v0.3 (`CORE_v0.3.md:40`), así que la dirección inversa del alias **no es construible**: la única que la regla tiene que garantizar es que escribir `c` no toca el lugar. Medido el 2026-11-02 01:31 UTC y fijado por `test_es_copia_y_ademas_el_lugar_no_se_puede_escribir`, no por la matriz sellada de la sonda (sus doce filas no tenían esta forma) |
 | cabecera `0.4` | `INVALID_PROGRAM(SYNTAX)` — `for` es reservada solo desde `0.5` (V3) |
 | `s[7]` con `str<8> = "hola"` | `ERROR(INDEX_OUT_OF_BOUNDS)` a los 3 pasos — la regla de rango es la de v0.3 §2.4, y el `while` gemelo falla igual |
 
