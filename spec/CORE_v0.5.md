@@ -437,8 +437,11 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
   (`evidence/c/gate_2026-11-02T072103Z.json`) y backends con c, rust, zig y pydecimal
   `218/218` y COBOL `148/218` con 70 `UNSUPPORTED` nombrados
   (`evidence/backends/gate_2026-11-02T081912Z.json`). No regresión medida hoja por hoja
-  contra el lote de 216: las 2 727 hojas compartidas de F2 salen idénticas salvo
-  `total`/`passed`, y las 1 734 de F3 salvo los tres contadores. La sonda de P4 es el recibo
+  contra el lote de 216 e indexada por la identidad del renglón —el caso, y caso más nivel de traza
+  en F3, que ocupa dos renglones por caso—: de las 2 727 hojas compartidas de F2 solo difieren
+  `total`, `passed` y el sello del recibo (`generated_utc`, `git_head`), y de las 3 462 de F3 los
+  tres contadores y ese mismo sello; F4 y F5, cotejados igual, salen con 14 de 42 y 39 de 398
+  hojas distintas, todo contadores, campos de costo y sello. La sonda de P4 es el recibo
   que fija la regla y el techo del toolchain: **R2
   `evidence/v05_p4/run_20261102T085025Z.json`**, `RELEASE_GATE` con `git_head=d363e7c`. La
   corrida del lote (**R1** `run_20261102T081925Z.json`, `203f579`) salió `EVIDENCE_ONLY` porque

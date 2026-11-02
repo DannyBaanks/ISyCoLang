@@ -102,8 +102,22 @@ sabotaje de corpus**, porque no existe ningún caso con 256 clones. Lo detecta
 - La sonda lee el tope **vivo** de `isyco/specialize.py` en cada uso, así que esas dos mutaciones
   mueven también las curvas de la sonda: no hay una copia del número que se oxide.
 - Ningún `expected` ni hash congelado existente se reescribió: en el recibo F2 nuevo las
-  **2 727** hojas compartidas con el de 216 salen idénticas —solo difieren `total` y `passed`—,
-  no se pierde ninguna y entran 54 nuevas (las dos filas de `447` y `448`).
+  **2 727** hojas compartidas con el de 216 salen idénticas salvo `total`, `passed` y el sello del
+  recibo (`generated_utc`, `git_head`); no se pierde ninguna y entran 54 nuevas (las dos filas de
+  `447` y `448`). El mismo cotejo, extendido a los otros tres gates e indexado por la **identidad
+  del renglón** —el caso, y caso más nivel de traza en F3, que ocupa dos renglones por caso;
+  alinear por posición devuelve 35 y 53 diferencias falsas, y indexar solo por `name` parte el
+  conteo por la mitad—: F3 tiene 3 462 compartidas y 5 distintas (los tres contadores y el sello;
+  cero diferencias en los hashes de los 432 renglones previos), F4 tiene 42 compartidas y 14
+  distintas (doce contadores `216→218` y el sello; los dos diferenciales, la semilla, los 32
+  tipos y los sabotajes idénticos) y F5 tiene 398 compartidas con 39 distintas (contadores,
+  campos de costo —no semánticos por `tools/backend_gate.py:67`— y el sello), 2 altas, que son
+  `448` entrando al `UNSUPPORTED` de COBOL con `ir0.2,str`, y 0 bajas, con los difftest de 8 484
+  y 1 270 idénticos.
+  **Corregido el 2026-11-02 en este mismo ADR:** la fila de abajo decía «1 734 hojas» desde
+  `d363e7c`, y esa cifra venía de indexar solo por `name`; son 3 462 con la identidad del renglón.
+  El error de método queda escrito como hallazgo 14 de `docs/EVIDENCE_MATRIX.md`. Ninguna
+  conclusión cambia: siguen siendo 4 y 5 hojas distintas, todas contadores y sello.
 
 ## Población y gates después de la decisión
 
@@ -115,7 +129,7 @@ diff --name-only 14b19a9 d363e7c -- isyco/ tools/` sale vacío—.
 
 | gate | recibo | resultado |
 |---|---|---|
-| F2 referencia | `evidence/conformance/run_2026-11-02T070428Z.json` | **218/218 `PASS`**, las 2 727 hojas compartidas con el de 216 idénticas y ninguna perdida |
+| F2 referencia | `evidence/conformance/run_2026-11-02T070428Z.json` | **218/218 `PASS`**, las 2 727 hojas compartidas con el de 216 idénticas salvo los dos contadores y el sello, y ninguna perdida |
 | F3 IR | `evidence/ir/gate_2026-11-02T070428Z.json` | **436/436** iguales sobre **149** programas bajados |
 | F4 C | `evidence/c/gate_2026-11-02T072103Z.json` | `PASS`, **218/218** en las cuatro combinaciones gcc/clang × plain/sanitized, difftest **24 612** en `gcc/plain` y **6 468** con sanitizers, ambos con 0 diferencias |
 | F5 backends | `evidence/backends/gate_2026-11-02T081912Z.json` | `PASS`, c/rust/zig/pydecimal **218/218** con 0 `UNSUPPORTED`, COBOL **148/218** con **70** `UNSUPPORTED` nombrados; difftest **8 484** por backend y **1 270** de strings en los cuatro con `str`, todos con 0 diferencias |
@@ -154,7 +168,7 @@ garantía de que 256 sean baratos (medido en la sección 5: 172 718 B de IR y 25
 | El rechazo es estático y llega igual a los cinco backends | **DEMONSTRATED** | `TopeFrontend` (3 tests) + F5 |
 | Con el tope puesto hay programas legales que Zig no compila | **DEMONSTRATED** | matriz §6 y bisección §6b de `run_20261102T085025Z.json` (R2, `RELEASE_GATE`) |
 | El número 256 está decidido con la población real delante | **DEMONSTRATED** (decisión) / **NOT_DEMONSTRATED** (que 256 sea el óptimo) | censo 48/49 con `casos_de_tope` partido |
-| Ningún programa existente cambia de significado | **DEMONSTRATED** | las 2 727 hojas compartidas de F2 y las 1 734 de F3 salen idénticas salvo los contadores (216→218, 432→436, 148→149), con 0 hojas perdidas |
+| Ningún programa existente cambia de significado | **DEMONSTRATED** | cotejo hoja por hoja contra los recibos de 216, indexado por la identidad del renglón: 2 727 compartidas en F2 con 4 distintas y 3 462 en F3 con 5 (antes decía 1 734, ver la corrección más arriba), y en los dos son solo contadores (216→218, 432→436, 148→149) más el sello del recibo, con 0 hojas perdidas |
 | Sabotear el tope se detecta | **DEMONSTRATED** | dos mutaciones de `tests/test_reference.py` y la lectura viva del número |
 ## El sello limpio: la corrida R2, nombrada aquí
 

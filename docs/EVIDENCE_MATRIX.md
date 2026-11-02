@@ -42,10 +42,10 @@ re-produce o es prosa.
 
 | gate | recibo más reciente | head | veredicto | cifras |
 |---|---|---|---|---|
-| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-02T070428Z.json` | `14b19a9` | `PASS` | 218/218 en los cinco corpus; las 216 filas compartidas con el recibo anterior (`run_2026-11-01T210445Z.json`) salen idénticas hoja por hoja —2 727 hojas, único cambio `total`/`passed`— y las dos altas son `447` (`INVALID_PROGRAM/SPEC_LIMIT`) y `448` (16 emisiones, `HALTED`) |
-| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-02T070428Z.json` | `14b19a9` | — | 436/436 comparaciones iguales, **149** programas bajados (`448` sí baja; `447` no: se compara su rechazo). Igualdad recibo-vs-recibo sobre las 432 anteriores: 1 734 hojas compartidas idénticas, cero diferencias salvo los tres contadores |
-| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-02T072103Z.json` | `14b19a9` | `PASS` | 218 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 218/218, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers; los dos sabotajes detectados (12 y 53 diferencias); `missing_compilers: []`. Poblaciones anteriores, todas `PASS`: 216 en `gate_2026-11-01T211424Z.json` (`2499fae`) y las seis que se enumeran renglón a renglón en `docs/BACKEND_C.md` |
-| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-02T081912Z.json` | `14b19a9` | `PASS` | c/rust/zig/pydecimal **218/218** con 0 `UNSUPPORTED`; cobol **148/218 con 70 `UNSUPPORTED`** nombrados y 0 fallas; 8 484 corridas diferenciales por backend y 1 270 de strings en los cuatro completos, todas sin diferencias; los tres sabotajes detectados en cada uno de los cuatro (cobol solo dos: no tiene `str`); `missing_toolchains: []`. stdout crudo sellado al lado: `gate_2026-11-02T081912Z_stdout.txt`. Que cobol pase de 147 a 148 **no** es una capacidad nueva: `447` es un rechazo del frontend y cuenta como `passed` en los cinco —hallazgo 12 abajo—. Anteriores en el mismo directorio: `gate_2026-11-01T225011Z.json` (`6c00225`, 216 casos, los tres de N1 entrando con `ir0.2,str` tal como estaba predicho), `gate_2026-11-01T082046Z.json` (`a4f608c`, 213) y antes `gate_2026-11-01T215718Z.json`, `FAIL` por `TIMEOUT` del arnés en el difftest de strings de pydecimal, preservado con su diagnóstico en `evidence/f5_flake/run_20261101T220854Z.json` y su reproduccion: 500 llamadas y dos pasadas de 1 270 con 0 diferencias |
+| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-02T070428Z.json` | `14b19a9` | `PASS` | 218/218 en los cinco corpus; las 216 filas compartidas con el recibo anterior (`run_2026-11-01T210445Z.json`) salen idénticas hoja por hoja —de las 2 727 compartidas solo difieren `total`, `passed` y el sello del recibo (`generated_utc`, `git_head`)— y las dos altas son `447` (`INVALID_PROGRAM/SPEC_LIMIT`) y `448` (16 emisiones, `HALTED`) |
+| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-02T070428Z.json` | `14b19a9` | — | 436/436 comparaciones iguales, **149** programas bajados (`448` sí baja; `447` no: se compara su rechazo). Igualdad recibo-vs-recibo sobre las 432 anteriores, indexada por caso **y** nivel de traza (los renglones se corren con las dos altas y cada caso ocupa dos renglones): 3 462 hojas compartidas —432 renglones × 8 campos + 6 de cabecera— y las 5 que difieren son los tres contadores (`comparisons` y `equal`, `432→436`, y `programs_lowered_to_ir`, `148→149`) más el sello (`generated_utc`, `git_head`); cero diferencias en los hashes de los 432 renglones previos. El número que estuvo escrito aquí, 1 734, era la mitad exacta: salió de indexar solo por `name`, que colapsa los dos niveles —hallazgo 14 abajo— |
+| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-02T072103Z.json` | `14b19a9` | `PASS` | 218 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 218/218, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers; los dos sabotajes detectados (12 y 53 diferencias); `missing_compilers: []`. Cotejo hoja por hoja contra el recibo de 216 (F4 no guarda renglones por caso, solo contadores por combinación): 42 hojas compartidas, 14 distintas —doce contadores `216→218` y el sello—; los dos diferenciales (24 612 y 6 468), la semilla, los 32 tipos y los dos sabotajes salen idénticos. Poblaciones anteriores, todas `PASS`: 216 en `gate_2026-11-01T211424Z.json` (`2499fae`) y las seis que se enumeran renglón a renglón en `docs/BACKEND_C.md` |
+| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-02T081912Z.json` | `14b19a9` | `PASS` | c/rust/zig/pydecimal **218/218** con 0 `UNSUPPORTED`; cobol **148/218 con 70 `UNSUPPORTED`** nombrados y 0 fallas; 8 484 corridas diferenciales por backend y 1 270 de strings en los cuatro completos, todas sin diferencias; los tres sabotajes detectados en cada uno de los cuatro (cobol solo dos: no tiene `str`); `missing_toolchains: []`. stdout crudo sellado al lado: `gate_2026-11-02T081912Z_stdout.txt`. Que cobol pase de 147 a 148 **no** es una capacidad nueva: `447` es un rechazo del frontend y cuenta como `passed` en los cinco —hallazgo 12 abajo—. Cotejo hoja por hoja contra `gate_2026-11-01T225011Z.json`, indexado por nombre: 398 hojas compartidas, 39 distintas —los contadores, los campos de costo, que el propio arnés declara no semánticos en `backend_gate.py:67`, y el sello—, 2 altas que son `448` entrando al `UNSUPPORTED` de cobol con `ir0.2,str`, y 0 bajas; los difftest de 8 484 y 1 270 y los tres sabotajes salen idénticos. Anteriores en el mismo directorio: `gate_2026-11-01T225011Z.json` (`6c00225`, 216 casos, los tres de N1 entrando con `ir0.2,str` tal como estaba predicho), `gate_2026-11-01T082046Z.json` (`a4f608c`, 213) y antes `gate_2026-11-01T215718Z.json`, `FAIL` por `TIMEOUT` del arnés en el difftest de strings de pydecimal, preservado con su diagnóstico en `evidence/f5_flake/run_20261101T220854Z.json` y su reproduccion: 500 llamadas y dos pasadas de 1 270 con 0 diferencias |
 
 **Hueco de F4 — CERRADO el 2026-11-01.** Existió así: F4 no se había re-corrido desde que
 `conformance_v0.5` entró en `CORPORA`, así que su recibo más reciente (`ec6b823`) fijaba 170
@@ -268,8 +268,9 @@ Qué encontró esta matriz al cotejar prose contra recibos:
     estaba en ningún recibo era el arnés: `tools/backend_gate.py:51` llama a `backend.run(...)`
     dentro del bucle de `corpus()` sin `try`, `main()` (`:115`) tampoco lo envuelve y la única
     captura del archivo es la de `git_head()` (`:40-43`), así que el JSON se escribe solo al final
-    (`:146`): si el caso *k* rompe un compilador, no hay gate ni para los *k−1* anteriores. Medido sobre el árbol de este lote —`backend_gate.corpus(zig, [4 ranuras ×
-    4 anchos])`—: lanza `builtins.RuntimeError` («zig: el compilador falló: …») a los 2 197 ms,
+    (`:146`): si el caso *k* rompe un compilador, no hay gate ni para los *k−1* anteriores.
+    Medido sobre el árbol de este lote —`backend_gate.corpus(zig, [4 ranuras × 4 anchos])`—:
+    lanza `builtins.RuntimeError` («zig: el compilador falló: …») a los 2 197 ms,
     subiendo por `backend_gate.py:51` ← `base.py:272` (`run`) ← `:238` (`_binary`) ← `:195`
     (`build`), y **no** es `InvalidProgram`, o sea que ningún `except` del arnés lo ve.
     `tools/warm_build_cache.py:34-36` captura solo `InvalidProgram` y solo alrededor del lowering;
@@ -278,6 +279,24 @@ Qué encontró esta matriz al cotejar prose contra recibos:
     arreglarlo es decisión aparte con su propia evidencia. Lo que enseña: un gate puede enrojecer
     por starvation del host (hallazgo 10) o **morirse sin enrojecer** por el toolchain, y en el
     segundo caso no hay `gate_*.json` que discutir, solo stdout sin hashear.
+14. **Cotejar recibos hoja por hoja tiene dos trampas de clave, y las dos dan números falsos.** La
+    no-regresión de este lote se midió primero alineando los JSON **por posición**: F2 devolvió 35
+    hojas distintas y F3 53, con `emits`, `code`, `claim` y `program_sha256` entre ellas. De esas,
+    solo 4 en F2 y 5 en F3 son diferencias reales: al entrar `447` y `448` ordenados por nombre
+    dentro del corpus, los renglones de después se desplazan y cada hoja se compara con la vecina
+    equivocada. Y encima el desplazamiento pierde cobertura —dejan de casar 4 hojas del recibo
+    viejo, 2 723 compartidas en vez de 2 727— mientras inventa diferencias. El segundo intento fue
+    indexar cada lista por `name`, que está bien en F2 (un renglón por caso) y mal en F3, donde
+    cada caso ocupa **dos** renglones (`trace_level` `stmt` y `full`): la clave se repite, el `dict`
+    se queda con el último y el conteo sale justo a la mitad. De ahí el **1 734** que salió primero
+    en el mensaje de `203f579` y pasó a tres docs con `d363e7c`, cuando con la clave del renglón
+    (`name` + `trace_level`) son **3 462** hojas compartidas. Las conclusiones no se mueven: las 5
+    distintas siguen siendo los tres contadores y el sello, y cero hashes de los 432 renglones
+    previos tocados. Lo que enseña: un cotejo entre dos recibos es una afirmación **por renglón**,
+    así que la clave tiene que ser la identidad del renglón, y antes de citar cualquier cifra hay
+    que comprobar que esa clave es única —contar las hojas antes y después de indexar, o comparar
+    `len(claves)` contra `len(renglones)`—. Ninguna de las dos trampas se ve en el resultado: ambas
+    devuelven un número que parece una medición.
 
 Nada de lo anterior (1–9) cambia un `expected`, un hash congelado ni un resultado de gate: son
 correcciones de *atribución* (una cifra que no tenía recibo) y una re-medición. El 10 sí cambió
@@ -289,4 +308,9 @@ lo que el conteo del gate **no** dice sobre un renglón, para que nadie lea un `
 si COBOL ejecutara el programa que el frontend rechaza. El 13 tampoco mueve una cifra ni un
 veredicto: nombra una forma de perderse el recibo que este lote **no** atravesó —en
 `gate_2026-11-02T081912Z.json` los cinco backends salen con `fallas=0`, o sea ningún programa de
-los 218 rompió un toolchain—, y queda como defecto del instrumento con su arreglo pendiente.
+los 218 rompió un toolchain—, y queda como defecto del instrumento con su arreglo pendiente. El 14
+sí corrige una cifra de este lote de evidencia —el 1 734 de F3 era la mitad exacta de los 3 462
+hojas compartidas que da el cotejo con la identidad del renglón—: se corrige aquí y en los tres
+docs que la citaban, sin reescribir `203f579` ni `d363e7c` ni sus mensajes, y sin tocar ningún
+`expected`, ningún digest y ningún veredicto, porque las cinco hojas distintas siguen siendo los
+contadores y el sello.
