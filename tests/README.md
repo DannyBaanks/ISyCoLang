@@ -29,7 +29,12 @@ así que el rango del día no se mueve. **Undécima corrida, ya con los 218 caso
 P4 dentro: 491,090 s** (`real 8 m 12,3 s`, 2026-11-02 08:41 UTC, OK). Es el máximo medido y
 **amplía el rango a 187,1–491,1 s**: corrió justo después del gate de backends y de
 `tools/v05_p4_probe.py --bisect-zig`, la misma condición que había subido la corrida de 329,6;
-la causa sigue sin atribuirse — medido, no explicado —. Entre la octava y la novena hubo una corrida
+la causa sigue sin atribuirse — medido, no explicado —. **Duodécima corrida, ya sobre el árbol
+commiteado `ac33000` y con los 194 tests: 347,739 s** (`real 5 m 48,0 s`, 2026-11-02 09:11 UTC,
+OK), dentro del rango y con `build/` lleno, así que no lo mueve. Mientras corría se editaron
+`docs/EVIDENCE_MATRIX.md`, el ADR de P4 y `spec/CORE_v0.5.md` — la ventana del hallazgo 11, esta
+vez medida desde dentro: ninguno de los tres es un fichero que la suite abra, y por eso salió OK.
+Entre la octava y la novena hubo una corrida
 con **6 fallas**, y ninguna era de N1: cuatro leyeron el `README.md` mientras se editaba (la suite
 corrió a la vez que la edición) y dos por la convención de rutas de los `SHA256SUMS.txt`
 (`./x` ≠ `x` para `test_every_dir_has_sums_and_lists_every_file`, con todos los digest iguales).
@@ -37,8 +42,11 @@ Está dicho como hallazgo 11 de `docs/EVIDENCE_MATRIX.md`, no escondido. El sub-
 `tests.test_v05_core.ForSobreStr tests.test_reference.Sabotage` —**21** tests, los 12 de N1 más
 los 9 sabotajes de la referencia (los 7 de antes más los dos de P4)— mide **0,973 s** (2026-11-02;
 antes, con 19, eran 0,386 s). Los dos sabotajes de P4, corridos solos, gastan **0,186 s**: no
-explican los 0,587 s de diferencia y la causa no está atribuida, solo medida. No toca backends. En frío
-casi todo es compilar Zig; para no esperar:
+explican los 0,587 s de diferencia y la causa no está atribuida, solo medida. No toca backends.
+Otro sub-set medido sobre `d0a74bd`, con los docs ya commiteados:
+`tests.test_specialize.TopePorDefinicion tests.test_reference.Sabotage` —18 tests, los 9 del
+tope más los 9 sabotajes— en **0,748 s** y OK. En frío casi todo es compilar Zig; para no
+esperar:
 
 ```bash
 python3 tools/warm_build_cache.py              # precompila en paralelo (añade --sabotages para el gate)
