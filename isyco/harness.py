@@ -47,9 +47,15 @@ def fila(code: str, exc: BaseException, fase: str, contexto: dict | None = None,
     """
     contexto = dict(contexto or {})
     texto = getattr(exc, "output", None) or str(exc)
-    return {"leg": contexto.pop("leg", ""), "phase": fase, "code": code,
-            "exception": type(exc).__name__, "detail": detalle(texto),
-            "excerpt": str(exc)[:EXCERPT_CHARS], "ms": round(ms, 1), **contexto}
+    registro = {"leg": contexto.pop("leg", ""), "phase": fase, "code": code,
+                "exception": type(exc).__name__, "detail": detalle(texto),
+                "excerpt": str(exc)[:EXCERPT_CHARS], "ms": round(ms, 1), **contexto}
+    key = getattr(exc, "key", None)
+    if key is not None:
+        # El nombre del artefacto bajo `build/` (hash de backend + toolchain + banderas +
+        # fuente). Sin campo propio habría que leérselo del stderr del compilador.
+        registro["build_key"] = key
+    return registro
 
 
 def intento(f, *args, fase: str, contexto: dict | None = None, **kw):
