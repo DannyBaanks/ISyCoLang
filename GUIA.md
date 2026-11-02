@@ -176,9 +176,16 @@ python3 -m isyco ir  precio.isy          # ver la IR canónica
 | `LIMIT_REACHED` | 4 | `code: max_steps` / `max_emits` / `max_call_depth` |
 | `TIMEOUT` | 5 | pasó `--timeout-ms` (lo decide el reloj, no la semántica) |
 | `UNSUPPORTED` | 1 | el backend nativo no implementa algo que el programa usa; `code` dice qué |
-| — | 1 | error de uso, archivo, o toolchain no instalado |
+| — | 1 | error de uso, archivo, toolchain no instalado, o el compilador del toolchain que muere (nota abajo) |
 
 Los `emits` hechos antes del error **sí** aparecen en la salida.
+
+Un programa que el idioma acepta puede aun así no tener binario: si el compilador del toolchain
+muere, la CLI no imprime un resultado del contrato —no hay `status` ni `code`— y el proceso sale
+1 con `ToolchainBuildFailure: <backend>: el compilador falló:` seguido del stderr del compilador
+(medido 2026-11-02 con zig 0.16 sobre 256 clones de una definición de 4 ranuras). No es
+`INVALID_PROGRAM`: el programa está bien, lo que falló es el banco de pruebas. En los gates eso se
+registra como una fila `TOOLCHAIN_BUILD_FAIL` (§5b); en una corrida suelta es un traceback.
 
 Límites por defecto: 1 000 000 pasos, 256 de profundidad de llamadas, 100 000
 emits. Se cambian con `--max-steps`, `--max-call-depth`, `--max-emits`; por
@@ -202,6 +209,32 @@ silencio; para correr igual: `ISYCO_ALLOW_MISSING_TOOLCHAINS=1 python3 -m unitte
 Si agregas evidencia nueva, agrega su hash a `SHA256SUMS.txt` de esa carpeta.
 Nunca edites un caso del corpus ni un archivo de evidencia existente: el
 corpus usa `SUPERSEDED.json`, la evidencia usa archivos nuevos.
+
+### 5b. Leer un recibo de gate
+
+Un gate escribe tres cosas y no pisa nunca una existente: `gate_<UTC>.json`, su `_stdout.txt`
+(lo que viste por consola, byte a byte) y el `SHA256SUMS.txt` del directorio. Si ya había un
+recibo con ese sello, la corrida truena en vez de destruir evidencia.
+
+- `harness`: una lista **por pierna** con los fallos del banco de pruebas. `TOOLCHAIN_BUILD_FAIL`
+  es el compilador del toolchain muriendo (el programa puede ser perfectamente legal) y
+  `HARNESS_INTERNAL` lo que la guarda no supo clasificar. No se mezclan con `failures` ni con
+  `diffs`, que siguen siendo solo divergencia semántica contra la referencia.
+- `not_run`: la pierna no terminó. Se escribe sin campos numéricos a propósito: un `diff_count`
+  de 0 pasaría como verde; la ausencia no.
+- `abortado`: murió la corrida entera. El recibo igual se sella y trae el tipo, el mensaje y el
+  final del traceback; el `verdict` sale `FAIL`.
+- `arbol_sucio_codigo` / `veredicto_arbol`: `RELEASE_GATE` exige código, corpus y pruebas
+  commiteados; con cualquier otro path sucio el recibo vale como `EVIDENCE_ONLY`.
+- `conformant` pliega todo eso: una fila en cualquier pierna lo vuelve `false` aunque no haya ni
+  una falla ni una diferencia.
+
+Dos detalles del comando que conviene conocer. `ISYCO_EVIDENCE_ROOT=<dir>` redirige la
+evidencia: es la perilla de los tests y de las sondas, **no** un ajuste del operador — sin ella,
+una corrida de prueba escribe sobre el registro del gate. `--extra-case <ruta.isy>` (F5) añade un
+caso sin tocar la población del corpus, para medir un programa que el idioma acepta y un toolchain
+no compila; la fuente se copia junto al recibo para que el `build_key` de la fila apunte a algo
+hasheable.
 
 ## 6. Dónde está cada cosa
 

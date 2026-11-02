@@ -7,6 +7,7 @@ Tests: `python3 -m unittest discover -s tests -v`
 | `test_backend_c.py` | backend C: tres vías, diferencial numérico, sabotajes (F4) |
 | `test_modules.py` | módulos (v0.4): identificadores seguros en backends, CLI con módulos, sabotaje del enlazador |
 | `test_backends.py` | contrato ISY_BACKEND/1 en C, Rust, Zig, pydecimal y cobol: corpus, UNSUPPORTED, diferenciales, sabotajes por testigos, costo (F5); `TopeFrontend` (3 tests) fija que el `SPEC_LIMIT` de P4 llega **idéntico** a los cinco backends y que los 16 clones de `448` ejecutan igual que la referencia |
+| `test_harness.py` | la guarda del arnés (hallazgo 13), con el crash fabricado en vez de esperárselo a un toolchain: `intento` devuelve `(None, fila)` y nunca un resultado comparable, `InvalidProgram` sube, `TOOLCHAIN_BUILD_FAIL` trae su `build_key` recomponible, la caché negativa deja **una** invocación del compilador en cinco intentos sobre la misma fuente, `compare` aborta el tipo que murió y corre el siguiente, y una fila en cualquier pierna vuelve no-conforme el pliegue aunque `failures` y `diffs` estén vacíos — la prueba formal de que ningún verde puede heredarse sobre un crash (15 tests, 1,6 s medidos 2026-11-02) |
 | `test_evidence.py` | `evidence/*/SHA256SUMS.txt` verificadas dentro de la suite y cifras del README contra la evidencia más reciente (PL-02), ahora también la población y los diferenciales del gate C (F4); control negativo con `ISYCO_EVIDENCE_ROOT=<copia>` |
 | `test_versions.py` | `isyco/versions.py` como única fuente de la versión: familias monotónicas, fail-closed con versiones desconocidas, y ningún literal de versión suelto en `isyco/` |
 | `test_v05_core.py` | V1 (`len` de arreglo resuelto en el frontend, cero nodos de IR, cero pasos) y V2 (`for x in a` como azúcar del parser): forma, gemelos, trazas, nombres sintéticos y rechazos en 0.1–0.4; la clase `ForSobreStr` (12 tests) añade N1 (`for` sobre un lugar `str`: cota = longitud del valor, variable `u8` copia sin alias — y el alias inverso no es construible porque `s[i] = …` es `NOT_ASSIGNABLE` desde v0.3 —, pasos e IR iguales al `while` gemelo) |
@@ -54,7 +55,12 @@ esperar:
 python3 tools/warm_build_cache.py              # precompila en paralelo (añade --sabotages para el gate)
 ISYCO_TEST_BACKENDS=c,rust python3 -m unittest discover -s tests   # suite sin Zig
 ISYCO_ALLOW_MISSING_TOOLCHAINS=1 python3 -m unittest discover -s tests   # permitir un toolchain ausente
+ISYCO_EVIDENCE_ROOT=/tmp/evid python3 tools/backend_gate.py --only c   # sellar fuera del registro
 ```
+
+Cualquier prueba o sonda que escriba evidencia **debe** pasar por `ISYCO_EVIDENCE_ROOT`: sin la
+perilla, una corrida de demostración escribe archivos nuevos dentro de `evidence/<tema>/` y el
+`SHA256SUMS.txt` del directorio pasa a incluirlos, que es destruir el registro del gate.
 
 Si falta el toolchain de un backend registrado, la suite **falla**
 (`test_backends.Toolchains`) en vez de saltarse tests en silencio; el contador

@@ -130,9 +130,24 @@ Un backend es **conforme** cuando, sobre los corpus `programs/conformance*`:
    declara (`sabotages`: hoy `half_even_as_half_up`, `div_floor` y, en los
    backends con `str`, `str_concat_truncates`) hace fallar el corpus y el
    diferencial (numérico, y también el de strings si el backend declara `str`).
+6. **ninguna pierna registró un fallo del instrumento**: las listas hermanas
+   `harness` de `corpus`, `difftest`, `difftest_str`, `does_the_work` y de cada
+   sabotaje están vacías, ninguna pierna quedó en `not_run` y el recibo no trae
+   `abortado`.
 
-`tools/backend_gate.py` comprueba los cinco puntos y resume el costo medido para cada backend instalado
-y guarda la evidencia en `evidence/backends/`.
+Los dos códigos que puede tener una fila —`TOOLCHAIN_BUILD_FAIL` (murió el
+compilador del toolchain armando el binario) y `HARNESS_INTERNAL` (explotó el
+instrumento por algo que no se sabe clasificar)— son datos del banco de pruebas, no
+divergencia semántica: no entran en `failures` ni en `diffs`, y aun así impiden la
+conformidad. La razón de ser de la cláusula 6 es que un toolchain puede morir sobre un
+programa que el idioma **acepta** —la forma que mide `tools/f5_harness_probe.py`: 256
+clones de una definición de cuatro ranuras, legal bajo el tope de `SPEC_LIMIT`—; en ese
+caso el gate registra la fila, sigue con el caso siguiente y **no** puede escribir el crash
+como un fallo del programa ni como una detección de sabotaje. Una fila que no se parece a
+un resultado de backend es la condición de que la comparación no corra.
+
+`tools/backend_gate.py` comprueba los seis puntos y resume el costo medido para cada backend
+instalado y guarda la evidencia en `evidence/backends/`.
 
 ## 6. Backends registrados
 
@@ -140,7 +155,7 @@ y guarda la evidencia en `evidence/backends/`.
 |---|---|---|---|
 | `c` | gcc / clang (GNU C11) | todas (desde 2026-10-29 también `ir0.2 str struct`) | `__int128`, builtins de overflow; 3 sabotajes de prueba (2 numéricos, 1 de str) |
 | `rust` | rustc (ed. 2021) | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-C overflow-checks=on -C panic=abort`; 3 sabotajes de prueba |
-| `zig` | zig 0.16 | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-O ReleaseSafe`; 3 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering) |
+| `zig` | zig 0.16 | todas (desde 2026-10-29 también `ir0.2 str struct`) | `-O ReleaseSafe`; 3 sabotajes de prueba; solo Linux (syscall `write`); un arreglo local de 64 KB cuesta ~10 s de compilación (limitación de Zig/LLVM, no del lowering); su comptime sí muere sobre un programa que el idioma acepta —256 clones de una definición de 4 ranuras dan `error: evaluation exceeded 1000 backwards branches`, medido en `tools/f5_harness_probe.py`— y el gate lo registra como `TOOLCHAIN_BUILD_FAIL` en `harness`, no como falla del programa |
 | `pydecimal` | python3 (CPython) | todas | ola 2: los `dec` son `decimal.Decimal`; cada redondeo lo deciden la división y `quantize` de CPython (`isy_rdiv`), no enteros escalados; el "binario" es el fuente con shebang (`py_compile` solo valida) y su RSS es el de un intérprete (~13 MB) |
 | `cobol` | cobc (GnuCOBOL 3.1.2) | núcleo numérico v0.1: `str`, `struct` y `emit_array` responden UNSUPPORTED; un programa `isy-ir/0.2` que no los usa sí se ejecuta (V7) | ola 2: zoned decimal nativo con `ISY-RDIV`; entrada por STDIN en hexadecimal (cobc no expone argv); cada función IR es un subprograma `IS RECURSIVE` con `CALL` y resultado por referencia; el hueco del resultado existe también en funciones `void` porque el proemio y el epílogo cuentan profundidad ahí; `DIVIDE … REMAINDER` trunca hacia cero como la referencia |
 

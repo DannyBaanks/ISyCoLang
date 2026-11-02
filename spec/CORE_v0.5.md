@@ -459,6 +459,16 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
   `tools/v7_capability_probe.py`) en vez de `load_all`, porque meter v0.5 en `CORPORA`
   cambió el tamaño de esa población. Un conteo sin población nombrada es una
   afirmación sin prueba.
+- **El instrumento no define semántica.** Desde el arnés endurecido (2026-11-02) un fallo del
+  banco de pruebas se registra como dato y no aborta la corrida: cada pierna de los gates lleva
+  una lista hermana `harness` con `TOOLCHAIN_BUILD_FAIL` o `HARNESS_INTERNAL`, una pierna que no
+  terminó se escribe `not_run`, una corrida abortada deja `abortado` con su traceback y el recibo
+  se sella en los tres casos. Nada de eso mueve la frontera de lo que el idioma acepta: `448`
+  (16 clones) y la forma de 256 clones son dos puntos distintos de la misma regla —el tope de
+  `SPEC_LIMIT` lo decide el frontend, antes de la IR—, mientras que lo que el compilador de un
+  backend haga con un programa ya aceptado es propiedad del backend y lo fija `spec/BACKEND.md`
+  §5 cláusula 6. El caso de 256 clones **no** entra al corpus por eso: corre con
+  `--extra-case` y deja su propio recibo.
 
 ## 10. Fuera de alcance de v0.5
 
