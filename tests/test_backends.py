@@ -270,8 +270,10 @@ class TopeFrontend(unittest.TestCase):
                     with_str.append(nombre)
                     self.assertEqual({k: got.get(k) for k in KEYS}, want, nombre)
                     self.assertFalse(got.get("backend_stderr"), nombre)
-        self.assertEqual(sorted(with_str), ["c", "pydecimal", "rust", "zig"],
-                         "los cuatro que implementan str ejecutan 448")
+        esperados = sorted(n for n in ("c", "pydecimal", "rust", "zig") if n in AVAILABLE)
+        self.assertEqual(sorted(with_str), esperados,
+                         "cada backend `str` presente ejecuta 448; con los cinco "
+                         "instalados la lista es cuatro")
         if "cobol" in AVAILABLE:
             self.assertNotIn("cobol", with_str)
 
