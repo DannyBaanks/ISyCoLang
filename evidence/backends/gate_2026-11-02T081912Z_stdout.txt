@@ -1,0 +1,41 @@
+### backend_gate ###
+[c] gcc: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+  corpus: 218/218 (unsupported 0, fallas 0)
+  difftest: 8484 corridas, 0 diferencias
+  difftest str: 1270 corridas, 0 diferencias
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 15)
+[rust] rustc 1.98.1 (48a229cea 2026-09-01)
+  corpus: 218/218 (unsupported 0, fallas 0)
+  difftest: 8484 corridas, 0 diferencias
+  difftest str: 1270 corridas, 0 diferencias
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 15)
+[zig] zig 0.16.0
+  corpus: 218/218 (unsupported 0, fallas 0)
+  difftest: 8484 corridas, 0 diferencias
+  difftest str: 1270 corridas, 0 diferencias
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 15)
+[pydecimal] /usr/bin/python3: Python 3.12.3
+  corpus: 218/218 (unsupported 0, fallas 0)
+  difftest: 8484 corridas, 0 diferencias
+  difftest str: 1270 corridas, 0 diferencias
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 15)
+[cobol] cobc: cobc (GnuCOBOL) 3.1.2.0
+  corpus: 148/218 (unsupported 70, fallas 0)
+  difftest: 8484 corridas, 0 diferencias
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53)
+{"out": "evidence/backends/gate_2026-11-02T081912Z.json", "verdict": "PASS", "sha256": "40aea1a3e5b53c58e1cb511d674347a8ddc3e11ad5bb33f2fe0aa98810612c2a"}
+EXIT_backend_gate=0

@@ -1,0 +1,1656 @@
+{
+  "censo_corpus": {
+    "filas": [
+      {
+        "caso": "401_len_arreglo",
+        "chequeo_ms": 0.38,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "402_for_decimales",
+        "chequeo_ms": 0.44,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "403_for_enteros",
+        "chequeo_ms": 0.25,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "404_for_break_continue",
+        "chequeo_ms": 0.35,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "405_for_copia",
+        "chequeo_ms": 0.28,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "406_len_parametro",
+        "chequeo_ms": 0.34,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "407_parametro_reasignable",
+        "chequeo_ms": 0.19,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "408_qname_arreglo",
+        "chequeo_ms": 0.56,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "409_str_cualquier_capacidad",
+        "chequeo_ms": 0.3,
+        "clones": [
+          "primero.10",
+          "primero.4"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "410_str_vacia_reutilizable",
+        "chequeo_ms": 0.32,
+        "clones": [
+          "es_vacia.1",
+          "es_vacia.4"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "411_pad_dos_anchos",
+        "chequeo_ms": 0.71,
+        "clones": [
+          "pad.2",
+          "pad.7"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "412_borde_capacidad_literal",
+        "chequeo_ms": 0.74,
+        "clones": [
+          "pad.1",
+          "pad.6"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "413_encadenar_contextuales",
+        "chequeo_ms": 0.45,
+        "clones": [
+          "copia.3",
+          "copia.8",
+          "envia.3",
+          "envia.8"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 4
+      },
+      {
+        "caso": "414_largo_ocho_y_dos",
+        "chequeo_ms": 0.22,
+        "clones": [
+          "largo.2",
+          "largo.8"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "415_largo_dos_y_ocho",
+        "chequeo_ms": 0.24,
+        "clones": [
+          "largo.2",
+          "largo.8"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "416_cast_mas_estrecho",
+        "chequeo_ms": 0.19,
+        "clones": [
+          "guion.3"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "417_junta_dos_contextuales",
+        "chequeo_ms": 0.24,
+        "clones": [
+          "junta.3.2"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "418_junta_desborda",
+        "chequeo_ms": 0.23,
+        "clones": [
+          "junta.8.16"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "419_definicion_sin_llamadas",
+        "chequeo_ms": 0.12,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "420_recursion_contextual",
+        "chequeo_ms": 0.44,
+        "clones": [
+          "cuenta.1",
+          "cuenta.4"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "421_marca_entre_modulos",
+        "chequeo_ms": 0.33,
+        "clones": [
+          "util.marca.3",
+          "util.marca.4"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "422_ancho_insuficiente_estatico",
+        "chequeo_ms": 0.2,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "423_ancho_grande_doble",
+        "chequeo_ms": 0.3,
+        "clones": [
+          "doble.64",
+          "doble.8"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "424_main_contextual",
+        "chequeo_ms": 0.1,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "425_str_pelado_fuera_de_parametro",
+        "chequeo_ms": 0.08,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "SYNTAX",
+        "n": 0
+      },
+      {
+        "caso": "426_str_pelado_en_v04",
+        "chequeo_ms": 0.09,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "SYNTAX",
+        "n": 0
+      },
+      {
+        "caso": "427_argumento_no_str",
+        "chequeo_ms": 0.14,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "428_str_pelado_desde_stdin",
+        "chequeo_ms": 0.19,
+        "clones": [
+          "largo.16"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "429_retorno_pelado_dos_expectativas",
+        "chequeo_ms": 0.29,
+        "clones": [
+          "doble.2.r4",
+          "doble.4.r8"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "430_retorno_pelado_desborda",
+        "chequeo_ms": 0.22,
+        "clones": [
+          "doble.4.r4"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "431_expectativa_mas_chica",
+        "chequeo_ms": 0.21,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "432_llamado_como_sentencia",
+        "chequeo_ms": 0.11,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "433_dentro_de_emit",
+        "chequeo_ms": 0.12,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "434_expectativa_por_parametro_pelado",
+        "chequeo_ms": 0.19,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "435_transmision_pelado_a_pelado",
+        "chequeo_ms": 0.32,
+        "clones": [
+          "doble.4.r8",
+          "eco.4.r8"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 2
+      },
+      {
+        "caso": "436_retorno_pelado_en_main",
+        "chequeo_ms": 0.09,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "TYPE_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "437_retorno_pelado_en_v04",
+        "chequeo_ms": 0.07,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "SYNTAX",
+        "n": 0
+      },
+      {
+        "caso": "438_retorno_pelado_desde_stdin",
+        "chequeo_ms": 0.24,
+        "clones": [
+          "doble.8.r16"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "439_void_en_sentencia",
+        "chequeo_ms": 0.16,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "440_llamada_calificada_void",
+        "chequeo_ms": 0.23,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "441_emit_arreglo_v03",
+        "chequeo_ms": 0.12,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "442_nucleo_03_sin_str",
+        "chequeo_ms": 0.25,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "443_m4_modulo_v04",
+        "chequeo_ms": 0.1,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": "VERSION_MISMATCH",
+        "n": 0
+      },
+      {
+        "caso": "444_for_sobre_str",
+        "chequeo_ms": 0.24,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "445_for_str_pelado_stdin",
+        "chequeo_ms": 0.38,
+        "clones": [
+          "emite.16"
+        ],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 1
+      },
+      {
+        "caso": "446_for_copia_str",
+        "chequeo_ms": 0.25,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": false,
+        "error": null,
+        "n": 0
+      },
+      {
+        "caso": "447_tope_de_especializaciones",
+        "chequeo_ms": 14.97,
+        "clones": [],
+        "cruce_contador": true,
+        "de_tope": true,
+        "error": "SPEC_LIMIT",
+        "n": 0
+      },
+      {
+        "caso": "448_dieciseis_clones_por_definicion",
+        "chequeo_ms": 1.86,
+        "clones": [
+          "dim.1.5",
+          "dim.1.6",
+          "dim.1.7",
+          "dim.1.8",
+          "dim.2.5",
+          "dim.2.6",
+          "dim.2.7",
+          "dim.2.8",
+          "dim.3.5",
+          "dim.3.6",
+          "dim.3.7",
+          "dim.3.8",
+          "dim.4.5",
+          "dim.4.6",
+          "dim.4.7",
+          "dim.4.8"
+        ],
+        "cruce_contador": true,
+        "de_tope": true,
+        "error": null,
+        "n": 16
+      }
+    ],
+    "resumen": {
+      "casos_con_error": [
+        "422_ancho_insuficiente_estatico",
+        "424_main_contextual",
+        "425_str_pelado_fuera_de_parametro",
+        "426_str_pelado_en_v04",
+        "427_argumento_no_str",
+        "431_expectativa_mas_chica",
+        "432_llamado_como_sentencia",
+        "433_dentro_de_emit",
+        "434_expectativa_por_parametro_pelado",
+        "436_retorno_pelado_en_main",
+        "437_retorno_pelado_en_v04",
+        "443_m4_modulo_v04",
+        "447_tope_de_especializaciones"
+      ],
+      "casos_de_tope": [
+        "447_tope_de_especializaciones",
+        "448_dieciseis_clones_por_definicion"
+      ],
+      "clones_con_retorno_contextual": 6,
+      "clones_sin_retorno_contextual": 43,
+      "cruce_contador_fallas": [],
+      "definiciones_max_globales": [
+        "dim"
+      ],
+      "definiciones_max_locales": [
+        "448_dieciseis_clones_por_definicion::dim"
+      ],
+      "definiciones_max_locales_sin_casos_de_tope": [
+        "409_str_cualquier_capacidad::primero",
+        "410_str_vacia_reutilizable::es_vacia",
+        "411_pad_dos_anchos::pad",
+        "412_borde_capacidad_literal::pad",
+        "413_encadenar_contextuales::copia",
+        "413_encadenar_contextuales::envia",
+        "414_largo_ocho_y_dos::largo",
+        "415_largo_dos_y_ocho::largo",
+        "420_recursion_contextual::cuenta",
+        "421_marca_entre_modulos::util.marca",
+        "423_ancho_grande_doble::doble",
+        "429_retorno_pelado_dos_expectativas::doble"
+      ],
+      "definiciones_unicas": 14,
+      "escalera_anchos": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        16,
+        64
+      ],
+      "escalera_retornos": [
+        4,
+        8,
+        16
+      ],
+      "max_por_definicion_en_todo_el_corpus": 16,
+      "max_por_definicion_en_un_programa": 16,
+      "max_por_definicion_en_un_programa_sin_casos_de_tope": 2,
+      "max_por_programa": 16,
+      "por_definicion_en_corpus": {
+        "copia": 2,
+        "cuenta": 2,
+        "dim": 16,
+        "doble": 7,
+        "eco": 1,
+        "emite": 1,
+        "envia": 2,
+        "es_vacia": 2,
+        "guion": 1,
+        "junta": 2,
+        "largo": 5,
+        "pad": 4,
+        "primero": 2,
+        "util.marca": 2
+      },
+      "programas": 48,
+      "programas_con_clones": 20,
+      "programas_max": [
+        "448_dieciseis_clones_por_definicion"
+      ],
+      "total_clones": 49
+    }
+  },
+  "control_mismo_ancho": {
+    "clones": 1,
+    "error": null,
+    "nombres": [
+      "ancho.4"
+    ],
+    "sitios": 20
+  },
+  "costo": [
+    {
+      "K": 8,
+      "c_equiv": true,
+      "c_ms": 7.6,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 8,
+      "code": null,
+      "control": true,
+      "fuente_bytes": 291,
+      "ir_bytes": 4673,
+      "ir_funciones": 9,
+      "pasos": 26,
+      "ref_ms": 0.6,
+      "resoluciones_max": 8,
+      "status": "HALTED"
+    },
+    {
+      "K": 64,
+      "c_equiv": true,
+      "c_ms": 12.0,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 64,
+      "code": null,
+      "control": true,
+      "fuente_bytes": 3455,
+      "ir_bytes": 36952,
+      "ir_funciones": 65,
+      "pasos": 194,
+      "ref_ms": 4.7,
+      "resoluciones_max": 64,
+      "status": "HALTED"
+    },
+    {
+      "K": 256,
+      "c_equiv": true,
+      "c_ms": 44.0,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 256,
+      "code": null,
+      "control": true,
+      "fuente_bytes": 38111,
+      "ir_bytes": 172718,
+      "ir_funciones": 257,
+      "pasos": 770,
+      "ref_ms": 21.5,
+      "resoluciones_max": 256,
+      "status": "HALTED"
+    },
+    {
+      "K": "dos ranuras 8x8",
+      "c_equiv": true,
+      "c_ms": 15.3,
+      "c_status": "HALTED",
+      "chequeo": "OK",
+      "clones": 64,
+      "code": null,
+      "control": true,
+      "fuente_bytes": 2094,
+      "ir_bytes": 56288,
+      "ir_funciones": 65,
+      "pasos": 194,
+      "ref_ms": 6.1,
+      "resoluciones_max": 64,
+      "status": "HALTED"
+    },
+    {
+      "K": 512,
+      "chequeo": "SPEC_LIMIT",
+      "control": false,
+      "fuente_bytes": 141663,
+      "resoluciones_max": 257
+    },
+    {
+      "K": 1024,
+      "chequeo": "SPEC_LIMIT",
+      "control": false,
+      "fuente_bytes": 545375,
+      "resoluciones_max": 257
+    },
+    {
+      "K": 2048,
+      "chequeo": "SPEC_LIMIT",
+      "control": false,
+      "fuente_bytes": 2139231,
+      "resoluciones_max": 257
+    }
+  ],
+  "curva_dos_ranuras": [
+    {
+      "W": 2,
+      "clones": 4,
+      "error": null,
+      "fuente_bytes": 210,
+      "llamadas": 4,
+      "resoluciones_max": 4
+    },
+    {
+      "W": 3,
+      "clones": 9,
+      "error": null,
+      "fuente_bytes": 344,
+      "llamadas": 9,
+      "resoluciones_max": 9
+    },
+    {
+      "W": 4,
+      "clones": 16,
+      "error": null,
+      "fuente_bytes": 542,
+      "llamadas": 16,
+      "resoluciones_max": 16
+    },
+    {
+      "W": 6,
+      "clones": 36,
+      "error": null,
+      "fuente_bytes": 1154,
+      "llamadas": 36,
+      "resoluciones_max": 36
+    },
+    {
+      "W": 8,
+      "clones": 64,
+      "error": null,
+      "fuente_bytes": 2094,
+      "llamadas": 64,
+      "resoluciones_max": 64
+    }
+  ],
+  "curva_tres_ranuras": [
+    {
+      "W": 2,
+      "clones": 8,
+      "error": null,
+      "fuente_bytes": 380,
+      "llamadas": 8,
+      "resoluciones_max": 8
+    },
+    {
+      "W": 3,
+      "clones": 27,
+      "error": null,
+      "fuente_bytes": 1019,
+      "llamadas": 27,
+      "resoluciones_max": 27
+    }
+  ],
+  "curva_una_ranura": [
+    {
+      "K": 1,
+      "clones": 1,
+      "error": null,
+      "fuente_bytes": 116,
+      "resoluciones_max": 1
+    },
+    {
+      "K": 2,
+      "clones": 2,
+      "error": null,
+      "fuente_bytes": 138,
+      "resoluciones_max": 2
+    },
+    {
+      "K": 4,
+      "clones": 4,
+      "error": null,
+      "fuente_bytes": 185,
+      "resoluciones_max": 4
+    },
+    {
+      "K": 8,
+      "clones": 8,
+      "error": null,
+      "fuente_bytes": 291,
+      "resoluciones_max": 8
+    },
+    {
+      "K": 16,
+      "clones": 16,
+      "error": null,
+      "fuente_bytes": 551,
+      "resoluciones_max": 16
+    },
+    {
+      "K": 32,
+      "clones": 32,
+      "error": null,
+      "fuente_bytes": 1263,
+      "resoluciones_max": 32
+    },
+    {
+      "K": 64,
+      "clones": 64,
+      "error": null,
+      "fuente_bytes": 3455,
+      "resoluciones_max": 64
+    },
+    {
+      "K": 128,
+      "clones": 128,
+      "error": null,
+      "fuente_bytes": 10911,
+      "resoluciones_max": 128
+    },
+    {
+      "K": 256,
+      "clones": 256,
+      "error": null,
+      "fuente_bytes": 38111,
+      "resoluciones_max": 256
+    },
+    {
+      "K": 257,
+      "clones": 0,
+      "error": "SPEC_LIMIT",
+      "fuente_bytes": 38388,
+      "resoluciones_max": 257
+    }
+  ],
+  "libreria_v6": [
+    {
+      "K": 1,
+      "clones": 11,
+      "cruce_contador": true,
+      "definiciones": 11,
+      "error": null,
+      "fuente_bytes": 1140,
+      "por_definicion": {
+        "fmt.copia": 1,
+        "fmt.etiqueta": 1,
+        "fmt.marca": 1,
+        "local": 1,
+        "texto.cuenta": 1,
+        "texto.doble": 1,
+        "texto.guion": 1,
+        "texto.junta": 1,
+        "texto.largo": 1,
+        "texto.mayus": 1,
+        "texto.pad": 1
+      },
+      "por_modulo": {
+        "MAIN": 1,
+        "fmt": 3,
+        "texto": 7
+      },
+      "resoluciones_max": 1
+    },
+    {
+      "K": 2,
+      "clones": 22,
+      "cruce_contador": true,
+      "definiciones": 11,
+      "error": null,
+      "fuente_bytes": 1523,
+      "por_definicion": {
+        "fmt.copia": 2,
+        "fmt.etiqueta": 2,
+        "fmt.marca": 2,
+        "local": 2,
+        "texto.cuenta": 2,
+        "texto.doble": 2,
+        "texto.guion": 2,
+        "texto.junta": 2,
+        "texto.largo": 2,
+        "texto.mayus": 2,
+        "texto.pad": 2
+      },
+      "por_modulo": {
+        "MAIN": 2,
+        "fmt": 6,
+        "texto": 14
+      },
+      "resoluciones_max": 2
+    },
+    {
+      "K": 3,
+      "clones": 29,
+      "cruce_contador": true,
+      "definiciones": 11,
+      "error": null,
+      "fuente_bytes": 1934,
+      "por_definicion": {
+        "fmt.copia": 2,
+        "fmt.etiqueta": 2,
+        "fmt.marca": 2,
+        "local": 3,
+        "texto.cuenta": 3,
+        "texto.doble": 2,
+        "texto.guion": 3,
+        "texto.junta": 3,
+        "texto.largo": 3,
+        "texto.mayus": 3,
+        "texto.pad": 3
+      },
+      "por_modulo": {
+        "MAIN": 3,
+        "fmt": 6,
+        "texto": 20
+      },
+      "resoluciones_max": 3
+    },
+    {
+      "K": 4,
+      "clones": 36,
+      "cruce_contador": true,
+      "definiciones": 11,
+      "error": null,
+      "fuente_bytes": 2401,
+      "por_definicion": {
+        "fmt.copia": 2,
+        "fmt.etiqueta": 2,
+        "fmt.marca": 2,
+        "local": 4,
+        "texto.cuenta": 4,
+        "texto.doble": 2,
+        "texto.guion": 4,
+        "texto.junta": 4,
+        "texto.largo": 4,
+        "texto.mayus": 4,
+        "texto.pad": 4
+      },
+      "por_modulo": {
+        "MAIN": 4,
+        "fmt": 6,
+        "texto": 26
+      },
+      "resoluciones_max": 4
+    },
+    {
+      "K": 6,
+      "clones": 58,
+      "cruce_contador": true,
+      "definiciones": 11,
+      "error": null,
+      "fuente_bytes": 3129,
+      "por_definicion": {
+        "fmt.copia": 4,
+        "fmt.etiqueta": 4,
+        "fmt.marca": 4,
+        "local": 6,
+        "texto.cuenta": 6,
+        "texto.doble": 4,
+        "texto.guion": 6,
+        "texto.junta": 6,
+        "texto.largo": 6,
+        "texto.mayus": 6,
+        "texto.pad": 6
+      },
+      "por_modulo": {
+        "MAIN": 6,
+        "fmt": 12,
+        "texto": 40
+      },
+      "resoluciones_max": 6
+    },
+    {
+      "K": 8,
+      "clones": 58,
+      "cruce_contador": true,
+      "definiciones": 11,
+      "error": null,
+      "fuente_bytes": 3837,
+      "por_definicion": {
+        "fmt.copia": 4,
+        "fmt.etiqueta": 4,
+        "fmt.marca": 4,
+        "local": 6,
+        "texto.cuenta": 6,
+        "texto.doble": 4,
+        "texto.guion": 6,
+        "texto.junta": 6,
+        "texto.largo": 6,
+        "texto.mayus": 6,
+        "texto.pad": 6
+      },
+      "por_modulo": {
+        "MAIN": 6,
+        "fmt": 12,
+        "texto": 40
+      },
+      "resoluciones_max": 6
+    }
+  ],
+  "milestone": "P4 (CORE v0.5) CERRADA — tope de 256 especializaciones por definicion (SPEC_LIMIT): censo, forma del crecimiento, techo de toolchain y libreria V6",
+  "receipt": {
+    "arbol_sucio_codigo": true,
+    "comando": "--bisect-zig --write",
+    "corpus": "programs/conformance_v0.5",
+    "decision": "P4 CERRADA el 2026-11-02 por Danny: 256 especializaciones por definicion fuente dentro del programa, rechazadas con INVALID_PROGRAM/SPEC_LIMIT (docs/decisions/P4_SPEC_LIMIT.md). La sonda verifica la regla y mide el techo del toolchain, que el tope NO garantiza",
+    "git_head": "203f579241cf32ffb37a93cc1d89d42c29f16aed",
+    "instrumento": "isyco/checker.py: Checker.specs (las copias creadas) y Checker.spec_counts (las resoluciones contadas por definicion)",
+    "python": "3.12.3",
+    "tope": 256,
+    "tope_como_se_lee": "isyco/specialize.py: MAX_CLONES_PER_DEFINITION, leida viva en cada uso; si el sabotaje la mueve, la sonda se mueve con ella",
+    "utc": "2026-11-02T08:19:25Z",
+    "veredicto_arbol": "EVIDENCE_ONLY"
+  },
+  "schema": "isyco.evidence/0.1",
+  "techo_toolchain": {
+    "filas": [
+      {
+        "W": 8,
+        "c": {
+          "estado": "OK",
+          "ms": 8,
+          "status": "HALTED"
+        },
+        "clones": 8,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 293,
+        "llamadas": 8,
+        "ranuras": 1,
+        "resoluciones_max": 8,
+        "rust": {
+          "estado": "OK",
+          "ms": 27,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 14,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 16,
+        "c": {
+          "estado": "OK",
+          "ms": 8,
+          "status": "HALTED"
+        },
+        "clones": 16,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 553,
+        "llamadas": 16,
+        "ranuras": 1,
+        "resoluciones_max": 16,
+        "rust": {
+          "estado": "OK",
+          "ms": 11,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 10,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 32,
+        "c": {
+          "estado": "OK",
+          "ms": 10,
+          "status": "HALTED"
+        },
+        "clones": 32,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 1265,
+        "llamadas": 32,
+        "ranuras": 1,
+        "resoluciones_max": 32,
+        "rust": {
+          "estado": "OK",
+          "ms": 12,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 12,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 64,
+        "c": {
+          "estado": "OK",
+          "ms": 14,
+          "status": "HALTED"
+        },
+        "clones": 64,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 3457,
+        "llamadas": 64,
+        "ranuras": 1,
+        "resoluciones_max": 64,
+        "rust": {
+          "estado": "OK",
+          "ms": 17,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 16,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 96,
+        "c": {
+          "estado": "OK",
+          "ms": 18,
+          "status": "HALTED"
+        },
+        "clones": 96,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 6673,
+        "llamadas": 96,
+        "ranuras": 1,
+        "resoluciones_max": 96,
+        "rust": {
+          "estado": "OK",
+          "ms": 22,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 20,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 128,
+        "c": {
+          "estado": "OK",
+          "ms": 33,
+          "status": "HALTED"
+        },
+        "clones": 128,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 10913,
+        "llamadas": 128,
+        "ranuras": 1,
+        "resoluciones_max": 128,
+        "rust": {
+          "estado": "OK",
+          "ms": 26,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 27,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 256,
+        "c": {
+          "estado": "OK",
+          "ms": 47,
+          "status": "HALTED"
+        },
+        "clones": 256,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 38113,
+        "llamadas": 256,
+        "ranuras": 1,
+        "resoluciones_max": 256,
+        "rust": {
+          "estado": "OK",
+          "ms": 49,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 50,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 257,
+        "c": {
+          "estado": "FRONTEND"
+        },
+        "clones": 0,
+        "cruce_contador": true,
+        "error": "SPEC_LIMIT",
+        "fuente_bytes": 38390,
+        "llamadas": 257,
+        "ranuras": 1,
+        "resoluciones_max": 257,
+        "rust": {
+          "estado": "FRONTEND"
+        },
+        "zig": {
+          "estado": "FRONTEND"
+        }
+      },
+      {
+        "W": 4,
+        "c": {
+          "estado": "OK",
+          "ms": 10,
+          "status": "HALTED"
+        },
+        "clones": 16,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 580,
+        "llamadas": 16,
+        "ranuras": 2,
+        "resoluciones_max": 16,
+        "rust": {
+          "estado": "OK",
+          "ms": 12,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 13,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 8,
+        "c": {
+          "estado": "OK",
+          "ms": 22,
+          "status": "HALTED"
+        },
+        "clones": 64,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 2228,
+        "llamadas": 64,
+        "ranuras": 2,
+        "resoluciones_max": 64,
+        "rust": {
+          "estado": "OK",
+          "ms": 27,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 25,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 12,
+        "c": {
+          "estado": "OK",
+          "ms": 56,
+          "status": "HALTED"
+        },
+        "clones": 144,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 5444,
+        "llamadas": 144,
+        "ranuras": 2,
+        "resoluciones_max": 144,
+        "rust": {
+          "estado": "OK",
+          "ms": 44,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 41,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 16,
+        "c": {
+          "estado": "OK",
+          "ms": 60,
+          "status": "HALTED"
+        },
+        "clones": 256,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 10612,
+        "llamadas": 256,
+        "ranuras": 2,
+        "resoluciones_max": 256,
+        "rust": {
+          "estado": "OK",
+          "ms": 61,
+          "status": "HALTED"
+        },
+        "zig": {
+          "error": "RuntimeError: 15ffe910f1972b621877dfb4.zig:2385:23: error: evaluation exceeded 1000 backwards branches",
+          "estado": "FALLO"
+        }
+      },
+      {
+        "W": 17,
+        "c": {
+          "estado": "FRONTEND"
+        },
+        "clones": 0,
+        "cruce_contador": true,
+        "error": "SPEC_LIMIT",
+        "fuente_bytes": 12254,
+        "llamadas": 289,
+        "ranuras": 2,
+        "resoluciones_max": 257,
+        "rust": {
+          "estado": "FRONTEND"
+        },
+        "zig": {
+          "estado": "FRONTEND"
+        }
+      },
+      {
+        "W": 4,
+        "c": {
+          "estado": "OK",
+          "ms": 21,
+          "status": "HALTED"
+        },
+        "clones": 64,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 2407,
+        "llamadas": 64,
+        "ranuras": 3,
+        "resoluciones_max": 64,
+        "rust": {
+          "estado": "OK",
+          "ms": 25,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 27,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 5,
+        "c": {
+          "estado": "OK",
+          "ms": 42,
+          "status": "HALTED"
+        },
+        "clones": 125,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 4760,
+        "llamadas": 125,
+        "ranuras": 3,
+        "resoluciones_max": 125,
+        "rust": {
+          "estado": "OK",
+          "ms": 43,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 44,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 6,
+        "c": {
+          "estado": "OK",
+          "ms": 99,
+          "status": "HALTED"
+        },
+        "clones": 216,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 8451,
+        "llamadas": 216,
+        "ranuras": 3,
+        "resoluciones_max": 216,
+        "rust": {
+          "estado": "OK",
+          "ms": 76,
+          "status": "HALTED"
+        },
+        "zig": {
+          "error": "RuntimeError: 59b52a21096e9eb716feb1a9.zig:1881:23: error: evaluation exceeded 1000 backwards branches",
+          "estado": "FALLO"
+        }
+      },
+      {
+        "W": 7,
+        "c": {
+          "estado": "FRONTEND"
+        },
+        "clones": 0,
+        "cruce_contador": true,
+        "error": "SPEC_LIMIT",
+        "fuente_bytes": 13855,
+        "llamadas": 343,
+        "ranuras": 3,
+        "resoluciones_max": 257,
+        "rust": {
+          "estado": "FRONTEND"
+        },
+        "zig": {
+          "estado": "FRONTEND"
+        }
+      },
+      {
+        "W": 3,
+        "c": {
+          "estado": "OK",
+          "ms": 33,
+          "status": "HALTED"
+        },
+        "clones": 81,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 3394,
+        "llamadas": 81,
+        "ranuras": 4,
+        "resoluciones_max": 81,
+        "rust": {
+          "estado": "OK",
+          "ms": 71,
+          "status": "HALTED"
+        },
+        "zig": {
+          "estado": "OK",
+          "ms": 38,
+          "status": "HALTED"
+        }
+      },
+      {
+        "W": 4,
+        "c": {
+          "estado": "OK",
+          "ms": 88,
+          "status": "HALTED"
+        },
+        "clones": 256,
+        "cruce_contador": true,
+        "error": null,
+        "fuente_bytes": 10906,
+        "llamadas": 256,
+        "ranuras": 4,
+        "resoluciones_max": 256,
+        "rust": {
+          "estado": "OK",
+          "ms": 168,
+          "status": "HALTED"
+        },
+        "zig": {
+          "error": "RuntimeError: 7443b5e8e72fb777f63cba72.zig:1635:23: error: evaluation exceeded 1000 backwards branches",
+          "estado": "FALLO"
+        }
+      },
+      {
+        "W": 5,
+        "c": {
+          "estado": "FRONTEND"
+        },
+        "clones": 0,
+        "cruce_contador": true,
+        "error": "SPEC_LIMIT",
+        "fuente_bytes": 27654,
+        "llamadas": 625,
+        "ranuras": 4,
+        "resoluciones_max": 257,
+        "rust": {
+          "estado": "FRONTEND"
+        },
+        "zig": {
+          "estado": "FRONTEND"
+        }
+      }
+    ],
+    "zig": {
+      "fijos_biseccion": 2,
+      "por_aridad": {
+        "1": {
+          "escalera_max_ok": 256,
+          "escalera_min_fallo": null,
+          "estado": "SIN_FALLO_DENTRO_DEL_TOPE"
+        },
+        "2": {
+          "bordes_validados": {
+            "72": {
+              "clones": 144,
+              "ms": 99,
+              "ultimo": 72,
+              "zig": "OK"
+            },
+            "128": {
+              "clones": 256,
+              "ms": null,
+              "ultimo": 128,
+              "zig": "FALLO"
+            }
+          },
+          "escalera_max_ok": 144,
+          "escalera_min_fallo": 256,
+          "estado": "BISECTADO",
+          "max_ok_clones": 250,
+          "min_fail_clones": 252,
+          "paso_clones": 2,
+          "pasos": [
+            {
+              "clones": 200,
+              "estado": "OK",
+              "ms": 56,
+              "ultimo": 100
+            },
+            {
+              "clones": 228,
+              "estado": "OK",
+              "ms": 152,
+              "ultimo": 114
+            },
+            {
+              "clones": 242,
+              "estado": "OK",
+              "ms": 66,
+              "ultimo": 121
+            },
+            {
+              "clones": 248,
+              "estado": "OK",
+              "ms": 62,
+              "ultimo": 124
+            },
+            {
+              "clones": 252,
+              "estado": "FALLO",
+              "ms": null,
+              "ultimo": 126
+            },
+            {
+              "clones": 250,
+              "estado": "OK",
+              "ms": 58,
+              "ultimo": 125
+            }
+          ]
+        },
+        "3": {
+          "bordes_validados": {
+            "31": {
+              "clones": 124,
+              "ms": 43,
+              "ultimo": 31,
+              "zig": "OK"
+            },
+            "54": {
+              "clones": 216,
+              "ms": null,
+              "ultimo": 54,
+              "zig": "FALLO"
+            }
+          },
+          "escalera_max_ok": 125,
+          "escalera_min_fallo": 216,
+          "estado": "BISECTADO",
+          "max_ok_clones": 164,
+          "min_fail_clones": 168,
+          "paso_clones": 4,
+          "pasos": [
+            {
+              "clones": 168,
+              "estado": "FALLO",
+              "ms": null,
+              "ultimo": 42
+            },
+            {
+              "clones": 144,
+              "estado": "OK",
+              "ms": 51,
+              "ultimo": 36
+            },
+            {
+              "clones": 156,
+              "estado": "OK",
+              "ms": 52,
+              "ultimo": 39
+            },
+            {
+              "clones": 160,
+              "estado": "OK",
+              "ms": 57,
+              "ultimo": 40
+            },
+            {
+              "clones": 164,
+              "estado": "OK",
+              "ms": 59,
+              "ultimo": 41
+            }
+          ]
+        },
+        "4": {
+          "bordes_validados": {
+            "10": {
+              "clones": 80,
+              "ms": 149,
+              "ultimo": 10,
+              "zig": "OK"
+            },
+            "32": {
+              "clones": 256,
+              "ms": null,
+              "ultimo": 32,
+              "zig": "FALLO"
+            }
+          },
+          "escalera_max_ok": 81,
+          "escalera_min_fallo": 256,
+          "estado": "BISECTADO",
+          "max_ok_clones": 120,
+          "min_fail_clones": 128,
+          "paso_clones": 8,
+          "pasos": [
+            {
+              "clones": 168,
+              "estado": "FALLO",
+              "ms": null,
+              "ultimo": 21
+            },
+            {
+              "clones": 120,
+              "estado": "OK",
+              "ms": 186,
+              "ultimo": 15
+            },
+            {
+              "clones": 144,
+              "estado": "FALLO",
+              "ms": null,
+              "ultimo": 18
+            },
+            {
+              "clones": 128,
+              "estado": "FALLO",
+              "ms": null,
+              "ultimo": 16
+            }
+          ]
+        }
+      },
+      "zig_instalado": true
+    }
+  }
+}
