@@ -85,6 +85,9 @@ class Sabotage(unittest.TestCase):
         # El sabotaje es de redondeo half_even: solo los tipos decimales pueden mostrarlo.
         report = compare(partial(run_c, sabotage="half_even_as_half_up"), pairs=0, types=DEC_TYPES)
         self.assertTrue(report["diffs"])
+        # Un sabotaje «detectado» sobre un tipo abortado no vale: la pierna debe estar limpia.
+        self.assertEqual(report.get("harness", []), [])
+        self.assertEqual(report.get("types_aborted", []), [])
 
 
 @unittest.skipUnless(HAS_CC, "no hay compilador de C")
@@ -93,6 +96,9 @@ class Differential(unittest.TestCase):
         report = compare(run_c, pairs=2)
         self.assertGreater(report["runs"], 2000)
         self.assertEqual(report["diffs"], [])
+        # Igual que en F5: `diffs == []` con un tipo abortado por el toolchain era verde.
+        self.assertEqual(report.get("harness", []), [])
+        self.assertEqual(report.get("types_aborted", []), [])
 
 
 @unittest.skipUnless(HAS_CC, "no hay compilador de C")

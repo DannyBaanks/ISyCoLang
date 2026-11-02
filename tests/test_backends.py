@@ -312,8 +312,15 @@ def _make_conformance(name):
             types = INT_TYPES[::5] + DEC_TYPES[::2]
             report = compare(self.backend.run, pairs=1, types=types)
             self.assertEqual(report["diffs"], [])
+            # `diffs == []` también lo escribe un diferencial que abortó el tipo por un fallo
+            # del instrumento: sin estas dos la muestra podría pasar sobre un crash (F5).
+            self.assertEqual(report.get("harness", []), [])
+            self.assertEqual(report.get("types_aborted", []), [])
             if "str" in self.backend.features:
-                self.assertEqual(compare_str(self.backend.run, per_op=2)["diffs"], [])
+                str_report = compare_str(self.backend.run, per_op=2)
+                self.assertEqual(str_report["diffs"], [])
+                self.assertEqual(str_report.get("harness", []), [])
+                self.assertFalse(str_report.get("aborted"))
 
         def test_engine_does_the_work(self):
             case = by_name("027_interes")

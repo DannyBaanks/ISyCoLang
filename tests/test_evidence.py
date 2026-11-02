@@ -98,10 +98,14 @@ class DocsMatchLatestEvidence(unittest.TestCase):
         # docs/EVIDENCE_MATRIX.md — F4 con 170 mientras F5 tenía 212).
         gate = json.loads(latest("c", "gate_").read_text(encoding="utf-8"))
         self.assertEqual(gate["verdict"], "PASS", "el último gate de C no es PASS")
+        self.assertIsNone(gate.get("abortado"), "evidence/c: el gate más reciente abortó")
         self.assertTrue(gate["corpus"], "evidence/c: el gate no cubrió ninguna combinación")
         readme = self.readme()
         for combo, entrada in sorted(gate["corpus"].items()):
             self.assertEqual(entrada["failures"], [], f"C {combo}: fallos")
+            # Con `.get` y default a []: los recibos sellados antes del arnés endurecido no
+            # tienen el campo y siguen valiendo para el árbol en que fueron escritos.
+            self.assertEqual(entrada.get("harness", []), [], f"C {combo}: filas del arnés")
             self.assertEqual(entrada["unsupported"], [], f"C {combo}: UNSUPPORTED sin dominio")
             self.assertEqual(entrada["expected_vs_reference_ok"], entrada["cases"],
                              f"C {combo}: expected ↔ referencia incompleto")
@@ -112,8 +116,12 @@ class DocsMatchLatestEvidence(unittest.TestCase):
                           f"del gate más reciente")
         for combo, entrada in sorted(gate["difftest"].items()):
             self.assertEqual(entrada["diff_count"], 0, f"C {combo}: diferencial con diferencias")
+            # `diff_count == 0` también lo deja un tipo abortado por el compilador: la lista
+            # hermana es lo que impide que ese cero sea verde.
+            self.assertEqual(entrada.get("harness", []), [], f"C {combo}: arnés diferencial")
         for nombre, entrada in sorted(gate["sabotage"].items()):
             self.assertTrue(entrada["detected"], f"el sabotaje {nombre} no se detecta")
+            self.assertEqual(entrada.get("harness", []), [], f"arnés en el sabotaje {nombre}")
 
     def test_backend_figures(self):
         # `--only X` escribe un gate parcial: cada backend se ata a su entrada
@@ -125,6 +133,10 @@ class DocsMatchLatestEvidence(unittest.TestCase):
         self.assertEqual(gates[-1]["verdict"], "PASS", "el último gate de backends no es PASS")
         newest: dict[str, dict] = {}
         for gate in gates:
+            # Un recibo con la corrida abortada no puede ser el respaldo de una cifra: capa 3
+            # del arnés (tools/_gate.py) deja el traceback aquí cuando el gate no terminó.
+            self.assertIsNone(gate.get("abortado"),
+                              f"gate {gate.get('generated_utc', '?')}: corrida abortada")
             newest.update(gate["backends"])
         self.assertLessEqual(set(registry()), set(newest), "backend registrado sin evidencia")
         readme = self.readme()
@@ -136,6 +148,19 @@ class DocsMatchLatestEvidence(unittest.TestCase):
             # la suite enrojece en vez de aceptarlo.
             self.assertTrue(entry["conformant"], name)
             self.assertEqual(corpus["failures"], [], name)
+            # Desde el arnés endurecido, las listas hermanas `harness` son divergencia del
+            # instrumento (TOOLCHAIN_BUILD_FAIL / HARNESS_INTERNAL), no del idioma. Con `.get`
+            # y default: los recibos sellados antes del arreglo no tienen el campo y siguen
+            # valiendo para su árbol.
+            self.assertEqual(corpus.get("harness", []), [], f"{name}: filas del arnés en corpus")
+            self.assertTrue(entry.get("completado", True), f"{name}: pierna abortada")
+            for pierna in ("difftest", "difftest_str"):
+                self.assertEqual(entry.get(pierna, {}).get("harness", []), [],
+                                 f"{name}: filas del arnés en {pierna}")
+            self.assertEqual(entry.get("does_the_work", {}).get("harness", []), [],
+                             f"{name}: filas del arnés en does_the_work")
+            for sabot, res in sorted(entry.get("sabotage", {}).items()):
+                self.assertEqual(res.get("harness", []), [], f"{name}: arnés en {sabot}")
             self.assertIn(norm(f"{corpus['passed']}/{corpus['cases']}"), readme, name)
             self.assertEqual(entry["difftest"]["diff_count"], 0, name)
             runs = norm(f"{entry['difftest']['runs']:,}".replace(",", " "))
