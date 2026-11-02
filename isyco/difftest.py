@@ -7,8 +7,10 @@ Compara status, code, emits, return y steps.
 """
 from __future__ import annotations
 
+import hashlib
 import random
 
+from .harness import intento
 from .interp import run
 from .types import DecT, IntT, canonical
 
@@ -107,22 +109,40 @@ def cases_for(t, pairs: int, seed: int):
 
 
 def compare(executor, pairs: int = 40, seed: int = 20261028, types=None) -> dict:
-    """executor(programa, input) -> (resultado, traza). Devuelve resumen + diferencias."""
-    report = {"seed": seed, "pairs_per_op": pairs, "types": [], "runs": 0, "diffs": []}
+    """executor(programa, input) -> (resultado, traza). Devuelve resumen + diferencias.
+
+    Un fallo del instrumento aborta **ese tipo** y deja correr el siguiente: `runs` cuenta lo
+    completado, `omitted` los casos de ese tipo que no llegaron a medirse (incluido el que
+    reventó) y cada crash deja su fila en `harness` con las coordenadas exactas. La referencia
+    (`reference`, abajo) sigue sin guarda a propósito: si ella explota, el bug es del idioma.
+    """
+    report = {"seed": seed, "pairs_per_op": pairs, "types": [], "runs": 0, "diffs": [],
+              "harness": [], "types_aborted": []}
     for t in types or (INT_TYPES + DEC_TYPES):
         program = program_for(t)
+        prog_hash = hashlib.sha256(program).hexdigest()
+        todo = cases_for(t, pairs, seed)
         count = 0
-        for op, a, b in cases_for(t, pairs, seed):
+        for op, a, b in todo:
             inputs = [str(op), a, b]
             want = reference(program, inputs)
-            got, _ = executor(program, inputs)
+            salida, fr = intento(executor, program, inputs, fase="difftest",
+                                 contexto={"leg": "difftest", "type": str(t),
+                                           "op": ops_for(t)[op], "input": inputs,
+                                           "program_sha256": prog_hash})
+            if fr is not None:
+                fr["omitted_after"] = len(todo) - count - 1
+                report["harness"].append(fr)
+                report["types_aborted"].append(str(t))
+                break
+            got = salida[0]
             count += 1
             have = {k: got.get(k) for k in COMPARED}
             if want != have or got.get("backend_stderr"):
                 report["diffs"].append({"type": str(t), "op": ops_for(t)[op], "input": inputs,
                                         "reference": want, "backend": have,
                                         "stderr": got.get("backend_stderr")})
-        report["types"].append({"type": str(t), "runs": count})
+        report["types"].append({"type": str(t), "runs": count, "omitted": len(todo) - count})
         report["runs"] += count
     return report
 
@@ -186,16 +206,32 @@ def str_cases(per_op: int, seed: int):
 
 
 def compare_str(executor, per_op: int = 12, seed: int = 20261029) -> dict:
-    """Diferencial de strings: concatenación, comparación, len/índice/slice/chr y casts."""
+    """Diferencial de strings: concatenación, comparación, len/índice/slice/chr y casts.
+
+    Aquí no hay tipos que saltar: un fallo del instrumento aborta la pierna, deja su fila en
+    `harness` con el operador y la entrada exactos, y `runs`/`omitted` separan lo medido de lo
+    que no. Sin guarda la referencia, igual que en `compare`.
+    """
     program = str_program()
-    report = {"seed": seed, "per_op": per_op, "runs": 0, "diffs": []}
-    for op, a, b, i, j, d in str_cases(per_op, seed):
+    prog_hash = hashlib.sha256(program).hexdigest()
+    todo = str_cases(per_op, seed)
+    report = {"seed": seed, "per_op": per_op, "runs": 0, "diffs": [], "harness": []}
+    for op, a, b, i, j, d in todo:
         inputs = [str(op), a, b, str(i), str(j), d]
         want = reference(program, inputs)
-        got, _ = executor(program, inputs)
+        salida, fr = intento(executor, program, inputs, fase="difftest_str",
+                             contexto={"leg": "difftest_str", "op": STR_OPS[op],
+                                       "input": inputs, "program_sha256": prog_hash})
+        if fr is not None:
+            fr["omitted_after"] = len(todo) - report["runs"] - 1
+            report["harness"].append(fr)
+            break
+        got = salida[0]
         report["runs"] += 1
         have = {k: got.get(k) for k in COMPARED}
         if want != have or got.get("backend_stderr"):
             report["diffs"].append({"op": STR_OPS[op], "input": inputs, "reference": want,
                                     "backend": have, "stderr": got.get("backend_stderr")})
+    report["omitted"] = len(todo) - report["runs"]
+    report["aborted"] = bool(report["harness"])
     return report
