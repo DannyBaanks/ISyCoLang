@@ -482,6 +482,25 @@ class ForSobreStr(unittest.TestCase):
         self.assertEqual(ejecuta(codigo.replace("n + c", "n + (c as i64)").encode())["return"],
                          "420")
 
+    def test_es_copia_y_ademas_el_lugar_no_se_puede_escribir(self):
+        """Los dos filos de «`c` es copia» (§4.4), medidos el 2026-11-01.
+
+        Hacia adentro: escribir `c` deja `s[0]` en `97` — es lo que fija `446`, y se repite
+        aquí sin corpus por si el `expected` se moviera. Hacia afuera no hay forma de probar
+        el alias inverso porque el lenguaje no lo permite: `s[0] = 66` es `NOT_ASSIGNABLE`
+        desde v0.3 (los `str` son inmutables, `spec/CORE_v0.3.md:40`). O sea que la única
+        direccionalidad que la regla tiene que garantizar es la primera.
+        """
+        copia = ('isyco 0.5\nfn main() -> i64 !emit {\n    let s: str<4> = "abc";\n'
+                 '    for c in s { c = 65; emit c; }\n    emit s[0];\n    return 0;\n}\n')
+        got = clave(copia)
+        self.assertEqual((got["emits"], got["steps"]), (["65", "65", "65", "97"], 22))
+        alias = ('isyco 0.5\nfn main() -> i64 !emit {\n    let s: str<4> = "abc";\n'
+                 '    for c in s { s[0] = 66; emit c; }\n    return 0;\n}\n')
+        got = ejecuta(alias.encode(), [])
+        self.assertEqual((got["status"], got["code"], got["emits"]),
+                         ("INVALID_PROGRAM", "NOT_ASSIGNABLE", []))
+
     def test_la_variable_no_escapa_del_bucle(self):
         codigo = ('isyco 0.5\nfn main() -> i64 {\n    let s: str<4> = "abc";\n'
                   '    for c in s { }\n    return c;\n}\n')
