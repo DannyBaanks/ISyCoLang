@@ -17,6 +17,10 @@ import copy
 from . import ast as A
 from .types import ContextStrT, StrT
 
+#: CORE v0.5 §7: es un literal normativo del spec, no un límite configurable — igual que
+#: `types.MAX_STR`. Cambiarlo aquí cambia el idioma, no un ajuste del toolchain.
+MAX_CLONES_PER_DEFINITION = 256
+
 
 def contextual_slots(fn: A.Fn) -> list[int]:
     """Posiciones de los parámetros escritos `str` sin capacidad."""

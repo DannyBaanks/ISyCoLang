@@ -70,6 +70,7 @@ class Checker:
         self.v05 = has(program.version, "v05")
         self.struct_types: dict[str, StructT] = {}
         self.specs: dict[str, A.Fn] = {}         # V6: especializaciones ya chequeadas
+        self.spec_counts: dict[str, int] = {}    # P4: resoluciones por definición fuente
 
     def check(self) -> None:
         if self.v03:
@@ -544,6 +545,14 @@ class Checker:
             ret_width = expected.n
         name = spec.spec_name(callee.name, widths, ret_width)
         if name not in self.specs:
+            # P4: el presupuesto gasta resoluciones, no sitios de llamada — dos llamadas con
+            # el mismo ancho comparten copia y consumen una sola vez.
+            conteo = self.spec_counts.get(callee.name, 0) + 1
+            self.spec_counts[callee.name] = conteo
+            if conteo > spec.MAX_CLONES_PER_DEFINITION:
+                raise InvalidProgram("SPEC_LIMIT", e.at,
+                                     f"{callee.name} pasa de {spec.MAX_CLONES_PER_DEFINITION} "
+                                     f"especializaciones por definición (CORE v0.5 §7)")
             clone = spec.make_clone(callee, name, widths, ret_width)
             self.specs[name] = clone
             self.program.fns[name] = clone

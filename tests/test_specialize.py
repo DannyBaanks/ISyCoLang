@@ -23,8 +23,9 @@ from isyco.ir import ty_from_json, ty_to_json                 # noqa: E402
 from isyco.ir_interp import compile_ir                        # noqa: E402
 from isyco.lexer import decode, tokenize                      # noqa: E402
 from isyco.parser import parse                                # noqa: E402
-from isyco.specialize import (contextual_slots, is_contextual, make_clone,   # noqa: E402
-                              spec_name)
+from isyco.source import Bundle                               # noqa: E402
+from isyco.specialize import (MAX_CLONES_PER_DEFINITION,      # noqa: E402
+                              contextual_slots, is_contextual, make_clone, spec_name)
 from isyco.types import ContextStrT, MAX_STR, StrT, type_size  # noqa: E402
 
 V05 = ROOT / "programs" / "conformance_v0.5"
@@ -62,6 +63,26 @@ def capacidad(fn: dict, parametro: str):
 def ejecutar(data: bytes, entradas: list = ()) -> dict:
     resultado, _ = run(data, list(entradas))
     return {k: resultado[k] for k in KEYS}
+
+
+def chequeado(data) -> checker.Checker:
+    """Chequea y devuelve el Checker: `spec_counts` es el instrumento del tope de P4."""
+    c = checker.Checker(modules.load_program(data))
+    c.check()
+    return c
+
+
+CABECERA_ECO = ("isyco 0.5\n\nfn eco(s: str) -> str {\n    return s;\n}\n\n"
+                "fn main() !emit {\n")
+
+
+def una_definicion(anchos, nombre="eco") -> str:
+    """Un `emit eco("a") as str<N>` por resolución: cada capacidad esperada, una copia."""
+    return "".join('    emit %s("a") as str<%d>;\n' % (nombre, n) for n in anchos)
+
+
+def fuente(cabecera: str, cuerpo: str) -> bytes:
+    return (cabecera + cuerpo + "}\n").encode()
 
 
 class ReglaDePosicion(unittest.TestCase):
@@ -355,3 +376,92 @@ class RetornoPelado(unittest.TestCase):
         ).encode()
         self.assertEqual(ejecutar(gemelo),
                          ejecutar(bytes_de("429_retorno_pelado_dos_expectativas")))
+
+
+class TopePorDefinicion(unittest.TestCase):
+    """CORE v0.5 §7 (P4): como máximo 256 copias por definición, `SPEC_LIMIT` al desbordar.
+
+    El tope vive en el frontend compartido, así que estos casos no bajan a la IR ni tocan
+    un backend: ~20 ms cada uno. El borde exacto 255/256/257 solo se demuestra aquí y en la
+    sonda — un caso de corpus con 256 clones no puede existir, porque un toolchain (Zig) se
+    cae mucho antes de esa cifra (`docs/decisions/P4_SPEC_LIMIT.md`). Por eso el corpus fija
+    el exceso (`447`) y un piso legal (`448`), no el borde.
+    """
+
+    N = MAX_CLONES_PER_DEFINITION
+
+    def test_la_constante_es_un_literal_del_spec(self):
+        self.assertEqual(MAX_CLONES_PER_DEFINITION, 256)
+
+    def test_255_resoluciones_son_legales(self):
+        c = chequeado(fuente(CABECERA_ECO, una_definicion(range(1, self.N))))
+        self.assertEqual(c.spec_counts, {"eco": self.N - 1})
+        self.assertEqual(len(c.specs), self.N - 1)
+
+    def test_256_es_el_ultimo_legal(self):
+        """Único instrumento del off-by-one: `>` y no `>=`. Ningún sabotaje de corpus lo ve,
+        porque el corpus no tiene —ni puede tener— una definición con 256 clones."""
+        observe = ejecutar(fuente(CABECERA_ECO, una_definicion(range(1, self.N + 1))))
+        self.assertEqual((observe["status"], observe["code"]), ("HALTED", None))
+        self.assertEqual(len(observe["emits"]), self.N)
+        self.assertEqual(len(chequeado(
+            fuente(CABECERA_ECO, una_definicion(range(1, self.N + 1)))).specs), self.N)
+
+    def test_257_es_spec_limit(self):
+        observe = ejecutar(fuente(CABECERA_ECO, una_definicion(range(1, self.N + 2))))
+        self.assertEqual((observe["status"], observe["code"]), ("INVALID_PROGRAM", "SPEC_LIMIT"))
+        self.assertEqual((observe["emits"], observe["return"], observe["steps"]), ([], None, 0))
+        with self.assertRaises(InvalidProgram) as ctx:
+            chequeado(fuente(CABECERA_ECO, una_definicion(range(1, self.N + 2))))
+        self.assertEqual(ctx.exception.code, "SPEC_LIMIT")
+
+    def test_el_conteo_es_por_definicion_no_por_programa(self):
+        """Dos definiciones con 200 copias cada una suman 400 resoluciones y son legales;
+        256 + 1 repartidas en dos definiciones también. Con un tope por programa, ambas
+        caerían — ese es exactamente el discriminador de la granularidad elegida."""
+        dos = ("isyco 0.5\n\nfn eco(s: str) -> str {\n    return s;\n}\n\n"
+               "fn otro(s: str) -> str {\n    return s;\n}\n\nfn main() !emit {\n")
+        medias = fuente(dos, una_definicion(range(1, 201)) + una_definicion(range(1, 201), "otro"))
+        observe = ejecutar(medias)
+        self.assertEqual((observe["status"], len(observe["emits"])), ("HALTED", 400))
+        self.assertEqual(chequeado(medias).spec_counts, {"eco": 200, "otro": 200})
+        partido = fuente(dos, una_definicion(range(1, self.N + 1))
+                         + una_definicion(range(1, 2), "otro"))
+        self.assertEqual(ejecutar(partido)["status"], "HALTED")
+
+    def test_dos_ranuras_multiplicativas_consumen_una_sola_vez(self):
+        """La forma que justifica la granularidad: 2 ranuras × 4 anchos = 16 copias de UNA
+        definición. 48 sitios de llamada no son 48 resoluciones: la clave decide."""
+        cuerpo = "".join('    emit dim("%s", "%s");\n' % ("a" * i, "b" * j)
+                         for i in (1, 2, 3, 4) for j in (5, 6, 7, 8) for _ in range(3))
+        dim = fuente("isyco 0.5\n\nfn dim(a: str, b: str) -> i64 {\n"
+                     "    return len(a) * 100 + len(b);\n}\n\nfn main() !emit {\n", cuerpo)
+        self.assertEqual(chequeado(dim).spec_counts, {"dim": 16})
+        self.assertEqual(ejecutar(dim)["emits"][:4], ["105", "105", "105", "106"])
+
+    def test_la_copia_nunca_es_definicion_contada(self):
+        """`cuenta` se resuelve en dos anchos; sus copias (`cuenta.4`, `cuenta.1`) llaman a
+        la misma definición, no son una definición más. Ninguna clave contada termina en un
+        segmento numérico, que es lo que delataría una copia contando como fuente."""
+        counts = chequeado(bytes_de("420_recursion_contextual")).spec_counts
+        self.assertEqual(counts, {"cuenta": 2})
+        self.assertEqual([k for k in counts if k.rsplit(".", 1)[-1].isdigit()], [])
+
+    def test_la_identidad_contada_es_calificada_por_modulo(self):
+        """La llave es la identidad del enlace, ya módulo-calificada: se cuenta `util.marca`,
+        no `marca`. Un prefijo distinto sería otra definición y otro presupuesto."""
+        bundle = Bundle.from_path(V05 / "421_marca_entre_modulos" / "main.isy")
+        self.assertEqual(chequeado(bundle).spec_counts, {"util.marca": 2})
+
+    def test_un_programa_04_no_puede_llegar_al_tope(self):
+        """No hace falta gating nuevo: sin 0.5 el `str` pelado muere en el parser (§7), así
+        que el contador nunca se mueve aunque el fuente escriba 257 capacidades distintas."""
+        cuerpo = "".join('    let v%d: str<%d> = eco("a");\n' % (n, n)
+                         for n in range(1, self.N + 2))
+        v04 = ("isyco 0.4\n\nfn eco(s: str) -> str {\n    return s;\n}\n\n"
+               "fn main() !emit {\n" + cuerpo + "}\n").encode()
+        observe = ejecutar(v04)
+        self.assertEqual((observe["status"], observe["code"]), ("INVALID_PROGRAM", "SYNTAX"))
+        with self.assertRaises(InvalidProgram) as ctx:
+            chequeado(v04)
+        self.assertEqual((ctx.exception.code, ctx.exception.at), ("SYNTAX", "3:14"))
