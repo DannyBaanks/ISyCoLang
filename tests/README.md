@@ -34,7 +34,9 @@ commiteado `ac33000` y con los 194 tests: 347,739 s** (`real 5 m 48,0 s`, 2026-1
 OK), dentro del rango y con `build/` lleno, así que no lo mueve. Mientras corría se editaron
 `docs/EVIDENCE_MATRIX.md`, el ADR de P4 y `spec/CORE_v0.5.md` — la ventana del hallazgo 11, esta
 vez medida desde dentro: ninguno de los tres es un fichero que la suite abra, y por eso salió OK.
-Entre la octava y la novena hubo una corrida
+**Decimotercera corrida, sobre el árbol limpio `e2fe2a0` (el estado final del lote): 216,894 s**
+(`real 3 m 37,3 s`, 2026-11-02 09:32 UTC, 194 tests, OK), en medio del rango y con el árbol
+commiteado antes de arrancar, como debe medirse. Entre la octava y la novena hubo una corrida
 con **6 fallas**, y ninguna era de N1: cuatro leyeron el `README.md` mientras se editaba (la suite
 corrió a la vez que la edición) y dos por la convención de rutas de los `SHA256SUMS.txt`
 (`./x` ≠ `x` para `test_every_dir_has_sums_and_lists_every_file`, con todos los digest iguales).
