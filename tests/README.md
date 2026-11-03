@@ -41,7 +41,22 @@ commiteado antes de arrancar, como debe medirse. Entre la octava y la novena hub
 con **6 fallas**, y ninguna era de N1: cuatro leyeron el `README.md` mientras se editaba (la suite
 corrió a la vez que la edición) y dos por la convención de rutas de los `SHA256SUMS.txt`
 (`./x` ≠ `x` para `test_every_dir_has_sums_and_lists_every_file`, con todos los digest iguales).
-Está dicho como hallazgo 11 de `docs/EVIDENCE_MATRIX.md`, no escondido. El sub-set
+Está dicho como hallazgo 11 de `docs/EVIDENCE_MATRIX.md`, no escondido. **Decimocuarta y
+decimoquinta corrida, las dos sobre el árbol limpio `66fe651` con los 209 tests del arnés
+endurecido:** 327,084 s la primera, con la variante callada `discover -s tests -q` (terminó
+2026-11-03 01:49 UTC) y **378,339 s** la segunda con el comando de arriba, `python3 -m unittest
+discover -s tests` (terminó 01:57 UTC); ambas `OK` y dentro del rango, así que 187,1–491,1 s no
+se mueve. La decimoquinta corrió inmediatamente después de `tools/warm_build_cache.py --jobs 12
+--sabotages`, y esa es la medición con la que se sostiene lo que su docstring afirma sobre
+compilar en paralelo: **1 870 trabajos y `0 fallaron (ninguno)`**, 0,7 s dentro de la herramienta
+(3,1 s de pared), y una segunda pasada con el mismo recuento en 0,2 s (2,7 s de pared). El borde
+de lo demostrado va dicho con ella: **solo 8 fuentes llegaron al compilador** (cuatro claves de
+cobol y cuatro de pydecimal, que son los 24 archivos con que creció `build/`, de 6 361 a 6 385)
+porque todo lo demás ya estaba caliente; `seen` deduplica `(backend, fuente)`, así que dos hilos
+nunca piden la misma clave y la carrera sobre una clave común **no** está ejercitada; y con cero
+fallos tampoco se ejercitó la caché negativa. Lo medido es que el llenado en paralelo con
+sabotajes no deja ninguna fila del arnés y que la suite completa sale verde justo después. El
+sub-set
 `tests.test_v05_core.ForSobreStr tests.test_reference.Sabotage` —**21** tests, los 12 de N1 más
 los 9 sabotajes de la referencia (los 7 de antes más los dos de P4)— mide **0,973 s** (2026-11-02;
 antes, con 19, eran 0,386 s). Los dos sabotajes de P4, corridos solos, gastan **0,186 s**: no

@@ -153,7 +153,7 @@ tienen recibo porque un recibo de ellas sería una foto de un día:
 
 | afirmación | comando |
 |---|---|
-| «194 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
+| «209 tests OK» y el tiempo de la suite | `python3 -m unittest discover -s tests` |
 | «sha256sum -c de `docs/origin/` coincide» | `sha256sum -c docs/origin/SHA256SUMS.txt` desde la raíz del repo |
 | conteos de `SUPPORTED`, llamadas a `has()` y sitios de versión | `grep -n` de `spec/CORE_v0.5.md` §0, fijados como test en `tests/test_versions.py` |
 
