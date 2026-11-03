@@ -13,16 +13,22 @@ clasifica cómo podría recibir un programa externo:
 
 Uso:
     python3 tools/inventory_assembly.py [ruta/a/workspace/assembly] [--out DIR]
+
+La raíz del monorepo, si no se pasa como argumento, sale de `ISYCO_ASSEMBLY` o
+de `~/Development/ISyCo/workspace/assembly`.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-DEFAULT_ASSEMBLY = Path("/home/danny/Development/ISyCo/workspace/assembly")
+DEFAULT_ASSEMBLY = Path(os.environ.get(
+    "ISYCO_ASSEMBLY",
+    str(Path.home() / "Development" / "ISyCo" / "workspace" / "assembly")))
 
 
 def classify(engine_dir: Path, taxonomy: dict) -> dict:

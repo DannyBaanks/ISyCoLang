@@ -513,9 +513,14 @@ Correcciones al V0 que este carril adopta:
 - Self-hosting del compilador.
 - LLVM directo (no hay `llc` en el host; C/Rust/Zig cubren el nativo inicial).
 - Afirmaciones de Turing-completitud de cualquier pack.
-- Publicación pública. **Decisión de Danny (2026-10-28): el repo es PRIVADO por
-  ahora.** Sin licencia ni remoto público; si se publica más adelante, se
-  revisa la separación público/privado (estándar §21).
+- Publicación pública. **Decisión de Danny (2026-10-28): el repo es PRIVADO; el
+  2026-11-03 pidió además un remoto PRIVADO (`DannyBaanks/ISyCoLang`) y a él se
+  empuja `main`.** Sin licencia y sin remoto público. La separación que pide el
+  estándar §21 **no está hecha**: `docs/PUBLICACION.md` mide qué se iría con el
+  push —el correo personal en la metadata de los 131 commits y 19 líneas de rutas
+  de workstation dentro de cinco recibos fijados por su `SHA256SUMS.txt`— y las dos
+  salidas (cadena completa, o exportación de un árbol preparado sin historia).
+  Ninguna de las dos se elige sin decisión explícita de Danny.
 
 ## 6. Claim table
 

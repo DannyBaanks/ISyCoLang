@@ -11,7 +11,12 @@
    `workspace/assembly`.
 7. Evidencia nueva → `evidence/<tema>/` con archivo nuevo por corrida (nunca
    sobrescribir) y su SHA-256.
-8. Repo **privado** (decisión de Danny, 2026-10-28). Sin remoto: el remoto de
-   GitHub creado el 2026-10-28 se borró a pedido de Danny. No hacer push, y
-   nunca crear un remoto (público o privado) ni publicar contenido sin que
-   Danny lo pida.
+8. Repo **privado** (decisión de Danny, 2026-10-28), con remoto **privado**
+   `DannyBaanks/ISyCoLang` desde 2026-11-03 (pedido por Danny; el remoto creado el
+   2026-10-28 se borró a su pedido). Sin remoto público: no publicar contenido ni
+   cambiar la visibilidad sin que Danny lo pida. La limpieza que pide el estándar
+   §21 está **abierta** y medida en `docs/PUBLICACION.md`: el correo personal en la
+   metadata de los 131 commits, y rutas de workstation en 19 líneas de cinco
+   recibos fijados por su `SHA256SUMS.txt` —limpiarlos rompe el sello, y reescribir
+   la historia deja de resolver los `git_head` que citan los recibos—. Antes de
+   cualquier publicación hay que elegir una de las dos salidas de ese documento.

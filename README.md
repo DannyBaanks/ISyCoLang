@@ -1,11 +1,15 @@
 # ISyCoLang
 
-**Repo PRIVADO** (decisión de Danny, 2026-10-28): sin licencia ni remoto.
+**Repo PRIVADO** (decisión de Danny, 2026-10-28), con remoto **privado**
+`DannyBaanks/ISyCoLang` creado el 2026-11-03 a su pedido. Sin licencia y sin remoto
+público: abrirlo exige primero la limpieza que mide `docs/PUBLICACION.md` —el correo
+personal en la metadata de los 131 commits y 19 líneas de rutas dentro de recibos
+sellados—.
 
-**Respaldo**: sin remoto no hay `push`; se usa un bundle verificable **fuera** del
-repo: `git bundle create ../ISyCoLang-<fecha>.bundle --all` y `git bundle verify`
-(historia completa; el SHA-256 del snapshot vigente se publica en el Tablero,
-comentario de cierre de la lista de pulido).
+**Respaldo**: `git push origin main` al remoto privado y, además, un bundle verificable
+**fuera** del repo: `git bundle create ../ISyCoLang-<fecha>.bundle --all` y
+`git bundle verify` (historia completa; el SHA-256 del snapshot vigente se publica en el
+Tablero, comentario de cierre de la lista de pulido).
 
 **Estado: `EXECUTABLE`** (core v0.4 congelado más las decisiones v0.5 —V1, V2, V6,
 V6-bis y V7 implementadas y selladas, N1 adoptada el 2026-11-01 y P4 cerrada el
@@ -53,6 +57,7 @@ docs/decisions/                    decisiones registradas (p. ej. no reusar Code
 docs/OPEN_QUESTIONS_P1_P4.md       qué respondieron P1–P4 —P4 cerrada 2026-11-02— y qué abrió: Z1 y Z2
 docs/EVIDENCE_MATRIX.md            qué está sellado, con qué árbol, y qué afirmación no tiene recibo
 docs/BACKEND_C.md                  backend C: garantías, protocolo, límites
+docs/PUBLICACION.md                qué información sensible lleva la historia y qué falta antes de publicar
 isyco/backends/base.py             driver común: validación, capacidades, caché, ejecución
 isyco/backends/c.py                ISY-IR -> C -> binario nativo
 isyco/backends/rust.py             ISY-IR -> Rust -> binario nativo
