@@ -358,16 +358,33 @@ corrientes de v0.3. Ningún backend conoce V6.
   escribe diez de una.
 - **El techo del toolchain no es el techo del idioma.** Con el tope puesto, C y
   Rust compilan todas las filas que la sonda genera antes del tope —256 copias
-  con una y con dos ranuras, 216 con tres, 256 con cuatro—; **Zig no**: su
-  evaluación en tiempo de compilación agota un tope interno y aborta (`error:
-  evaluation exceeded 1000 backwards branches`), y la frontera depende de la
-  **aridad** de la definición, no solo del número de copias. Medido por
-  bisección (`tools/v05_p4_probe.py --bisect-zig`): aridad 1 no falla dentro
-  del tope, aridad 2 compila 250 y revienta en 252, aridad 3 en 164/168,
-  aridad 4 en 120/128. O sea hay programas **legales** para v0.5 que un backend
-  concreto no puede construir; P4 no afirma que 256 copias compilen en todas
-  partes, afirma que el frontend no las acepta sin decir por qué. La pregunta
-  abierta que esto deja es **Z1** (`docs/OPEN_QUESTIONS_P1_P4.md`).
+  con una y con dos ranuras, 216 con tres, 256 con cuatro—; **el emisor de
+  octubre, en Zig, no**: su evaluación en tiempo de compilación agotaba un tope
+  interno y abortaba (`error: evaluation exceeded 1000 backwards branches`), y
+  la frontera dependía de la **aridad** de la definición, no solo del número de
+  copias. Medido por bisección (`tools/v05_p4_probe.py --bisect-zig`): aridad 1
+  no falla dentro del tope, aridad 2 compila 250 y revienta en 252, aridad 3 en
+  164/168, aridad 4 en 120/128. **Medido el 2026-11-03 que esa frontera era del
+  emisor, no de Zig ni del idioma**
+  (`evidence/z1_ceiling/run_2026-11-03T035753Z.json`): Zig cobra **una** rama de
+  evaluación por instanciación de `str` y el emisor cobraba **dos**, porque cada
+  sitio instanciaba además su propio tipo. Con un alias `const StrN = IsyStr(N);`
+  por ancho y `@setEvalBranchQuota(1000 + 8·sitios)` como primera sentencia de
+  todo cuerpo que instancia `str`, compilan las ocho formas medidas —hasta 2048
+  instanciaciones en una firma—, coincidiendo con la referencia y con C, y el
+  gate completo sale `PASS` (`evidence/backends/gate_2026-11-03T040610Z.json`).
+  O sea que P4 no afirma que 256 copias compilen en todas partes, afirma que el
+  frontend no las acepta sin decir por qué — y lo que la medición compra es que
+  **tampoco** promete coste: 512 sitios cuestan 18 s de compilación y 1024 en
+  cuatro ranuras, 60,8 s; y la aridad no está topada, así que el producto
+  `256 clones × aridad` sigue siendo construible más allá de lo medido. La
+  garantía tiene además un límite conocido por el otro lado: en materia de
+  **profundidad de expresión** el frontend tampoco tiene cota nombrada, y ahí el
+  fallo sí que no dice por qué — una cadena izquierda de 242 términos `len(s)`
+  sube `RecursionError` de Python, sin `SPEC_LIMIT` ni `UNSUPPORTED` ni número
+  (**Z2**, `docs/OPEN_QUESTIONS_P1_P4.md`). Las cuatro fronteras de la bisección
+  se conservan sin retocar: son el registro de la corrida que abrió **Z1**, hoy
+  abierta como política y sin testigo concreto.
 
 ## 8. V7 — capacidades por contenido, no por etiqueta
 
@@ -442,7 +459,8 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
   `total`, `passed` y el sello del recibo (`generated_utc`, `git_head`), y de las 3 462 de F3 los
   tres contadores y ese mismo sello; F4 y F5, cotejados igual, salen con 14 de 42 y 39 de 398
   hojas distintas, todo contadores, campos de costo y sello. La sonda de P4 es el recibo
-  que fija la regla y el techo del toolchain: **R2
+  que fija la regla y el techo del toolchain —**medido el 2026-11-03 que ese techo era
+  del emisor de Zig y no del idioma: ver §7 y la fila Z1 de §11**—: **R2
   `evidence/v05_p4/run_20261102T085025Z.json`**, `RELEASE_GATE` con `git_head=d363e7c`. La
   corrida del lote (**R1** `run_20261102T081925Z.json`, `203f579`) salió `EVIDENCE_ONLY` porque
   la documentación de este lote estaba a medio editar mientras corría —`isyco/` y `tools/` no
@@ -490,8 +508,9 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
 | P1 (`at` de las sentencias sintéticas del `for`) | **cerrado por medición** | — (es la línea del `for`; el gate compara trazas salvos `at`) |
 | P2 (`for` sobre un literal de arreglo) | **cerrado: no** | — (`SYNTAX`, §4.3) |
 | P3 (nombre de la especialización y su efecto en `program_sha256` y las trazas) | **cerrado por medición** | `program_sha256` es el SHA del archivo principal (v0.4 §6 P6) y **no se mueve**: medido en `411`, `417` y `420`, los tres iguales al `sha256sum` del `.isy`. Lo que sí cambia es la traza: `411` muestra `main`, `pad.2`, `pad.7` y nunca `pad` a secas — la especialización es visible en el nombre, no en la identidad. Los nombres viajan por la codificación inyectiva de `fn_ident` (longitud prefijada), que no colisiona con un nombre de usuario |
-| P4 (cota de especializaciones por programa) | **cerrada el 2026-11-02: 256 por definición dentro del programa, `SPEC_LIMIT`** | La regla está en §7 y la decisión con su evidencia en `docs/decisions/P4_SPEC_LIMIT.md`. La base con la que se eligió el número quedó sellada antes: `tools/v05_p4_probe.py` recalculaba el censo desde `Checker.specs` sobre la población del gate y medía la forma — **33 clones** en 19 de los 46 casos (27 V6 + 6 V6-bis, 13 definiciones), 4 por programa, 2 por definición **dentro de un programa** pero 7 de `doble` **en el corpus**; una ranura con K anchos da K clones, dos W², tres W³, 20 sitios con el mismo ancho dan 1 clon (`evidence/v05_p4/run_20261101T234407Z.json`, `RELEASE_GATE` sobre `6ebb00d`; las dos corridas anteriores siguen válidas para su población: `run_20261101T154040Z.json` —`2938c01`, 32 en 18/43— y `run_20261101T062234Z.json` —`52f5564`, sobre 42—). Con la decisión dentro, la sonda re-mide sobre **48** casos: **49 clones en 20 programas**, 14 definiciones, y el máximo **sin** los casos de tope sigue en **2** (`evidence/v05_p4/run_20261102T081925Z.json` —R1, `EVIDENCE_ONLY` porque la documentación del lote estaba a medio editar; la misma corrida sobre el árbol commiteado es R2 `run_20261102T085025Z.json`, `RELEASE_GATE`, idéntica hoja por hoja salvo tiempos y el sello—). Los dos casos que la fijan: `447` (la 257 se rechaza en el frontend, no baja a IR) y `448` (16 = 4×4 copias, legal). Lo que la medición **no** compró: techo de toolchain — Zig revienta con 256 copias de una definición de dos ranuras mientras C y Rust las compilan, y **Z1** pregunta si eso es frontera del idioma o del backend |
-| Z1 (¿el techo de un toolchain es parte del idioma?) | **abierta desde 2026-11-02 — no es decisión de semántica** | Medida la frontera (`evidence/v05_p4/run_20261102T085025Z.json` §6 y su bisección; R1 `run_20261102T081925Z.json` da los mismos valores no temporales): aridad 2 compila 250 y revienta en 252, aridad 3 en 164/168, aridad 4 en 120/128, aridad 1 no falla dentro de la cota. Lo que falta es decidir si la cota de una capacidad es del idioma, del backend o de los dos con un `UNSUPPORTED` por plataforma; hoy `PROGRAM_REQUIRES` (V7) describe contenido, no coste de compilación. §7 tiene la limitación escrita |
+| P4 (cota de especializaciones por programa) | **cerrada el 2026-11-02: 256 por definición dentro del programa, `SPEC_LIMIT`** | La regla está en §7 y la decisión con su evidencia en `docs/decisions/P4_SPEC_LIMIT.md`. La base con la que se eligió el número quedó sellada antes: `tools/v05_p4_probe.py` recalculaba el censo desde `Checker.specs` sobre la población del gate y medía la forma — **33 clones** en 19 de los 46 casos (27 V6 + 6 V6-bis, 13 definiciones), 4 por programa, 2 por definición **dentro de un programa** pero 7 de `doble` **en el corpus**; una ranura con K anchos da K clones, dos W², tres W³, 20 sitios con el mismo ancho dan 1 clon (`evidence/v05_p4/run_20261101T234407Z.json`, `RELEASE_GATE` sobre `6ebb00d`; las dos corridas anteriores siguen válidas para su población: `run_20261101T154040Z.json` —`2938c01`, 32 en 18/43— y `run_20261101T062234Z.json` —`52f5564`, sobre 42—). Con la decisión dentro, la sonda re-mide sobre **48** casos: **49 clones en 20 programas**, 14 definiciones, y el máximo **sin** los casos de tope sigue en **2** (`evidence/v05_p4/run_20261102T081925Z.json` —R1, `EVIDENCE_ONLY` porque la documentación del lote estaba a medio editar; la misma corrida sobre el árbol commiteado es R2 `run_20261102T085025Z.json`, `RELEASE_GATE`, idéntica hoja por hoja salvo tiempos y el sello—). Los dos casos que la fijan: `447` (la 257 se rechaza en el frontend, no baja a IR) y `448` (16 = 4×4 copias, legal). Lo que la medición **no** compró: techo de toolchain — Zig revienta con 256 copias de una definición de dos ranuras mientras C y Rust las compilan, y **Z1** pregunta si eso es frontera del idioma o del backend. **Corregido el 2026-11-03:** esas fronteras eran del emisor de Zig, no del idioma ni del toolchain — ver la fila Z1 y §7 |
+| Z1 (¿el techo de un toolchain es parte del idioma?) | **abierta desde 2026-11-02; sin testigo concreto desde 2026-11-03 — no es decisión de semántica** | Medida la frontera el 2026-11-02 (`evidence/v05_p4/run_20261102T085025Z.json` §6 y su bisección: aridad 2 compila 250 y revienta en 252, aridad 3 en 164/168, aridad 4 en 120/128, aridad 1 no falla dentro de la cota) y **medido el 2026-11-03 que esas cuatro fronteras eran del emisor, no de Zig** (`evidence/z1_ceiling/run_2026-11-03T035753Z.json`, diez claims `DEMONSTRADO`): Zig cobra **una** rama de evaluación por instanciación de `str` y el emisor cobraba **dos**. Con `const StrN = IsyStr(N);` por ancho y `@setEvalBranchQuota(1000 + 8·sitios)` por cuerpo compilan las ocho formas medidas —hasta 2048 instanciaciones en una firma—, coinciden con la referencia y con C, y el gate completo sale `PASS` (`evidence/backends/gate_2026-11-03T040610Z.json`). No se movió ninguna cota. Lo que queda por decidir es si el idioma hereda el **coste** de un toolchain (18 s para 512 sitios, 60,8 s para el caso extra) y en qué capa viviría ese dato si se eligiera nombrarlo —hoy `PROGRAM_REQUIRES` (V7) describe contenido, no coste de compilación—; §7 tiene la limitación escrita |
+| Z2 (¿el frontend tiene un techo de profundidad de expresión?) | **abierta desde 2026-11-03 — medida, sin guarda nombrada** | Una cadena izquierda de 241 términos `len(s)` baja a IR y 242 suben `RecursionError` de Python contra el límite de fábrica (1000 frames); sin el clon de V6 la misma forma llega a 329 (`str<64>` y `i64`). El borde bajo lo pone el `copy.deepcopy` con que `specialize.py:55` copia el cuerpo por resolución — 985 de 999 frames del traceback son de `copy.py`— y **lo paga igual la referencia normativa**: el mismo fuente muere por `compile_ir`, por `interp.run` y por `run_via_ir` en el mismo punto, con los mismos `program_sha256`. No es tamaño (un árbol de 2000 términos pasa) y el número depende del llamante (300 frames previos lo bajan de 241 a 166). La profundidad máxima de la población del repo es **8** sobre 151 fuentes que bajan. Prueba: `evidence/z2_depth/run_2026-11-03T074629Z.json` (E1–E10, `RELEASE_GATE`) y `docs/OPEN_QUESTIONS_P1_P4.md` §Z2. Lo que falta decidir: nombrar una cota medida sobre la población, quitar la recursión de enmedio, o envolver las cinco bajadas de gate que hoy están fuera de `harness.intento`. Ninguna se hizo |
 | **[D-new]** `for` sobre `str` (N1) | **cerrada el 2026-11-01: adoptada, por caso y por texto** | §4.4 tiene la regla escrita (lugar de `str` ⇒ `len(s)` vueltas, variable `u8` copia, cota = longitud del valor y no la capacidad) y tres casos con su gemelo: `444_for_sobre_str` (22/22), `445_for_str_pelado_stdin` (27/27, N1 × V6 con el `str` pelado) y `446_for_copia_str` (22/22, copia sin alias); trazas `stmt` e IR podada idénticas y `features_of` sin átomo nuevo. La población del corpus pasa de 43 a 46 casos y la del gate de 213 a 216. Decisión: `docs/decisions/N1_FOR_SOBRE_STR.md` |
 | **[D-new]** diagonal `0.5` de M4 (N2) | **cerrado por caso: `443`** | `programs/conformance_v0.5/443_m4_modulo_v04/` (raíz `0.5` + módulo `0.4` ⇒ `INVALID_PROGRAM(VERSION_MISMATCH)`), con sus dos controles medidos en el README del directorio: `0.5/0.5` con los mismos archivos da `HALTED` `return 2` en 4 pasos —lo único defectuoso es la cabecera— y `0.4/0.5` da `VERSION_MISMATCH`, o sea que la regla sigue siendo simétrica. Alta el 2026-11-01; la población del corpus pasa de 42 a 43 casos |
 | **[D-new]** el `let` sin anotación (N3) | **cerrado por texto** | escrito en §4.1 como excepción acotada al `let` con anotación de CORE §4: solo el `let x` sintético del `for`, y toma el tipo del **elemento** (`checker.py:205-209`). No es inferencia general, medido: `let x = 1;` es `SYNTAX` con `0.4` y con `0.5`. Las cuatro formas están en la sonda §3 (`let_anotacion`) con sus tres sabotajes |

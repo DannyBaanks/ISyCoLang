@@ -154,6 +154,20 @@ construibles; y por debajo del tope sí hay techo de toolchain: Zig revienta con
 definición de dos ranuras. Decisión: `docs/decisions/P4_SPEC_LIMIT.md`; recibo:
 `evidence/v05_p4/run_20261102T081925Z.json`.
 
+**Corregida otra vez el 2026-11-03, solo la atribución de esa última frase.** El techo era del
+**emisor**, no de Zig: con un `const StrN = IsyStr(N);` por ancho y
+`@setEvalBranchQuota(1000 + 8·sitios)` por cuerpo, Zig compila esas formas y hasta 2048
+instanciaciones, coincidiendo con la referencia y con C
+(`evidence/z1_ceiling/run_2026-11-03T035753Z.json`; la decisión con su corrección fechada, en
+`docs/decisions/P4_SPEC_LIMIT.md`). Lo que el `str` pelado **sí** conserva como coste propio está
+medido por el otro lado: la resolución de una definición contextual copia el cuerpo entero
+(`isyco/specialize.py:55`), y esa copia recursiva es la que pone el techo bajo de profundidad del
+frontend — 241 términos `len(s)` de una cadena con `str` pelado bajan y 242 sueltan
+`RecursionError`, contra 329/330 de la misma forma sin clon
+(`evidence/z2_depth/run_2026-11-03T074629Z.json`, E1, E2 y E10; pregunta **Z2** en
+`docs/OPEN_QUESTIONS_P1_P4.md`). La librería de texto de este documento está en profundidad **5**
+sobre un máximo de población de **8**, así que hoy nadie lo roza.
+
 ## Diferencial sellado
 
 `evidence/v05_v6/run_*.json` (recibo `isyco.evidence/0.1`: `git_head`, `arbol_sucio`,

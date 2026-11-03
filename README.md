@@ -10,7 +10,9 @@ comentario de cierre de la lista de pulido).
 **Estado: `EXECUTABLE`** (core v0.4 congelado más las decisiones v0.5 —V1, V2, V6,
 V6-bis y V7 implementadas y selladas, N1 adoptada el 2026-11-01 y P4 cerrada el
 2026-11-02; `spec/CORE_v0.5.md` en `BORRADOR`—; fase F5,
-olas 1 y 2 PASS, y el corpus v0.5 dentro del gate: 218 casos): intérprete de referencia
+olas 1 y 2 PASS, y el corpus v0.5 dentro del gate: 218 casos — la pierna de corpus del
+recibo F5 más nuevo corre además un caso **fuera** del corpus con `--extra-case`, así que
+sus cifras son 219): intérprete de referencia
 conforme a los corpus v0.1–v0.5, IR canónica (ISY-IR) y backends nativos C, Rust y Zig —
 más los backends `pydecimal` y `cobol` de la ola 2, con sustratos `decimal` y GnuCOBOL —
 verificados contra la referencia bajo el contrato `ISY_BACKEND/1` (`cobol` en el
@@ -26,7 +28,7 @@ no por su cabecera — CORE v0.5 V7).
 | ¿Formato? | `.isy`; spec congelada en `spec/CORE.md` (v0.1) + `spec/CORE_v0.2.md` + `spec/CORE_v0.3.md` (strings y structs) + `spec/CORE_v0.4.md` (módulos); la cabecera `isyco 0.1`/`0.2`/`0.3`/`0.4` elige. `isyco 0.5` ya corre en el engine (V1, V2, V6, V6-bis, V7) y su texto está en `spec/CORE_v0.5.md` como `BORRADOR`, sin congelar. |
 | ¿Cómo ejecuto un programa? | `python3 -m isyco run programa.isy --input '["40","2"]'` (`--via c`, `--via rust`, `--via zig`, `--via pydecimal` o `--via cobol` para compilado). Guía para personas: `GUIA.md`. |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia en Python, semántica normativa). |
-| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.5 (218/218), IR que preserva la semántica (436/436 comparaciones iguales, 149 programas bajados a IR — los rechazados por el frontend se comparan por su rechazo), backends C, Rust, Zig y pydecimal iguales a la referencia (218/218 y 8 484 corridas diferenciales sin diferencias cada uno, más 1 270 del diferencial de strings; C además con las cuatro combinaciones gcc/clang × plain/sanitized sobre los 218 — gate F4, `evidence/c/gate_2026-11-02T072103Z.json`); COBOL igual dentro de su dominio declarado (148/218, 70 UNSUPPORTED nombrando la capacidad que exige cada programa —`str`/`struct`/`emit_array`; las capacidades las exige el programa, no su cabecera: CORE v0.5 V7—, 8 484 corridas diferenciales sin diferencias). Ver claim table. |
+| ¿Qué está demostrado? | Intérprete conforme a los corpus v0.1–v0.5 (218/218), IR que preserva la semántica (436/436 comparaciones iguales, 149 programas bajados a IR — los rechazados por el frontend se comparan por su rechazo), backends C, Rust, Zig y pydecimal iguales a la referencia (219/219 y 8 484 corridas diferenciales sin diferencias cada uno, más 1 270 del diferencial de strings —el 219 es el caso que corre fuera del corpus con `--extra-case`: 256 clones de cuatro ranuras, `evidence/backends/gate_2026-11-03T040610Z.json`; C además con las cuatro combinaciones gcc/clang × plain/sanitized sobre los 218 — gate F4, `evidence/c/gate_2026-11-02T072103Z.json`); COBOL igual dentro de su dominio declarado (148/219, 71 UNSUPPORTED nombrando la capacidad que exige cada programa —`str`/`struct`/`emit_array`; las capacidades las exige el programa, no su cabecera: CORE v0.5 V7—, 8 484 corridas diferenciales sin diferencias). Ver claim table. |
 | ¿Qué NO está demostrado? | Todo lo demás; ver la claim table en `ROADMAP.md` §6. |
 | ¿Tests? | `python3 -m unittest discover -s tests -v` |
 | ¿Evidencia? | `evidence/`, inventariada en `docs/EVIDENCE_MATRIX.md` |
@@ -48,7 +50,7 @@ spec/IR.md                         forma de ISY-IR v0.1 y v0.2 (lo que reciben l
 GUIA.md                            guía para personas: escribir, correr y leer un resultado
 spec/BACKEND.md                    contrato ISY_BACKEND/1 (capacidades, protocolo, conformidad, costo)
 docs/decisions/                    decisiones registradas (p. ej. no reusar Code IR)
-docs/OPEN_QUESTIONS_P1_P4.md       qué respondieron P1–P4 —P4 cerrada 2026-11-02— y qué abrió: Z1
+docs/OPEN_QUESTIONS_P1_P4.md       qué respondieron P1–P4 —P4 cerrada 2026-11-02— y qué abrió: Z1 y Z2
 docs/EVIDENCE_MATRIX.md            qué está sellado, con qué árbol, y qué afirmación no tiene recibo
 docs/BACKEND_C.md                  backend C: garantías, protocolo, límites
 isyco/backends/base.py             driver común: validación, capacidades, caché, ejecución
@@ -67,7 +69,7 @@ programs/conformance/              corpus v0.1 (expected previos al intérprete;
 programs/conformance_v0.2/         corpus v0.2 (expected previos a implementar v0.2)
 programs/conformance_v0.3/         corpus v0.3 (strings y structs)
 programs/conformance_v0.4/         corpus v0.4 (módulos)
-programs/conformance_v0.5/         corpus v0.5 (401–443, decisiones V1–V7) + gemelos escritos a mano
+programs/conformance_v0.5/         corpus v0.5 (401–448, decisiones V1–V7; censo P4: 48 casos) + gemelos
 programs/dogfood/                  programas que Danny quiere escribir; fuera del gate, miden dolor real
 tests/                             conformidad, determinismo, sabotaje, oráculo
 tools/_gate.py                     capa compartida de los gates: head, sello, árbol, sums, sellado
@@ -86,6 +88,8 @@ tools/v7_capability_probe.py       V7: capacidades por contenido vs por etiqueta
 tools/textlib_probe.py             ¿librería de texto hoy? tres vías sobre `programs/dogfood/`
 tools/dogfood_wall_probe.py        el «muro de cabecera» del dogfood: víctimas de la etiqueta o del programa
 tools/f5_harness_probe.py          mide la guarda del arnés: el zig que rompe su comptime
+tools/z1_ceiling_probe.py          techo de comptime de Zig (Z1): cuota, sabotajes y controles
+tools/z2_depth_probe.py            techo de profundidad del frontend (Z2): dos fronteras y quién las paga
 ```
 
 ## Reproducir lo que existe
@@ -93,7 +97,7 @@ tools/f5_harness_probe.py          mide la guarda del arnés: el zig que rompe s
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # 209 tests (3,1-8,2 min con build/ llena; ver tests/README.md)
+python3 -m unittest discover -s tests -v       # 213 tests; el rango 3,1-8,2 min es de los 209
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
@@ -105,6 +109,8 @@ python3 tools/v05_spec_probe.py                # aristas del borrador v0.5: mide
 python3 tools/v05_spec_probe.py --write        # …y sella en evidence/v05_spec/ (árbol limpio = RELEASE_GATE)
 python3 tools/v05_p4_probe.py                  # censo (P4): K, W2, W3, costo y techo de toolchain
 python3 tools/v05_p4_probe.py --bisect-zig --write   # …+ frontera de Zig (Z1), y sella en evidence/v05_p4/
+python3 tools/z1_ceiling_probe.py --write          # …y sella la frontera de Zig re-medida (Z1)
+python3 tools/z2_depth_probe.py --write            # …y sella la frontera de profundidad (Z2)
 ```
 
 ## Relación con el monorepo

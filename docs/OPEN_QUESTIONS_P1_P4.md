@@ -1,6 +1,6 @@
 # Preguntas del CORE v0.5: P1–P4 y lo que abrió la implementación
 
-**Estado (2026-11-02).** P1, P2, P3 y **P4** están **cerradas**. P4 se cerró el 2026-11-02 con
+**Estado (2026-11-03).** P1, P2, P3 y **P4** están **cerradas**. P4 se cerró el 2026-11-02 con
 la decisión de Danny —**256 resoluciones por definición dentro del programa**, rechazadas con
 `SPEC_LIMIT`— sobre la base sellada que este documento ya tenía; la regla está en
 `spec/CORE_v0.5.md` §7 y la decisión en `docs/decisions/P4_SPEC_LIMIT.md`. Cerrar P4 abrió una
@@ -9,12 +9,19 @@ parte del idioma. Aparecieron además tres puntos que la propuesta no
 preveía (N1–N3). **N2 se cerró el 2026-11-01 con el caso `443`**, **N3 con el texto de
 §4.1 más su matriz en la sonda** y **N1 el mismo día, adoptada, con tres casos y sus
 gemelos y el texto de §4.4 sin el `[D]`**. No queda ninguna decisión abierta antes de congelar
-`spec/CORE_v0.5.md`; lo que queda es Z1, que es una pregunta de toolchain y no de semántica.
+`spec/CORE_v0.5.md`. **Z1 se respondió por medición el 2026-11-03**
+(`evidence/z1_ceiling/run_2026-11-03T035753Z.json`): el techo que la abrió no era de Zig sino de
+cómo el emisor escribía el programa, y hoy no queda ningún testigo concreto — la pregunta de
+política sigue siendo de Danny. La medición abrió otra, **Z2**: un techo de *profundidad* en el
+frontend de referencia que es artefacto del anfitrión Python, lo paga la propia referencia
+normativa y no tiene guarda nombrada.
 
 Las preguntas vienen de `spec/CORE_v0.5_propuesta.md` §2, donde se marcaron **[P]**.
 Las pruebas se pueden re-correr: `tools/v05_revalida_probe.py`, `tools/v05_v6_probe.py`,
 `tools/v7_capability_probe.py`, `tools/v05_p4_probe.py` y `tools/v05_spec_probe.py` — estos
-dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no fija.
+dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no fija. Las de
+Z1 y Z2 son `tools/z1_ceiling_probe.py` y `tools/z2_depth_probe.py`; la segunda no toca ningún
+toolchain, la primera sí invoca a Zig y Rust.
 
 | id | pregunta | respuesta | dónde está la prueba |
 |---|---|---|---|
@@ -22,7 +29,8 @@ dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no
 | P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §4 |
 | P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
 | P4 | ¿cuántas especializaciones puede crear un programa? | **cerrada el 2026-11-02**: **256 resoluciones por definición dentro del programa**, la 257 es `SPEC_LIMIT` estático | `docs/decisions/P4_SPEC_LIMIT.md`, `447`/`448`, `tests/test_specialize.py::TopePorDefinicion`, `evidence/v05_p4/run_20261102T085025Z.json` (R2, `RELEASE_GATE`) |
-| Z1 | ¿el techo de un toolchain forma parte del idioma? | **abierta**: con P4 puesto hay programas legales que Zig no compila (frontera medida por aridad) | `evidence/v05_p4/run_20261102T085025Z.json` (R2) §6/§6b, `spec/CORE_v0.5.md` §7, `evidence/f5_harness/run_2026-11-02T233718Z.json` (la guarda: el fallo ya es renglón, no abort) |
+| Z1 | ¿el techo de un toolchain forma parte del idioma? | **abierta y sin testigo concreto (2026-11-03)**: el techo no era de Zig sino del emisor; con el alias por ancho y la cuota del cuerpo compilan las ocho formas medidas, hasta 2048 instanciaciones, y coinciden con la referencia y con C | `evidence/z1_ceiling/run_2026-11-03T035753Z.json` (C1-C10); la bisección histórica que abrió la pregunta sigue en `evidence/v05_p4/run_20261102T085025Z.json` (R2) §6/§6b; la guarda del fallo ya-nombrado, `evidence/f5_harness/run_2026-11-02T233718Z.json`; el re-run que la cerró, `evidence/backends/gate_2026-11-03T040610Z.json` |
+| Z2 | ¿el frontend de referencia tiene un techo de profundidad de expresión, y de quién es? | **abierta desde 2026-11-03 — medidas dos fronteras, sin guarda nombrada**: una cadena izquierda de 241 términos `len(s)` se acepta y 242 sueltan `RecursionError` contra el límite de fábrica de Python; sin el clon de V6 la misma forma llega a 329. Es profundidad y no tamaño (un árbol de 2000 términos pasa), el techo bajo lo pone el `copy.deepcopy` con que `specialize.py:55` copia el cuerpo por resolución (985 de 999 frames), y **lo paga igual la referencia normativa**: el mismo fuente muere por `compile_ir`, por `interp.run` y por `run_via_ir` en el mismo punto | `evidence/z2_depth/run_2026-11-03T074629Z.json` (E1-E10, `RELEASE_GATE`) con sus cinco fuentes selladas; apareció en el claim C10 de `evidence/z1_ceiling/run_2026-11-03T035753Z.json` |
 | N1 | ¿`for c in s` con `s: str<N>` es normativo? | **cerrada el 2026-11-01 — adoptado**: la regla de §4.4 ya no tiene `[D]` y tres casos la fijan | `programs/conformance_v0.5/444`–`446` + sus gemelos, `tools/v05_spec_probe.py` §7 |
 | N2 | ¿algún caso fija el cruce con raíz `0.5` de M4? | **cerrada el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` + `tools/v05_spec_probe.py` §1 |
 | N3 | ¿el `let` sin anotación es inferencia? | **cerrada el 2026-11-01**: no, es solo el sintético del `for` | `spec/CORE_v0.5.md` §4.1 + `evidence/v05_spec/run_20261101T153344Z.json` §3 |
@@ -242,6 +250,10 @@ bisección con `--bisect-zig`:
 | 3 ranuras | 64 · 125 OK, **216** (W=6) FALLO | **164 OK / 168 FALLO** | OK |
 | 4 ranuras | 81 OK, **256** (W=4) FALLO | **120 OK / 128 FALLO** | OK |
 
+> Las cuatro fronteras de esta tabla son del **emisor de ese día**, no de Zig: así lo midió Z1 el
+> 2026-11-03 y está escrito más abajo. Se conservan sin retocar porque son el registro de la corrida
+> que abrió la pregunta, y porque la bisección sigue siendo la de `evidence/v05_p4/…` (R2).
+
 El fallo es de evaluación en tiempo de compilación (`error: evaluation exceeded 1000 backwards
 branches`), no de enlaces ni de memoria, y la bisección barre una forma **parcial**: fija en 2 las
 ranuras primeras y suelta la última, así que el umbral es de esa forma (paso de 2^(n-1) clones por
@@ -266,6 +278,49 @@ el gate con `--extra-case`, `evidence/backends/gate_2026-11-02T235456Z.json` (`4
 cobol/C/Rust/pydecimal respondiendo normal). Z1 queda entonces como lo que es: una pregunta de
 capacidad, no de arnés.
 
+**La pregunta se respondió por medición (2026-11-03), y la premisa se cayó.**
+`tools/z1_ceiling_probe.py` separó los dos mecanismos que estaban mezclados. Zig cobra **una** rama
+de evaluación por instanciación de `str` (acotado: 960 sitios con una firma de cuatro parámetros
+caben en los 1000 de fábrica y 1024 revientan, con el mismo texto de error en las cuatro formas que
+mueren). El emisor de octubre cobraba **dos**, porque cada sitio instanciaba además su propio tipo;
+por eso la bisección de P4 cortó en 500 OK / 504 FALLO. Prueba directa, no inferencia: el punto que
+P4 selló como FALLO —504 instanciaciones— compila **sin** la cuota del emisor con el arreglo puesto
+(lo que lo arregló fue el alias, que bajó el coste de dos ramas a una), y 1024 instanciaciones
+siguen muriendo sin esa cuota aunque el alias ya esté: la cuota no es el adorno que arregló P4, es
+lo que sostiene el resto (claims C1, C4 y C7). Los dos mecanismos son distintos y no son
+intercambiables: la misma cuota escrita a nivel de **archivo** no autoriza el marco del cuerpo (C2,
+sabotaje medido en 0,7 s), y la **firma** vive en su propio marco —una declaración de 1024
+parámetros `IsyStr(2)` agota el de la declaración aunque el cuerpo traiga su cuota, y
+`const Str2 = IsyStr(2);` lo evita (C3)—. El arreglo cabe en tres líneas por función y está
+conmuteado: un `const StrN = IsyStr(N);` por ancho usado en todo el código, y
+`@setEvalBranchQuota(1000 + 8·sitios)` como primera sentencia de todo cuerpo que instancia `str`
+(el ocho es margen sobre el coste medido, no aritmética; un programa sin `str` no escribe ni una
+cosa ni la otra). Con eso compilan las ocho formas de la sonda —incluida la aridad 2048, la firma
+más grande probada— y cada una coincide con la referencia y con C (C5, C8). Continuidad con el FAIL
+que motivó la guarda de F5: el caso extra de 256 clones de cuatro ranuras tiene hoy
+`program_sha256 = 52a28039…`, **el mismo del recibo** `gate_2026-11-02T235456Z.json`, y compila
+(C6). Y el gate re-corrido con ese emisor salió `PASS`:
+`evidence/backends/gate_2026-11-03T040610Z.json` (`b4b8873`, `RELEASE_GATE`) da 219/219 en c, rust,
+zig y pydecimal con **cero filas de arnés** en
+las cinco piernas; el FAIL del 2026-11-02 se conserva intacto como estaba. Lo que NO se afirmó: que
+el arreglo sea barato (18 s para 512 sitios y 60,8 s para el caso extra; la cuota levanta el techo,
+no acelera el compilador — C9, dato para F6) ni que no haya otro techo más arriba (aridad no está
+topada por el idioma, así que el producto `256 clones × aridad` sigue siendo construible y no se
+midió por encima de 2048 instanciaciones en un cuerpo).
+
+**Z1 queda entonces como pregunta de política sin testigo.** Lo que la abrió —«hay programas
+legales que un backend concreto no puede construir»— no se reproduce con el emisor de hoy en
+ninguna forma medida. Lo que sigue siendo de Danny es lo que la medición no puede decir: si el
+idioma debe heredar el **coste** de un toolchain (aquí: decenas de segundos por programa, y un
+techo que se compra con una línea escrita en el fuente generado), y en qué capa viviría ese dato
+si se eligiera nombrarlo —hoy `PROGRAM_REQUIRES` (V7) describe contenido, no costes—. Bajar la
+cota de P4 para tapar esto habría comprado ignorancia; subirla no compra nada, porque el techo no
+era del frontend. Ninguna de las dos se hizo.
+
+**Y la medición abrió Z2.** Buscar el techo de Zig con una cadena de `len(s)+len(s)+…` terminó en
+un `RecursionError` del propio frontend antes de que el programa llegara a IR: eso es
+`## Z2` más abajo, y es una pregunta de anfitrión, no de toolchain.
+
 **Lo que sigue sin medir es el otro modo de romperse.** `Backend.build()`
 (`isyco/backends/base.py:182`) llama al compilador sin `timeout=`: un toolchain que se **cuelga**
 en vez de morir no produce `ToolchainBuildFailure` y cuelga la pierna igual que antes del arreglo.
@@ -275,6 +330,108 @@ recibo que lo afirme en ningún sentido.
 
 **Permanece mientras:** un backend del corpus falle por volumen de especializaciones dentro de la
 cota del idioma, y nadie haya dicho si eso es un bug del backend o una frontera del lenguaje.
+
+## Z2 — ¿el frontend tiene un techo de profundidad, y de quién es? `[ABIERTA desde 2026-11-03]`
+
+Z2 apareció midiendo Z1: la cadena de `len(s) + len(s) + …` con que se buscaba la frontera de Zig
+revienta antes de que el programa llegue a IR. **No es del emisor, ni del idioma, ni de un
+toolchain: es del anfitrión Python.** La ruta `compile_ir` —`load` → `check` → `lower` →
+`validate`— desciende por la expresión de forma recursiva, así que lo que agota el límite de
+fábrica de Python (1000 frames) es la **profundidad** de una expresión, no el tamaño del
+programa. Medido en `evidence/z2_depth/run_2026-11-03T074629Z.json` (`tools/z2_depth_probe.py`,
+head `d4bb95a`, diez claims E1–E10 `DEMONSTRADO`, `RELEASE_GATE`, `arbol_sucio_codigo=false`), con
+cada caso en un proceso hijo de pila limpia y tres familias de la misma forma:
+
+| familia | frontera | qué la pone |
+|---|---|---|
+| `str` pelado (dispara el clon de V6) | **241 OK / 242** `RecursionError` | el `copy.deepcopy` del clon |
+| `str<64>` (misma forma, sin clon) | **329 OK / 330** `RecursionError` | la recursión del frontend |
+| `i64` (sin `str` ninguno) | **329 OK / 330** `RecursionError` | la recursión del frontend |
+
+De esa tabla caen cuatro cosas, y ninguna es la que la pregunta esperaba.
+
+**Primera: no hay un techo, hay dos, y el más bajo lo pone el clon** (E1, E2). Cada resolución de
+una definición contextual copia el cuerpo entero, y esa copia es recursiva. En el caso que muere,
+**985 de los 999 frames** del traceback son de `copy.py`, y las marcas que asoman por debajo son
+`checker.py:check|block|call|_typeof` — la línea que copia es `isyco/specialize.py:55`,
+`clone = copy.deepcopy(fn)`. La atribución no es una inferencia: es la pila de la excepción. Los
+mismos 242 términos escritos con `str<64>` bajan a IR sin excepción (E2, medido en la misma
+corrida), y las dos familias sin clon cortan a un término una de otra sobre forma y término
+idénticos: lo que separa 241 de 329 no es el AST sino si hay resolución contextual de `str`.
+
+**Segunda: el número no es una capacidad de nada** (E3, E8). Bajar la frontera depende de cuánta
+pila traiga quien llama: con 0 frames previos corta en 241, y con 50, 100, 150, 200 y 300 previos
+corta en 228, 216, 203, 191 y **166**. Y se mueve a voluntad con `sys.setrecursionlimit`: 242
+términos pasan con 2000 de límite y 1200 con 5000, mientras 6000 no pasan **ni con 20000** y 60000
+no pasan con 200000. Un techo que cambia con el llamante no se puede escribir en una spec.
+
+**Tercera: el techo lo paga la semántica normativa, no un detalle del camino a la IR** (E10). El
+mismo fuente que muere en `compile_ir` a 242 términos muere igual por `interp.run` —la referencia
+de F2, que es la semántica según `AGENTS.md` regla 4— y por `run_via_ir`, en las dos familias; la
+bisección de la ruta de referencia corta en 241 OK / 242, a cero términos de la bajada, con los
+**mismos dos `program_sha256`** (`151ac361…` OK, `5e2d021e…` FALLO) y el `deepcopy` comiéndose el
+99 % de los frames también ahí. Y la acomodación de pila que **sí** existe está mal atada (E4):
+las dos del paquete — `sys.setrecursionlimit(max(old, 50 * lim["max_call_depth"] + 1000))` en
+`isyco/interp.py:374` y `isyco/ir_interp.py:346` — envuelven la **ejecución** del intérprete y
+se restauran en un `finally`, así que la bajada de un fuente nunca pasa por ahí — subir
+`max_call_depth` no abre margen en el frontend. Nadie captura `RecursionError` en `isyco/`, y no
+existe `MAX_DEPTH` ni `profundidad_max` de expresión (búsqueda medida, cero coincidencias). Lo
+que produce este techo, por tanto, no es un rechazo: el checker **acepta** el programa, no existe
+`SPEC_LIMIT` ni `UNSUPPORTED` ni número, y sube una excepción de Python.
+
+**Cuarta: es profundidad, no tamaño — y la población está a un orden de magnitud** (E9, E6). Un
+árbol de 2000 términos (22097 bytes, profundidad 12) se acepta, mientras una cadena izquierda de
+242 (2277 bytes) revienta. Censada la población con la misma regla sobre las **151 fuentes del
+repo que bajan a IR** (127 son rechazos a propósito): la profundidad de expresión **máxima de
+todo el repo es 8** (`programs/dogfood/01_recibo.isy`) y la librería de texto que motivó V6 está
+en **5** (`programs/dogfood/06_biblioteca_texto.isy`), frente a los 241 medidos; la regla
+`cadena(k) → profundidad k+1`, calibrada sobre tres puntos que sí bajan a IR (3→4, 120→121,
+200→201), pone la cadena que muere en 242. Es el mismo tipo de margen que encontró el censo de P4
+(2 clones por definición contra una cota de 256): el techo es real y hoy nadie lo roza.
+
+**Lo que sí cuesta: el clon se paga en tiempo, y es multiplicativo** (E7). Bajar un programa con
+200 resoluciones de un cuerpo de 2 términos cuesta **0,076 s**; las mismas 200 resoluciones con un
+cuerpo de 240 términos cuestan **4,663 s** en la sola referencia, sin compilador delante — y eso
+está dentro de lo que el tope de P4 permite (256 por definición). Como P4 topa clones **por
+definición** y la aridad no está topada, el producto `clones × términos` sigue siendo construible
+dentro del idioma. Dato para F6, que mide costes.
+
+**Dónde tropieza con los gates** (E5). Cinco bajadas del frontend están fuera de
+`harness.intento`: `tools/ir_gate.py:62`, `:66` y `:67` y `tools/backend_gate.py:77` llaman al
+frontend pelado — el cuarto a propósito: «si la referencia explota, el bug es del idioma y tiene
+que subir» — y en `tools/backend_gate.py:170` la bajada se evalúa como **argumento** de `intento`,
+es decir antes del paraguas. Lo que las cubre es la capa 3 de cada gate (`except Exception` en
+`tools/ir_gate.py:77` y `tools/backend_gate.py:334`), así que **el recibo no se pierde**: un
+programa suficiente profundo sale `FAIL` con `abortado`. Lo que se pierde es la pierna entera y la
+identidad del caso, que queda solo en el excerpt del traceback en vez de una fila
+`HARNESS_INTERNAL` con `leg`/`case`/`program_sha256` — la forma en que el hallazgo 13 de
+`docs/EVIDENCE_MATRIX.md` cerró el lado del toolchain. Medido aparte: envuelto a propósito en
+`intento`, el mismo fuente de 242 términos da esa fila con excepción `RecursionError`. Hay código
+para registrar el crash; no lo hay para evitarlo ni para nombrarlo.
+
+**NOT_DEMONSTRATED**, escrito antes de decidir nada: dónde está el techo físico del anfitrión si
+se sube el límite — en todo el rango medido el fallo siguió siendo `RecursionError` y nunca una
+señal del proceso, con 188 MB de RSS en el punto más hondo (60000 términos con límite 200000),
+así que no se sabe si un `setrecursionlimit` alto desemboca en desbordamiento de C stack—; **la
+consecuencia atribuida a los gates es lectura de código, no ejercida**: ninguna de las cinco
+bajadas se ejecutó con un programa que reviente dentro de un gate real; si el `parser` solo o el
+`checker` solo tienen fronteras propias por debajo de la compuesta (aquí se midió la ruta
+completa); y cuánto cuesta el `deepcopy` frente a una copia superficial con compartición (no
+medido).
+
+**Las tres salidas que existen**, sin recomendar ninguna —es decisión de Danny y depende de si se
+quiere un límite *nombrado* o ninguno—: (a) una guarda explícita con número medido sobre la
+población, en el patrón que ya fijó P4 (`SPEC_LIMIT` estático, antes de la IR, con el por qué),
+que además obligaría a decir si la cota cuenta con clon o sin él; (b) quitar la recursión de
+enmedio —copiar el clon con un recorrido explícito, o no copiar el cuerpo entero—, que sube el
+techo sin nombrar ninguno pero toca el mecanismo más sensible del checker; (c) envolver las cinco
+bajadas en `intento`, que es lo mínimo y no requiere decidir la cota. Lo que no vale es el estado
+de hoy: un techo que existe, no lo nombra nadie, depende del llamante y lo paga la referencia
+normativa.
+
+Prueba: `evidence/z2_depth/run_2026-11-03T074629Z.json` (`DEMONSTRADO`, diez claims) con sus cinco
+fuentes selladas y `tools/z2_depth_probe.py`; continuidad con el claim C10 de
+`evidence/z1_ceiling/run_2026-11-03T035753Z.json`, que es donde apareció.
 
 ## N1 — `for` sobre un `str` `[CERRADA el 2026-11-01 — por caso y por texto]`
 

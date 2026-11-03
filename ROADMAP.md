@@ -349,7 +349,10 @@ que falsifica V7.
 > también, y la asimetría está declarada en `docs/decisions/P4_SPEC_LIMIT.md`, en
 > `programs/conformance_v0.5/README.md` y aquí: **la mutación off-by-one (`>` por `>=`) no la
 > detecta ningún sabotaje de corpus**, porque un programa con 256 clones no puede entrar al gate
-> (Zig lo rompe), así que la muerde solo `test_256_es_el_ultimo_legal`. Los dos sabotajes de P4
+> (Zig lo rompía con el emisor de octubre; hoy compila —ver la corrección fechada dos párrafos
+> abajo— y **sigue sin entrar al corpus**: corre con `--extra-case` y deja su propio recibo, así que
+> la conclusión no se mueve), así que la muerde solo `test_256_es_el_ultimo_legal`. Los dos
+> sabotajes de P4
 > sí están en la referencia: apagar el tope (`10**9`) rompe **exactamente** `447`, y bajarlo a `1`
 > rompe `411_pad_dos_anchos` y deja en verde `416_cast_mas_estrecho` — la cota muerde por encima
 > de 1, no en 1. Gates del lote: F2 `evidence/conformance/run_2026-11-02T070428Z.json`
@@ -364,6 +367,25 @@ que falsifica V7.
 > tiempos y 4 el propio sello—. Decisión:
 > `docs/decisions/P4_SPEC_LIMIT.md`. Con esto **no queda ninguna decisión abierta** del
 > borrador de CORE v0.5; lo que queda es Z1, que es de toolchain y no de semántica.
+>
+> **Corrección fechada (2026-11-03), y Z2.** Las cuatro fronteras de arriba son del **emisor**, no
+> de Zig: el emisor de octubre instanciaba un tipo propio por sitio y cobraba dos ramas de
+> evaluación de comptime; con el alias `const StrN = IsyStr(N);` por ancho y
+> `@setEvalBranchQuota(1000 + 8·sitios)` por cuerpo, Zig cobra **una** rama por instanciación y
+> compilan las ocho formas medidas hasta 2048 instanciaciones, coincidiendo con la referencia y con
+> C (`evidence/z1_ceiling/run_2026-11-03T035753Z.json`, `RELEASE_GATE` sobre `536486a`, diez
+> claims). El caso extra del `FAIL` `gate_2026-11-02T235456Z.json` mantiene su `program_sha256`
+> (`52a28039…`), compila y F5 salió `PASS` con `219/219`
+> (`evidence/backends/gate_2026-11-03T040610Z.json`, `b4b8873`). Z1 queda abierta como **política y
+> sin testigo concreto**: qué hacer con el coste (18 s para 512 sitios, 60,8 s para el caso extra)
+> sí sigue siendo de Danny. Ninguna decisión de cota se movió: P4 sigue en 256. Y medir Z1 abrió
+> **Z2**, que no es de toolchain: el frontend de referencia suelta `RecursionError` en una cadena
+> izquierda de 242 términos `len(s)` —241 pasan—, el borde bajo lo pone el `copy.deepcopy` con que
+> `isyco/specialize.py:55` copia el cuerpo por resolución, y lo paga igual la referencia normativa
+> (el mismo fuente muere por `compile_ir`, por `interp.run` y por `run_via_ir`). No hay cota
+> nombrada ni número ni `SPEC_LIMIT` ahí, y el límite depende de la pila del llamante:
+> `evidence/z2_depth/run_2026-11-03T074629Z.json` (E1–E10, `RELEASE_GATE` sobre `d4bb95a`) y
+> `docs/OPEN_QUESTIONS_P1_P4.md` §Z2.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 

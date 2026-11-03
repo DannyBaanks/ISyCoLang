@@ -77,6 +77,25 @@ Es decir: **hay programas legales bajo P4 que Zig no compila.** Eso abre **Z1**
 `spec/CORE_v0.5.md` §7. No se arregla subiendo o bajando el tope: subir no compra nada (el techo
 no es del frontend) y bajar no es una decisión de P4 sin medir la población real de una librería.
 
+**Corregida la atribución el 2026-11-03, sin reescribir la tabla de arriba.** Las cuatro fronteras
+de esa matriz son del **emisor de Zig de ese día**, no de Zig ni del idioma: cada sitio instanciaba
+su propio tipo y cobraba **dos** ramas de evaluación de comptime. Medido en
+`evidence/z1_ceiling/run_2026-11-03T035753Z.json` (C1, C4, C5) que con un solo `const StrN =
+IsyStr(N);` por ancho —una rama por instanciación— compilan sin cuota las 500 **y las 504**
+instanciaciones que esta decisión selló como FALLO, y que con la cuota del emisor
+(`@setEvalBranchQuota(1000 + 8·sitios)`, primera sentencia de cada cuerpo) compilan hasta 2048
+instanciaciones en una firma, coincidiendo con la referencia y con C. El caso extra de F5 mantiene
+su `program_sha256` (`52a28039…`) y hoy compila: `evidence/backends/gate_2026-11-03T040610Z.json`,
+`PASS` con `219/219`. **Nada de esto mueve la decisión**: el tope sigue en 256, la granularidad
+sigue por definición, `447` y `448` siguen fijándola, y la limitación honesta de §7 sigue siendo
+limitación — lo que cambia es de quién era el techo. La frase de
+`programs/conformance_v0.5/README.md` que atribuye a Zig la exclusión del caso de 256 clones queda
+**superada por esta nota** y no se
+reescribe ahí: su hash está en el `SHA256SUMS.txt` del corpus y romperlo no es corregir un texto,
+es mover una evidencia. Z1 sigue abierta, ahora como política sin testigo concreto
+(`docs/OPEN_QUESTIONS_P1_P4.md`); y de medir Z1 salió **Z2**, un techo de profundidad del propio
+frontend que no es de ningún toolchain (`evidence/z2_depth/run_2026-11-03T074629Z.json`).
+
 ## Dónde se fija cada borde
 
 | borde | quién lo fija | por qué ahí |
