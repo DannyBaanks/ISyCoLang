@@ -341,8 +341,10 @@ class CuotaYAliasZig(unittest.TestCase):
         self.assertFalse(any(l.startswith("const Str") for l in src.splitlines()))
 
     def test_el_programa_fronteira_ejecuta_como_la_referencia(self):
-        """512 sitios: con la cuota de fábrica Zig no compila; emitido así, sí y coincide."""
-        n = 512
+        """1024 sitios: fuera de la cuota del emisor Zig revienta su presupuesto de fábrica
+        (medido en `tools/z1_ceiling_probe.py`: 992 instanciaciones caben en los 1000 de
+        fábrica y 1008 no), y con la cuota escrita compila y coincide con la referencia."""
+        n = 1024
         firma = ", ".join(f"a{i}: str" for i in range(1, n + 1))
         args = ", ".join('"{}"'.format("x" * (1 + i % 4)) for i in range(n))
         fuente = (f'isyco 0.5\n\nfn m({firma}) -> i64 {{ return len(a1); }}\n'

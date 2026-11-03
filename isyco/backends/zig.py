@@ -432,7 +432,9 @@ HALF_EVEN_TIE = {
 SABOTAGES = ("half_even_as_half_up", "div_floor", "str_concat_truncates")
 
 # Presupuesto de comptime que el emisor se autoconcede (Z1): el de fábrica de Zig más ocho
-# ramas por instanciación de `str` que el propio cuerpo genera.
+# ramas por instanciación de `str` del propio cuerpo. Cuesta una (medido: 960 sitios con una
+# firma de cuatro parámetros caben en los 1000 de fábrica y 1024 revientan), así que el ocho
+# es margen, no aritmética.
 CUOTA_BASE = 1000
 CUOTA_SITIO = 8
 
@@ -489,10 +491,11 @@ class ZigEmitter:
     def cuota(self, lineas: list[str]) -> list[str]:
         """Cuota de comptime proporcional a las instanciaciones del propio cuerpo.
 
-        Zig cuesta ~2 ramas por `isy_str(...)` en el marco de la función (medido en Z1: 500
-        sitios caben en la cuota de fábrica de 1000 y 512 no). Ocho por sitio deja cuatro
-        veces de margen sin apagar la guarda, que sigue siendo finita y sigue creciendo solo
-        con el código que el emisor genera de verdad.
+        Zig cuesta una rama por `isy_str(...)` en el marco de la función —dos antes del alias,
+        cuando cada sitio instanciaba además su tipo—: medido en Z1, 960 sitios con una firma
+        de cuatro parámetros caben en los 1000 de fábrica y 1024 revientan. Ocho por sitio
+        deja ocho veces de margen sin apagar la guarda, que sigue siendo finita y sigue
+        creciendo solo con el código que el emisor genera de verdad.
         """
         sitios = sum(l.count("isy_str(") for l in lineas)
         if not sitios:
