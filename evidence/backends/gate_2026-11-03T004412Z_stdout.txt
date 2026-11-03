@@ -1,0 +1,38 @@
+[c] gcc: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+  corpus: 218/218 (unsupported 0, fallas 0, arnés 0)
+  difftest: 8484 corridas, 0 diferencias, 0 filas del arnés
+  difftest str: 1270 corridas, 0 diferencias, 0 filas del arnés
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12, arnés 0)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53, arnés 0)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 0, arnés 0)
+[rust] rustc 1.98.1 (48a229cea 2026-09-01)
+  corpus: 218/218 (unsupported 0, fallas 0, arnés 0)
+  difftest: 8484 corridas, 0 diferencias, 0 filas del arnés
+  difftest str: 1270 corridas, 0 diferencias, 0 filas del arnés
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12, arnés 0)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53, arnés 0)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 0, arnés 0)
+[zig] zig 0.16.0
+  corpus: 218/218 (unsupported 0, fallas 0, arnés 0)
+  difftest: 8484 corridas, 0 diferencias, 0 filas del arnés
+  difftest str: 1270 corridas, 0 diferencias, 0 filas del arnés
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12, arnés 0)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53, arnés 0)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 0, arnés 0)
+[pydecimal] /usr/bin/python3: Python 3.12.3
+  corpus: 218/218 (unsupported 0, fallas 0, arnés 0)
+  difftest: 8484 corridas, 0 diferencias, 0 filas del arnés
+  difftest str: 1270 corridas, 0 diferencias, 0 filas del arnés
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12, arnés 0)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53, arnés 0)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 0, arnés 0)
+[cobol] cobc: cobc (GnuCOBOL) 3.1.2.0
+  corpus: 148/218 (unsupported 70, fallas 0, arnés 0)
+  difftest: 8484 corridas, 0 diferencias, 0 filas del arnés
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12, arnés 0)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53, arnés 0)

@@ -1,0 +1,8 @@
+corpus gcc/plain: 218/218 (unsupported 0, arnés 0)
+corpus gcc/sanitized: 218/218 (unsupported 0, arnés 0)
+corpus clang/plain: 218/218 (unsupported 0, arnés 0)
+corpus clang/sanitized: 218/218 (unsupported 0, arnés 0)
+difftest gcc/plain: 24612 corridas, 0 diferencias, 0 filas del arnés
+difftest gcc/sanitized: 6468 corridas, 0 diferencias, 0 filas del arnés
+sabotaje half_even_as_half_up: detectado=True (corpus ['019_dec_half_even', '031_cast_dec_rescale', '120_v02_keeps_v01_semantics'], diferencial 12, arnés 0)
+sabotaje div_floor: detectado=True (corpus ['014_div_trunc', '120_v02_keeps_v01_semantics'], diferencial 53, arnés 0)
