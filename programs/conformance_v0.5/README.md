@@ -1,4 +1,4 @@
-# `programs/conformance_v0.5/` — corpus **activo**: 48/48 coinciden con su `expected`
+# `programs/conformance_v0.5/` — corpus **activo**: 54/54 coinciden con su `expected`
 
 Los `expected` de este directorio se escribieron a mano el **2026-10-30** (commits
 `dd561c6` y `0e9ca79`, que no tocan ningún archivo de `isyco/`), antes de implementar
@@ -35,10 +35,11 @@ mismo par de archivos y solo la cabecera cambiada:
 Los cuatro casos con módulos —`408_qname_arreglo/`, `421_marca_entre_modulos/`,
 `440_llamada_calificada_void/` y `443_m4_modulo_v04/`— tienen que leerse con
 `load_corpus`, que arma el `Bundle` del directorio: tomar `main.isy` como bytes sueltos
-devuelve un falso `UNKNOWN_MODULE`. La población del directorio es 44 programas a un
-archivo + 4 carpetas = **48** (los 43 de `443`, los tres de N1 y los dos de P4); un
-`glob("4*.isy")` sobre la raíz se queda en 44 y esa es la cuenta que el censo de P4 hizo
-mal la primera vez (`docs/EVIDENCE_MATRIX.md`, hallazgo 2).
+devuelve un falso `UNKNOWN_MODULE`. La población del directorio es 50 programas a un
+archivo + 4 carpetas = **54**; un `glob("4*.isy")` sobre la raíz se queda en los 50 y no en
+54, que es la cuenta que el censo de P4 hizo mal la primera vez
+(`docs/EVIDENCE_MATRIX.md`, hallazgo 2) —entonces eran 44 + 4 = 48 (los 43 de `443`, los
+tres de N1 y los dos de P4).
 
 **Alta de los casos `444`–`446` (2026-11-01, N1).** `for` sobre un `str` pasa a ser
 normativa con tres casos y sus gemelos (`docs/decisions/N1_FOR_SOBRE_STR.md`); con ellos el
@@ -84,6 +85,33 @@ raro deja recibo propio (`evidence/backends/gate_2026-11-02T235456Z.json`, `verd
 Las cuatro altas anteriores siguen valiendo caso por caso —ningún `expected` ni hash congelado
 se reescribió.
 
+**Alta de los casos `449`–`454` (2026-11-03, Z2).** La cota de anidamiento de una expresión
+(CORE v0.5 §7: 64 niveles) entra con tres pares `al_tope`/`pasa_tope`, uno por cada cara del
+anidar, y los 54 del directorio coinciden con su `expected` —medido en este árbol, con la
+referencia de siempre—. El `expected` se escribió desde la regla; lo que se midió antes de
+escribirlo fue **qué cuenta llega a 64** en cada cara, porque las tres cuentan distinto
+(Z2 en `docs/OPEN_QUESTIONS_P1_P4.md`):
+
+| caso | cara | nivel | quién lo corta | observado (referencia) |
+|---|---|---|---|---|
+| `449_parentesis_al_tope` | 63 pares de paréntesis | parser 64 (AST 1) | `Parser.nivel` | `HALTED`, `1`, 4 pasos, 365 bytes |
+| `450_parentesis_pasa_tope` | 64 pares | parser 65 | `Parser.nivel` | `INVALID_PROGRAM(SPEC_LIMIT)` en `6:82`, 0 pasos, 367 bytes |
+| `451_cadena_izquierda_al_tope` | suma izquierda sin clon | AST 64 | `Checker.check` | `HALTED`, `64`, 4 pasos, 562 bytes |
+| `452_cadena_izquierda_pasa_tope` | la misma, +1 término | AST 65 | `Checker.check` | `INVALID_PROGRAM(SPEC_LIMIT)` en `7:22`, 0 pasos, 566 bytes |
+| `453_len_pelado_al_tope` | 63 `len(s)` sobre `str` pelado | AST 64 | `Checker.check` | `HALTED`, `252`, 5 pasos, 896 bytes |
+| `454_len_pelado_pasa_tope` | 64 `len(s)` | AST 65 | `Checker.check` | `INVALID_PROGRAM(SPEC_LIMIT)` en `7:25`, 0 pasos, 905 bytes |
+
+El AST de un paréntesis es 1 —no crea nodos—, así que su nivel lo lleva contando el parser; la
+cadena izquierda se construye en un bucle y no le baja ni un frame al parser, así que su nivel
+lo lleva el AST. Y `453` son 63 términos y no 64 porque el último `len(s)` añade el nivel de su
+propio operando: 63 de cadena + 1 = 64. Los tres `pasa_tope` se rechazan **antes** de bajar a la
+IR y antes de construir el clon: los 242 términos que antes morían por `RecursionError` —985 de
+999 frames eran del `copy.deepcopy` de `specialize.py:55`— son aquí 64 términos que devuelven
+`SPEC_LIMIT` sin `RecursionError` (C6 de `evidence/z2_guard/`). Los tres `al_tope` sí bajan a la
+IR, que es para lo que la cota deja margen: la forma legal más cara (63 pares) cuesta 716 frames
+y la CLI llega al frontend con 6, un test con 10 (C4 del mismo recibo). Los seis van sin gemelo:
+el azúcar `for`/`while` no cambia cuántos niveles anida una expresión.
+
 | archivo | qué fija | decisión | hoy (referencia) |
 |---|---|---|---|
 | `401_len_arreglo` | `len([T; N])` → `N` | V1 | `HALTED`, `5`, 6 pasos |
@@ -103,7 +131,8 @@ decisiones: `docs/decisions/V6_CONTEXTUAL_STR.md`, `docs/decisions/V6B_CONTEXTUA
 y `docs/decisions/V7_CONTENT_CAPABILITIES.md`. `444`–`446` son N1 (`for` sobre `str`),
 decidida y sellada el 2026-11-01 en `docs/decisions/N1_FOR_SOBRE_STR.md`; `447`–`448` son P4
 (tope de especializaciones por definición), decidida y sellada el 2026-11-02 en
-`docs/decisions/P4_SPEC_LIMIT.md`.
+`docs/decisions/P4_SPEC_LIMIT.md`; `449`–`454` son Z2 (cota de anidamiento de una expresión),
+decidida y sellada el 2026-11-03 en `docs/decisions/Z2_MAX_EXPR_DEPTH.md`.
 
 ## `gemelos/`
 

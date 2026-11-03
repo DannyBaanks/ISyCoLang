@@ -1,0 +1,10 @@
+{
+  "claim": "Z2: 64 terminos len(s) con clon de V6 (AST de 65) es SPEC_LIMIT",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SPEC_LIMIT",
+    "emits": [],
+    "return": null
+  }
+}

@@ -191,6 +191,12 @@ Límites por defecto: 1 000 000 pasos, 256 de profundidad de llamadas, 100 000
 emits. Se cambian con `--max-steps`, `--max-call-depth`, `--max-emits`; por
 ejemplo `--input '["19.99","3000000"]'` se detiene en `max_emits`.
 
+Y uno que **no** es bandera: una expresión no puede anidar más de 64 niveles (CORE v0.5 §7).
+Si escribes una suma de 65 términos en cadena —`1 + 1 + …`— o 64 pares de paréntesis, la CLI
+devuelve `INVALID_PROGRAM` con `code: SPEC_LIMIT` y un mensaje que nombra el número
+(`una expresión anida 65 niveles y la cota es 64`). Es el idioma hablando, no Python
+quedándose sin pila; la decisión y sus mediciones están en `docs/decisions/Z2_MAX_EXPR_DEPTH.md`.
+
 Para ver paso a paso: `--trace stmt --trace-out traza.jsonl` (solo `ast`/`ir`).
 
 ## 5. Comprobar que todo sigue bien

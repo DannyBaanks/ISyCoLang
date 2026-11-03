@@ -7,6 +7,16 @@ ISY-IR. La referencia **es** la semántica normativa (`AGENTS.md` regla 4), así
 ella no puede bajar no tiene con qué discutir — y aquí no lo rechaza el idioma: sube una
 `RecursionError` de Python.
 
+**Instrumento pre-decisión, preservado y no reescrito (2026-11-03).** Z2 se cerró con la salida (a)
+del preview: `ast.MAX_EXPR_DEPTH = 64` rechazando el nivel 65 con `SPEC_LIMIT`
+(`docs/decisions/Z2_MAX_EXPR_DEPTH.md`). Esta sonda sigue corriendo, y corrida el 2026-11-03 sobre su
+propio árbol después de la decisión da `FALSO` en E1–E4 y E6–E10 y `DEMONSTRADO` solo en E5 (que es
+lectura de procedimiento de los gates y no cambió): mide el muro del anfitrión sobre fuentes que el
+idioma ya rechaza en el nivel 65, así que el «después» se mide en `tools/z2_guard_probe.py` y su sello
+vive en `evidence/z2_guard/`. Para que terminara en vez de abortar hubo que endurecer tres sitios del
+arnés —el parseo de la salida del hijo en E4, la calibración de la regla en E6 y nada más—; el recibo
+sellado `run_2026-11-03T074629Z.json` no se reescribió y sigue siendo la prueba del «antes».
+
 Lo que esta sonda separa, todo medido en procesos hijos con el límite de fábrica (1000):
 
 1. La frontera es de **profundidad de expresión**, no de tamaño: una cadena izquierda de 241
@@ -307,8 +317,27 @@ def main(argv) -> int:
             presentes[nombre] = [l for l in proc.stdout.splitlines()
                                  if "test" not in l][:6]
         sitios_cuota = [l for l in presentes["setrecursionlimit"] if "50 * lim" in l]
-        # Cómo lo vería un gate hoy: envuelto en `harness.intento` es una fila del arnés.
-        con_guarda = json.loads(subprocess.run(
+        # Qué devuelve HOY esa misma envoltura, desde la decisión Z2: la bajada ya no muere por el
+        # anfitrión, así que `intento` re-lanza el rechazo del idioma en vez de anotarlo como fila
+        # `HARNESS_INTERNAL`. Se mide para que el claim E4 de abajo no se lea como estado actual.
+        hoy = json.loads(subprocess.run(
+            [sys.executable, "-c", r'''
+import json, sys
+sys.path.insert(0, sys.argv[1])
+from isyco.errors import IsyError
+from isyco.harness import intento
+from isyco.ir_interp import compile_ir
+sys.setrecursionlimit(1000)
+try:
+    r, fila = intento(compile_ir, open(sys.argv[2], "rb").read(), fase="sonda",
+                      contexto={"leg": "z2"})
+    print(json.dumps({"valor": r is not None, "fila": fila}))
+except IsyError as exc:
+    print(json.dumps({"relanzado": type(exc).__name__, "code": getattr(exc, "code", None)}))
+''', str(ROOT), str(camino)],
+            capture_output=True, text=True, timeout=900).stdout.strip().splitlines()[-1])
+        # Cómo lo vería un gate hoy: envuelto en `intento` es una fila del arnés.
+        proc = subprocess.run(
             [sys.executable, "-c", r'''
 import json, sys
 sys.path.insert(0, sys.argv[1])
@@ -319,8 +348,12 @@ r, fila = intento(compile_ir, open(sys.argv[2], "rb").read(), fase="sonda",
                   contexto={"leg": "z2"})
 print(json.dumps({"valor": r is not None, "fila": fila}))
 ''', str(ROOT), str(camino)],
-            capture_output=True, text=True, timeout=900).stdout.strip().splitlines()[-1])
-        fila = con_guarda["fila"] or {}
+            capture_output=True, text=True, timeout=900)
+        # Con la guarda Z2 puesta el hijo no imprime: `intento` re-lanza el rechazo del idioma.
+        filas_hijas = proc.stdout.strip().splitlines()
+        con_guarda = (json.loads(filas_hijas[-1]) if filas_hijas
+                      else {"sin_salida": (proc.stderr or "")[-160:]})
+        fila = con_guarda.get("fila") or {}
         claim("E4", "no hay guarda para **esta** cota, y la que existe está atada a un eje "
                     "distinto: `isyco/` no captura `RecursionError` en ningún sitio ni declara "
                     "`MAX_DEPTH` ni `profundidad_max` de expresión (búsqueda medida, cero "
@@ -339,7 +372,7 @@ print(json.dumps({"valor": r is not None, "fila": fila}))
                                 and fila.get("code") == "HARNESS_INTERNAL"
                                 and fila.get("exception") == "RecursionError") else "FALSO",
               {"buscado_en_isyco": presentes, "sitios_cuota": sitios_cuota,
-               "intento": con_guarda})
+               "intento": con_guarda, "intento_hoy": hoy})
 
         # --- E5: las bajadas dentro de los gates están fuera de `harness.intento` ---------
         # Se busca en el texto porque la afirmación es de procedimiento: qué capa envuelve cada
@@ -392,7 +425,10 @@ print(json.dumps({"valor": r is not None, "fila": fila}))
         regla = {}
         for k in (3, 120, 200):
             c = escribir(tmp, f"regla_{k}.isy", fuente_pelada(cadena("len(s)", k)))
-            regla[k] = profundidad(compile_ir(c.read_bytes()))
+            try:
+                regla[k] = profundidad(compile_ir(c.read_bytes()))
+            except Exception as exc:      # post-decisión Z2: 120 y 200 ya no llegan a la IR
+                regla[k] = f"{type(exc).__name__}:{getattr(exc, 'code', '')}"
         censo, no_bajan = [], []
         for f in sorted(ROOT.glob("programs/**/*.isy")):
             try:

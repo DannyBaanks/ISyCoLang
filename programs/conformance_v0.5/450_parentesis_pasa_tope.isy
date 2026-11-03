@@ -1,0 +1,9 @@
+isyco 0.5
+
+# Z2 (CORE v0.5 S7): 64 pares de parentesis = 65 niveles de anidamiento.
+# La cota es de frontend: se rechaza aqui, sin bajar a la IR ni tocar un backend.
+fn main() -> i64 !emit {
+    let x: i64 = ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
+    emit x;
+    return x;
+}

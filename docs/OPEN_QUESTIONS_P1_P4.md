@@ -13,15 +13,20 @@ gemelos y el texto de §4.4 sin el `[D]`**. No queda ninguna decisión abierta a
 (`evidence/z1_ceiling/run_2026-11-03T035753Z.json`): el techo que la abrió no era de Zig sino de
 cómo el emisor escribía el programa, y hoy no queda ningún testigo concreto — la pregunta de
 política sigue siendo de Danny. La medición abrió otra, **Z2**: un techo de *profundidad* en el
-frontend de referencia que es artefacto del anfitrión Python, lo paga la propia referencia
-normativa y no tiene guarda nombrada.
+frontend de referencia que era artefacto del anfitrión Python y lo pagaba la propia referencia
+normativa. **Z2 se cerró el 2026-11-03 con una cota nombrada de 64 niveles, `SPEC_LIMIT` y las
+dos guardas del caso** (`docs/decisions/Z2_MAX_EXPR_DEPTH.md`); la única pregunta que sigue
+abierta es Z1, ahora sin testigo concreto.
 
 Las preguntas vienen de `spec/CORE_v0.5_propuesta.md` §2, donde se marcaron **[P]**.
 Las pruebas se pueden re-correr: `tools/v05_revalida_probe.py`, `tools/v05_v6_probe.py`,
 `tools/v7_capability_probe.py`, `tools/v05_p4_probe.py` y `tools/v05_spec_probe.py` — estos
 dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no fija. Las de
-Z1 y Z2 son `tools/z1_ceiling_probe.py` y `tools/z2_depth_probe.py`; la segunda no toca ningún
-toolchain, la primera sí invoca a Zig y Rust.
+Z1 y Z2 son `tools/z1_ceiling_probe.py`, `tools/z2_depth_probe.py` y `tools/z2_guard_probe.py`;
+las dos de Z2 no tocan ningún toolchain, la de Z1 sí invoca a Zig y Rust. `z2_depth_probe` mide
+el techo **antes** de la decisión y `z2_guard_probe` el estado **después**, sobre los mismos
+materiales: correr la primera hoy mide fuentes que el idioma ya rechaza, y así está dicho en su
+docstring.
 
 | id | pregunta | respuesta | dónde está la prueba |
 |---|---|---|---|
@@ -30,7 +35,7 @@ toolchain, la primera sí invoca a Zig y Rust.
 | P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
 | P4 | ¿cuántas especializaciones puede crear un programa? | **cerrada el 2026-11-02**: **256 resoluciones por definición dentro del programa**, la 257 es `SPEC_LIMIT` estático | `docs/decisions/P4_SPEC_LIMIT.md`, `447`/`448`, `tests/test_specialize.py::TopePorDefinicion`, `evidence/v05_p4/run_20261102T085025Z.json` (R2, `RELEASE_GATE`) |
 | Z1 | ¿el techo de un toolchain forma parte del idioma? | **abierta y sin testigo concreto (2026-11-03)**: el techo no era de Zig sino del emisor; con el alias por ancho y la cuota del cuerpo compilan las ocho formas medidas, hasta 2048 instanciaciones, y coinciden con la referencia y con C | `evidence/z1_ceiling/run_2026-11-03T035753Z.json` (C1-C10); la bisección histórica que abrió la pregunta sigue en `evidence/v05_p4/run_20261102T085025Z.json` (R2) §6/§6b; la guarda del fallo ya-nombrado, `evidence/f5_harness/run_2026-11-02T233718Z.json`; el re-run que la cerró, `evidence/backends/gate_2026-11-03T040610Z.json` |
-| Z2 | ¿el frontend de referencia tiene un techo de profundidad de expresión, y de quién es? | **abierta desde 2026-11-03 — medidas dos fronteras, sin guarda nombrada**: una cadena izquierda de 241 términos `len(s)` se acepta y 242 sueltan `RecursionError` contra el límite de fábrica de Python; sin el clon de V6 la misma forma llega a 329. Es profundidad y no tamaño (un árbol de 2000 términos pasa), el techo bajo lo pone el `copy.deepcopy` con que `specialize.py:55` copia el cuerpo por resolución (985 de 999 frames), y **lo paga igual la referencia normativa**: el mismo fuente muere por `compile_ir`, por `interp.run` y por `run_via_ir` en el mismo punto | `evidence/z2_depth/run_2026-11-03T074629Z.json` (E1-E10, `RELEASE_GATE`) con sus cinco fuentes selladas; apareció en el claim C10 de `evidence/z1_ceiling/run_2026-11-03T035753Z.json` |
+| Z2 | ¿el frontend de referencia tiene un techo de profundidad de expresión, y de quién es? | **cerrada el 2026-11-03 — cota nombrada: 64 niveles, el 65 es `INVALID_PROGRAM`/`SPEC_LIMIT` antes de la IR.** Sí había techo y era del anfitrión: una cadena izquierda de 241 términos `len(s)` se aceptaba y 242 soltaban `RecursionError` contra el límite de fábrica de Python, sin número y sin por qué; sin el clon de V6 la misma forma llegaba a 329; el techo bajo lo ponía el `copy.deepcopy` con que `specialize.py:55` copia el cuerpo por resolución (985 de 999 frames) y lo pagaba igual la referencia normativa por las tres rutas. La guarda va en **dos puntos con un solo número** (`Parser.nivel` y `Checker.check` con `expr_depth`) porque anidar tiene dos caras que no cuentan lo mismo, y las cuatro caras llegan al **mismo nivel 64** con conteos de fuente distintos. Es profundidad y no tamaño: un árbol de 2000 términos sigue bajando | decisión: `docs/decisions/Z2_MAX_EXPR_DEPTH.md`; antes: `evidence/z2_depth/run_2026-11-03T074629Z.json` (E1-E10, `RELEASE_GATE`) con sus cinco fuentes selladas, apareció en el claim C10 de `evidence/z1_ceiling/run_2026-11-03T035753Z.json`; después: `tools/z2_guard_probe.py` con `evidence/z2_guard/run_2026-11-03T211418Z.json` (C1-C8) y su re-sello `RELEASE_GATE` en el mismo directorio; los bordes, `449`–`454` y `tests/test_depth.py` |
 | N1 | ¿`for c in s` con `s: str<N>` es normativo? | **cerrada el 2026-11-01 — adoptado**: la regla de §4.4 ya no tiene `[D]` y tres casos la fijan | `programs/conformance_v0.5/444`–`446` + sus gemelos, `tools/v05_spec_probe.py` §7 |
 | N2 | ¿algún caso fija el cruce con raíz `0.5` de M4? | **cerrada el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` + `tools/v05_spec_probe.py` §1 |
 | N3 | ¿el `let` sin anotación es inferencia? | **cerrada el 2026-11-01**: no, es solo el sintético del `for` | `spec/CORE_v0.5.md` §4.1 + `evidence/v05_spec/run_20261101T153344Z.json` §3 |
@@ -331,7 +336,7 @@ recibo que lo afirme en ningún sentido.
 **Permanece mientras:** un backend del corpus falle por volumen de especializaciones dentro de la
 cota del idioma, y nadie haya dicho si eso es un bug del backend o una frontera del lenguaje.
 
-## Z2 — ¿el frontend tiene un techo de profundidad, y de quién es? `[ABIERTA desde 2026-11-03]`
+## Z2 — ¿hay techo de profundidad, y de quién es? `[CERRADA 2026-11-03: 64 niveles, SPEC_LIMIT]`
 
 Z2 apareció midiendo Z1: la cadena de `len(s) + len(s) + …` con que se buscaba la frontera de Zig
 revienta antes de que el programa llegue a IR. **No es del emisor, ni del idioma, ni de un
@@ -432,6 +437,40 @@ normativa.
 Prueba: `evidence/z2_depth/run_2026-11-03T074629Z.json` (`DEMONSTRADO`, diez claims) con sus cinco
 fuentes selladas y `tools/z2_depth_probe.py`; continuidad con el claim C10 de
 `evidence/z1_ceiling/run_2026-11-03T035753Z.json`, que es donde apareció.
+
+### Decidida el 2026-11-03: la salida (a), cota de 64 niveles
+
+Danny eligió **(a)** — «cota nombrada», en el preview del 2026-11-03: `RecursionError` del
+anfitrión convertido en `INVALID_PROGRAM`/`SPEC_LIMIT` con un número medido, en el patrón que fijó
+P4, antes de la IR y con el por qué en el mensaje. Las salidas (b) y (c) **no se hicieron**: (b)
+toca el mecanismo más sensible del checker sin comprar la garantía que se pidió, y (c) es lo mínimo
+pero deja el borde en manos del anfitrión. Nada de lo escrito arriba se reescribió: es el registro
+de la medición que sostuvo la decisión, y su recibo sigue siendo la prueba del «antes». Decisión,
+números y límites: `docs/decisions/Z2_MAX_EXPR_DEPTH.md`.
+
+Lo que quedó puesto es **un número en dos puntos**: `ast.MAX_EXPR_DEPTH = 64`, ejercitado por
+`Parser.nivel` (cuenta los niveles que le bajan frames) y por `Checker.check` (mide la cadena de
+nodos del AST con `expr_depth`, iterativo). Se midió que hacen falta los dos y no por prudencia:
+una suma izquierda de k términos se construye en un bucle y no le baja ni un frame al parser, así
+que un contador de solo-parser veía anidar 1 nivel un AST de 64.
+
+Los números del «después», todos sellados en `evidence/z2_guard/` (C1–C8 de
+`tools/z2_guard_probe.py`): el borde cae en el **mismo nivel 64** en las cuatro caras del anidar
+—63 pares de paréntesis, 64 prefijos `-`, 64 términos sumados, 63 términos `len(s)` con clon—; con
+0, 50, 100, 150, 200 y 300 frames del llamante el rechazo sigue siendo `SPEC_LIMIT`; la cara más
+cara al tope pide **716** frames de los 999 útiles y los llamantes reales del paquete llegan con
+**6** (la CLI) y **10** (un test); la población del repo sigue en **8** sobre **154** fuentes que
+bajan; los 242 términos que morían se rechazan en **61 ms**, y con ellos los **241 que antes
+bajaban** — nombrar el borde cuesta dejar fuera lo que el anfitrión toleraba—; y con
+`MAX_EXPR_DEPTH` levantado a 200 el muro del anfitrión aparece en **89** pares con pila limpia y
+**62** con 300 frames encima, o sea que estaba **por debajo** de la cota que hoy se eligió: sin la
+guarda, un fuente de 64 niveles moría según quién llamara.
+
+**La cota no borra el muro**, y es la limitación que queda escrita (C8, y en `spec/CORE_v0.5.md`
+§7): con la guarda puesta, el fuente del tope legal —63 pares, 64 niveles— baja con pila limpia y
+revienta por `RecursionError` si quien llama trae 300 frames. Lo garantizado es que el **idioma**
+nombra el borde, no que la forma legal quepa en cualquier pila heredada. La salida (b) habría
+cambiado esto; la (a) lo deja como limitación nombrada.
 
 ## N1 — `for` sobre un `str` `[CERRADA el 2026-11-01 — por caso y por texto]`
 

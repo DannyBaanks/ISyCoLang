@@ -1,0 +1,12 @@
+{
+  "claim": "Z2: suma izquierda de 64 terminos (AST de 64 niveles) se acepta",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "64"
+    ],
+    "return": "64"
+  }
+}

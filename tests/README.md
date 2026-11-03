@@ -2,7 +2,7 @@ Tests: `python3 -m unittest discover -s tests -v`
 
 | archivo | qué prueba |
 |---|---|
-| `test_reference.py` | intérprete de referencia contra los cinco corpus (v0.1–v0.5, 218 casos), hashes congelados, sabotajes de la semántica (F2, v0.2, v0.3) — 9 sabotajes: los 7 anteriores más los dos de P4 (`test_el_tope_de_especializaciones_se_desactiva`, `test_bajar_el_tope_a_uno_rompe_el_corpus`), y `test_len_de_str_se_hace_estatico`, el de N1 |
+| `test_reference.py` | intérprete de referencia contra los cinco corpus (v0.1–v0.5, 224 casos), hashes congelados, sabotajes de la semántica (F2, v0.2, v0.3) — 9 sabotajes: los 7 anteriores más los dos de P4 (`test_el_tope_de_especializaciones_se_desactiva`, `test_bajar_el_tope_a_uno_rompe_el_corpus`), y `test_len_de_str_se_hace_estatico`, el de N1 |
 | `test_ir.py` | ISY-IR v0.1/v0.2: resultado y traza iguales a la referencia, validador de mundo cerrado (F3) |
 | `test_backend_c.py` | backend C: tres vías, diferencial numérico, sabotajes (F4) |
 | `test_modules.py` | módulos (v0.4): identificadores seguros en backends, CLI con módulos, sabotaje del enlazador |
@@ -12,6 +12,7 @@ Tests: `python3 -m unittest discover -s tests -v`
 | `test_versions.py` | `isyco/versions.py` como única fuente de la versión: familias monotónicas, fail-closed con versiones desconocidas, y ningún literal de versión suelto en `isyco/` |
 | `test_v05_core.py` | V1 (`len` de arreglo resuelto en el frontend, cero nodos de IR, cero pasos) y V2 (`for x in a` como azúcar del parser): forma, gemelos, trazas, nombres sintéticos y rechazos en 0.1–0.4; la clase `ForSobreStr` (12 tests) añade N1 (`for` sobre un lugar `str`: cota = longitud del valor, variable `u8` copia sin alias — y el alias inverso no es construible porque `s[i] = …` es `NOT_ASSIGNABLE` desde v0.3 —, pasos e IR iguales al `while` gemelo) |
 | `test_specialize.py` | V6 y V6-bis: la capacidad diferida en parámetro y en retorno se resuelve por el sitio de llamada — sin centinela, inyectiva en los nombres, fail-closed en las dos direcciones y paso-neutral contra el gemelo escrito a mano. `TopePorDefinicion` (9 tests) fija P4: 255 y 256 resoluciones legales, 257 es `SPEC_LIMIT`, la identidad contada es `nombre calificado por módulo` **por definición y no por programa**, la copia nunca es definición contada, y ningún programa `0.4` puede llegar al tope |
+| `test_depth.py` | Z2 (CORE v0.5 §7) — 8 tests en cuatro clases: `CotaNombrada` fija el literal 64, el borde exclusivo (`>` y no `>=`) y que las tres caras del anidar llegan al mismo nivel (paréntesis por el parser, cadena izquierda y `len(s)` pelado por el AST); `LaGuardaGanaAlAnfitrion` que con 100 frames del llamante encima la señal sigue siendo `SPEC_LIMIT` y que la guarda no agota la pila que mide; `EsLaGuardaLoQueRechaza` es el sabotaje de la constante —subirla a 200 devuelve la aceptación, bajarla a 5 rechaza lo legal—; `LaPoblacionQuedaDebajo` es el tripwire: ninguna fuente del repo que la spec acepta pasa de 64 niveles y ninguna de la población real (fuera de `449`–`454`) pasa de 8 |
 
 Tiempos (12 núcleos, 2026-10-30): ~3 min (197.0 s medidos, 91 tests) con la
 caché `build/` llena. **Re-medido 2026-11-01: 166 tests en 191,3 s, 191,6 s, 200,2 s,

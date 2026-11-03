@@ -123,13 +123,20 @@ conservan afirmaciones no demostradas.
 
 ## Límites conocidos y trabajo pendiente
 
-1. **Profundidad del frontend (Z2):** la
-   [sonda sellada](evidence/z2_depth/run_2026-11-03T074629Z.json) encontró `RecursionError` con
-   cadenas de expresiones profundas. En el host medido (Python 3.12.3, límite de recursión 1000),
-   la forma con especialización contextual pasó con 241 términos y falló con 242; dos formas sin
-   ese clon pasaron con 329 y fallaron con 330. **Son fronteras observadas dependientes del
-   proceso, no límites normativos del lenguaje.** El error aún no se convierte sistemáticamente en
-   un rechazo controlado.
+1. **Profundidad del frontend (Z2, cota nombrada el 2026-11-03):** el idioma topa el anidamiento a
+   **64 niveles** y el 65 se rechaza con `INVALID_PROGRAM`/`SPEC_LIMIT` antes de la IR
+   (`isyco/ast.py:MAX_EXPR_DEPTH`, ejercitado en `Parser.nivel` y en `Checker.check`; casos
+   `449`–`454`; decisión en
+   [docs/decisions/Z2_MAX_EXPR_DEPTH.md](docs/decisions/Z2_MAX_EXPR_DEPTH.md)). El límite conocido
+   sigue en pie, ahora medido: la cota **no borra el muro del anfitrión**. Con la guarda levantada a
+   200, la cadena de paréntesis moría por `RecursionError` en 89 pares con pila limpia y en 62 con
+   300 frames del llamante encima, y el fuente del tope legal sigue reventando con 300 frames
+   aunque la guarda esté puesta
+   ([sonda Z2](evidence/z2_guard/run_2026-11-03T211418Z.json), C8). Los llamantes reales del
+   paquete llegan con 6 y 10 frames y la forma legal más cara pide 716 de los 999 útiles. Las
+   fronteras de la [sonda pre-decisión](evidence/z2_depth/run_2026-11-03T074629Z.json) (241/242 y
+   329/330) quedan como registro del «antes»: hoy esos fuentes se rechazan por la cota, y con ellos
+   los 241 términos que antes bajaban.
 2. **Compilación Zig (Z1):** una familia legal antes fallaba por presupuesto de evaluación
    `comptime`. El emisor se corrigió y la
    [sonda Z1](evidence/z1_ceiling/run_2026-11-03T035753Z.json) y F5 muestran que los casos medidos
@@ -197,9 +204,9 @@ programs/conformance/              corpus v0.1 (expected previos al intérprete;
 programs/conformance_v0.2/         corpus v0.2 (expected previos a implementar v0.2)
 programs/conformance_v0.3/         corpus v0.3 (strings y structs)
 programs/conformance_v0.4/         corpus v0.4 (módulos)
-programs/conformance_v0.5/         corpus v0.5 (401–448, decisiones V1–V7; censo P4: 48 casos) + gemelos
+programs/conformance_v0.5/         corpus v0.5 (401–454, decisiones V1–V7; 54 casos) + gemelos
 programs/dogfood/                  programas que Danny quiere escribir; fuera del gate, miden dolor real
-tests/                             conformidad, determinismo, sabotaje, oráculo
+tests/                             conformidad, determinismo, sabotaje, oráculo y la cota de profundidad
 tools/_gate.py                     capa compartida de los gates: head, sello, árbol, sums, sellado
 tools/run_conformance.py           corre el corpus y guarda evidencia nueva
 tools/ir_gate.py                   compara IR vs referencia y guarda evidencia
@@ -217,7 +224,8 @@ tools/textlib_probe.py             ¿librería de texto hoy? tres vías sobre `p
 tools/dogfood_wall_probe.py        el «muro de cabecera» del dogfood: víctimas de la etiqueta o del programa
 tools/f5_harness_probe.py          mide la guarda del arnés: el zig que rompe su comptime
 tools/z1_ceiling_probe.py          techo de comptime de Zig (Z1): cuota, sabotajes y controles
-tools/z2_depth_probe.py            techo de profundidad del frontend (Z2): dos fronteras y quién las paga
+tools/z2_depth_probe.py            instrumento PRE-decisión de Z2: las fronteras sin cota (preservado)
+tools/z2_guard_probe.py            Z2 después de la guarda: la cota, su precio en frames y su límite
 ```
 
 ### Gates y comandos avanzados
@@ -238,7 +246,9 @@ python3 tools/v05_spec_probe.py --write        # …y sella en evidence/v05_spec
 python3 tools/v05_p4_probe.py                  # censo (P4): K, W2, W3, costo y techo de toolchain
 python3 tools/v05_p4_probe.py --bisect-zig --write   # …+ frontera de Zig (Z1), y sella en evidence/v05_p4/
 python3 tools/z1_ceiling_probe.py --write          # …y sella la frontera de Zig re-medida (Z1)
-python3 tools/z2_depth_probe.py --write            # …y sella la frontera de profundidad (Z2)
+python3 tools/z2_guard_probe.py                    # la cota Z2 en vigor: quién la corta y qué cuesta
+python3 tools/z2_guard_probe.py --write            # …y sella el recibo del después (evidence/z2_guard/)
+python3 tools/z2_depth_probe.py --write            # instrumento PRE-decisión: mide fuentes ya rechazadas
 ```
 
 ### Relación con el monorepo

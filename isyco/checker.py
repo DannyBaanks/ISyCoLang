@@ -59,6 +59,52 @@ def static_len(value):
     return value
 
 
+def _valores_ast(value):
+    """Contenido de un campo, achatando listas, tuplas, sets y valores de dict."""
+    if isinstance(value, (list, tuple, set)):
+        for item in value:
+            yield from _valores_ast(item)
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from _valores_ast(item)
+    else:
+        yield value
+
+
+def _es_nodo(v) -> bool:
+    return dataclasses.is_dataclass(v) and type(v).__module__ == A.__name__
+
+
+def expr_depth(program: A.Program) -> tuple[int, str]:
+    """Cadena más larga de nodos de expresión del programa y `at` de su raíz.
+
+    Recorrido explícito, no recursivo: la guarda que mide el fondo no puede ser la que agote
+    la pila que mide (Z2). Y se mide aparte del anidamiento que cuenta el parser: una suma
+    izquierda de k términos no hace bajar ni un frame al parser y aun así anida k niveles.
+    """
+    raices: list[A.Expr] = []
+    pila: list = [program]
+    while pila:
+        nodo = pila.pop()
+        for campo in dataclasses.fields(nodo):
+            for v in _valores_ast(getattr(nodo, campo.name)):
+                if isinstance(v, A.Expr):
+                    raices.append(v)
+                elif _es_nodo(v):
+                    pila.append(v)
+    mejor, donde = 0, "1:1"
+    pila = [(e, 1) for e in raices]
+    while pila:
+        nodo, d = pila.pop()
+        if d > mejor:
+            mejor, donde = d, nodo.at
+        for campo in dataclasses.fields(nodo):
+            for v in _valores_ast(getattr(nodo, campo.name)):
+                if isinstance(v, A.Expr):
+                    pila.append((v, d + 1))
+    return mejor, donde
+
+
 class Checker:
     def __init__(self, program: A.Program):
         self.program = program
@@ -73,6 +119,14 @@ class Checker:
         self.spec_counts: dict[str, int] = {}    # P4: resoluciones por definición fuente
 
     def check(self) -> None:
+        # Z2: antes de tocar nada recursivo. Sin esta guarda el checker bajaba 242 términos
+        # y reventaba con RecursionError del anfitrión (985 de 999 frames eran de copy.deepcopy
+        # por el clon de V6); con ella el rechazo es del idioma: INVALID_PROGRAM/SPEC_LIMIT.
+        hondo, donde = expr_depth(self.program)
+        if hondo > A.MAX_EXPR_DEPTH:
+            raise InvalidProgram("SPEC_LIMIT", donde,
+                                 f"una expresión anida {hondo} niveles y la cota es "
+                                 f"{A.MAX_EXPR_DEPTH} (CORE v0.5 §7)")
         if self.v03:
             self.check_structs()
         if "main" not in self.program.fns:

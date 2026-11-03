@@ -1,0 +1,12 @@
+{
+  "claim": "Z2: con el clon de V6 la misma cota rige (63 terminos len(s) = 64 niveles)",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "252"
+    ],
+    "return": "252"
+  }
+}

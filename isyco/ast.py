@@ -3,6 +3,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+#: Cota Z2 (CORE v0.5 §7): niveles máximos de anidamiento de una expresión. Se mide dos veces
+#: porque las dos formas de anidar son distintas: el parser cuenta los niveles que recursionan
+#: (paréntesis, argumentos de llamada, índices) y el checker la cadena de nodos del AST (una
+#: suma izquierda de k términos anida k niveles sin que el parser baje ni un frame).
+MAX_EXPR_DEPTH = 64
+
 
 @dataclass
 class Expr:

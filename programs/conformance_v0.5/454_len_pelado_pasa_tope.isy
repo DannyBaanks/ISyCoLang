@@ -1,0 +1,13 @@
+isyco 0.5
+
+# Z2 (CORE v0.5 S7): 64 terminos `len(s)` sobre un `str` pelado, o sea con el
+# clon de V6 activo. La cota cuenta igual con clon y sin el: son 64 terminos
+# = 65 niveles de AST (la raiz Add, el Len y el Name).
+fn cuanto(s: str) -> i64 {
+    return len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s);
+}
+
+fn main() -> i64 !emit {
+    emit cuanto("hola");
+    return 256;
+}

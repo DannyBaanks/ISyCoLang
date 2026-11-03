@@ -24,6 +24,7 @@ class Parser:
         #: V2: nombres ya escritos en este módulo, para que el índice sintético no choque
         self.usados = {t.text for t in tokens if t.kind in ("IDENT", "KW")}
         self.for_n = 0
+        self.nesting = 0        # Z2: niveles de anidamiento de expresión en curso
 
     @property
     def v03(self) -> bool:
@@ -367,8 +368,26 @@ class Parser:
         finally:
             self.no_struct_lit = saved
 
+    def nivel(self, siguiente):
+        """Baja un nivel de anidamiento con guarda (Z2, CORE v0.5 §7).
+
+        El techo de pila del anfitrión no puede decidir si un fuente se acepta: con la guarda
+        levantada a 200 para que no estorbe, la cadena de paréntesis moría por `RecursionError`
+        en 89 pares con pila limpia y en 62 con 300 frames del llamante encima —el tope legal
+        de hoy, 64 niveles, caía en medio y sin número (`evidence/z2_guard/`, C8).
+        """
+        self.nesting += 1
+        try:
+            if self.nesting > A.MAX_EXPR_DEPTH:
+                raise InvalidProgram("SPEC_LIMIT", self.tok.at,
+                                     f"una expresión anida {self.nesting} niveles y la cota es "
+                                     f"{A.MAX_EXPR_DEPTH} (CORE v0.5 §7)")
+            return siguiente()
+        finally:
+            self.nesting -= 1
+
     def expr(self):
-        return self.or_expr()
+        return self.nivel(self.or_expr)
 
     def or_expr(self):
         left = self.and_expr()
@@ -387,7 +406,7 @@ class Parser:
     def not_expr(self):
         if self.is_("not"):
             at = self.take().at
-            return A.Unary(at, "not", self.not_expr())
+            return A.Unary(at, "not", self.nivel(self.not_expr))
         return self.cmp_expr()
 
     def cmp_expr(self):
@@ -426,7 +445,7 @@ class Parser:
                 literal.at = at
                 return self.postfix(literal)
             at = self.take().at
-            return A.Unary(at, "-", self.unary())
+            return A.Unary(at, "-", self.nivel(self.unary))
         return self.postfix()
 
     def postfix(self, node=None):

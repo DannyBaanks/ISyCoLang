@@ -386,6 +386,20 @@ que falsifica V7.
 > nombrada ni número ni `SPEC_LIMIT` ahí, y el límite depende de la pila del llamante:
 > `evidence/z2_depth/run_2026-11-03T074629Z.json` (E1–E10, `RELEASE_GATE` sobre `d4bb95a`) y
 > `docs/OPEN_QUESTIONS_P1_P4.md` §Z2.
+>
+> **Z2 cerrada el 2026-11-03 con la salida (a) —cota nombrada.** `ast.MAX_EXPR_DEPTH = 64` y el nivel
+> 65 rechazado con `INVALID_PROGRAM`/`SPEC_LIMIT` **en dos puntos** del frontend (`Parser.nivel` cuenta
+> los niveles que le bajan frames; `Checker.check` mide la cadena de nodos del AST con `expr_depth`,
+> iterativo, porque una suma izquierda se construye en un bucle sin bajarle un frame al parser). Seis
+> casos fijan los dos bordes —`449`–`454`—, `tests/test_depth.py` ejerce el sabotaje en las dos
+> direcciones y la sonda `tools/z2_guard_probe.py` sella el después (`evidence/z2_guard/`, C1–C8):
+> las cuatro caras llegan al mismo nivel 64, el borde no se mueve con 0…300 frames del llamante, la
+> población sigue en 8 sobre 154 fuentes y los 242 términos que morían se rechazan en 61 ms —y con
+> ellos los 241 que antes bajaban—. Queda escrita la limitación: con la guarda levantada el muro del
+> anfitrión está en 89 pares limpio y 62 con 300 frames, o sea **por debajo** de la cota, así que el
+> fuente del tope legal todavía muere si quien llama trae mucha pila. Las salidas (b) —quitar la
+> recursión de enmedio— y (c) —envolver las cinco bajadas de gate— no se hicieron. Decisión:
+> `docs/decisions/Z2_MAX_EXPR_DEPTH.md`.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 

@@ -1,0 +1,12 @@
+{
+  "claim": "Z2: 63 pares de parentesis (nivel 64) se aceptan y bajan a la IR",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1"
+    ],
+    "return": "1"
+  }
+}

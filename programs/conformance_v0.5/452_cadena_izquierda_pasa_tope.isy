@@ -1,0 +1,10 @@
+isyco 0.5
+
+# Z2 (CORE v0.5 S7): suma izquierda de 65 terminos = 65 niveles de AST.
+# El parser la construye en bucle y no baja ni un frame: la guarda que la frena es la
+# del checker sobre el AST, no la cuenta de anidamiento del parser.
+fn main() -> i64 !emit {
+    let x: i64 = 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1;
+    emit x;
+    return x;
+}

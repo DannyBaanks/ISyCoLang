@@ -1,0 +1,10 @@
+{
+  "claim": "Z2: 64 pares de parentesis (nivel 65) son INVALID_PROGRAM/SPEC_LIMIT",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SPEC_LIMIT",
+    "emits": [],
+    "return": null
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "claim": "Z2: suma izquierda de 65 terminos (AST de 65) es SPEC_LIMIT",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SPEC_LIMIT",
+    "emits": [],
+    "return": null
+  }
+}
