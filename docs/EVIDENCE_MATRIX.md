@@ -14,11 +14,12 @@ re-produce o es prosa.
 - Las rutas de recibo son relativas al repo. Cada `evidence/<dir>/SHA256SUMS.txt` guarda
   nombres **sin carpeta**, así que se verifica **desde adentro** del directorio:
   `(cd evidence/c && sha256sum -c SHA256SUMS.txt)`. Desde la raíz falla con «No existe el
-  archivo». Verificado el 2026-11-01 sobre los **20** listados que hay (14 en `evidence/`,
-  `spec/` y los cinco `programs/conformance*/`): los 20 pasan desde adentro y todos fallan
-  desde la raíz. La única lista que sí corre desde la raíz es `docs/origin/SHA256SUMS.txt`.
-  `programs/dogfood/` no tiene lista (no es corpus congelado) y `tests/test_evidence.py`
-  resuelve las rutas él mismo, por eso no depende del `cwd`.
+  archivo». Volver a verificarlo el 2026-11-03: hay **22** listas (16 en `evidence/`, `spec/`
+  y los cinco `programs/conformance*/`), las 22 pasan desde adentro —615 archivos— y
+  las 22 fallan desde la raíz. La única lista que sí corre desde la raíz es
+  `docs/origin/SHA256SUMS.txt` (2/2). `programs/dogfood/` no tiene lista (no es corpus
+  congelado) y `tests/test_evidence.py` resuelve las rutas él mismo, por eso no depende
+  del `cwd`.
 - `git_head` se abrevia a 7. Un recibo viejo sigue siendo válido para el árbol que fija.
 - Los cuatro recibos de la población **213** (`a4f608c`, el commit que metió `443`) salen de
   **una sola corrida en lote**, en ese orden: `run_conformance`, `ir_gate`, `c_gate`,
@@ -27,10 +28,14 @@ re-produce o es prosa.
   de la herramienta, y son el registro del código de salida. El log completo vivió en `/tmp`
   y no es evidencia canónica; lo canónico son los cuatro `_stdout.txt` sellados.
 - Lo mismo con los cuatro de la población **216**, en el mismo orden y los cuatro con
-  `git_head=2499fae` (el sello de la sonda con la matriz de N1). Ojo con el campo:
-  `tools/c_gate.py:118` escribe el head al **final** de su corrida y `tools/backend_gate.py:107`
-  al **inicio**, así que en este lote entraron commits *mientras* medía F5. Que los cuatro
-  coincidan no es una cortesía del instrumento: se verificó por hash (hallazgo 8).
+  `git_head=2499fae` (el sello de la sonda con la matriz de N1). Ojo con el campo **hasta ese
+  lote**: `tools/c_gate.py` escribía el head al **final** de su corrida y `tools/backend_gate.py`
+  al **inicio**, así que en 216 entraron commits *mientras* medía F5. Que los cuatro coincidan
+  no era una cortesía del instrumento: se verificó por hash (hallazgo 8). Desde el arnés
+  endurecido los cuatro gates calculan sello, `git_head` y `veredicto_arbol` **al inicio**
+  (`tools/c_gate.py:84` y `:89`, `tools/backend_gate.py:299` y `:305`, por `tools/_gate.py:155`)
+  y F4 añade `git_head_end` al terminar (`tools/c_gate.py:178`): un recibo dice dónde empezó y
+  puede demostrar si el árbol se movió mientras medía.
 - **F5 no quedó en ese lote.** Su corrida de `2499fae` salió `FAIL` por un `TIMEOUT` del
   arnés (`gate_2026-11-01T215718Z.json`), se preservó el recibo y se re-corrió sola: el
   `PASS` es `gate_2026-11-01T225011Z.json` con `git_head=6c00225`. En esa segunda corrida el
@@ -42,10 +47,58 @@ re-produce o es prosa.
 
 | gate | recibo más reciente | head | veredicto | cifras |
 |---|---|---|---|---|
-| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-02T070428Z.json` | `14b19a9` | `PASS` | 218/218 en los cinco corpus; las 216 filas compartidas con el recibo anterior (`run_2026-11-01T210445Z.json`) salen idénticas hoja por hoja —de las 2 727 compartidas solo difieren `total`, `passed` y el sello del recibo (`generated_utc`, `git_head`)— y las dos altas son `447` (`INVALID_PROGRAM/SPEC_LIMIT`) y `448` (16 emisiones, `HALTED`) |
-| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-02T070428Z.json` | `14b19a9` | — | 436/436 comparaciones iguales, **149** programas bajados (`448` sí baja; `447` no: se compara su rechazo). Igualdad recibo-vs-recibo sobre las 432 anteriores, indexada por caso **y** nivel de traza (los renglones se corren con las dos altas y cada caso ocupa dos renglones): 3 462 hojas compartidas —432 renglones × 8 campos + 6 de cabecera— y las 5 que difieren son los tres contadores (`comparisons` y `equal`, `432→436`, y `programs_lowered_to_ir`, `148→149`) más el sello (`generated_utc`, `git_head`); cero diferencias en los hashes de los 432 renglones previos. El número que estuvo escrito aquí, 1 734, era la mitad exacta: salió de indexar solo por `name`, que colapsa los dos niveles —hallazgo 14 abajo— |
-| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-02T072103Z.json` | `14b19a9` | `PASS` | 218 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 218/218, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers; los dos sabotajes detectados (12 y 53 diferencias); `missing_compilers: []`. Cotejo hoja por hoja contra el recibo de 216 (F4 no guarda renglones por caso, solo contadores por combinación): 42 hojas compartidas, 14 distintas —doce contadores `216→218` y el sello—; los dos diferenciales (24 612 y 6 468), la semilla, los 32 tipos y los dos sabotajes salen idénticos. Poblaciones anteriores, todas `PASS`: 216 en `gate_2026-11-01T211424Z.json` (`2499fae`) y las seis que se enumeran renglón a renglón en `docs/BACKEND_C.md` |
-| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-02T081912Z.json` | `14b19a9` | `PASS` | c/rust/zig/pydecimal **218/218** con 0 `UNSUPPORTED`; cobol **148/218 con 70 `UNSUPPORTED`** nombrados y 0 fallas; 8 484 corridas diferenciales por backend y 1 270 de strings en los cuatro completos, todas sin diferencias; los tres sabotajes detectados en cada uno de los cuatro (cobol solo dos: no tiene `str`); `missing_toolchains: []`. stdout crudo sellado al lado: `gate_2026-11-02T081912Z_stdout.txt`. Que cobol pase de 147 a 148 **no** es una capacidad nueva: `447` es un rechazo del frontend y cuenta como `passed` en los cinco —hallazgo 12 abajo—. Cotejo hoja por hoja contra `gate_2026-11-01T225011Z.json`, indexado por nombre: 398 hojas compartidas, 39 distintas —los contadores, los campos de costo, que el propio arnés declara no semánticos en `backend_gate.py:67`, y el sello—, 2 altas que son `448` entrando al `UNSUPPORTED` de cobol con `ir0.2,str`, y 0 bajas; los difftest de 8 484 y 1 270 y los tres sabotajes salen idénticos. Anteriores en el mismo directorio: `gate_2026-11-01T225011Z.json` (`6c00225`, 216 casos, los tres de N1 entrando con `ir0.2,str` tal como estaba predicho), `gate_2026-11-01T082046Z.json` (`a4f608c`, 213) y antes `gate_2026-11-01T215718Z.json`, `FAIL` por `TIMEOUT` del arnés en el difftest de strings de pydecimal, preservado con su diagnóstico en `evidence/f5_flake/run_20261101T220854Z.json` y su reproduccion: 500 llamadas y dos pasadas de 1 270 con 0 diferencias |
+| F2 — referencia contra el corpus | `evidence/conformance/run_2026-11-03T003813Z.json` | `026db0f` | `PASS` | 218/218 en los cinco corpus, en **0,318 s** medidos. Cotejo hoja por hoja contra el lote anterior (`run_2026-11-02T070428Z.json`, `14b19a9`): 3 045 hojas compartidas, **2** distintas —`generated_utc` y `git_head`, el sello—, **5 altas** (`arbol_sucio_codigo`, `veredicto_arbol` y las tres hojas de `harness`: `guarda`, `codigos=[HARNESS_INTERNAL]`, `capas=[corrida]`) y **0 bajas**: el arnés endurecido no mueve ni una cifra del corpus ni de sus 218 renglones. Del recibo que reemplaza queda lo que fijó: `447` alto como `INVALID_PROGRAM/SPEC_LIMIT` y `448` con 16 emisiones `HALTED`, sobre 2 727 hojas compartidas con `run_2026-11-01T210445Z.json` de las que solo diferían `total`, `passed` y el sello |
+| F3 — ISY-IR vs referencia | `evidence/ir/gate_2026-11-03T003813Z.json` | `026db0f` | `PASS` | 436/436 comparaciones iguales sobre **149** programas bajados (`448` sí baja; `447` no: se compara su rechazo), en **0,685 s**. La celda del veredicto **deja de ser un guion**: `ir_gate` ahora declara `verdict`. Cotejo contra `gate_2026-11-02T070428Z.json`: 3 494 hojas compartidas, **2** distintas (el sello), **6 altas** (`verdict`, `arbol_sucio_codigo`, `veredicto_arbol` y las tres de `harness`) y **0 bajas**. Del recibo que reemplaza queda lo que fijó con el índice correcto —caso **y** nivel de traza, porque cada renglón ocupa dos líneas—: 3 462 hojas compartidas sobre 432 renglones con 5 distintas (los contadores `432→436` y `148→149` más el sello) y cero diferencias en los hashes de los 432 renglones previos; el número que estuvo escrito ahí antes, 1 734, era la mitad exacta de indexar solo por `name` —hallazgo 14 abajo— |
+| F4 — backend C (tres vías + sanitizers) | `evidence/c/gate_2026-11-03T003814Z.json` | `026db0f` | `PASS` | 218 casos en las cuatro combinaciones (`gcc/plain`, `gcc/sanitized`, `clang/plain`, `clang/sanitized`), cada una con las tres vías expected ↔ referencia ↔ binario en 218/218, cero fallos y cero `UNSUPPORTED`; diferencial 24 612 corridas en `gcc/plain` (40 parejas por operación, semilla 20261028, 32 tipos, 0 diferencias) y 6 468 con sanitizers (4 parejas); los dos sabotajes detectados (12 y 53 diferencias); `missing_compilers: []`; **5 m 58 s** medidos. Primer lote con la guarda: `harness: []`, `no_medidos: 0` e `intentados: 218` en las cuatro combinaciones, `harness: []` con `omitted: 0` y `types_aborted: []` en los dos diferenciales, y `harness: []` con `not_run: false` en los dos sabotajes. Y primer lote con el **sello al inicio**: `git_head` y `git_head_end` valen `026db0f`, así que está medido que el árbol no se movió mientras medía —antes el head de F4 se escribía al final y no podía decir nada de la mitad de la corrida—. Cotejo contra `gate_2026-11-02T072103Z.json`: 53 hojas compartidas, **2** distintas (el sello), **31 altas** (12 del corpus: tres campos de arnés por combinación; 6 del difftest; 4 de los sabotajes; 6 del bloque `harness`; `git_head_end`; y las dos del árbol) y **0 bajas**. Poblaciones anteriores, todas `PASS`: 218 en `gate_2026-11-02T072103Z.json` (`14b19a9`), cuyo cotejo contra el recibo de 216 —F4 no guarda renglones por caso, solo contadores por combinación— dio 42 hojas compartidas y 14 distintas: doce contadores `216→218` y el sello, con los dos diferenciales, la semilla, los 32 tipos y los dos sabotajes idénticos; 216 en `gate_2026-11-01T211424Z.json` (`2499fae`) y las seis que se enumeran renglón a renglón en `docs/BACKEND_C.md` |
+| F5 — contrato `ISY_BACKEND/1` | `evidence/backends/gate_2026-11-03T004412Z.json` | `026db0f` | `PASS` | c/rust/zig/pydecimal **218/218** con 0 `UNSUPPORTED`; cobol **148/218 con 70 `UNSUPPORTED`** nombrados y 0 fallas; 8 484 corridas diferenciales por backend y 1 270 de strings en los cuatro completos, todas sin diferencias; `does_the_work` en los cinco; los tres sabotajes detectados en cada uno de los cuatro (cobol solo dos: no tiene `str`); `missing_toolchains: []`; **42 m 25 s** medidos. Con la guarda puesta, la cifra que importa es la que no se ve: **cero hojas `harness` en las cuatro piernas y en los tres sabotajes de los cinco backends, `no_medidos: 0`, `completado: true` en los cinco y `abortado` ausente del recibo**, así que `not_run` no aparece ni una vez. stdout crudo sellado al lado: `gate_2026-11-03T004412Z_stdout.txt`. Cotejo contra `gate_2026-11-02T081912Z.json`: 424 hojas compartidas, **25** distintas —21 son `generated_utc`, `git_head` y 19 campos de costo (`wall_ms_total`, `user_ms_total`, `sys_ms_total`, `max_rss_kb_max`), que el propio arnés declara no semánticos; las otras 4 son un **renombrado** que quita ambigüedad: el sabotaje `str_concat_truncates` guardaba sus 15 diferencias de strings en `difftest_diffs`, y ahora ese campo es solo el diferencial **numérico** (0, que es lo cierto: truncar strings no toca la aritmética) mientras `difftest_str_diffs` lleva las 15 y `detected` sigue siendo `true`—, **86 altas** (33 de `harness` por pierna y sabotaje, 12 de `difftest_str_diffs`, 9 de `omitted`, 5 cada una de `completado`, `no_medidos`, `types_aborted` y `seleccionado`, 4 de `aborted`, 6 del bloque `harness` y 2 del árbol) y **0 bajas**. Ojo con el stdout: la línea de sabotaje resume `diferencial N` solo con el numérico, así que un sabotaje de `str` puede leerse como `diferencial 0` teniendo 15 diferencias de strings en el JSON. Anteriores en el mismo directorio: el **FAIL** de `gate_2026-11-02T235456Z.json` (`4bb9ab5`, 41 m 48 s) con el caso extra y su fila `TOOLCHAIN_BUILD_FAIL` —párrafo abajo—, luego `gate_2026-11-02T081912Z.json` (`14b19a9`, 218) cuyo cotejo contra `gate_2026-11-01T225011Z.json` dio 398 compartidas, 39 distintas —contadores, campos de costo y sello—, 2 altas que eran `448` entrando al `UNSUPPORTED` de cobol con `ir0.2,str` y 0 bajas; `gate_2026-11-01T225011Z.json` (`6c00225`, 216 casos, los tres de N1 entrando con `ir0.2,str` tal como estaba predicho), `gate_2026-11-01T082046Z.json` (`a4f608c`, 213) y antes `gate_2026-11-01T215718Z.json`, `FAIL` por `TIMEOUT` del arnés en el difftest de strings de pydecimal, preservado con su diagnóstico en `evidence/f5_flake/run_20261101T220854Z.json` y su reproduccion: 500 llamadas y dos pasadas de 1 270 con 0 diferencias. Que cobol pase de 147 a 148 **no** es una capacidad nueva: `447` es un rechazo del frontend y cuenta como `passed` en los cinco —hallazgo 12 abajo— |
+
+**El FAIL del caso extra convive con el PASS del lote.** `tools/backend_gate.py`
+acepta `--extra-case <ruta.isy>`: un caso **fuera** del corpus congelado, sin
+`expect.json` porque `corpus()` compara el backend contra la referencia y nunca
+contra un `expected`. Lo que se corrió es la fuente que cierra P4 por el lado
+del toolchain —256 clones de una definición de 4 ranuras × 4 anchos, 10 906
+bytes, sha `52a2803975...`—, legal bajo el tope y mortal para el comptime de
+Zig. El recibo es `evidence/backends/gate_2026-11-02T235456Z.json` (`4bb9ab5`,
+`RELEASE_GATE`, 41 m 48 s) y sale `verdict=FAIL` con **una** razón:
+`backends/zig/corpus/harness` de una fila `TOOLCHAIN_BUILD_FAIL` con `case:
+extra_zig_4x4`, `build_key 7443b5e8e72fb777f63cba72`, `ms: 1131.5` y la línea
+`error:` del compilador en `detail`, mientras `failures` queda `[]` y
+`no_medidos: 1`. Los otros cuatro backends corren el mismo caso sin morir: c,
+rust y pydecimal `219/219`, cobol `148/219` con `extra_zig_4x4` entre sus 71
+`UNSUPPORTED`. Las otras tres filas del recibo (una por sabotaje de zig) son el
+mismo fuente muerto: la caché negativa no alcanza cuando el sabotaje cambia las
+banderas, porque la clave del artefacto incluye las banderas. Antes de este
+arreglo la corrida no terminaba: abortaba en ese caso 219 y no había
+`gate_*.json` ni para los 218 anteriores. Queda sellado tal cual —el gate se
+niega a pisar un archivo que exista (`tools/_gate.py:164`) y reescribe los
+`SHA256SUMS.txt` con nombres pelados— y su stamp es el **más viejo** de los dos
+del arnés endurecido, así que `latest()` lee el `PASS` de arriba y este FAIL no
+lo tapa. La fuente va copiada al lado (`gate_2026-11-02T235456Z_extra_case.isy`)
+porque `build/` está en `gitignore` y sin copia el `program_sha256` del recibo
+no apuntaría a nada comprobable.
+
+**La sonda que demuestra la guarda, y no solo el gate.**
+`evidence/f5_harness/run_2026-11-02T233718Z.json` (`8df68b8`, `RELEASE_GATE`,
+`arbol_sucio_codigo: false`) es `tools/f5_harness_probe.py --write` sobre la
+misma fuente, con **siete claims DEMONSTRADO** y su stdout crudo, la fuente
+`.isy`, el `.zig` emitido (310 088 bytes, sha `7cdc036863...`, sellado por lo
+mismo de `build/`) y el stderr del compilador al lado. No es un gate: es la
+prueba de que el fallo es **dato** y de que el dato es reproducible. Los dos
+que no se leen del JSON anterior: C1 recomponer la `build_key` a mano desde
+nombre, versión y fuente y que coincida con la de la fila; C4 que el mismo
+fuente muerto no vuelve a invocar el compilador —1 079,283 ms el primer intento
+contra 0,905 ms el segundo, con el mismo stderr—, y C5 que el `zig build`
+crudo, sin la guarda en medio, dice la misma línea y sale con `exit 1`, o sea
+que la CLI no entrega `status` ni `code` del contrato cuando muere el
+toolchain. C2 afirma que un rechazo del frontend **sube** como
+`InvalidProgram` (la guarda no se lo traga), C3 que la referencia y los backends
+instalados coinciden en esa fuente (`HALTED`, `return 0`, 770 pasos, 256 emits;
+c/rust/pydecimal iguales, cobol `UNSUPPORTED`, zig con la fila), C6 que 16
+clones de la misma definición **sí** compilan en Zig —la frontera es del
+compilador, no del idioma— y C7 que una fila en cualquier pierna vuelve
+no-conforme al backend aunque `failures` y `diffs` estén vacíos. El caso
+**no entró al corpus** (decisión de Danny): la población del gate sigue siendo
+218 y el raro deja recibo propio.
 
 **Hueco de F4 — CERRADO el 2026-11-01.** Existió así: F4 no se había re-corrido desde que
 `conformance_v0.5` entró en `CORPORA`, así que su recibo más reciente (`ec6b823`) fijaba 170
@@ -259,26 +312,46 @@ Qué encontró esta matriz al cotejar prose contra recibos:
     `backend_stderr`, más la salida de la CLI). Lo que enseña: cuando un error nuevo es de
     frontend, la cobertura que hay que exigir está en el test que compara backends entre sí, no en
     el conteo del gate.
-13. **Un fallo del compilador de un toolchain aborta F5 y no deja recibo.** Cerrar P4 obligó a
-    construir un programa que el idioma acepta y Zig no compila: 256 clones de una definición de
-    cuatro ranuras es legal bajo el tope, y el compilador de Zig revienta su propio límite de
-    comptime con `error: evaluation exceeded 1000 backwards branches`. De ahí que `448` lleve 16
-    clones y no 256, y de ahí que la sonda sí registre el fallo como dato
-    (`tools/v05_p4_probe.py:538`, «el fallo es el dato») mientras el gate lo propaga. Lo que no
-    estaba en ningún recibo era el arnés: `tools/backend_gate.py:51` llama a `backend.run(...)`
-    dentro del bucle de `corpus()` sin `try`, `main()` (`:115`) tampoco lo envuelve y la única
-    captura del archivo es la de `git_head()` (`:40-43`), así que el JSON se escribe solo al final
-    (`:146`): si el caso *k* rompe un compilador, no hay gate ni para los *k−1* anteriores.
-    Medido sobre el árbol de este lote —`backend_gate.corpus(zig, [4 ranuras × 4 anchos])`—:
-    lanza `builtins.RuntimeError` («zig: el compilador falló: …») a los 2 197 ms,
-    subiendo por `backend_gate.py:51` ← `base.py:272` (`run`) ← `:238` (`_binary`) ← `:195`
-    (`build`), y **no** es `InvalidProgram`, o sea que ningún `except` del arnés lo ve.
-    `tools/warm_build_cache.py:34-36` captura solo `InvalidProgram` y solo alrededor del lowering;
-    la compilación real está en `:62`, sin guarda. **No se toca el arnés en este lote**
-    (precedente del hallazgo 10): es un hecho sobre el instrumento, no sobre el lenguaje, y
-    arreglarlo es decisión aparte con su propia evidencia. Lo que enseña: un gate puede enrojecer
-    por starvation del host (hallazgo 10) o **morirse sin enrojecer** por el toolchain, y en el
-    segundo caso no hay `gate_*.json` que discutir, solo stdout sin hashear.
+13. **Un fallo del compilador de un toolchain abortaba F5 y no dejaba recibo. CERRADO el
+    2026-11-03.** Cerrar P4 obligó a construir un programa que el idioma acepta y Zig no compila:
+    256 clones de una definición de cuatro ranuras es legal bajo el tope, y el compilador de Zig
+    revienta su propio límite de comptime con `error: evaluation exceeded 1000 backwards
+    branches`. De ahí que `448` lleve 16 clones y no 256, y de ahí que la sonda sí registre el
+    fallo como dato (`tools/v05_p4_probe.py:538`, «el fallo es el dato») mientras el gate lo
+    propagaba. Lo que no estaba en ningún recibo era el arnés. Medido sobre el árbol de aquel
+    lote —`backend_gate.corpus(zig, [4 ranuras × 4 anchos])`—: `tools/backend_gate.py:51` llamaba
+    a `backend.run(...)` dentro del bucle de `corpus()` sin `try`, `main()` (`:115`) tampoco lo
+    envolvía, la única captura del archivo era la de `git_head()` (`:40-43`) y el JSON se escribía
+    solo al final (`:146`), así que si el caso *k* rompía un compilador no había gate ni para los
+    *k−1* anteriores: lanzaba `builtins.RuntimeError` («zig: el compilador falló: …») a los
+    2 197 ms subiendo por `base.py:272` (`run`) ← `:238` (`_binary`) ← `:195` (`build`), y **no**
+    era `InvalidProgram`, o sea que ningún `except` del arnés lo veía. `tools/warm_build_cache.py`
+    capturaba solo `InvalidProgram` y solo alrededor del lowering (`:34-36`); la compilación real
+    estaba en `:62`, sin guarda. **Arreglado en este lote, en tres capas**, cada una con su prueba:
+    el **caso** (`isyco/harness.py:61`, `intento` devuelve resultado o fila y no lanza), la
+    **pierna** (`tools/backend_gate.py:210`, `capa()` marca `not_run` cuando una fila cayó en
+    medio) y la **corrida** (`tools/backend_gate.py:334`, `except Exception` guarda
+    `report["abortado"]` y el `finally` sella igual). `base.py:216` lanza ahora
+    `ToolchainBuildFailure` (`:37`, subclase de `RuntimeError`; nada en el repo hacía
+    `except RuntimeError`, así que cambiar el tipo no le quitaba el manejo a nadie) y conoce la
+    clave del artefacto, que la fila publica como `build_key` —recomponible a mano desde nombre,
+    versión, banderas y fuente—; la caché negativa (`:197`) no vuelve a invocar un compilador que
+    ya murió. El registro es una lista **hermana** `harness`, no una mezcla: `failures` y `diffs`
+    siguen siendo solo divergencia semántica, y `tools/_gate.py:118` (`es_conforme`) pliega la
+    hermana —una fila en cualquier pierna vuelve no-conforme al backend aunque los dos contadores
+    estén vacíos, que es justo lo que `tests/test_harness.py` muerde—. Dos códigos
+    (`TOOLCHAIN_BUILD_FAIL` y `HARNESS_INTERNAL`, `isyco/harness.py:25`) y un sello en el recibo
+    (`harness.guarda = isyco.harness/1`): un recibo anterior al arreglo no lo tiene, así que
+    ninguna afirmación posterior puede respaldarse en él por error. Recibos: la sonda con sus
+    siete claims `DEMONSTRADO` (`evidence/f5_harness/run_2026-11-02T233718Z.json`, `8df68b8`,
+    `RELEASE_GATE`), el gate con el caso extra (`evidence/backends/gate_2026-11-02T235456Z.json`,
+    `4bb9ab5`, `verdict=FAIL` con **una** fila y `failures: []`) y el lote verde que lo reemplaza
+    (`evidence/backends/gate_2026-11-03T004412Z.json`, `026db0f`). Lo que enseña sigue valiendo: un
+    gate puede enrojecer por starvation del host (hallazgo 10) o **morirse sin enrojecer** por el
+    toolchain, y antes, en el segundo caso, no había `gate_*.json` que discutir —solo stdout sin
+    hashear—. Hoy el renglón existe; lo que queda afuera es el modo «se cuelga», que ningún
+    `timeout=` del compilador ampara y está escrito como `NOT_DEMONSTRATED` en
+    `docs/OPEN_QUESTIONS_P1_P4.md` (Z1).
 14. **Cotejar recibos hoja por hoja tiene dos trampas de clave, y las dos dan números falsos.** La
     no-regresión de este lote se midió primero alineando los JSON **por posición**: F2 devolvió 35
     hojas distintas y F3 53, con `emits`, `code`, `claim` y `program_sha256` entre ellas. De esas,

@@ -81,7 +81,7 @@ no es del frontend) y bajar no es una decisión de P4 sin medir la población re
 
 | borde | quién lo fija | por qué ahí |
 |---|---|---|
-| 256 legal (último) | `tests/test_specialize.py::TopePorDefinicion` | el corpus no puede: un caso con 256 clones es legal bajo la regla y Zig no lo compila, así que **abortaría F5 sin recibo** —`tools/backend_gate.py:51` no captura el `RuntimeError`; medido y nombrado en `docs/EVIDENCE_MATRIX.md`, hallazgo 13 |
+| 256 legal (último) | `tests/test_specialize.py::TopePorDefinicion` | el corpus no puede con él: un caso con 256 clones es legal bajo la regla y Zig no lo compila. Desde el arnés endurecido eso **deja renglón, no abort**, pero el caso sigue fuera del corpus por decisión: se corre con `--extra-case` y tiene recibo propio —`evidence/backends/gate_2026-11-02T235456Z.json` (`4bb9ab5`, `verdict=FAIL`, `zig.corpus.harness` con una fila `TOOLCHAIN_BUILD_FAIL` y `failures: []`) y la sonda `evidence/f5_harness/run_2026-11-02T233718Z.json` (`8df68b8`)—; cierre del hallazgo 13 de `docs/EVIDENCE_MATRIX.md` |
 | 257 → `SPEC_LIMIT` | `447_tope_de_especializaciones` (corpus) + el mismo test | el rechazo sí viaja por el frontend compartido: los cinco backends devuelven lo mismo que la referencia sin una línea de `backend_stderr` |
 | 16 copias de una definición legal | `448_dieciseis_clones_por_definicion` | piso con la forma que justifica la granularidad (dos ranuras × 4 anchos) |
 | el contador no cuenta llamadas | §4 de la sonda + `TopePorDefinicion` | control negativo, no caso de corpus |

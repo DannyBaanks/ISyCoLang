@@ -22,7 +22,7 @@ dos últimos sellan las aristas que el borrador de la spec afirma y el corpus no
 | P2 | ¿se permite `for x in [1, 2, 3]`? | **no**: `SYNTAX` | `tools/v05_spec_probe.py` §4 |
 | P3 | nombre de la especialización: ¿afecta a `program_sha256` y a las trazas? | identidad **no**, traza **sí** | `tools/v05_spec_probe.py` §6, `tests/test_specialize.py` |
 | P4 | ¿cuántas especializaciones puede crear un programa? | **cerrada el 2026-11-02**: **256 resoluciones por definición dentro del programa**, la 257 es `SPEC_LIMIT` estático | `docs/decisions/P4_SPEC_LIMIT.md`, `447`/`448`, `tests/test_specialize.py::TopePorDefinicion`, `evidence/v05_p4/run_20261102T085025Z.json` (R2, `RELEASE_GATE`) |
-| Z1 | ¿el techo de un toolchain forma parte del idioma? | **abierta**: con P4 puesto hay programas legales que Zig no compila (frontera medida por aridad) | `evidence/v05_p4/run_20261102T085025Z.json` (R2) §6/§6b, `spec/CORE_v0.5.md` §7 |
+| Z1 | ¿el techo de un toolchain forma parte del idioma? | **abierta**: con P4 puesto hay programas legales que Zig no compila (frontera medida por aridad) | `evidence/v05_p4/run_20261102T085025Z.json` (R2) §6/§6b, `spec/CORE_v0.5.md` §7, `evidence/f5_harness/run_2026-11-02T233718Z.json` (la guarda: el fallo ya es renglón, no abort) |
 | N1 | ¿`for c in s` con `s: str<N>` es normativo? | **cerrada el 2026-11-01 — adoptado**: la regla de §4.4 ya no tiene `[D]` y tres casos la fijan | `programs/conformance_v0.5/444`–`446` + sus gemelos, `tools/v05_spec_probe.py` §7 |
 | N2 | ¿algún caso fija el cruce con raíz `0.5` de M4? | **cerrada el 2026-11-01** | `programs/conformance_v0.5/443_m4_modulo_v04/` + `tools/v05_spec_probe.py` §1 |
 | N3 | ¿el `let` sin anotación es inferencia? | **cerrada el 2026-11-01**: no, es solo el sintético del `for` | `spec/CORE_v0.5.md` §4.1 + `evidence/v05_spec/run_20261101T153344Z.json` §3 |
@@ -255,6 +255,23 @@ cuatro completos). Lo que falta para cerrarla es decidir si la cota de una capac
 idioma, del backend, o de los dos con un `UNSUPPORTED` nombrado por plataforma —y, si se elige lo
 último, en qué capa vive ese dato, porque hoy `PROGRAM_REQUIRES` (V7) describe **contenido**, no
 costes de compilación.
+
+**El arnés dejó de ser parte de la pregunta (2026-11-03).** Hasta el lote anterior Z1 tenía un
+coste de instrumento encima: el mismo programa legal de 256 clones que Zig no compila se llevaba
+por delante F5 sin dejar recibo (hallazgo 13 de `docs/EVIDENCE_MATRIX.md`), así que discutir la
+frontera de Zig significaba quedarse sin gate. Hoy esa fuente corre y el fallo es un renglón: la
+sonda `evidence/f5_harness/run_2026-11-02T233718Z.json` (`8df68b8`, siete claims `DEMONSTRADO`) y
+el gate con `--extra-case`, `evidence/backends/gate_2026-11-02T235456Z.json` (`4bb9ab5`,
+`verdict=FAIL` con `zig.corpus.harness` de una fila `TOOLCHAIN_BUILD_FAIL`, `failures: []` y
+cobol/C/Rust/pydecimal respondiendo normal). Z1 queda entonces como lo que es: una pregunta de
+capacidad, no de arnés.
+
+**Lo que sigue sin medir es el otro modo de romperse.** `Backend.build()`
+(`isyco/backends/base.py:182`) llama al compilador sin `timeout=`: un toolchain que se **cuelga**
+en vez de morir no produce `ToolchainBuildFailure` y cuelga la pierna igual que antes del arreglo.
+La guarda ampara «muere», no «no devuelve»; el `timeout_ms` de 60 s existe para la *ejecución* del
+binario, no para su construcción. Escrito como `NOT_DEMONSTRATED` — este lote no lo toca y no hay
+recibo que lo afirme en ningún sentido.
 
 **Permanece mientras:** un backend del corpus falle por volumen de especializaciones dentro de la
 cota del idioma, y nadie haya dicho si eso es un bug del backend o una frontera del lenguaje.
