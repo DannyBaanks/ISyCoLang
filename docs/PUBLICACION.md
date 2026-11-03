@@ -78,8 +78,8 @@ medio:
    inventario del host del lado privado y `evidence/` del público, y esto es §21, no
    una excusa: el archivo lista compiladores y rutas de una máquina concreta.
 2. recoser las referencias, que son cinco lugares verificables: la fila de contexto
-   `docs/EVIDENCE_MATRIX.md:150`, el mapa de `README.md:44` y su sección «Reproducir lo
-   que existe» (`README.md:99`), `ROADMAP.md:74`, la prosa del inventario
+   `docs/EVIDENCE_MATRIX.md:150`, el mapa de `README.md` (sección «Referencia del repositorio»)
+   y sus «Gates y comandos avanzados», `ROADMAP.md:74`, la prosa del inventario
    `ROADMAP.md:420` y las dos filas de la claim table `ROADMAP.md:555-556` —estas dos
    dicen `DEMONSTRATED` y su evidencia pasa a ser una copia externa con hash publicado,
    que es lo que §21 permite pero no lo que un lector de GitHub puede verificar sin más.
