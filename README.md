@@ -46,7 +46,7 @@ Estos números son **resultados de corridas selladas en los commits indicados en
 | F5 · C, Rust, Zig, pydecimal | **219/219** por backend; **8 484** corridas diferenciales numéricas y 1 270 de strings por backend, sin diferencias reportadas | [F5](evidence/backends/gate_2026-11-03T040610Z.json) |
 | F5 · COBOL en su dominio numérico | **148/219**, con **71 `UNSUPPORTED`** explícitos, 0 discrepancias reportadas y **8 484** corridas diferenciales numéricas sin diferencias | [F5](evidence/backends/gate_2026-11-03T040610Z.json) |
 
-**Importante:** el gate F5 usó **218 casos del corpus + 1 caso adicional con `--extra-case`**; el corpus formal sigue siendo de 218, no 219. `UNSUPPORTED` es el rechazo previsto fuera del dominio de COBOL, **no** un caso aprobado como ejecución equivalente. Los gates incluyen controles con fallos inyectados y `does_the_work`, pero eso valida el alcance de sus pruebas, no todas las entradas futuras.
+**Importante:** el gate F5 usó **218 casos del corpus + 1 caso adicional con `--extra-case`**; el corpus formal sigue siendo de 218, no 219. Una coincidencia de rechazo del **frontend** (por ejemplo `INVALID_PROGRAM/SPEC_LIMIT`) puede contar como caso conforme: **219/219 no significa 219 programas compilados en binarios**. `UNSUPPORTED` es el rechazo previsto fuera del dominio de COBOL, **no** un caso aprobado como ejecución equivalente. Los gates incluyen controles con fallos inyectados y `does_the_work`, pero eso valida el alcance de sus pruebas, no todas las entradas futuras.
 
 La [matriz de evidencia](docs/EVIDENCE_MATRIX.md) distingue gates `RELEASE_GATE` / `EVIDENCE_ONLY`, versiones de árbol y contraejemplos. La [claim table y los planes](ROADMAP.md) conservan afirmaciones no demostradas.
 
