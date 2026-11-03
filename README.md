@@ -2,13 +2,58 @@
 
 **Un lenguaje de programación con semántica propia y múltiples backends verificables.**
 
-ISyCoLang define el comportamiento de sus programas en un intérprete de referencia, baja el código a una representación intermedia canónica (**ISY-IR**) y permite ejecutarlo mediante distintos backends. Un backend no decide qué significa el programa: debe reproducir el contrato común o declarar la capacidad que no soporta.
+ISyCoLang define el comportamiento de sus programas en un intérprete de referencia, baja el código
+a una representación intermedia canónica (**ISY-IR**) y permite ejecutarlo mediante distintos
+backends. Un backend no decide qué significa el programa: debe reproducir el contrato común o
+declarar la capacidad que no soporta.
 
-`.isy` → lexer/parser → tipos y efectos → ISY-IR → intérprete IR / C / Rust / Zig / Python `decimal` / GnuCOBOL.
+`.isy` → lexer/parser → tipos y efectos → ISY-IR → intérprete IR / C / Rust / Zig / Python
+`decimal` / GnuCOBOL.
 
-**Estado (3 de noviembre de 2026):** `EXECUTABLE` dentro de los dominios y corpus medidos. Las especificaciones v0.1–v0.4 están congeladas; el engine ya implementa decisiones de v0.5, pero `spec/CORE_v0.5.md` sigue en **BORRADOR**, no es una especificación congelada. No hay aquí una afirmación de soporte universal ni de paridad fuera de los casos medidos.
+**Estado (3 de noviembre de 2026):** `EXECUTABLE` dentro de los dominios y corpus medidos. Las
+especificaciones v0.1–v0.4 están congeladas; el engine ya implementa decisiones de v0.5, pero
+`spec/CORE_v0.5.md` sigue en **BORRADOR**, no es una especificación congelada. No hay aquí una
+afirmación de soporte universal ni de paridad fuera de los casos medidos.
 
-**Acceso:** repositorio **privado**, sin licencia publicada ni autorización de distribución pública. Hay información de infraestructura e identidad en el historial/recibos; antes de publicar se debe resolver `docs/PUBLICACION.md`. No cambiar la visibilidad ni reescribir la evidencia sellada para mejorar la apariencia del README.
+## Acceso y respaldo
+
+Repositorio **privado** (decisión de Danny, 2026-10-28), sin licencia publicada ni
+autorización de distribución pública. Desde 2026-11-03 tiene un remoto **privado**
+`DannyBaanks/ISyCoLang`, al que se empuja `main` con `git push origin main`; no
+existe remoto público y ninguno se crea sin pedido explícito de Danny.
+
+Respaldo que no depende del remoto: un bundle con la historia completa, escrito
+**fuera** del repo y verificado después.
+
+```bash
+git bundle create ../ISyCoLang-<fecha>.bundle --all
+git bundle verify ../ISyCoLang-<fecha>.bundle
+```
+
+Antes de cualquier cambio de visibilidad falta resolver la separación público /
+privado del estándar §21; está medida en [docs/PUBLICACION.md](docs/PUBLICACION.md).
+Ni reescribir la evidencia sellada ni reordenar la historia para que este README
+luzca mejor: limpiar los recibos rompería su sello y los `git_head` que citan
+dejarían de resolver.
+
+## Respuestas rápidas (estándar §16)
+
+El estándar pide que un lenguaje público responda diez preguntas en menos de 90
+segundos; se responde aquí porque es el checklist previo a publicar. Cada cifra es
+la del recibo más nuevo, no una corrida hecha para esta revisión.
+
+| pregunta | respuesta hoy |
+|---|---|
+| ¿Qué es? | Un lenguaje pequeño con semántica propia, con varios backends que compiten por implementarla por contrato. |
+| ¿Qué lo hace distinto? | La semántica la fija el intérprete de referencia; C, Rust, Zig, `decimal` y GnuCOBOL no deciden qué significa el programa. |
+| ¿Formato? | `.isy` en UTF-8; la cabecera `isyco 0.1` … `isyco 0.5` elige las reglas, con v0.5 en borrador. |
+| ¿Cómo ejecuto un programa? | `python3 -m isyco run precio.isy --input '["19.99","3"]'`, y `--via c` (u otro backend) para la ruta compilada. |
+| ¿Dónde vive el engine? | `isyco/` (intérprete de referencia y CLI) y `isyco/backends/` (los ejecutores). |
+| ¿Qué está demostrado? | Los gates F2–F5 sobre los corpus v0.1–v0.5, en la tabla «Resultados respaldados por recibos». |
+| ¿Qué NO está demostrado? | Soporte universal, paridad fuera de los casos medidos, ventaja de rendimiento, v0.5 como estándar congelado y cualquier límite normativo de profundidad. La claim table vive en `ROADMAP.md` §6. |
+| ¿Tests? | `python3 -m unittest discover -s tests -v`. |
+| ¿Evidencia? | `evidence/`, inventariada en [docs/EVIDENCE_MATRIX.md](docs/EVIDENCE_MATRIX.md). |
+| ¿Límites conocidos? | La sección «Límites conocidos y trabajo pendiente» y `docs/FEASIBILITY_2026-10-28.md` §12. |
 
 ## Inicio rápido
 
@@ -20,23 +65,41 @@ python3 -m isyco ir precio.isy
 python3 -m isyco run precio.isy --input '["19.99","3"]' --via c
 ```
 
-El primer comando usa `--via ast` (intérprete de referencia, opción predeterminada). Para el ejemplo, la guía registra `status=HALTED`, emisiones `23.19`, `46.38`, `69.57`, y retorno `69.57`. El segundo imprime ISY-IR; el tercero compila y ejecuta mediante C, siempre que el toolchain esté instalado.
+El primer comando usa `--via ast` (intérprete de referencia, opción predeterminada). Para el
+ejemplo, la guía registra `status=HALTED`, emisiones `23.19`, `46.38`, `69.57`, y retorno `69.57`.
+El segundo imprime ISY-IR; el tercero compila y ejecuta mediante C, siempre que el toolchain esté
+instalado.
 
-También puedes usar `--via ir`, `--via rust`, `--via zig`, `--via pydecimal` o `--via cobol`. **No todos los backends implementan todas las capacidades:** cuando el programa requiere una capacidad ausente, el contrato exige `UNSUPPORTED`, no una simulación silenciosa. La ruta por COBOL necesita GnuCOBOL, la ruta Zig necesita Zig, etc.; no se proporciona aquí un instalador de toolchains.
+También puedes usar `--via ir`, `--via rust`, `--via zig`, `--via pydecimal` o `--via cobol`. **No
+todos los backends implementan todas las capacidades:** cuando el programa requiere una capacidad
+ausente, el contrato exige `UNSUPPORTED`, no una simulación silenciosa. La ruta por COBOL necesita
+GnuCOBOL, la ruta Zig necesita Zig, etc.; no se proporciona aquí un instalador de toolchains.
 
-**Para aprender la sintaxis y los resultados:** [GUIA.md](GUIA.md). **Semántica:** [spec/](spec/README.md). **Contrato de backends:** [spec/BACKEND.md](spec/BACKEND.md).
+**Para aprender la sintaxis y los resultados:** [GUIA.md](GUIA.md). **Semántica:**
+[spec/](spec/README.md). **Contrato de backends:** [spec/BACKEND.md](spec/BACKEND.md).
 
 ## Lenguaje y arquitectura
 
-- **Formatos y versiones.** Código UTF-8 en `.isy`; la cabecera `isyco 0.1` … `isyco 0.5` selecciona las reglas. Las versiones antiguas conservan su comportamiento documentado.
-- **Tipos y efectos.** Enteros con políticas explícitas de desbordamiento, decimales con escala/redondeo, `bool`, arreglos, funciones, efectos `!emit`; desde v0.3, strings ASCII acotados y structs; desde v0.4, módulos e imports.
-- **v0.5 en el engine.** `len` para arreglos, `for` sobre lugares/arreglos/strings según sus reglas, y especialización contextual acotada de parámetros/retornos `str`. El límite P4 es de **256 resoluciones por definición fuente**; la siguiente debe dar `INVALID_PROGRAM/SPEC_LIMIT`.
-- **Referencia y lowering.** `isyco/` alberga lexer, parser, comprobador de tipos, intérprete y bajada a ISY-IR; `isyco/backends/` contiene los ejecutores. La comparación obliga a conservar `status`, `code`, `emits`, `return` y `steps` dentro del dominio declarado.
-- **Investigación separada.** El carril **3OPS Lab** y los posibles backends futuros (p. ej. Prolog, Fortran o esolangs) son líneas del roadmap, **no** implementaciones verificadas en este repositorio.
+- **Formatos y versiones.** Código UTF-8 en `.isy`; la cabecera `isyco 0.1` … `isyco 0.5`
+  selecciona las reglas. Las versiones antiguas conservan su comportamiento documentado.
+- **Tipos y efectos.** Enteros con políticas explícitas de desbordamiento, decimales con
+  escala/redondeo, `bool`, arreglos, funciones, efectos `!emit`; desde v0.3, strings ASCII
+  acotados y structs; desde v0.4, módulos e imports.
+- **v0.5 en el engine.** `len` para arreglos, `for` sobre lugares/arreglos/strings según sus
+  reglas, y especialización contextual acotada de parámetros/retornos `str`. El límite P4 es de
+  **256 resoluciones por definición fuente**; la siguiente debe dar `INVALID_PROGRAM/SPEC_LIMIT`.
+- **Referencia y lowering.** `isyco/` alberga lexer, parser, comprobador de tipos, intérprete y
+  bajada a ISY-IR; `isyco/backends/` contiene los ejecutores. La comparación obliga a conservar
+  `status`, `code`, `emits`, `return` y `steps` dentro del dominio declarado.
+- **Investigación separada.** El carril **3OPS Lab** y los posibles backends futuros (p. ej.
+  Prolog, Fortran o esolangs) son líneas del roadmap, **no** implementaciones verificadas en este
+  repositorio.
 
 ## Resultados respaldados por recibos
 
-Estos números son **resultados de corridas selladas en los commits indicados en los recibos**, no una ejecución independiente sobre el HEAD actual ni una demostración de equivalencia para todos los programas posibles.
+Estos números son **resultados de corridas selladas en los commits indicados en los recibos**, no
+una ejecución independiente sobre el HEAD actual ni una demostración de equivalencia para todos
+los programas posibles.
 
 | Gate / alcance | Resultado registrado | Recibo |
 |---|---|---|
@@ -46,17 +109,38 @@ Estos números son **resultados de corridas selladas en los commits indicados en
 | F5 · C, Rust, Zig, pydecimal | **219/219** por backend; **8 484** corridas diferenciales numéricas y 1 270 de strings por backend, sin diferencias reportadas | [F5](evidence/backends/gate_2026-11-03T040610Z.json) |
 | F5 · COBOL en su dominio numérico | **148/219**, con **71 `UNSUPPORTED`** explícitos, 0 discrepancias reportadas y **8 484** corridas diferenciales numéricas sin diferencias | [F5](evidence/backends/gate_2026-11-03T040610Z.json) |
 
-**Importante:** el gate F5 usó **218 casos del corpus + 1 caso adicional con `--extra-case`**; el corpus formal sigue siendo de 218, no 219. Una coincidencia de rechazo del **frontend** (por ejemplo `INVALID_PROGRAM/SPEC_LIMIT`) puede contar como caso conforme: **219/219 no significa 219 programas compilados en binarios**. `UNSUPPORTED` es el rechazo previsto fuera del dominio de COBOL, **no** un caso aprobado como ejecución equivalente. Los gates incluyen controles con fallos inyectados y `does_the_work`, pero eso valida el alcance de sus pruebas, no todas las entradas futuras.
+**Importante:** el gate F5 usó **218 casos del corpus + 1 caso adicional con `--extra-case`**; el
+corpus formal sigue siendo de 218, no 219. Una coincidencia de rechazo del **frontend** (por
+ejemplo `INVALID_PROGRAM/SPEC_LIMIT`) puede contar como caso conforme: **219/219 no significa 219
+programas compilados en binarios**. `UNSUPPORTED` es el rechazo previsto fuera del dominio de
+COBOL, **no** un caso aprobado como ejecución equivalente. Los gates incluyen controles con fallos
+inyectados y `does_the_work`, pero eso valida el alcance de sus pruebas, no todas las entradas
+futuras.
 
-La [matriz de evidencia](docs/EVIDENCE_MATRIX.md) distingue gates `RELEASE_GATE` / `EVIDENCE_ONLY`, versiones de árbol y contraejemplos. La [claim table y los planes](ROADMAP.md) conservan afirmaciones no demostradas.
+La [matriz de evidencia](docs/EVIDENCE_MATRIX.md) distingue gates `RELEASE_GATE` /
+`EVIDENCE_ONLY`, versiones de árbol y contraejemplos. La [claim table y los planes](ROADMAP.md)
+conservan afirmaciones no demostradas.
 
 ## Límites conocidos y trabajo pendiente
 
-1. **Profundidad del frontend (Z2):** la [sonda sellada](evidence/z2_depth/run_2026-11-03T074629Z.json) encontró `RecursionError` con cadenas de expresiones profundas. En el host medido (Python 3.12.3, límite de recursión 1000), la forma con especialización contextual pasó con 241 términos y falló con 242; dos formas sin ese clon pasaron con 329 y fallaron con 330. **Son fronteras observadas dependientes del proceso, no límites normativos del lenguaje.** El error aún no se convierte sistemáticamente en un rechazo controlado.
-2. **Compilación Zig (Z1):** una familia legal antes fallaba por presupuesto de evaluación `comptime`. El emisor se corrigió y la [sonda Z1](evidence/z1_ceiling/run_2026-11-03T035753Z.json) y F5 muestran que los casos medidos ahora compilan; **esto no prueba ausencia de nuevos fallos de compilador**.
-3. **Conformidad acotada:** el corpus, los pares diferenciales y los sabotajes no agotan el espacio de programas/entradas, plataformas ni variantes de toolchain. No se afirma ventaja general de rendimiento ni equivalencia formal universal.
-4. **v0.5 todavía en borrador.** Implementar decisiones y pasar gates no equivale a congelar el texto normativo.
-5. **Publicación pendiente:** el historial y algunos recibos contienen datos del host o metadata de autor. El repositorio permanece privado; ver `docs/PUBLICACION.md`.
+1. **Profundidad del frontend (Z2):** la
+   [sonda sellada](evidence/z2_depth/run_2026-11-03T074629Z.json) encontró `RecursionError` con
+   cadenas de expresiones profundas. En el host medido (Python 3.12.3, límite de recursión 1000),
+   la forma con especialización contextual pasó con 241 términos y falló con 242; dos formas sin
+   ese clon pasaron con 329 y fallaron con 330. **Son fronteras observadas dependientes del
+   proceso, no límites normativos del lenguaje.** El error aún no se convierte sistemáticamente en
+   un rechazo controlado.
+2. **Compilación Zig (Z1):** una familia legal antes fallaba por presupuesto de evaluación
+   `comptime`. El emisor se corrigió y la
+   [sonda Z1](evidence/z1_ceiling/run_2026-11-03T035753Z.json) y F5 muestran que los casos medidos
+   ahora compilan; **esto no prueba ausencia de nuevos fallos de compilador**.
+3. **Conformidad acotada:** el corpus, los pares diferenciales y los sabotajes no agotan el
+   espacio de programas/entradas, plataformas ni variantes de toolchain. No se afirma ventaja
+   general de rendimiento ni equivalencia formal universal.
+4. **v0.5 todavía en borrador.** Implementar decisiones y pasar gates no equivale a congelar el
+   texto normativo.
+5. **Publicación pendiente:** el historial y algunos recibos contienen datos del host o metadata
+   de autor. El repositorio permanece privado; ver `docs/PUBLICACION.md`.
 
 ## Cómo verificar sin confundir evidencia con tests nuevos
 
@@ -65,7 +149,15 @@ python3 -m unittest discover -s tests -v
 sha256sum -c docs/origin/SHA256SUMS.txt
 ```
 
-La suite comprueba también el contenido de `evidence/*/SHA256SUMS.txt` y la coherencia de ciertas cifras de este README con los recibos. **La existencia de esos tests no significa que se hayan ejecutado en esta revisión del README.** Los gates que generan recibos escriben archivos nuevos en `evidence/` y actualizan sus listas SHA-256: ejecutarlos deliberadamente y con el árbol controlado; para ensayos, usar `ISYCO_EVIDENCE_ROOT` según [GUIA.md](GUIA.md). No modificar recibos sellados.
+La suite comprueba también el contenido de `evidence/*/SHA256SUMS.txt` y la coherencia de
+ciertas cifras de este README con los recibos. **Recuento medido en el árbol del 2026-11-03: 213
+tests con 278 subtests.** El rango que registra [GUIA.md](GUIA.md) es de 187,1 a 491,1 s sobre
+quince corridas y ya incluye dos de esos 213; el recuento y la duración del histórico están
+atados al árbol y a la toolchain de cada corrida, así que no se citan aquí como cifra de hoy.
+**La existencia de esos tests no significa que se hayan ejecutado en esta revisión del README.**
+Los gates que generan recibos escriben archivos nuevos en `evidence/` y actualizan sus listas
+SHA-256: ejecutarlos deliberadamente y con el árbol controlado; para ensayos, usar
+`ISYCO_EVIDENCE_ROOT` según [GUIA.md](GUIA.md). No modificar recibos sellados.
 
 ## Referencia del repositorio
 
@@ -133,7 +225,7 @@ tools/z2_depth_probe.py            techo de profundidad del frontend (Z2): dos f
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # suite; recuento y duración dependen del árbol/toolchains
+python3 -m unittest discover -s tests -v       # suite completa: 213 tests (278 subtests) el 2026-11-03
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
