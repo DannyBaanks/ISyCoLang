@@ -342,8 +342,9 @@ class CuotaYAliasZig(unittest.TestCase):
 
     def test_el_programa_fronteira_ejecuta_como_la_referencia(self):
         """1024 sitios: fuera de la cuota del emisor Zig revienta su presupuesto de fábrica
-        (medido en `tools/z1_ceiling_probe.py`: 992 instanciaciones caben en los 1000 de
-        fábrica y 1008 no), y con la cuota escrita compila y coincide con la referencia."""
+        (medido y sellado en `evidence/z1_ceiling/run_2026-11-03T035753Z.json`, claims C1 y C7:
+        con el alias puesto caben 960 instanciaciones sin cuota y 1024 mueren, a una rama por
+        instanciación), y con la cuota escrita compila y coincide con la referencia."""
         n = 1024
         firma = ", ".join(f"a{i}: str" for i in range(1, n + 1))
         args = ", ".join('"{}"'.format("x" * (1 + i % 4)) for i in range(n))
