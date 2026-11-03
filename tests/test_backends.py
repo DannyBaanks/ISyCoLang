@@ -288,6 +288,70 @@ class TopeFrontend(unittest.TestCase):
         self.assertIn("INVALID_PROGRAM", proc.stdout)
 
 
+class CuotaYAliasZig(unittest.TestCase):
+    """Z1: el techo de comptime de Zig es forma del emisor, no del idioma.
+
+    Dos invariantes del código generado, con el `expected` contado en el lenguaje (llamadas
+    con literal de `str`), no en el texto emitido: la cuota que el emisor se autoconcede vale
+    `1000 + 8·sitios` y vive dentro del cuerpo, y cada ancho de `str` se instancia una sola
+    vez a nivel de archivo. Sin la segunda, la firma de un clone con 1024 parámetros agota
+    el marco de la declaración y ninguna cuota de cuerpo lo alcanza (medido en
+    `tools/z1_ceiling_probe.py`).
+    """
+
+    K = 5
+
+    def setUp(self):
+        if "zig" not in AVAILABLE:
+            self.skipTest("zig no instalado")
+        cuerpo = "".join('    emit m("ab");\n' for _ in range(self.K))
+        self.fuente = ('isyco 0.5\n\nfn m(a: str) -> i64 { return len(a); }\n'
+                       f'fn main() -> i64 !emit {{\n{cuerpo}    return 0;\n}}\n').encode()
+
+    def linea_cuota(self, src: str) -> str | None:
+        for linea in src.splitlines():
+            if "setEvalBranchQuota" in linea:
+                return linea.strip()
+        return None
+
+    def test_la_cuota_vale_mil_mas_ocho_por_sitio_y_vive_en_el_cuerpo(self):
+        src = AVAILABLE["zig"].emit(compile_ir(self.fuente))
+        lineas = src.splitlines()
+        esperada = f"comptime {{ @setEvalBranchQuota({1000 + 8 * self.K}); }}"
+        self.assertEqual(self.linea_cuota(src), esperada)
+        i = next(n for n, l in enumerate(lineas) if l.startswith("fn f_main"))
+        self.assertEqual(lineas[i + 1].strip(), esperada,
+                         "la cuota tiene que ser la primera sentencia del cuerpo: a nivel "
+                         "de archivo es otro marco y no autoriza nada (medido)")
+        self.assertNotIn(esperada, "\n".join(lineas[:i]))
+
+    def test_cada_ancho_se_instancia_una_vez_y_el_codigo_generado_no_usa_isystr(self):
+        src = AVAILABLE["zig"].emit(compile_ir(self.fuente))
+        lineas = src.splitlines()
+        self.assertEqual([l for l in lineas if l.startswith("const Str")], ["const Str2 = IsyStr(2);"])
+        desde_alias = next(n for n, l in enumerate(lineas) if l.startswith("const Str"))
+        self.assertFalse([l for l in lineas[desde_alias + 1:] if "IsyStr(" in l],
+                         "después de los alias todo tipo de `str` se nombra por el alias")
+
+    def test_un_programa_sin_str_no_lleva_cuota_ni_alias(self):
+        fuente = (b"isyco 0.5\n\nfn m(a: i64) -> i64 { return a; }\n"
+                  b"fn main() -> i64 !emit { emit m(7); return 0; }\n")
+        src = AVAILABLE["zig"].emit(compile_ir(fuente))
+        self.assertIsNone(self.linea_cuota(src))
+        self.assertFalse(any(l.startswith("const Str") for l in src.splitlines()))
+
+    def test_el_programa_fronteira_ejecuta_como_la_referencia(self):
+        """512 sitios: con la cuota de fábrica Zig no compila; emitido así, sí y coincide."""
+        n = 512
+        firma = ", ".join(f"a{i}: str" for i in range(1, n + 1))
+        args = ", ".join('"{}"'.format("x" * (1 + i % 4)) for i in range(n))
+        fuente = (f'isyco 0.5\n\nfn m({firma}) -> i64 {{ return len(a1); }}\n'
+                  f'fn main() -> i64 !emit {{\n    emit m({args});\n    return 0;\n}}\n').encode()
+        esperado, _ = run(fuente, [])
+        obtenido, _ = AVAILABLE["zig"].run(fuente, [], None)
+        self.assertEqual({k: obtenido.get(k) for k in KEYS}, {k: esperado.get(k) for k in KEYS})
+
+
 def _make_conformance(name):
     @unittest.skipUnless(name in AVAILABLE, f"toolchain de {name} no instalado")
     class Conformance(unittest.TestCase):

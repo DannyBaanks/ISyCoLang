@@ -431,6 +431,11 @@ HALF_EVEN_TIE = {
 }
 SABOTAGES = ("half_even_as_half_up", "div_floor", "str_concat_truncates")
 
+# Presupuesto de comptime que el emisor se autoconcede (Z1): el de fábrica de Zig más ocho
+# ramas por instanciación de `str` que el propio cuerpo genera.
+CUOTA_BASE = 1000
+CUOTA_SITIO = 8
+
 
 class ZigEmitter:
     def __init__(self, module: dict, sabotage: str | None = None):
@@ -445,11 +450,13 @@ class ZigEmitter:
         self.rets = {fn["name"]: ty_from_json(fn["ret"]) for fn in module["functions"]}
         self.structs: dict[str, str] = {}      # repr(StructT) -> nombre del struct de Zig
         self.struct_defs: list[str] = []
+        self.ancho: dict[int, str] = {}        # N -> alias del tipo `IsyStr(N)`
+        self.aliases: list[str] = []
 
     # --- tipos ----------------------------------------------------------------
     def ztype(self, t) -> str:
         if isinstance(t, StrT):
-            return f"IsyStr({t.n})"
+            return self.alias_ancho(t.n)
         if isinstance(t, StructT):
             key = repr(t)
             if key not in self.structs:
@@ -465,6 +472,32 @@ class ZigEmitter:
         if isinstance(t, DecT):
             return "i64"
         return f"[{t.n}]{self.ztype(t.elem)}"
+
+    def alias_ancho(self, n: int) -> str:
+        """Un `IsyStr(N)` declarado por ancho, no uno por uso.
+
+        Medido en Z1: evaluar la firma de un clone con 1024 parámetros `IsyStr(2)` agota el
+        presupuesto de comptime de Zig (~1 rama por instancia) y ninguna cuota escrita dentro
+        de un cuerpo lo alcanza, porque el marco es el de la declaración. El tipo es el mismo.
+        """
+        if n not in self.ancho:
+            nombre = f"Str{n}"
+            self.ancho[n] = nombre
+            self.aliases.append(f"const {nombre} = IsyStr({n});")
+        return self.ancho[n]
+
+    def cuota(self, lineas: list[str]) -> list[str]:
+        """Cuota de comptime proporcional a las instanciaciones del propio cuerpo.
+
+        Zig cuesta ~2 ramas por `isy_str(...)` en el marco de la función (medido en Z1: 500
+        sitios caben en la cuota de fábrica de 1000 y 512 no). Ocho por sitio deja cuatro
+        veces de margen sin apagar la guarda, que sigue siendo finita y sigue creciendo solo
+        con el código que el emisor genera de verdad.
+        """
+        sitios = sum(l.count("isy_str(") for l in lineas)
+        if not sitios:
+            return lineas
+        return [f"    comptime {{ @setEvalBranchQuota({CUOTA_BASE + CUOTA_SITIO * sitios}); }}"] + lineas
 
     def zero(self, t) -> str:
         if isinstance(t, BoolT):
@@ -507,7 +540,7 @@ class ZigEmitter:
         main_src = self.zig_main(main)
         return "\n".join([f"// generado por isyco.backends.zig desde ISY-IR {self.module['source_sha256']}",
                           RUNTIME.replace("ISY_HALF_EVEN_TIE", HALF_EVEN_TIE.get(self.sabotage, HALF_EVEN_TIE[None])),
-                          *self.struct_defs, *bodies, main_src, ""])
+                          *self.aliases, *self.struct_defs, *bodies, main_src, ""])
 
     def function(self, fn: dict) -> str:
         self.lines, self.indent, self.tmp = [], 1, 0
@@ -525,7 +558,7 @@ class ZigEmitter:
         # Con valor de retorno no hace falta nada: el validador garantiza que todo camino
         # retorna, y Zig lo comprueba por su cuenta.
         header = f"fn {fn_ident(fn['name'])}({params}) {'void' if ret is None else self.ztype(ret)}"
-        return f"{header} {{\n" + "\n".join(self.lines) + "\n}\n"
+        return f"{header} {{\n" + "\n".join(self.cuota(self.lines)) + "\n}\n"
 
     def zig_main(self, fn: dict) -> str:
         types = [ty_from_json(loc["ty"]) for loc in fn["locals"]]
@@ -557,7 +590,7 @@ class ZigEmitter:
             lines += ["    " + x for x in self.put_top(ret, "r")]
             lines.append('    isy_out("\\n");')
         lines += ['    isy_end("HALTED", "-");', "}"]
-        return "\n".join(lines)
+        return "\n".join([lines[0], *self.cuota(lines[1:-1]), "}"])
 
     def leaf_count(self, t) -> int:
         if isinstance(t, ArrT):
