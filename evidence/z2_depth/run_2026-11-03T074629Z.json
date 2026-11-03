@@ -1,0 +1,752 @@
+{
+  "schema": "isycolang.z2_depth_probe/1",
+  "generated_utc": "2026-11-03T074629Z",
+  "git_head": "d4bb95a4dd6484f9f987fa35eca694282fcd94dc",
+  "arbol_sucio_codigo": false,
+  "veredicto_arbol": "RELEASE_GATE",
+  "python": "3.12.3",
+  "limite_de_fabrica": 1000,
+  "familias": {
+    "pelada": "parametro `str` pelado: dispara el clon de V6",
+    "str64": "parametro `str<64>`: misma forma, sin clon",
+    "entera": "parametro `i64`: forma pura sin `str`"
+  },
+  "fronteras": {
+    "pelada": {
+      "ok": 241,
+      "fallo": 242,
+      "resultado_fallo": "RecursionError",
+      "fuente_ok_sha256": "151ac361aebd1991e16534f06ebc66e540e7218915d1a91995f474f20d586c10",
+      "fuente_fallo_sha256": "5e2d021e810d982e271502bf4ba1b4a5c605b7ea5ad5b2efb2046dc561d4a6a3"
+    },
+    "str64": {
+      "ok": 329,
+      "fallo": 330,
+      "resultado_fallo": "RecursionError",
+      "fuente_ok_sha256": "527cc3ddd83e1c8854f7aa62bf007d6d442ff21257cb21a93b9aaa8ff9de1b56",
+      "fuente_fallo_sha256": "af79eaf03f99caf82fc113a93a38e385844ef3fd101286627bc2b7d37677bab2"
+    },
+    "entera": {
+      "ok": 329,
+      "fallo": 330,
+      "resultado_fallo": "RecursionError",
+      "fuente_ok_sha256": "2f24e5d6213fed9fe04e5730ffc47abbcd278f4aa7385f955e5592c3a969a21e",
+      "fuente_fallo_sha256": "7f2cb08d837e038fb43fc7afc0cb5dba204b49fb99996c21f85c9faac80749eb"
+    }
+  },
+  "censo_poblacion": {
+    "fuentes_que_bajan": 151,
+    "rechazadas": 127,
+    "max_profundidad": 8,
+    "top": [
+      {
+        "profundidad": 8,
+        "fuente": "programs/dogfood/01_recibo.isy"
+      },
+      {
+        "profundidad": 7,
+        "fuente": "programs/conformance_v0.3/221_num_as_str.isy"
+      },
+      {
+        "profundidad": 5,
+        "fuente": "programs/dogfood/06_biblioteca_texto.isy"
+      },
+      {
+        "profundidad": 5,
+        "fuente": "programs/dogfood/02_csv.isy"
+      },
+      {
+        "profundidad": 4,
+        "fuente": "programs/dogfood/probes/p4_dividir.isy"
+      },
+      {
+        "profundidad": 4,
+        "fuente": "programs/dogfood/04_turnos.isy"
+      },
+      {
+        "profundidad": 4,
+        "fuente": "programs/conformance_v0.5/448_dieciseis_clones_por_definicion.isy"
+      },
+      {
+        "profundidad": 4,
+        "fuente": "programs/conformance_v0.5/420_recursion_contextual.isy"
+      }
+    ],
+    "biblioteca_texto": [
+      {
+        "profundidad": 5,
+        "fuente": "programs/dogfood/06_biblioteca_texto.isy"
+      }
+    ]
+  },
+  "continuidad": {
+    "z1_c10": "evidence/z1_ceiling/run_2026-11-03T035753Z.json",
+    "especializacion": "isyco/specialize.py:55 copy.deepcopy(fn)",
+    "gates_fuera_de_intento": [
+      {
+        "dónde": "tools/ir_gate.py:62",
+        "protegida": false,
+        "cruda": true,
+        "linea": "ir_sem = semantic_hash(compile_ir(case[\"program\"]))"
+      },
+      {
+        "dónde": "tools/ir_gate.py:66",
+        "protegida": false,
+        "cruda": true,
+        "linea": "ref = run(case[\"program\"], case[\"input\"], case.get(\"limits\"), trace=level)"
+      },
+      {
+        "dónde": "tools/ir_gate.py:67",
+        "protegida": false,
+        "cruda": true,
+        "linea": "via = run_via_ir(case[\"program\"], case[\"input\"], case.get(\"limits\"),"
+      },
+      {
+        "dónde": "tools/backend_gate.py:77",
+        "protegida": false,
+        "cruda": true,
+        "linea": "ref, _ = run(case[\"program\"], case[\"input\"], case.get(\"limits\"))"
+      },
+      {
+        "dónde": "tools/backend_gate.py:170",
+        "protegida": false,
+        "cruda": false,
+        "linea": "fuente, fr = intento(backend.emit, compile_ir(case[\"program\"]), fase=\"does_the_work.emit\","
+      }
+    ]
+  },
+  "pila_del_llamante": {
+    "0": [
+      241,
+      242
+    ],
+    "50": [
+      228,
+      229
+    ],
+    "100": [
+      216,
+      217
+    ],
+    "150": [
+      203,
+      204
+    ],
+    "200": [
+      191,
+      192
+    ],
+    "300": [
+      166,
+      167
+    ]
+  },
+  "ruta_referencia": {
+    "frontera_interpelada": {
+      "ok": 241,
+      "fallo": 242,
+      "resultado_fallo": "RecursionError",
+      "fuente_ok_sha256": "151ac361aebd1991e16534f06ebc66e540e7218915d1a91995f474f20d586c10",
+      "fuente_fallo_sha256": "5e2d021e810d982e271502bf4ba1b4a5c605b7ea5ad5b2efb2046dc561d4a6a3"
+    },
+    "mismos_fuentes_por_las_tres_rutas": {
+      "pelada_interp": {
+        "resultado": "RecursionError",
+        "frames": 999,
+        "frames_copy": 985,
+        "marcas": [
+          "<string>:bajar",
+          "<string>:hondo",
+          "checker.py:_typeof",
+          "checker.py:block",
+          "checker.py:call",
+          "checker.py:check"
+        ],
+        "s": 0.049,
+        "rss_mb": 24
+      },
+      "pelada_via_ir": {
+        "resultado": "RecursionError",
+        "frames": 999,
+        "frames_copy": 984,
+        "marcas": [
+          "<string>:bajar",
+          "<string>:hondo",
+          "checker.py:_typeof",
+          "checker.py:block",
+          "checker.py:call",
+          "checker.py:check"
+        ],
+        "s": 0.053,
+        "rss_mb": 24
+      },
+      "entera_interp": {
+        "resultado": "RecursionError",
+        "frames": 999,
+        "frames_copy": 0,
+        "marcas": [
+          "<string>:bajar",
+          "<string>:hondo",
+          "checker.py:_typeof",
+          "checker.py:binary",
+          "checker.py:block",
+          "checker.py:check"
+        ],
+        "s": 0.108,
+        "rss_mb": 24
+      },
+      "entera_via_ir": {
+        "resultado": "RecursionError",
+        "frames": 999,
+        "frames_copy": 0,
+        "marcas": [
+          "<string>:bajar",
+          "<string>:hondo",
+          "checker.py:_typeof",
+          "checker.py:binary",
+          "checker.py:block",
+          "checker.py:check"
+        ],
+        "s": 0.12,
+        "rss_mb": 24
+      }
+    }
+  },
+  "acomodacion_de_pila": {
+    "setrecursionlimit": [
+      "isyco/interp.py:374:        sys.setrecursionlimit(max(old_limit, 50 * lim[\"max_call_depth\"] + 1000))",
+      "isyco/ir_interp.py:346:        sys.setrecursionlimit(max(old_limit, 50 * lim[\"max_call_depth\"] + 1000))"
+    ],
+    "recursion_error_capturada": []
+  },
+  "coste_clones_por_terminos": {
+    "1x2": [
+      "OK",
+      0.035
+    ],
+    "1x60": [
+      "OK",
+      0.038
+    ],
+    "1x240": [
+      "OK",
+      0.056
+    ],
+    "8x2": [
+      "OK",
+      0.036
+    ],
+    "8x60": [
+      "OK",
+      0.059
+    ],
+    "8x240": [
+      "OK",
+      0.196
+    ],
+    "64x2": [
+      "OK",
+      0.043
+    ],
+    "64x60": [
+      "OK",
+      0.243
+    ],
+    "64x240": [
+      "OK",
+      1.485
+    ],
+    "200x2": [
+      "OK",
+      0.076
+    ],
+    "200x60": [
+      "OK",
+      0.757
+    ],
+    "200x240": [
+      "OK",
+      4.663
+    ]
+  },
+  "limites_subidos": {
+    "242_con_2000": [
+      "OK",
+      23
+    ],
+    "1200_con_5000": [
+      "OK",
+      24
+    ],
+    "6000_con_5000": [
+      "RecursionError",
+      28
+    ],
+    "6000_con_20000": [
+      "RecursionError",
+      37
+    ],
+    "20000_con_60000": [
+      "RecursionError",
+      73
+    ],
+    "60000_con_200000": [
+      "RecursionError",
+      188
+    ]
+  },
+  "claims": [
+    {
+      "id": "E1",
+      "afirmacion": "el techo de `compile_ir` es de **profundidad de expresión** y su valor depende de si el programa dispara el clon de V6: con `str` pelado corta en 241 OK / 242 y sin clon corta en 329 (arreglo de `i64`) y 329 (`str<64>`); las dos familias sin clon tienen la misma forma y el mismo término y cortan a un término una de otra, así que lo que separa las dos fronteras no es la forma del AST sino si hay resolución contextual de `str` — ~90 términos más arriba con la misma cadena",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "pelada": {
+          "ok": 241,
+          "fallo": 242,
+          "resultado_fallo": "RecursionError"
+        },
+        "str64": {
+          "ok": 329,
+          "fallo": 330,
+          "resultado_fallo": "RecursionError"
+        },
+        "entera": {
+          "ok": 329,
+          "fallo": 330,
+          "resultado_fallo": "RecursionError"
+        },
+        "misma_forma_sin_clon": true
+      }
+    },
+    {
+      "id": "E2",
+      "afirmacion": "la frontera del caso con clon se agota dentro de `copy.deepcopy`, no dentro del parser ni del lowering: 99 % de los 999 frames del traceback son de `copy.py` y las marcas que asoman por debajo son `specialize` y el checker; los mismos 242 términos sin clon bajan a IR sin excepción",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "con_clon": {
+          "resultado": "RecursionError",
+          "frames": 999,
+          "frames_copy": 985,
+          "marcas": [
+            "<string>:bajar",
+            "<string>:hondo",
+            "checker.py:_typeof",
+            "checker.py:block",
+            "checker.py:call",
+            "checker.py:check"
+          ],
+          "s": 0.051,
+          "rss_mb": 21
+        },
+        "sin_clon_misma_medida": {
+          "resultado": "OK",
+          "s": 0.049,
+          "rss_mb": 21
+        }
+      }
+    },
+    {
+      "id": "E3",
+      "afirmacion": "la misma familia con clon tiene fronteras distintas según cuántos frames traiga el llamante: 300 frames → 166 OK > 200 frames → 191 OK > 150 frames → 203 OK > 100 frames → 216 OK > 50 frames → 228 OK > 0 frames → 241 OK — el número medido no es una capacidad del idioma ni del frontend, es cuánta pila queda en el proceso que llama",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "frontera_por_frames": {
+          "0": [
+            241,
+            242
+          ],
+          "50": [
+            228,
+            229
+          ],
+          "100": [
+            216,
+            217
+          ],
+          "150": [
+            203,
+            204
+          ],
+          "200": [
+            191,
+            192
+          ],
+          "300": [
+            166,
+            167
+          ]
+        }
+      }
+    },
+    {
+      "id": "E4",
+      "afirmacion": "no hay guarda para **esta** cota, y la que existe está atada a un eje distinto: `isyco/` no captura `RecursionError` en ningún sitio ni declara `MAX_DEPTH` ni `profundidad_max` de expresión (búsqueda medida, cero coincidencias), y sus únicas dos acomodaciones de pila son `sys.setrecursionlimit(50 * max_call_depth + 1000)` en ['isyco/interp.py:374', 'isyco/ir_interp.py:346'] — envuelven la **ejecución** del intérprete y se restauran en un `finally`, así que la bajada de un fuente nunca pasa por ahí. Sin paraguas el fallo sube; con él (medido), el programa de 242 términos sale como fila `HARNESS_INTERNAL` con excepción `RecursionError`, nunca como rechazo del idioma",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "buscado_en_isyco": {
+          "setrecursionlimit": [
+            "isyco/interp.py:374:        sys.setrecursionlimit(max(old_limit, 50 * lim[\"max_call_depth\"] + 1000))",
+            "isyco/interp.py:378:            sys.setrecursionlimit(old_limit)",
+            "isyco/backends/pydecimal.py:34:sys.setrecursionlimit(10000)",
+            "isyco/ir_interp.py:346:        sys.setrecursionlimit(max(old_limit, 50 * lim[\"max_call_depth\"] + 1000))",
+            "isyco/ir_interp.py:350:            sys.setrecursionlimit(old_limit)"
+          ],
+          "RecursionError": [],
+          "MAX_DEPTH": [],
+          "profundidad_max": []
+        },
+        "sitios_cuota": [
+          "isyco/interp.py:374:        sys.setrecursionlimit(max(old_limit, 50 * lim[\"max_call_depth\"] + 1000))",
+          "isyco/ir_interp.py:346:        sys.setrecursionlimit(max(old_limit, 50 * lim[\"max_call_depth\"] + 1000))"
+        ],
+        "intento": {
+          "valor": false,
+          "fila": {
+            "leg": "z2",
+            "phase": "sonda",
+            "code": "HARNESS_INTERNAL",
+            "exception": "RecursionError",
+            "detail": "maximum recursion depth exceeded",
+            "excerpt": "maximum recursion depth exceeded",
+            "ms": 7.8
+          }
+        }
+      }
+    },
+    {
+      "id": "E5",
+      "afirmacion": "ninguna de las 5 bajadas del frontend dentro de los dos gates está envuelta en `harness.intento`: tools/ir_gate.py:62, tools/ir_gate.py:66, tools/ir_gate.py:67, tools/backend_gate.py:77 llaman al frontend pelado y tools/backend_gate.py:170 evalúa la bajada como **argumento** de `intento`, o sea antes del paraguas (en `backend_gate.py:77` la llamada sin guarda es deliberada: 'si la referencia explota, el bug es del idioma y tiene que subir'). Lo que sí las cubre es la capa 3 de cada gate (['tools/ir_gate.py', 'tools/backend_gate.py']) y, en `ir_gate.py:63`, un `except InvalidProgram` que por diseño solo alcanza los rechazos del idioma. Consecuencia leída del código, no ejercida: un programa suficiente profundo no deja el gate sin recibo —sale FAIL con `abortado`— pero truncaba la pierna entera, con la identidad del caso solo en el excerpt del traceback y no en una fila `HARNESS_INTERNAL` con `leg`/`case`/`program_sha256` como sí da `intento`",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "llamadas_encontradas": [
+          {
+            "dónde": "tools/ir_gate.py:62",
+            "protegida": false,
+            "cruda": true,
+            "linea": "ir_sem = semantic_hash(compile_ir(case[\"program\"]))"
+          },
+          {
+            "dónde": "tools/ir_gate.py:66",
+            "protegida": false,
+            "cruda": true,
+            "linea": "ref = run(case[\"program\"], case[\"input\"], case.get(\"limits\"), trace=level)"
+          },
+          {
+            "dónde": "tools/ir_gate.py:67",
+            "protegida": false,
+            "cruda": true,
+            "linea": "via = run_via_ir(case[\"program\"], case[\"input\"], case.get(\"limits\"),"
+          },
+          {
+            "dónde": "tools/backend_gate.py:77",
+            "protegida": false,
+            "cruda": true,
+            "linea": "ref, _ = run(case[\"program\"], case[\"input\"], case.get(\"limits\"))"
+          },
+          {
+            "dónde": "tools/backend_gate.py:170",
+            "protegida": false,
+            "cruda": false,
+            "linea": "fuente, fr = intento(backend.emit, compile_ir(case[\"program\"]), fase=\"does_the_work.emit\","
+          }
+        ],
+        "except_en_gates": {
+          "tools/ir_gate.py": [
+            "except InvalidProgram:",
+            "except Exception as exc:",
+            "except FileExistsError as exc:"
+          ],
+          "tools/backend_gate.py": [
+            "except Exception as exc:",
+            "except FileExistsError as exc:"
+          ]
+        },
+        "capa3": {
+          "tools/ir_gate.py": [
+            "except Exception as exc:"
+          ],
+          "tools/backend_gate.py": [
+            "except Exception as exc:"
+          ]
+        },
+        "sin_paraguas": [
+          "tools/ir_gate.py:62",
+          "tools/ir_gate.py:66",
+          "tools/ir_gate.py:67",
+          "tools/backend_gate.py:77",
+          "tools/backend_gate.py:170"
+        ]
+      }
+    },
+    {
+      "id": "E6",
+      "afirmacion": "la población real está más de un orden de magnitud por debajo de la frontera: sobre 151 fuentes que bajan a IR (127 rechazadas a propósito) la profundidad máxima de expresión es **8** (`programs/dogfood/01_recibo.isy`) y la librería de texto que motivó V6 está en **5**, frente al borde medido en **241** (la regla extrapolada pone la cadena que muere en 242); la regla `cadena(k) -> profundidad k+1` se calibró sobre tres puntos que sí bajan a IR, así que profundidad de frontera y profundidad de censo son la misma magnitud",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "regla_cadena_k_es_profundidad": {
+          "3": 4,
+          "120": 121,
+          "200": 201
+        },
+        "max_poblacion": 8,
+        "top": [
+          [
+            8,
+            "programs/dogfood/01_recibo.isy"
+          ],
+          [
+            7,
+            "programs/conformance_v0.3/221_num_as_str.isy"
+          ],
+          [
+            5,
+            "programs/dogfood/06_biblioteca_texto.isy"
+          ],
+          [
+            5,
+            "programs/dogfood/02_csv.isy"
+          ],
+          [
+            4,
+            "programs/dogfood/probes/p4_dividir.isy"
+          ],
+          [
+            4,
+            "programs/dogfood/04_turnos.isy"
+          ],
+          [
+            4,
+            "programs/conformance_v0.5/448_dieciseis_clones_por_definicion.isy"
+          ],
+          [
+            4,
+            "programs/conformance_v0.5/420_recursion_contextual.isy"
+          ]
+        ],
+        "biblioteca_texto": [
+          [
+            5,
+            "programs/dogfood/06_biblioteca_texto.isy"
+          ]
+        ],
+        "rechazadas": 127,
+        "fuentes_censadas": 151
+      }
+    },
+    {
+      "id": "E7",
+      "afirmacion": "el coste del clon es multiplicativo en clones × términos del cuerpo, porque `specialize.py:55` copia el cuerpo entero por resolución: 200 resoluciones de un cuerpo de 2 términos cuestan 0.076 s y las mismas 200 de un cuerpo de 240 cuestan 4.663 s, en la frontera de lo que el tope de P4 permite (256 por definición) y con la referencia como único ejecutor — dato para F6",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "s_por_clones_x_terminos": {
+          "1x2": [
+            "OK",
+            0.035
+          ],
+          "1x60": [
+            "OK",
+            0.038
+          ],
+          "1x240": [
+            "OK",
+            0.056
+          ],
+          "8x2": [
+            "OK",
+            0.036
+          ],
+          "8x60": [
+            "OK",
+            0.059
+          ],
+          "8x240": [
+            "OK",
+            0.196
+          ],
+          "64x2": [
+            "OK",
+            0.043
+          ],
+          "64x60": [
+            "OK",
+            0.243
+          ],
+          "64x240": [
+            "OK",
+            1.485
+          ],
+          "200x2": [
+            "OK",
+            0.076
+          ],
+          "200x60": [
+            "OK",
+            0.757
+          ],
+          "200x240": [
+            "OK",
+            4.663
+          ]
+        }
+      }
+    },
+    {
+      "id": "E8",
+      "afirmacion": "la cota es del anfitrión y se puede levantar, pero la necesidad crece con la profundidad y nadie ha medido dónde está el techo físico: 242 términos pasan con 2000 de límite y 1200 con 5000, mientras 6000 no pasan ni con 20000 y 60000 no pasan con 200000. En todo el rango medido el fallo sigue siendo `RecursionError`, no una señal del proceso: no se observó desbordamiento de C stack, y eso es un `NOT_DEMONSTRATED`, no un verde",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "resultado_y_rss": {
+          "242_con_2000": [
+            "OK",
+            23
+          ],
+          "1200_con_5000": [
+            "OK",
+            24
+          ],
+          "6000_con_5000": [
+            "RecursionError",
+            28
+          ],
+          "6000_con_20000": [
+            "RecursionError",
+            37
+          ],
+          "20000_con_60000": [
+            "RecursionError",
+            73
+          ],
+          "60000_con_200000": [
+            "RecursionError",
+            188
+          ]
+        }
+      }
+    },
+    {
+      "id": "E9",
+      "afirmacion": "el techo no es de tamaño de fuente: un árbol de 2000 términos (22097 bytes, profundidad 12) se acepta, mientras una cadena izquierda de 242 (2277 bytes) revienta — el mismo control que dejó Z1 en su claim C10, reproducido aquí con la familia del clon",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "arbol_2000": [
+          "OK",
+          22097
+        ],
+        "cadena_fallo": [
+          "RecursionError",
+          2277
+        ],
+        "arbol_sha256": "b034d5958c08f40d2f7cac610f98071722f53dcac6c8c3dcac31cd1e55014384",
+        "cadena_sha256": "5e2d021e810d982e271502bf4ba1b4a5c605b7ea5ad5b2efb2046dc561d4a6a3"
+      }
+    },
+    {
+      "id": "E10",
+      "afirmacion": "el techo no es un artefacto del camino a la IR: el fuente que muere en `compile_ir` a 242 términos muere igual por `interp.run` — la referencia normativa de F2 — y por `run_via_ir`, y en las dos familias (330 términos sin clon incluidos). La bisección de la ruta de referencia corta en 241 OK / 242, a 0 términos de la bajada, y el mismo `deepcopy` se come el 99 % de los frames: la suba de `setrecursionlimit` va alrededor de la **ejecución** y `load` ya reventó antes, así que subir `max_call_depth` no abre margen en el frontend",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "frontera_referencia_pelada": {
+          "ok": 241,
+          "fallo": 242,
+          "resultado_fallo": "RecursionError",
+          "ok_medido": {
+            "resultado": "OK",
+            "s": 0.051,
+            "status": "HALTED",
+            "code": null,
+            "rss_mb": 24
+          },
+          "fallo_medido": {
+            "resultado": "RecursionError",
+            "frames": 999,
+            "frames_copy": 985,
+            "marcas": [
+              "<string>:bajar",
+              "<string>:hondo",
+              "checker.py:_typeof",
+              "checker.py:block",
+              "checker.py:call",
+              "checker.py:check"
+            ],
+            "s": 0.048,
+            "rss_mb": 24
+          },
+          "fuente_ok_sha256": "151ac361aebd1991e16534f06ebc66e540e7218915d1a91995f474f20d586c10",
+          "fuente_fallo_sha256": "5e2d021e810d982e271502bf4ba1b4a5c605b7ea5ad5b2efb2046dc561d4a6a3"
+        },
+        "bajada_ir_pelada": [
+          241,
+          242
+        ],
+        "bajada_ir_entera": [
+          329,
+          330
+        ],
+        "ruta_de_los_mismos_fuentes": {
+          "pelada_interp": {
+            "resultado": "RecursionError",
+            "frames": 999,
+            "frames_copy": 985,
+            "marcas": [
+              "<string>:bajar",
+              "<string>:hondo",
+              "checker.py:_typeof",
+              "checker.py:block",
+              "checker.py:call",
+              "checker.py:check"
+            ],
+            "s": 0.049,
+            "rss_mb": 24
+          },
+          "pelada_via_ir": {
+            "resultado": "RecursionError",
+            "frames": 999,
+            "frames_copy": 984,
+            "marcas": [
+              "<string>:bajar",
+              "<string>:hondo",
+              "checker.py:_typeof",
+              "checker.py:block",
+              "checker.py:call",
+              "checker.py:check"
+            ],
+            "s": 0.053,
+            "rss_mb": 24
+          },
+          "entera_interp": {
+            "resultado": "RecursionError",
+            "frames": 999,
+            "frames_copy": 0,
+            "marcas": [
+              "<string>:bajar",
+              "<string>:hondo",
+              "checker.py:_typeof",
+              "checker.py:binary",
+              "checker.py:block",
+              "checker.py:check"
+            ],
+            "s": 0.108,
+            "rss_mb": 24
+          },
+          "entera_via_ir": {
+            "resultado": "RecursionError",
+            "frames": 999,
+            "frames_copy": 0,
+            "marcas": [
+              "<string>:bajar",
+              "<string>:hondo",
+              "checker.py:_typeof",
+              "checker.py:binary",
+              "checker.py:block",
+              "checker.py:check"
+            ],
+            "s": 0.12,
+            "rss_mb": 24
+          }
+        }
+      }
+    }
+  ],
+  "veredicto": "DEMONSTRADO"
+}
