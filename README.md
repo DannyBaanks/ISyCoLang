@@ -103,15 +103,17 @@ los programas posibles.
 
 | Gate / alcance | Resultado registrado | Recibo |
 |---|---|---|
-| F2 · referencia vs expected | **218/218** casos de los corpus v0.1–v0.5 | [F2](evidence/conformance/run_2026-11-03T003813Z.json) |
-| F3 · ISY-IR vs referencia | **436/436** comparaciones iguales; **149** programas bajados a IR (otros rechazos se cotejan como rechazo) | [F3](evidence/ir/gate_2026-11-03T003813Z.json) |
-| F4 · C en gcc/clang, normal y sanitizado | Tres vías (expected ↔ referencia ↔ binario) **sobre los 218** casos en cada una de las cuatro combinaciones; 0 diferencias reportadas y controles saboteados detectados | [F4](evidence/c/gate_2026-11-03T003814Z.json) |
-| F5 · C, Rust, Zig, pydecimal | **219/219** por backend; **8 484** corridas diferenciales numéricas y 1 270 de strings por backend, sin diferencias reportadas | [F5](evidence/backends/gate_2026-11-03T040610Z.json) |
-| F5 · COBOL en su dominio numérico | **148/219**, con **71 `UNSUPPORTED`** explícitos, 0 discrepancias reportadas y **8 484** corridas diferenciales numéricas sin diferencias | [F5](evidence/backends/gate_2026-11-03T040610Z.json) |
+| F2 · referencia vs expected | **224/224** casos de los corpus v0.1–v0.5 | [F2](evidence/conformance/run_2026-11-03T232115Z.json) |
+| F3 · ISY-IR vs referencia | **448/448** comparaciones iguales; **152** programas bajados a IR (otros rechazos se cotejan como rechazo) | [F3](evidence/ir/gate_2026-11-03T232115Z.json) |
+| F4 · C en gcc/clang, normal y sanitizado | Tres vías (expected ↔ referencia ↔ binario) **sobre los 224** casos en cada una de las cuatro combinaciones; 0 diferencias reportadas y controles saboteados detectados | [F4](evidence/c/gate_2026-11-03T232116Z.json) |
+| F5 · C, Rust, Zig, pydecimal | **224/224** por backend; **8 484** corridas diferenciales numéricas y 1 270 de strings por backend, sin diferencias reportadas | [F5](evidence/backends/gate_2026-11-03T232750Z.json) |
+| F5 · COBOL en su dominio numérico | **153/224**, con **71 `UNSUPPORTED`** explícitos, 0 discrepancias reportadas y **8 484** corridas diferenciales numéricas sin diferencias | [F5](evidence/backends/gate_2026-11-03T232750Z.json) |
 
-**Importante:** el gate F5 usó **218 casos del corpus + 1 caso adicional con `--extra-case`**; el
-corpus formal sigue siendo de 218, no 219. Una coincidencia de rechazo del **frontend** (por
-ejemplo `INVALID_PROGRAM/SPEC_LIMIT`) puede contar como caso conforme: **219/219 no significa 219
+**Importante:** los cuatro recibos de arriba son **una sola corrida en lote** sobre el árbol
+commiteado `7022ae4` y los cuatro dicen `RELEASE_GATE`. El gate F5 de este lote usó **los 224
+casos del corpus, sin `--extra-case`**; el caso raro que cerró P4 por el lado del compilador sigue
+fuera del corpus formal y deja recibo propio. Una coincidencia de rechazo del **frontend** (por
+ejemplo `INVALID_PROGRAM/SPEC_LIMIT`) puede contar como caso conforme: **224/224 no significa 224
 programas compilados en binarios**. `UNSUPPORTED` es el rechazo previsto fuera del dominio de
 COBOL, **no** un caso aprobado como ejecución equivalente. Los gates incluyen controles con fallos
 inyectados y `does_the_work`, pero eso valida el alcance de sus pruebas, no todas las entradas
@@ -132,8 +134,9 @@ conservan afirmaciones no demostradas.
    200, la cadena de paréntesis moría por `RecursionError` en 89 pares con pila limpia y en 62 con
    300 frames del llamante encima, y el fuente del tope legal sigue reventando con 300 frames
    aunque la guarda esté puesta
-   ([sonda Z2](evidence/z2_guard/run_2026-11-03T211418Z.json), C8). Los llamantes reales del
-   paquete llegan con 6 y 10 frames y la forma legal más cara pide 716 de los 999 útiles. Las
+   ([sonda Z2, `RELEASE_GATE`](evidence/z2_guard/run_2026-11-04T001913Z.json), C8). Los llamantes
+   reales del paquete llegan con 6 y 10 frames y la forma legal más cara pide 716 de los 999
+   útiles. Las
    fronteras de la [sonda pre-decisión](evidence/z2_depth/run_2026-11-03T074629Z.json) (241/242 y
    329/330) quedan como registro del «antes»: hoy esos fuentes se rechazan por la cota, y con ellos
    los 241 términos que antes bajaban.
@@ -156,11 +159,13 @@ python3 -m unittest discover -s tests -v
 sha256sum -c docs/origin/SHA256SUMS.txt
 ```
 
-La suite comprueba también el contenido de `evidence/*/SHA256SUMS.txt` y la coherencia de
-ciertas cifras de este README con los recibos. **Recuento medido en el árbol del 2026-11-03: 213
-tests con 278 subtests.** El rango que registra [GUIA.md](GUIA.md) es de 187,1 a 491,1 s sobre
-quince corridas y ya incluye dos de esos 213; el recuento y la duración del histórico están
-atados al árbol y a la toolchain de cada corrida, así que no se citan aquí como cifra de hoy.
+La suite comprueba también el contenido de `evidence/*/SHA256SUMS.txt` y la coherencia de ciertas
+cifras de este README con los recibos. **Recuento medido el 2026-11-04 sobre `7022ae4`: 221 tests
+con 290 subtests** —los ocho de `tests/test_depth.py` están dentro—, en **186,5 s** con `unittest`
+y **214,1 s** con `pytest`, con la caché `build/` llena. El rango que registra [GUIA.md](GUIA.md)
+sobre las corridas de `unittest` es de 186,5 a 491,1 s en dieciséis medidas; el recuento y la
+duración del histórico están atados al árbol y a la toolchain de cada corrida, así que no se citan
+aquí como cifra de hoy.
 **La existencia de esos tests no significa que se hayan ejecutado en esta revisión del README.**
 Los gates que generan recibos escriben archivos nuevos en `evidence/` y actualizan sus listas
 SHA-256: ejecutarlos deliberadamente y con el árbol controlado; para ensayos, usar
@@ -233,7 +238,7 @@ tools/z2_guard_probe.py            Z2 después de la guarda: la cota, su precio 
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # suite completa: 213 tests (278 subtests) el 2026-11-03
+python3 -m unittest discover -s tests -v       # suite completa: 221 tests (290 subtests) el 2026-11-04
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)

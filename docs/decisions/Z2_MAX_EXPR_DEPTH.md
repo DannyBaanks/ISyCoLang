@@ -12,7 +12,9 @@ frontend tenía un techo de profundidad que era de Python, se manifestaba como `
 Nace del mismo objetivo que P4 y que N1: una **librería de texto**. La pregunta real no era
 «cuánta pila tiene el proceso», sino «qué le pasa a quien escriba una cadena larga de `len(s)` o
 un `pad` con cuarenta anchos». Antes: el proceso moría a los 242 términos con una excepción del
-anfitrión. Hoy: el programa se rechaza con un error que nombra la cota, y en 61 ms.
+anfitrión. Hoy: el programa se rechaza con un error que nombra la cota, y en 27 ms medidos (C6 de
+`evidence/z2_guard/run_2026-11-04T001913Z.json`: 0,027 s en las dos fuentes, la de 241 términos
+que antes bajaba y la de 242 que antes reventaba).
 
 ## La regla, y qué cuenta
 
@@ -36,8 +38,8 @@ El borde es exclusivo por el lado de arriba (`>`, no `>=`): 64 niveles son legal
 ## Por qué 64 y no otro número
 
 Dicho sin adornos: **64 no sale de una medición de techo.** Sale de dos datos medidos el
-2026-11-03 (`evidence/z2_depth/run_2026-11-03T074629Z.json` y
-`evidence/z2_guard/run_2026-11-03T…`):
+2026-11-03 (`evidence/z2_depth/run_2026-11-03T074629Z.json` para el antes y
+`evidence/z2_guard/run_2026-11-04T001913Z.json` para el después):
 
 | dato | valor | qué aporta a la elección |
 |---|---|---|
@@ -151,12 +153,19 @@ promesa, y las promesas recortan el conjunto de lo que antes pasaba por accident
 
 ## El sello
 
-- **R2 (grado de gate):** `evidence/z2_guard/run_2026-11-03T213Z…` — `veredicto_arbol`
-  `RELEASE_GATE`, árbol de código limpio, C1–C8 `DEMONSTRADO`. Es el recibo al que hay que ir a
-  leer la regla después de la decisión.
-- **R1 (las del lote, preservadas sin retocar):** `evidence/z2_guard/run_2026-11-03T205940Z.json` y
-  `run_2026-11-03T211418Z.json` (sha `f27d59ae`), ambas con `git_head=8e5c2b2` y
+- **R2 (grado de gate):** `evidence/z2_guard/run_2026-11-04T001913Z.json` (sha `5a295289…`) —
+  `veredicto_arbol` `RELEASE_GATE`, `arbol_sucio_codigo: false` sobre `7022ae4`, C1–C8
+  `DEMONSTRADO`, cinco fuentes del borde al lado con su sha y su stdout crudo. Es el recibo al que
+  hay que ir a leer la regla después de la decisión, y el que corre **después** de los cuatro
+  gates del lote: su sello (`00:19:13Z`) es el segundo en que F5 escribió su recibo, así que la
+  sonda midió el mismo árbol commiteado que midieron F2, F3, F4 y F5.
+- **R1 (las del lote, preservadas sin retocar):** `evidence/z2_guard/run_2026-11-03T205940Z.json`
+  (sha `17dc0295`, siete claims), `run_2026-11-03T211117Z.json` (sha `161eeb05`) y
+  `run_2026-11-03T211418Z.json` (sha `f27d59ae`), las tres con `git_head=8e5c2b2` y
   `veredicto_arbol=EVIDENCE_ONLY`: sellaron mientras la documentación de esta decisión estaba a
-  medio editar. `run_2026-11-03T211418Z.json` es la que introduce C8 y el segundo llamante de C4;
-  la anterior se queda como quedó —el precedente de P4 pide conservar la corrida del lote, no
-  borrarla—. Ninguna reescribe a la otra: cada una con su stdout crudo y sus fuentes al lado.
+  medio editar. La de `211117Z` es la que introduce **C8** y el segundo llamante de C4 (`run` y
+  los tres tests de la sonda, con una hoja renombrada: `frames_quien_llama.medido.ir` pasa a
+  `crudo.medido.ir`); la de `211418Z` añade a ese C8 las dos hojas `tope_con_guarda` —si el fuente
+  del tope legal revienta **con la guarda puesta**— y no mueve nada más salvo tiempos y RSS. La de
+  `205940Z` se queda como quedó: el precedente de P4 pide conservar la corrida del lote, no
+  borrarla. Ninguna reescribe a la otra: cada una con su stdout crudo y sus fuentes al lado.

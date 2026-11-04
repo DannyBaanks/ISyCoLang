@@ -367,7 +367,7 @@ corrientes de v0.3. Ningún backend conoce V6.
   conteos distintos del fuente —63 pares, 64 prefijos `-`, 64 términos sumados, 63 términos
   `len(s)` con clon— y al **mismo nivel**, medido por la sonda (`tools/z2_guard_probe.py`).
   La regla es general, no es de V6; vive en §7 porque ahí está el clon que ponía la frontera
-  baja (241 términos): con la guarda ese fuente se rechaza por `SPEC_LIMIT` en 61 ms y el
+  baja (241 términos): con la guarda ese fuente se rechaza por `SPEC_LIMIT` en 27 ms y el
   `deepcopy` de `specialize.py:55` ya no se alcanza por esta vía. El número deja aire medido: la
   forma legal más cara (63 pares de paréntesis) pide **716** frames de los 999 útiles,
   `python3 -m isyco ir` llega al frontend con **6**, un test del paquete con **10**, y la
@@ -486,6 +486,25 @@ void». El defecto era previo y alcanzable fuera de v0.5 (canario `439`, `isyco 
   la documentación de este lote estaba a medio editar mientras corría —`isyco/` y `tools/` no
   tenían ninguna modificación—; se conservó sin retocar y R2 la repite hoja por hoja: 1 135
   hojas compartidas, 118 distintas, de las cuales 114 son campos de tiempo y 4 el propio sello.
+  Recibos del lote de **224** (Z2), los cuatro gates con `git_head=7022ae4`, árbol de
+  código limpio y `veredicto_arbol=RELEASE_GATE` en los cuatro, salidos de **una sola cadena**
+  en el orden F2, F3, F4, F5: referencia `224/224`
+  (`evidence/conformance/run_2026-11-03T232115Z.json`, sha `35c881ea…`), IR `448/448` sobre
+  **152** programas bajados —los tres `al_tope` bajan, los tres `pasa_tope` se comparan por
+  su rechazo— (`evidence/ir/gate_2026-11-03T232115Z.json`, sha `eb006123…`), C `224/224` en
+  las cuatro combinaciones (`evidence/c/gate_2026-11-03T232116Z.json`, sha `b09233e0…`) y
+  backends con c, rust, zig y pydecimal `224/224` y COBOL `153/224` con 71 `UNSUPPORTED`
+  nombrados (`evidence/backends/gate_2026-11-03T232750Z.json`, sha `cb29cbde…`). No regresión
+  medida hoja por hoja contra el lote de 218, con el índice del renglón —el caso, y caso más
+  nivel de traza en F3—: F2 deja 2 786 compartidas, 4 hojas distintas (el sello y
+  `total`/`passed` `218→224`), 72 altas y **0 bajas**; F3, 3 500 compartidas, 5 distintas,
+  96 altas (los doce renglones nuevos) y **0 bajas**; F4, 63 compartidas y 19 distintas
+  —todo contadores y sello; 0 altas porque F4 no guarda renglones por caso—; F5, 448
+  compartidas, 42 distintas, 2 altas (el renglón `453_len_pelado_al_tope` dentro del
+  `UNSUPPORTED` de cobol) y 4 bajas, que son el `--extra-case` que este lote no llevó, no
+  capacidad perdida. La sonda del después es `tools/z2_guard_probe.py` con su recibo
+  `evidence/z2_guard/run_2026-11-04T001913Z.json` (sha `5a295289…`, `RELEASE_GATE` sobre el
+  mismo `7022ae4`, C1–C8 `DEMONSTRADO`), corrido en el segundo en que F5 terminó de escribir.
 - **No regresión:** ningún programa `0.1`–`0.4` cambia. Medido por recabezado
   (`401`/`406` siguen en `UNKNOWN_NAME` en 0.1/0.2 y `TYPE_MISMATCH` en 0.3/0.4;
   `402`–`405` siguen en `SYNTAX`; `426`/`437` siguen en `SYNTAX`), por el brazo viejo

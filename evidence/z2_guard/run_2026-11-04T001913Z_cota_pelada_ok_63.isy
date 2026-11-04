@@ -1,0 +1,10 @@
+isyco 0.5
+
+fn cuanto(s: str) -> i64 {
+    return len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s) + len(s);
+}
+
+fn main() -> i64 !emit {
+    emit cuanto("hola");
+    return 252;
+}

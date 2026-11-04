@@ -394,7 +394,7 @@ que falsifica V7.
 > casos fijan los dos bordes —`449`–`454`—, `tests/test_depth.py` ejerce el sabotaje en las dos
 > direcciones y la sonda `tools/z2_guard_probe.py` sella el después (`evidence/z2_guard/`, C1–C8):
 > las cuatro caras llegan al mismo nivel 64, el borde no se mueve con 0…300 frames del llamante, la
-> población sigue en 8 sobre 154 fuentes y los 242 términos que morían se rechazan en 61 ms —y con
+> población sigue en 8 sobre 154 fuentes y los 242 términos que morían se rechazan en 27 ms —y con
 > ellos los 241 que antes bajaban—. Queda escrita la limitación: con la guarda levantada el muro del
 > anfitrión está en 89 pares limpio y 62 con 300 frames, o sea **por debajo** de la cota, así que el
 > fuente del tope legal todavía muere si quien llama trae mucha pila. Las salidas (b) —quitar la

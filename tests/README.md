@@ -62,6 +62,17 @@ sub-set
 los 9 sabotajes de la referencia (los 7 de antes más los dos de P4)— mide **0,973 s** (2026-11-02;
 antes, con 19, eran 0,386 s). Los dos sabotajes de P4, corridos solos, gastan **0,186 s**: no
 explican los 0,587 s de diferencia y la causa no está atribuida, solo medida. No toca backends.
+
+**Decimosexta corrida, 2026-11-04 a las 00:48 UTC, ya con los ocho tests de `test_depth.py` dentro
+(221) y la población en 224: 186,514 s** (`real 3 m 6,8 s`, `OK`). Es el **mínimo medido** y
+**mueve el rango a 186,5–491,1 s**. Corrió sobre `7022ae4` con `docs/`, `spec/CORE_v0.5.md` y
+`ROADMAP.md` editados sin commitear: ninguno de los tres lo abre la suite
+—`DocsMatchLatestEvidence` lee solo el `README.md` raíz—, y ese README ya traía dentro las cifras
+de los cuatro recibos del lote, que es lo que la comprobación contrasta. **El mismo árbol, en
+`pytest`: 221 `passed` más 290 `subtests passed`
+en 214,09 s** (`real 3 m 34,4 s`) — el recuento de subtests no lo da `unittest`, que reporta 221 y
+nada más; de ahí que el README cite los dos comandos.
+
 Otro sub-set medido sobre `d0a74bd`, con los docs ya commiteados:
 `tests.test_specialize.TopePorDefinicion tests.test_reference.Sabotage` —18 tests, los 9 del
 tope más los 9 sabotajes— en **0,748 s** y OK. En frío casi todo es compilar Zig; para no
