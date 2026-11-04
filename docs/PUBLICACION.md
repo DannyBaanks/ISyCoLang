@@ -65,16 +65,22 @@ cuenta, no de este repo.
 
 **Lo que no hace.** La clave vive en `.git/config`, no en el árbol: no viaja con un
 `clone` y hay que volver a ponerla en cualquier copia nueva. Y alcanza solo a los
-commits que se creen de aquí en adelante. La historia a hoy son **139 commits**
-(`git rev-list --all --count` y `git rev-list --count HEAD`, los dos 139; una rama y
-cero tags —los 131 de arriba son la medida del 2026-11-03 sobre `eb4f0af`—), y los
-139 llevan la dirección personal del punto 1 como author: `sort -u` sobre
+commits que se creen de aquí en adelante, así que los conteos de este párrafo son
+medida sobre `f693902`: la historia ahí tiene **139 commits** (`git rev-list --all
+--count` y `git rev-list --count HEAD`, los dos 139; una rama y cero tags —los 131 de
+arriba son la medida del 2026-11-03 sobre `eb4f0af`—), y los 139 llevan la dirección
+personal del punto 1 como author: `sort -u` sobre
 `%an <%ae> | %cn <%ce>` da dos identidades y en las dos el author es esa dirección,
 con la noreply genérica de `GitHub` como committer en una de ellas (el commit hecho
 desde la web). El propio `f693902` es anterior al cambio y conserva la dirección
 personal en author y committer. Esto **no cierra el punto 1**: frena que la historia
 siga creciendo con el correo, y R2 ya pedía precisamente esta dirección («authored con
 la dirección noreply de GitHub»).
+
+**La prueba de que rige** es este mismo documento: el commit que lo sella, `b687975`,
+salió con la noreply en author y en committer (`git log -1 --format='%ae %ce'` sobre
+él). Con ese commit la historia pasa a 140, y el de los que conservan la dirección
+personal se queda en 139: ese techo ya no crece, aunque el total sí con cada entrega.
 
 ## Qué NO está (barrido con resultado negativo, que también es dato)
 
