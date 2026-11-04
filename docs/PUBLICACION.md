@@ -44,6 +44,38 @@ El punto 1 no se cita con la dirección escrita aquí a propósito: se reproduce
 `git log --format='%an <%ae> | %cn <%ce>' | sort -u`. Copiarla en un doc sería
 duplicar la fuga.
 
+## Config local de identidad (2026-11-04)
+
+Puesta el 2026-11-04 sobre `f693902`, **solo en este repo** y **una sola clave**:
+`git config --local user.email`, con la dirección noreply que GitHub asigna a la
+cuenta, de forma `<id numérico>+<login>@users.noreply.github.com`. El id salió de
+`gh api user` sobre la sesión autenticada, así que no es una dirección inventada; el
+valor se lee con `git config --local --get user.email`. Aquí no aparece escrita
+literal: el barrido de «Qué NO está» de abajo usa un patrón de correo sobre el árbol y
+sale vacío, y meter cualquier dirección literal —aunque sea una noreply— lo volvería
+falso. `user.name` y el `user.email` **global** no se tocaron: el global sigue
+siendo la dirección personal del punto 1, y eso es materia de la configuración de la
+cuenta, no de este repo.
+
+- **Verificado:** `git var GIT_AUTHOR_IDENT` y `git var GIT_COMMITTER_IDENT` resuelven
+  los dos a la noreply después del cambio.
+- **NOT_DEMONSTRADO:** que la dirección esté dada de alta en la cuenta. La lista de
+  correos pide el scope `user` (`gh api user/emails` sale 404) y `public_email` vuelve
+  `null`, así que desde la línea de comandos no hay forma de comprobarlo.
+
+**Lo que no hace.** La clave vive en `.git/config`, no en el árbol: no viaja con un
+`clone` y hay que volver a ponerla en cualquier copia nueva. Y alcanza solo a los
+commits que se creen de aquí en adelante. La historia a hoy son **139 commits**
+(`git rev-list --all --count` y `git rev-list --count HEAD`, los dos 139; una rama y
+cero tags —los 131 de arriba son la medida del 2026-11-03 sobre `eb4f0af`—), y los
+139 llevan la dirección personal del punto 1 como author: `sort -u` sobre
+`%an <%ae> | %cn <%ce>` da dos identidades y en las dos el author es esa dirección,
+con la noreply genérica de `GitHub` como committer en una de ellas (el commit hecho
+desde la web). El propio `f693902` es anterior al cambio y conserva la dirección
+personal en author y committer. Esto **no cierra el punto 1**: frena que la historia
+siga creciendo con el correo, y R2 ya pedía precisamente esta dirección («authored con
+la dirección noreply de GitHub»).
+
 ## Qué NO está (barrido con resultado negativo, que también es dato)
 
 Los tres comandos, corridos hoy sobre el árbol, salen **vacíos**:
@@ -105,6 +137,7 @@ tocan.
 | inventario medido de 1-6 | **hecho** (este documento) |
 | remoto privado con la cadena completa | **hecho** el 2026-11-03 (`origin`) |
 | punto 1 (correo en metadata) | **abierto** — solo se resuelve eligiendo R1 o R2 |
+| config local `user.email` con la noreply | **hecho** el 2026-11-04 sobre `f693902` — rige solo los commits nuevos, no cierra el punto 1 |
 | puntos 2-6 (19 líneas selladas) | **abierto** — ídem |
 | repo público | **NO_DEMONSTRADO / no existe**: bloqueado hasta que Danny elija R1 o R2 |
 
