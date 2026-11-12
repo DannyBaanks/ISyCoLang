@@ -2,6 +2,17 @@
 
 **Fecha: 2026-11-03. Estado: NO PUBLICADO. Remoto: solo privado.**
 
+> **Corrección fechada (2026-11-12): el repositorio es PÚBLICO.** Danny cambió la visibilidad de
+> `DannyBaanks/ISyCoLang` el 2026-11-12. La limpieza que este documento mide **no se aplicó
+> antes**: no se eligió ninguna de las dos salidas de abajo, la historia no se reescribió y los
+> recibos no se tocaron. Por tanto lo inventariado en «Qué hay y dónde» —la dirección personal en
+> la metadata de commits y las rutas del host en cinco recibos— **es público desde esa fecha**.
+> La «consecuencia vinculante» de la sección siguiente quedó superada por esa decisión. El resto
+> del documento se conserva como quedó el 2026-11-03/04: describe el estado previo y sigue siendo
+> el inventario válido de qué se expuso. Las dos salidas siguen existiendo, con un coste nuevo:
+> reescribir la historia ya no evita la exposición de lo que estuvo público (clones, forks y
+> cachés), solo la reduce hacia adelante. Sigue sin licencia.
+
 Este documento existe porque se pidió empujar `eb4f0af` y abrir la PR del pase de docs.
 Al mirar qué se iba con el push salió que la historia del repo lleva información
 personal y de infraestructura interna que el estándar §21 pone del lado privado. Se
