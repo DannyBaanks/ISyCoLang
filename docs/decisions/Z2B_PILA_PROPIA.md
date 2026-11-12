@@ -96,3 +96,20 @@ esta decisión es la sonda, no un lote nuevo.
 `arbol_sucio_codigo: false` sobre `4917258`, P1–P8 `DEMONSTRADO`, trece fuentes al lado. Instrumento:
 `tools/z2_pila_probe.py`, que no invoca ningún toolchain. Medido en un contenedor con Python
 3.13.18; los recibos anteriores de Z2 son del host de Danny.
+
+## Corrección fechada (2026-11-12, más tarde): Z3 se cerró y el presupuesto cambió
+
+El texto de arriba describe el primer sello (`run_2026-11-12T024856Z.json`). Ese mismo día Danny
+pidió cerrar Z3 y tres cosas de este documento quedaron superadas:
+
+- **Z3 ya no está abierta.** `ast.MAX_STMT_DEPTH = 64`; el nivel 65 de sentencias de control es
+  `SPEC_LIMIT`. La fila «El anidamiento de sentencias tiene cota — FALSO» vale para el primer
+  sello, no para hoy. Decisión: `docs/decisions/Z3_MAX_STMT_DEPTH.md`.
+- **`frames_frontend()` es 32 × (64 + 64) = 4 096**, no 2 048: el recorrido más hondo legal es
+  una expresión al tope dentro de sentencias al tope (1 039 frames medidos).
+- **La ejecución ya no pide `50 * max_call_depth + 1000`.** Esa cifra no era una cota: una
+  llamada recursiva al fondo de 60 `if` gasta 126 frames por llamada y moría dentro de
+  `max_call_depth`. Hoy pide `frames_ejecucion(max_call_depth)`: 4 frames por nivel de las dos
+  cotas por llamada, más el presupuesto de un recorrido.
+
+Sello vigente: `evidence/z2_pila/run_2026-11-12T042036Z.json` (P1–P12).
