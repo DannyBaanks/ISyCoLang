@@ -267,6 +267,7 @@ tools/z2_depth_probe.py            instrumento PRE-decisión de Z2: las frontera
 tools/z2_guard_probe.py            Z2 después de la guarda: la cota, su precio en frames y su límite
 tools/z2_pila_probe.py             Z2-b y Z3: la pila del llamante ya no decide; la cota de sentencias
 tools/lote_diff.py                 coteja dos lotes de gates hoja por hoja (no regresión entre recibos)
+tools/v05_gate_f24_probe.py        gate F2.4, ítems 4 y 6: criba a cabecera 0.5 en COBOL y does_the_work sobre un `for`
 ```
 
 ### Gates y comandos avanzados
