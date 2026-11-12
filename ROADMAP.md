@@ -130,7 +130,7 @@ aprobados por Danny el 2026-10-29.
 sin cambiar ningún resultado anterior; IR y los tres backends nativos iguales a
 la referencia en el corpus completo.
 
-#### F2.4 — Core v0.5: `for`, `len` de arreglos, `str` sin capacidad  `[PROPUESTA 2026-10-30 — bloqueada por decisión de Danny, no por código]`
+#### F2.4 — Core v0.5: `for`, `len` de arreglos, `str` sin capacidad  `[PASS 2026-11-12: spec/CORE_v0.5.md FROZEN v0.5; referencia 228/228; fue PROPUESTA desde 2026-10-30]`
 
 Nace del dogfood (`docs/DOGFOOD_2026-10-30.md`): los cinco programas reales midieron
 qué no se puede escribir. `spec/CORE_v0.5_propuesta.md` convierte eso en siete
@@ -428,6 +428,27 @@ que falsifica V7.
 > (`RELEASE_GATE` sobre `ec22d57`, P1–P12). Decisión:
 > `docs/decisions/Z3_MAX_STMT_DEPTH.md`. Los cuatro gates se re-corrieron con los 228 casos, en
 > contenedor y no en el host de los lotes anteriores.
+
+> **Revisión para congelar CORE v0.5 (2026-11-12) — falta solo la aprobación de Danny.** El
+> borrador citaba el código por número de línea y casi ninguna cita apuntaba ya a lo que decía:
+> se cambiaron por símbolos, y las cifras se pusieron al día (58 casos, lote de 228). Dos recibos
+> nuevos: el lote de 228 cotejado hoja por hoja contra el de 224 sin bajas ni hojas de resultado
+> distintas (`tools/lote_diff.py` → `evidence/lotes/run_2026-11-12T150933Z.json`), y los ítems 4
+> y 6 del gate F2.4 medidos en su forma literal (`tools/v05_gate_f24_probe.py` →
+> `evidence/v05_gate_f24/run_2026-11-12T151303Z.json`). **Hallazgo:** el ítem 4 pedía que la
+> criba a cabecera `0.5` «produzca `isy-ir/0.1`» y baja rotulada `isy-ir/0.2`; V7 dejó la
+> etiqueta y derivó la exigencia del contenido, y COBOL la ejecuta igual. Ningún `expected` nuevo
+> se supera al congelar (`322` ya estaba en `SUPERSEDED.json`). Lista completa en
+> `spec/CORE_v0.5.md` §11, fila «congelar». **No se congeló:** el estado sigue `BORRADOR` y el
+> archivo sigue fuera de `spec/SHA256SUMS.txt`.
+
+> **CORE v0.5 congelado el 2026-11-12, por orden de Danny** con la lista anterior delante.
+> `spec/CORE_v0.5.md` pasa a `FROZEN v0.5` y su hash entra en `spec/SHA256SUMS.txt`; desde hoy
+> no se edita. Quedan ratificados los 64 niveles de Z2 y Z3 (con el `else if` contando uno) y
+> aceptada la desviación del ítem 4 del gate. Z1 sigue abierta como política de toolchain. El
+> lote de gates vigente es el de 228 sobre `1cb56ce`: entre ese commit y el congelado no cambió
+> `isyco/`, solo documentos, dos herramientas y una prueba. `tests/test_spec_frozen.py` verifica
+> los cinco hashes en cada corrida.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 

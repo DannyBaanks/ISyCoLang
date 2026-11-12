@@ -1,0 +1,8 @@
+ítem 4 — criba con cabecera 0.5: etiqueta isy-ir/0.2, pide ir0.2: False, referencia ['25', '97', '21'] cobol ['25', '97', '21'] (a mano ['25', '97', '21']); sabotaje con str: pide ir0.2: True, cobol UNSUPPORTED(ir0.2,str) → PASS
+ítem 6 — does_the_work sobre un `for`, c: fugas [], emits ['3702', '20736', '20757'], otra entrada ['30', '90', '111'] → PASS
+ítem 6 — does_the_work sobre un `for`, rust: fugas [], emits ['3702', '20736', '20757'], otra entrada ['30', '90', '111'] → PASS
+ítem 6 — does_the_work sobre un `for`, zig: fugas [], emits ['3702', '20736', '20757'], otra entrada ['30', '90', '111'] → PASS
+ítem 6 — does_the_work sobre un `for`, pydecimal: fugas [], emits ['3702', '20736', '20757'], otra entrada ['30', '90', '111'] → PASS
+ítem 6 — does_the_work sobre un `for`, cobol: fugas [], emits ['3702', '20736', '20757'], otra entrada ['30', '90', '111'] → PASS
+ítem 6 — sabotaje (fuente con las salidas escritas): fugas ['3702', '20736', '20757'], otra entrada ['3702', '20736', '20757'] → DETECTADO
+veredicto: PASS (RELEASE_GATE)

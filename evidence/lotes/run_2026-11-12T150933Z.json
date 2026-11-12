@@ -1,0 +1,172 @@
+{
+  "schema": "isyco-lote-diff/1",
+  "generated_utc": "2026-11-12T150933Z",
+  "git_head": "2a7bad7e87b4ffe061089ee57fcc357d16c6c7a1",
+  "arbol_sucio_codigo": false,
+  "veredicto_arbol": "RELEASE_GATE",
+  "permitidas": {
+    "sello": [
+      "generated_utc",
+      "git_head",
+      "git_head_end"
+    ],
+    "contador": [
+      "cases",
+      "comparisons",
+      "equal",
+      "expected_vs_reference_ok",
+      "intentados",
+      "passed",
+      "programs_lowered_to_ir",
+      "reference_vs_backend_ok",
+      "total"
+    ],
+    "costo": [
+      "max_rss_kb_max",
+      "rss_measured_runs",
+      "runs_measured",
+      "sys_ms_total",
+      "user_ms_total",
+      "wall_ms_total"
+    ],
+    "toolchain": [
+      "python",
+      "toolchain"
+    ]
+  },
+  "gates": {
+    "F2": {
+      "viejo": {
+        "recibo": "evidence/conformance/run_2026-11-03T232115Z.json",
+        "sha256": "35c881ead9465ab10d78328bce032f4780cd2576f078a134ea5c510d71fea295"
+      },
+      "nuevo": {
+        "recibo": "evidence/conformance/run_2026-11-12T042323Z.json",
+        "sha256": "8c9d8feebf47283c51d6d50d2ea857256d7b207369ff29617b83ad9f331e2afa"
+      },
+      "compartidas": 2858,
+      "distintas": 5,
+      "altas": 48,
+      "bajas": 0,
+      "distintas_por_clase": {
+        "contador": 2,
+        "sello": 2,
+        "toolchain": 1
+      },
+      "distintas_por_campo": {
+        "generated_utc": 1,
+        "git_head": 1,
+        "passed": 1,
+        "python": 1,
+        "total": 1
+      },
+      "prohibidas": [],
+      "bajas_rutas": [],
+      "veredicto": "SIN_REGRESION"
+    },
+    "F3": {
+      "viejo": {
+        "recibo": "evidence/ir/gate_2026-11-03T232115Z.json",
+        "sha256": "eb0061232608e2b0e923f59ae8f3075cdeb9beb8fa4a7ac26548c356ef9b5285"
+      },
+      "nuevo": {
+        "recibo": "evidence/ir/gate_2026-11-12T042323Z.json",
+        "sha256": "d7df41163f0cec310257f4a38f9e6da24cad980f693dd5c7fb7a0ca6723348c3"
+      },
+      "compartidas": 3596,
+      "distintas": 5,
+      "altas": 64,
+      "bajas": 0,
+      "distintas_por_clase": {
+        "contador": 3,
+        "sello": 2
+      },
+      "distintas_por_campo": {
+        "comparisons": 1,
+        "equal": 1,
+        "generated_utc": 1,
+        "git_head": 1,
+        "programs_lowered_to_ir": 1
+      },
+      "prohibidas": [],
+      "bajas_rutas": [],
+      "veredicto": "SIN_REGRESION"
+    },
+    "F4": {
+      "viejo": {
+        "recibo": "evidence/c/gate_2026-11-03T232116Z.json",
+        "sha256": "b09233e065ba772cb5c7d929009ef513899c5aa96cf9312319ba06dd355702ca"
+      },
+      "nuevo": {
+        "recibo": "evidence/c/gate_2026-11-12T042330Z.json",
+        "sha256": "32a9763328e972dfdae13a87f6bb3e8008ac0379307940ef64ce3cbce396b226"
+      },
+      "compartidas": 63,
+      "distintas": 19,
+      "altas": 0,
+      "bajas": 0,
+      "distintas_por_clase": {
+        "contador": 16,
+        "sello": 3
+      },
+      "distintas_por_campo": {
+        "cases": 4,
+        "expected_vs_reference_ok": 4,
+        "generated_utc": 1,
+        "git_head": 1,
+        "git_head_end": 1,
+        "intentados": 4,
+        "reference_vs_backend_ok": 4
+      },
+      "prohibidas": [],
+      "bajas_rutas": [],
+      "veredicto": "SIN_REGRESION"
+    },
+    "F5": {
+      "viejo": {
+        "recibo": "evidence/backends/gate_2026-11-03T232750Z.json",
+        "sha256": "cb29cbde580773192054c510739b691b975e163a254fe86ed6a3ea1abb43f0be"
+      },
+      "nuevo": {
+        "recibo": "evidence/backends/gate_2026-11-12T042934Z.json",
+        "sha256": "af4d65d3435f8027929e47ae4c86215949f9df793b128d3d7cfa8ee46f08f8fd"
+      },
+      "compartidas": 450,
+      "distintas": 44,
+      "altas": 0,
+      "bajas": 0,
+      "distintas_por_clase": {
+        "contador": 10,
+        "costo": 30,
+        "sello": 2,
+        "toolchain": 2
+      },
+      "distintas_por_campo": {
+        "cases": 5,
+        "generated_utc": 1,
+        "git_head": 1,
+        "max_rss_kb_max": 5,
+        "passed": 5,
+        "rss_measured_runs": 5,
+        "runs_measured": 5,
+        "sys_ms_total": 5,
+        "toolchain": 2,
+        "user_ms_total": 5,
+        "wall_ms_total": 5
+      },
+      "prohibidas": [],
+      "bajas_rutas": [],
+      "veredicto": "SIN_REGRESION"
+    }
+  },
+  "sabotaje": {
+    "detectado": true,
+    "prohibidas": 1,
+    "bajas": 11
+  },
+  "verdict": "PASS",
+  "no_mide": [
+    "que los dos lotes salieran del mismo anfitrión ni del mismo toolchain: las hojas `python` y `toolchain` lo registran cuando difieren",
+    "nada que el recibo no guarde: F4 no lleva renglones por caso"
+  ]
+}

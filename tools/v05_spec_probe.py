@@ -320,7 +320,7 @@ def main(argv: list[str]) -> int:
            "veredicto_arbol": "EVIDENCE_ONLY" if sucio else "RELEASE_GATE",
            "python": platform.python_version(),
            "corpus": str(V05.relative_to(ROOT)),
-           "fuente_normativa": "spec/CORE_v0.5.md (BORRADOR) §0, §2, §4.1, §4.3, §4.4, "
+           "fuente_normativa": "spec/CORE_v0.5.md §0, §2, §4.1, §4.3, §4.4, "
                                "§7, §11"}
     documento = {"schema": "isyco.evidence/0.1",
                  "milestone": "Borrador CORE v0.5 — aristas normativas sin caso de corpus",

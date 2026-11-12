@@ -1,0 +1,6 @@
+F2: SIN_REGRESION — compartidas 2858, distintas 5 {'contador': 2, 'sello': 2, 'toolchain': 1}, altas 48, bajas 0
+F3: SIN_REGRESION — compartidas 3596, distintas 5 {'contador': 3, 'sello': 2}, altas 64, bajas 0
+F4: SIN_REGRESION — compartidas 63, distintas 19 {'contador': 16, 'sello': 3}, altas 0, bajas 0
+F5: SIN_REGRESION — compartidas 450, distintas 44 {'contador': 10, 'costo': 30, 'sello': 2, 'toolchain': 2}, altas 0, bajas 0
+sabotaje (un resultado cambiado y un caso borrado en F2): DETECTADO — 1 prohibidas, 11 bajas
+veredicto: PASS (RELEASE_GATE)
