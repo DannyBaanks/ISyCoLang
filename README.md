@@ -21,9 +21,18 @@ Repositorio **público** desde el 2026-11-12 (decisión de Danny):
 [`DannyBaanks/ISyCoLang`](https://github.com/DannyBaanks/ISyCoLang). Fue privado del 2026-10-28
 al 2026-11-12.
 
-**Sin licencia publicada.** Que el código sea visible no concede permiso de uso, copia,
-modificación ni redistribución: mientras no haya un archivo `LICENSE`, todos los derechos quedan
-reservados por su autor. Si quieres usarlo, pregunta antes.
+**Licencia: [FSL-1.1-ALv2](LICENSE.md)** (Functional Source License 1.1, con licencia futura
+Apache 2.0), desde el 2026-11-12. En corto, y sin sustituir al texto de la licencia:
+
+- puedes usar, copiar, modificar y redistribuir el software para cualquier fin que **no sea un
+  uso competidor**: ofrecerlo a terceros en un producto o servicio comercial que lo sustituya o
+  que dé la misma funcionalidad o una sustancialmente similar;
+- el uso interno, la educación y la investigación no comerciales, y los servicios profesionales a
+  un licenciatario están permitidos expresamente;
+- **cada versión pasa a Apache 2.0 a los dos años** de haberse publicado.
+
+No es una licencia «open source» en el sentido de la OSI: es *source available* con conversión
+diferida. Lo publicado entre el 2026-11-12 y el commit que añade `LICENSE.md` salió sin licencia.
 
 **Lo que se publicó tal cual.** La limpieza previa que pedía el estándar §21 no se aplicó: la
 historia conserva la metadata de autor de sus commits y cinco recibos sellados conservan rutas del
@@ -172,7 +181,7 @@ conservan afirmaciones no demostradas.
 4. **v0.5 todavía en borrador.** Implementar decisiones y pasar gates no equivale a congelar el
    texto normativo.
 5. **Publicado sin la limpieza de §21 (2026-11-12):** el historial y cinco recibos contienen
-   metadata de autor o rutas del host, y ahora son públicos. Sigue sin licencia. Qué hay, dónde y
+   metadata de autor o rutas del host, y ahora son públicos. Qué hay, dónde y
    qué salidas quedan: `docs/PUBLICACION.md`.
 
 ## Cómo verificar sin confundir evidencia con tests nuevos

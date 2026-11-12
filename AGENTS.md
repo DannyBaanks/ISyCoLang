@@ -12,8 +12,9 @@
 7. Evidencia nueva → `evidence/<tema>/` con archivo nuevo por corrida (nunca
    sobrescribir) y su SHA-256.
 8. Repo **público** desde 2026-11-12 (decisión de Danny; fue privado del 2026-10-28 al
-   2026-11-12, con remoto privado `DannyBaanks/ISyCoLang` desde 2026-11-03). **Sin
-   licencia**: no añadir una ni cambiar la visibilidad sin que Danny lo pida. Se publicó
+   2026-11-12, con remoto privado `DannyBaanks/ISyCoLang` desde 2026-11-03). Licencia
+   **FSL-1.1-ALv2** (`LICENSE.md`, elegida por Danny el 2026-11-12; cada versión pasa a
+   Apache 2.0 a los dos años): no cambiarla ni cambiar la visibilidad sin que Danny lo pida. Se publicó
    sin aplicar la limpieza que pide el estándar §21, medida en `docs/PUBLICACION.md`: el
    correo personal en la metadata de commits y rutas de workstation en 19 líneas de cinco
    recibos fijados por su `SHA256SUMS.txt` —limpiarlos rompe el sello, y reescribir la
