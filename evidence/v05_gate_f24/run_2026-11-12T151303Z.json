@@ -1,0 +1,248 @@
+{
+  "schema": "isyco-v05-gate-f24/1",
+  "generated_utc": "2026-11-12T151303Z",
+  "git_head": "1e31abcb639cd1aa245a8f9d43492d64315fed5c",
+  "arbol_sucio_codigo": false,
+  "veredicto_arbol": "RELEASE_GATE",
+  "toolchains": {
+    "c": "gcc: gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "rust": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+    "zig": "zig 0.16.0",
+    "pydecimal": "/usr/local/bin/python3: Python 3.13.18",
+    "cobol": "cobc: cobc (GnuCOBOL) 3.1.2.0"
+  },
+  "item_4": {
+    "schema_ir": "isy-ir/0.2",
+    "features": [
+      "arrays",
+      "bool",
+      "calls",
+      "emit",
+      "int32",
+      "int64",
+      "ovf:trap",
+      "while"
+    ],
+    "esperado_a_mano": {
+      "status": "HALTED",
+      "code": null,
+      "emits": [
+        "25",
+        "97",
+        "21"
+      ],
+      "return": "97"
+    },
+    "referencia": {
+      "status": "HALTED",
+      "code": null,
+      "emits": [
+        "25",
+        "97",
+        "21"
+      ],
+      "return": "97"
+    },
+    "cobol": {
+      "status": "HALTED",
+      "code": null,
+      "emits": [
+        "25",
+        "97",
+        "21"
+      ],
+      "return": "97"
+    },
+    "etiqueta_que_pedia_la_propuesta": "isy-ir/0.1",
+    "sabotaje_con_str": {
+      "schema_ir": "isy-ir/0.2",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "emit",
+        "int32",
+        "int64",
+        "ir0.2",
+        "ovf:trap",
+        "str",
+        "while"
+      ],
+      "cobol": {
+        "status": "UNSUPPORTED",
+        "code": "ir0.2,str",
+        "emits": [],
+        "return": null
+      },
+      "detectado": true
+    },
+    "ok": true
+  },
+  "item_6": {
+    "esperado_a_mano": {
+      "status": "HALTED",
+      "code": null,
+      "emits": [
+        "3702",
+        "20736",
+        "20757"
+      ],
+      "return": "20757"
+    },
+    "otra_entrada": [
+      "10",
+      "20"
+    ],
+    "otra_entrada_emits_a_mano": [
+      "30",
+      "90",
+      "111"
+    ],
+    "referencia": {
+      "status": "HALTED",
+      "code": null,
+      "emits": [
+        "3702",
+        "20736",
+        "20757"
+      ],
+      "return": "20757"
+    },
+    "features": [
+      "arrays",
+      "bool",
+      "emit",
+      "int64",
+      "ovf:trap",
+      "while"
+    ],
+    "backends": {
+      "c": {
+        "fugas": [],
+        "resultado": {
+          "status": "HALTED",
+          "code": null,
+          "emits": [
+            "3702",
+            "20736",
+            "20757"
+          ],
+          "return": "20757"
+        },
+        "otra_entrada_emits": [
+          "30",
+          "90",
+          "111"
+        ],
+        "ok": true
+      },
+      "rust": {
+        "fugas": [],
+        "resultado": {
+          "status": "HALTED",
+          "code": null,
+          "emits": [
+            "3702",
+            "20736",
+            "20757"
+          ],
+          "return": "20757"
+        },
+        "otra_entrada_emits": [
+          "30",
+          "90",
+          "111"
+        ],
+        "ok": true
+      },
+      "zig": {
+        "fugas": [],
+        "resultado": {
+          "status": "HALTED",
+          "code": null,
+          "emits": [
+            "3702",
+            "20736",
+            "20757"
+          ],
+          "return": "20757"
+        },
+        "otra_entrada_emits": [
+          "30",
+          "90",
+          "111"
+        ],
+        "ok": true
+      },
+      "pydecimal": {
+        "fugas": [],
+        "resultado": {
+          "status": "HALTED",
+          "code": null,
+          "emits": [
+            "3702",
+            "20736",
+            "20757"
+          ],
+          "return": "20757"
+        },
+        "otra_entrada_emits": [
+          "30",
+          "90",
+          "111"
+        ],
+        "ok": true
+      },
+      "cobol": {
+        "fugas": [],
+        "resultado": {
+          "status": "HALTED",
+          "code": null,
+          "emits": [
+            "3702",
+            "20736",
+            "20757"
+          ],
+          "return": "20757"
+        },
+        "otra_entrada_emits": [
+          "30",
+          "90",
+          "111"
+        ],
+        "ok": true
+      }
+    },
+    "sabotaje_fuente_tramposo": {
+      "backend": "c",
+      "fugas": [
+        "3702",
+        "20736",
+        "20757"
+      ],
+      "resultado": {
+        "status": "HALTED",
+        "code": null,
+        "emits": [
+          "3702",
+          "20736",
+          "20757"
+        ],
+        "return": "20757"
+      },
+      "otra_entrada_emits": [
+        "3702",
+        "20736",
+        "20757"
+      ],
+      "ok": false,
+      "detectado": true
+    },
+    "ok": true
+  },
+  "verdict": "PASS",
+  "no_mide": [
+    "los ítems 1, 2, 3 y 5 del gate: están en los recibos de F2–F5 y en tests/test_v05_core.py",
+    "ningún anfitrión distinto del que corrió esta sonda"
+  ]
+}

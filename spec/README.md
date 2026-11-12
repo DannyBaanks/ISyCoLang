@@ -14,7 +14,9 @@ intérprete de referencia (`AGENTS.md` §4).
   (§7 y §8), que es donde se midió que «aritmética de capacidades» no hacía falta.
 - `CORE_v0.5.md`: `BORRADOR` (2026-11-01) — el texto normativo de V1–V7 ya implementado,
   con las aristas medidas y los sitios del código donde vive cada regla. **No congelado**:
-  no entra en `SHA256SUMS.txt` hasta que Danny diga, y le quedan abiertas P4, N1 y N2 (§11).
+  no entra en `SHA256SUMS.txt` hasta que Danny diga. Revisado para congelar el 2026-11-12:
+  P4, N1, N2, Z2 y Z3 están cerradas y §11 lista lo que falta, que es solo su aprobación
+  (Z1 sigue abierta como política de toolchain y no bloquea).
 - `ERRATA_v0.1.md`: interpretaciones de v0.1 (resueltas por v0.2).
 - `IR.md`: forma de ISY-IR — v0.1 y, desde CORE v0.3, v0.2 (§9). Normativa para backends.
 - `BACKEND.md`: contrato `ISY_BACKEND/1` (F5): qué recibe y qué entrega un backend, cómo
