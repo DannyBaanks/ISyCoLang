@@ -9,14 +9,17 @@ El límite de recursión de Python es **absoluto**: cuenta los frames del hilo e
 que ya traía el llamante. `reserva(n)` lo vuelve relativo: mide la profundidad en curso, sube el
 límite a `profundidad + n` si hace falta, y lo restaura al salir. Nunca lo baja.
 
-Dos presupuestos, dos ejes:
+Dos presupuestos, dos ejes, y los dos salen de las cotas nombradas del idioma
+(`ast.MAX_EXPR_DEPTH`, Z2, y `ast.MAX_STMT_DEPTH`, Z3):
 
-* todo lo que **recorre un árbol acotado por la cota** —parser, checker con sus clones, bajada
+* todo lo que **recorre un árbol acotado por las cotas** —parser, checker con sus clones, bajada
   a IR, validador de IR, censo de capacidades y los cinco emisores— lleva `@con_pila` y pide
-  `frames_frontend()`: `FRAMES_POR_NIVEL` por cada nivel de la cota. La forma legal más cara
-  medida gasta menos de la mitad (`tests/test_depth.py::LoLegalCabe` lo ata);
-* la **ejecución** (`interp.run`, `ir_interp.run_ir`) pide lo que ya pedía, ahora contado desde
-  el llamante: `50 * max_call_depth + 1000`.
+  `frames_frontend()`: `FRAMES_POR_NIVEL` por cada nivel de las dos cotas. La forma legal más
+  cara medida gasta menos de la mitad (`tests/test_depth.py::LoLegalCabe` lo ata);
+* la **ejecución** (`interp.run`, `ir_interp.run_ir`) pide `frames_ejecucion(max_call_depth)`:
+  `FRAMES_EJECUCION_POR_NIVEL` por nivel de las dos cotas **por cada llamada** del programa. El
+  `50 * max_call_depth + 1000` anterior no era una cota: una llamada recursiva dentro de 60
+  `if` anidados gasta 126 frames por llamada y moría dentro de `max_call_depth`.
 
 No captura `RecursionError`: si el presupuesto fuera falso, la excepción sube tal cual y el arnés
 la registra como fallo del instrumento, igual que antes.
@@ -33,9 +36,23 @@ from . import ast as A
 FRAMES_POR_NIVEL = 32
 
 
+#: Frames reservados por nivel de anidamiento legal **en cada llamada** del programa que corre.
+FRAMES_EJECUCION_POR_NIVEL = 4
+
+
+def niveles() -> int:
+    """Niveles legales de anidamiento, leídos de las cotas **vivas** (un sabotaje las mueve)."""
+    return A.MAX_EXPR_DEPTH + A.MAX_STMT_DEPTH
+
+
 def frames_frontend() -> int:
-    """Presupuesto del frontend, leído de la cota **viva** (un sabotaje de la cota lo mueve)."""
-    return FRAMES_POR_NIVEL * A.MAX_EXPR_DEPTH
+    """Presupuesto de un recorrido de árbol: expresión al tope dentro de sentencias al tope."""
+    return FRAMES_POR_NIVEL * niveles()
+
+
+def frames_ejecucion(max_call_depth: int) -> int:
+    """Presupuesto de la ejecución: cada llamada puede estar al fondo de las dos cotas."""
+    return FRAMES_EJECUCION_POR_NIVEL * niveles() * max_call_depth + frames_frontend()
 
 
 def profundidad() -> int:

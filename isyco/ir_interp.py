@@ -16,7 +16,7 @@ from .interp import DEFAULT_LIMITS, TRACE_LEVELS, canonical_json, load, source_m
 from .source import program_sha256
 from .ir import ir_hash, lower, ty_from_json
 from .ir_validate import validate
-from .pila import reserva
+from .pila import frames_ejecucion, reserva
 from .types import (IntT, StrT, allowed_char, canonical, canonical_text, cast, dec_fit, int_fit,
                     int_trunc_div, parse_canonical, round_scaled)
 
@@ -343,7 +343,7 @@ def run_ir(module: dict, program_sha256: str, inputs: list, limits: dict | None 
             args.append(value)
         interp = IRInterpreter(module, lim, trace, timeout_ms)
         # Contado desde el llamante (isyco/pila.py): la pila heredada no decide el resultado.
-        with reserva(50 * lim["max_call_depth"] + 1000):
+        with reserva(frames_ejecucion(lim["max_call_depth"])):
             value = interp.call(interp.fns["main"], args, main.at)
         if main.ret is not None:
             result["return"] = canonical_text(value, main.ret)

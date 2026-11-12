@@ -20,6 +20,12 @@ El `expected` de cada test está escrito sobre la regla, no copiado de una corri
 quien llamaba traía 300 frames (C8). `isyco/pila.py` reserva la pila del paquete contada desde el
 llamante; `LoLegalCabe` fija que lo legal baja, se valida, se emite y ejecuta con 300 y 3 000
 frames encima, y que es la reserva —no el anfitrión— la que lo consigue.
+
+**Z3 (2026-11-12).** Medir Z2-b dejó a la vista el mismo defecto en otro eje: las sentencias de
+control anidaban sin cota (676 `if` bajaban, 677 morían por `RecursionError`). `CotaDeSentencias`
+fija `ast.MAX_STMT_DEPTH = 64` con el patrón de Z2 —literal, borde exclusivo, dos guardas,
+sabotaje en las dos direcciones—, y `LaEjecucionCabe` que con las dos cotas nombradas la pila de
+la ejecución deja de ser una apuesta: el peor programa legal recursiona hasta `max_call_depth`.
 """
 from __future__ import annotations
 
@@ -36,7 +42,8 @@ from isyco import ast as A                                     # noqa: E402
 from isyco import pila                                         # noqa: E402
 from isyco.backends import registry                            # noqa: E402
 from isyco.backends.base import features_of                    # noqa: E402
-from isyco.checker import expr_depth                           # noqa: E402
+from isyco.checker import check, expr_depth, stmt_depth  # noqa: E402
+#                          # noqa: E402
 from isyco.errors import InvalidProgram                        # noqa: E402
 from isyco.interp import run                                   # noqa: E402
 from isyco.ir_interp import compile_ir, run_via_ir             # noqa: E402
@@ -260,24 +267,191 @@ class LoLegalCabe(unittest.TestCase):
         self.assertEqual(sys.getrecursionlimit(), antes)                   # y por RecursionError
 
     def test_la_ejecucion_tambien_cuenta_desde_el_llamante(self):
-        """`50 * max_call_depth + 1000` era absoluto: un llamante más hondo que eso lo anulaba."""
-        fuente, limites = recursivo(200), {"max_call_depth": 256}
+        """El presupuesto de ejecución era absoluto: un llamante más hondo que él lo anulaba."""
+        fuente, limites = recursivo(5), {"max_call_depth": 8}
+        hondo = pila.frames_ejecucion(8) + 800       # más frames de llamante que el presupuesto
         corre = lambda: run(fuente, [], limites)[0]
-        self.assertEqual(corre()["emits"], ["200"])
-        self.assertEqual(con_llamante(14000, corre)["emits"], ["200"])
+        self.assertEqual(corre()["emits"], ["5"])
+        self.assertEqual(con_llamante(hondo, corre)["emits"], ["5"])
         with mock.patch.object(pila, "profundidad", lambda: 0):           # sabotaje: absoluto
             with self.assertRaises(RecursionError):
-                con_llamante(14000, corre)
+                con_llamante(hondo, corre)
+
+
+M = A.MAX_STMT_DEPTH
+
+
+def anidados(niveles: int, cabecera: str = "if true", fondo: str = "emit x;") -> bytes:
+    """`niveles` sentencias de control una dentro de otra, con `fondo` en la más honda."""
+    sale = "break;\n" if cabecera.startswith("while") else ""
+    cuerpo = "".join("    " * (i + 1) + cabecera.format(i=i) + " {\n" for i in range(niveles))
+    cuerpo += "    " * (niveles + 1) + fondo + "\n"
+    cuerpo += "".join("    " * (i + 2) + sale + "    " * (i + 1) + "}\n"
+                      for i in reversed(range(niveles))) if sale else \
+        "".join("    " * (i + 1) + "}\n" for i in reversed(range(niveles)))
+    return (f"isyco 0.5\n\nfn main() -> i64 !emit {{\n    let x: i64 = 1;\n"
+            f"    let a: [i64; 1] = [1];\n{cuerpo}    return 0;\n}}\n").encode()
+
+
+def else_if(ramas: int) -> bytes:
+    """Cadena plana de `ramas` ramas: cada `else if` es un `if` dentro del `else`."""
+    cadena = "    if n == 1 {\n        r = 1;\n    }" + "".join(
+        f" else if n == {i} {{\n        r = {i};\n    }}" for i in range(2, ramas + 1))
+    return (f"isyco 0.5\n\nfn main() -> i64 !emit {{\n    let n: i64 = {ramas};\n"
+            f"    let r: i64 = 0;\n{cadena} else {{\n        r = -1;\n    }}\n"
+            f"    emit r;\n    return 0;\n}}\n").encode()
+
+
+def recursivo_al_fondo(ifs: int, pares: int, veces: int) -> bytes:
+    """La llamada recursiva al fondo de `ifs` sentencias y de `pares` llamadas anidadas."""
+    cuerpo = "".join("    " * (i + 1) + "if n > 0 {\n" for i in range(ifs))
+    cuerpo += "    " * (ifs + 1) + f"return 1 + {'id(' * pares}baja(n - 1){')' * pares};\n"
+    cuerpo += "".join("    " * (i + 1) + "}\n" for i in reversed(range(ifs)))
+    return (f"isyco 0.5\n\nfn id(a: i64) -> i64 {{\n    return a;\n}}\n\n"
+            f"fn baja(n: i64) -> i64 {{\n{cuerpo}    return 0;\n}}\n\n"
+            f"fn main() -> i64 !emit {{\n    emit baja({veces});\n    return 0;\n}}\n").encode()
+
+
+#: (legal en el borde, un nivel más arriba): las cuatro caras de la cota de sentencias
+BORDES_Z3 = {"if": (anidados(M), anidados(M + 1)),
+             "while": (anidados(M, "while true"), anidados(M + 1, "while true")),
+             "for": (anidados(M, "for v{i} in a"), anidados(M + 1, "for v{i} in a")),
+             "else_if": (else_if(M), else_if(M + 1))}
+
+
+class CotaDeSentencias(unittest.TestCase):
+    """Z3: el anidamiento de sentencias de control lo corta el idioma, no la pila."""
+
+    def test_la_constante_es_un_literal_del_spec(self):
+        self.assertEqual(A.MAX_STMT_DEPTH, 64)
+
+    def test_el_borde_es_exclusivo_en_las_cuatro_caras(self):
+        for cara, (legal, pasado) in BORDES_Z3.items():
+            with self.subTest(cara=cara):
+                visto = resultado(legal)
+                self.assertEqual(visto["status"], "HALTED", visto)
+                self.assertEqual(visto["emits"], [str(M)] if cara == "else_if" else ["1"])
+                self.assertEqual(run_via_ir(legal, [])[0]["emits"], visto["emits"])
+                visto = resultado(pasado)
+                self.assertEqual((visto["status"], visto["code"]),
+                                 ("INVALID_PROGRAM", "SPEC_LIMIT"))
+                self.assertEqual((visto["emits"], visto["return"]), ([], None))
+
+    def test_el_parser_y_el_ast_cuentan_lo_mismo(self):
+        for cara, (legal, _) in BORDES_Z3.items():
+            with self.subTest(cara=cara):
+                self.assertEqual(stmt_depth(load_program(legal))[0], M)
+
+    def test_los_niveles_se_suman_entre_formas_distintas(self):
+        mezcla = (b"isyco 0.5\n\nfn main() -> i64 !emit {\n    let x: i64 = 1;\n"
+                  b"    while x < 2 {\n        if x == 5 {\n            x = 9;\n"
+                  b"        } else if x == 1 {\n            if true {\n                emit x;\n"
+                  b"            }\n        }\n        x = x + 1;\n    }\n    return 0;\n}\n")
+        self.assertEqual(stmt_depth(load_program(mezcla))[0], 4)   # while, if, else-if, if
+        self.assertEqual(resultado(mezcla)["emits"], ["1"])
+        with mock.patch.object(A, "MAX_STMT_DEPTH", 3):
+            self.assertEqual(resultado(mezcla)["code"], "SPEC_LIMIT")
+
+    def test_el_checker_rechaza_aunque_el_parser_no_haya_contado(self):
+        """Segunda guarda: un AST que no pasó por `Parser.control` se corta igual."""
+        with mock.patch.object(A, "MAX_STMT_DEPTH", 200):
+            programa = load_program(anidados(M + 1))
+        with self.assertRaises(InvalidProgram) as visto:
+            check(programa)
+        self.assertEqual(visto.exception.code, "SPEC_LIMIT")
+
+    def test_un_llamante_hondo_sigue_obteniendo_spec_limit(self):
+        for cara, (_, pasado) in BORDES_Z3.items():
+            with self.subTest(cara=cara):
+                self.assertEqual(con_llamante(3000, lambda: resultado(pasado))["code"],
+                                 "SPEC_LIMIT")
+
+    def test_mover_la_constante_mueve_el_borde(self):
+        """Sabotaje en las dos direcciones, como en Z2."""
+        with mock.patch.object(A, "MAX_STMT_DEPTH", 200):
+            for cara, (_, pasado) in BORDES_Z3.items():
+                with self.subTest(cara=cara):
+                    self.assertEqual(resultado(pasado)["status"], "HALTED")
+        self.assertEqual(resultado(anidados(4))["status"], "HALTED")
+        with mock.patch.object(A, "MAX_STMT_DEPTH", 3):
+            self.assertEqual(resultado(anidados(4))["code"], "SPEC_LIMIT")
+
+    def test_las_dos_cotas_al_tope_recorren_todo_el_camino(self):
+        """Lo más hondo que el idioma acepta: expresión al tope dentro de sentencias al tope."""
+        peor = anidados(M, fondo=f"emit {'(' * (N - 1)}x{')' * (N - 1)};")
+        for frames in (0, 300, 3000):
+            with self.subTest(frames=frames):
+                self.assertEqual(con_llamante(frames, lambda: todo_el_camino(peor)),
+                                 ["HALTED", "HALTED"])
+        with mock.patch.object(pila, "FRAMES_POR_NIVEL", 0):
+            with self.assertRaises(RecursionError):
+                con_llamante(300, lambda: compile_ir(peor))
+
+
+class LaEjecucionCabe(unittest.TestCase):
+    """Con las dos cotas nombradas, cada llamada del programa tiene un coste de pila acotado."""
+
+    def test_el_peor_programa_esta_en_las_dos_cotas(self):
+        programa = load_program(self.PEOR)
+        self.assertEqual((stmt_depth(programa)[0], expr_depth(programa)[0]), (M, N))
+
+    LIMITES = {"max_call_depth": 256}
+    PEOR = recursivo_al_fondo(M, N - 4, 250)     # 64 `if` y `1 + id(…id(baja(n - 1)))` en nivel 64
+
+    def test_el_peor_programa_legal_recursiona_hasta_el_limite(self):
+        """Antes: `RecursionError` con la llamada dentro de 60 `if`, muy por debajo de 256."""
+        for ejecutar in (run, run_via_ir):
+            with self.subTest(ruta=ejecutar.__name__):
+                visto = ejecutar(self.PEOR, [], self.LIMITES)[0]
+                self.assertEqual((visto["status"], visto["emits"]), ("HALTED", ["250"]))
+                hondo = con_llamante(3000, lambda: ejecutar(self.PEOR, [], self.LIMITES)[0])
+                self.assertEqual(hondo["emits"], ["250"])
+
+    def test_el_limite_de_llamadas_lo_sigue_poniendo_el_idioma(self):
+        pasado = recursivo_al_fondo(M, N - 4, 300)
+        for ejecutar in (run, run_via_ir):
+            with self.subTest(ruta=ejecutar.__name__):
+                visto = ejecutar(pasado, [], self.LIMITES)[0]
+                self.assertEqual((visto["status"], visto["code"]),
+                                 ("LIMIT_REACHED", "max_call_depth"))
+
+    def test_sin_el_presupuesto_por_nivel_vuelve_el_muro(self):
+        with mock.patch.object(pila, "FRAMES_EJECUCION_POR_NIVEL", 0):
+            for ejecutar in (run, run_via_ir):
+                with self.subTest(ruta=ejecutar.__name__):
+                    with self.assertRaises(RecursionError):
+                        ejecutar(self.PEOR, [], self.LIMITES)
+
+    def test_el_presupuesto_dobla_el_coste_medido_por_llamada(self):
+        def frames(veces: int) -> int:
+            fuente = recursivo_al_fondo(M, N - 4, veces)
+            lo, hi = 1, pila.frames_ejecucion(256)
+            real = pila.frames_ejecucion
+            while lo + 1 < hi:
+                medio = (lo + hi) // 2
+                with mock.patch.object(pila, "frames_ejecucion", lambda _: medio), \
+                        mock.patch("isyco.interp.frames_ejecucion", lambda _: medio):
+                    try:
+                        con_llamante(0, lambda: run(fuente, [], self.LIMITES))
+                        hi = medio
+                    except RecursionError:
+                        lo = medio
+            self.assertIs(pila.frames_ejecucion, real)
+            return hi
+        por_llamada = (frames(60) - frames(20)) / 40
+        reservado = pila.FRAMES_EJECUCION_POR_NIVEL * pila.niveles()
+        self.assertGreater(por_llamada, 150, por_llamada)       # no es un coste de juguete
+        self.assertLessEqual(2 * por_llamada, reservado, por_llamada)
 
 
 class LaPoblacionQuedaDebajo(unittest.TestCase):
     """Tripwire: ningún programa del repo roza la cota; si uno la cruza, esto lo nombra."""
 
-    FUENTES_Z2 = tuple(f"{n}_" for n in range(449, 455))   # viven en la cota: no son población
+    FUENTES_Z2 = tuple(f"{n}_" for n in range(449, 459))   # viven en las cotas: no son población
 
     def test_toda_fuente_del_repo_cabe_bajo_la_cota(self):
         """Se miden los programas que la spec acepta; los rechazos a propósito no tienen AST."""
-        censadas, profunda, donde = 0, 0, ""
+        censadas, profunda, donde, sentencias = 0, 0, "", 0
         for carpeta in ("conformance", "conformance_v0.2", "conformance_v0.3",
                         "conformance_v0.4", "conformance_v0.5", "dogfood"):
             for ruta in sorted((ROOT / "programs" / carpeta).rglob("*.isy")):
@@ -287,15 +461,21 @@ class LaPoblacionQuedaDebajo(unittest.TestCase):
                 if esperado.exists() and not self.se_acepta(esperado):
                     continue
                 try:
-                    hondo, _ = expr_depth(load_program(ruta.read_bytes()))
+                    programa = load_program(ruta.read_bytes())
+                    hondo, _ = expr_depth(programa)
+                    anida, _ = stmt_depth(programa)
                 except InvalidProgram:
                     continue                    # rechazos a propósito: no tienen AST que medir
                 censadas += 1
                 self.assertLessEqual(hondo, A.MAX_EXPR_DEPTH, str(ruta))
+                self.assertLessEqual(anida, A.MAX_STMT_DEPTH, str(ruta))
+                if not ruta.name.startswith(self.FUENTES_Z2):
+                    sentencias = max(sentencias, anida)
                 if not ruta.name.startswith(self.FUENTES_Z2) and hondo > profunda:
                     profunda, donde = hondo, str(ruta.relative_to(ROOT))
         self.assertGreaterEqual(censadas, 150, "la población censada cambió sin decir nada")
         self.assertLessEqual(profunda, 8, f"la población real se pasó de lo censado: {donde}")
+        self.assertEqual(sentencias, 4, "Z3: la población real anida 4 sentencias (02_csv.isy)")
 
     @staticmethod
     def se_acepta(expect: Path) -> bool:

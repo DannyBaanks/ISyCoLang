@@ -25,6 +25,7 @@ class Parser:
         self.usados = {t.text for t in tokens if t.kind in ("IDENT", "KW")}
         self.for_n = 0
         self.nesting = 0        # Z2: niveles de anidamiento de expresión en curso
+        self.stmt_nesting = 0   # Z3: sentencias de control abiertas en curso
 
     @property
     def v03(self) -> bool:
@@ -262,11 +263,10 @@ class Parser:
             return A.Let(at, name, ty, expr)
         if self.is_("if"):
             return self.if_stmt()
-        if self.accept("while"):
-            cond = self.cond()
-            return A.While(at, cond, self.block())
+        if self.is_("while"):
+            return self.control(lambda: self.while_stmt(at))
         if self.v05 and self.accept("for"):
-            return self.for_stmt(at)
+            return self.control(lambda: self.for_stmt(at))
         if self.accept("break"):
             self.expect(";")
             return A.Break(at)
@@ -305,13 +305,38 @@ class Parser:
             return A.Assign(at, name, path[0][1] if path else None, expr)
         self.fail("se esperaba una sentencia")
 
+    def control(self, siguiente):
+        """Abre una sentencia de control con guarda (Z3, CORE v0.5 §7).
+
+        Sin ella el borde lo ponía el anfitrión: 676 `if` anidados bajaban y 677 morían por
+        `RecursionError`, sin número ni error nombrado (`evidence/z2_pila/`, P8). El `at` es el
+        de la sentencia que cruza la cota.
+        """
+        self.stmt_nesting += 1
+        try:
+            if self.stmt_nesting > A.MAX_STMT_DEPTH:
+                raise InvalidProgram("SPEC_LIMIT", self.tok.at,
+                                     f"una sentencia de control anida {self.stmt_nesting} "
+                                     f"niveles y la cota es {A.MAX_STMT_DEPTH} (CORE v0.5 §7)")
+            return siguiente()
+        finally:
+            self.stmt_nesting -= 1
+
+    def while_stmt(self, at) -> A.While:
+        self.expect("while")
+        cond = self.cond()
+        return A.While(at, cond, self.block())
+
     def if_stmt(self) -> A.If:
+        return self.control(self._if_stmt)
+
+    def _if_stmt(self) -> A.If:
         at = self.expect("if").at
         cond = self.cond()
         then = self.block()
         els = None
         if self.accept("else"):
-            els = self.if_stmt() if self.is_("if") else self.block()
+            els = self.if_stmt() if self.is_("if") else self.block()   # `else if`: un nivel más
         return A.If(at, cond, then, els)
 
     # --- azúcar CORE v0.5 ------------------------------------------------------

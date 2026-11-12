@@ -1,0 +1,14 @@
+{
+  "claim": "Z3: una cadena de 64 ramas if/else-if (nivel 64) se acepta y la entrada 64 llega a la ultima rama",
+  "input": [
+    "64"
+  ],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "64"
+    ],
+    "return": "64"
+  }
+}

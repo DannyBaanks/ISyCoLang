@@ -15,7 +15,7 @@ from . import ast as A
 from .checker import check
 from .errors import HostTimeout, InvalidProgram, IsyError, LimitReached, RuntimeFault
 from .modules import load_program
-from .pila import reserva
+from .pila import frames_ejecucion, reserva
 from .source import Bundle, program_sha256
 from .types import (ArrT, BoolT, DecT, IntT, StrT, StructT, allowed_char, canonical,
                     canonical_text, cast, dec_fit, int_fit, int_trunc_div, parse_canonical,
@@ -371,7 +371,7 @@ def run(data, inputs: list, limits: dict | None = None, trace: str = "none",
             args.append(value)
         interp = Interpreter(program, lim, trace, timeout_ms)
         # Contado desde el llamante (isyco/pila.py): la pila heredada no decide el resultado.
-        with reserva(50 * lim["max_call_depth"] + 1000):
+        with reserva(frames_ejecucion(lim["max_call_depth"])):
             value = interp.call(main, args, main.at)
         if main.ret is not None:
             result["return"] = canonical_text(value, main.ret)
