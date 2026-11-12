@@ -134,7 +134,14 @@ conservan afirmaciones no demostradas.
    200, la cadena de paréntesis moría por `RecursionError` en 89 pares con pila limpia y en 62 con
    300 frames del llamante encima, y el fuente del tope legal sigue reventando con 300 frames
    aunque la guarda esté puesta
-   ([sonda Z2, `RELEASE_GATE`](evidence/z2_guard/run_2026-11-04T001913Z.json), C8). Los llamantes
+   ([sonda Z2, `RELEASE_GATE`](evidence/z2_guard/run_2026-11-04T001913Z.json), C8).
+   **Cerrado el 2026-11-12 (Z2-b):** `isyco/pila.py` reserva la pila del paquete contada desde el
+   llamante —2048 frames para todo recorrido acotado por la cota— y el tope legal baja, se valida,
+   se emite y ejecuta con 0, 300 y 3 000 frames encima
+   ([sonda Z2-b, `RELEASE_GATE`](evidence/z2_pila/run_2026-11-12T024856Z.json), P1–P7;
+   [docs/decisions/Z2B_PILA_PROPIA.md](docs/decisions/Z2B_PILA_PROPIA.md)). Lo que sigue abierto es
+   **Z3**: el anidamiento de *sentencias* no tiene cota nombrada (676 bloques `if` bajan, 677 dan
+   `RecursionError`; P8). Las cifras que siguen en este punto son del estado anterior. Los llamantes
    reales del paquete llegan con 6 y 10 frames y la forma legal más cara pide 716 de los 999
    útiles. Las
    fronteras de la [sonda pre-decisión](evidence/z2_depth/run_2026-11-03T074629Z.json) (241/242 y
@@ -231,6 +238,7 @@ tools/f5_harness_probe.py          mide la guarda del arnés: el zig que rompe s
 tools/z1_ceiling_probe.py          techo de comptime de Zig (Z1): cuota, sabotajes y controles
 tools/z2_depth_probe.py            instrumento PRE-decisión de Z2: las fronteras sin cota (preservado)
 tools/z2_guard_probe.py            Z2 después de la guarda: la cota, su precio en frames y su límite
+tools/z2_pila_probe.py             Z2-b: la pila del llamante ya no decide; deja medida Z3 (sentencias)
 ```
 
 ### Gates y comandos avanzados
@@ -254,6 +262,7 @@ python3 tools/z1_ceiling_probe.py --write          # …y sella la frontera de Z
 python3 tools/z2_guard_probe.py                    # la cota Z2 en vigor: quién la corta y qué cuesta
 python3 tools/z2_guard_probe.py --write            # …y sella el recibo del después (evidence/z2_guard/)
 python3 tools/z2_depth_probe.py --write            # instrumento PRE-decisión: mide fuentes ya rechazadas
+python3 tools/z2_pila_probe.py --write             # Z2-b: la reserva de pila y sus sabotajes (evidence/z2_pila/)
 ```
 
 ### Relación con el monorepo

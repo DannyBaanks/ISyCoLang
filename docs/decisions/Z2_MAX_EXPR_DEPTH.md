@@ -169,3 +169,16 @@ promesa, y las promesas recortan el conjunto de lo que antes pasaba por accident
   del tope legal revienta **con la guarda puesta**— y no mueve nada más salvo tiempos y RSS. La de
   `205940Z` se queda como quedó: el precedente de P4 pide conservar la corrida del lote, no
   borrarla. Ninguna reescribe a la otra: cada una con su stdout crudo y sus fuentes al lado.
+
+## Corrección fechada (2026-11-12): el hueco de C8 se cerró en Z2-b
+
+La fila «La cota garantiza que la forma legal quepa en cualquier pila — **FALSO, y medido**» y el
+párrafo «No borra el muro del anfitrión» describen el estado al 2026-11-04 y se conservan como
+quedaron. Desde el 2026-11-12 `isyco/pila.py` reserva la pila del paquete contada desde el
+llamante, y el caso exacto de C8 —63 pares, límite de fábrica, 300 frames— baja (P7 de
+`evidence/z2_pila/run_2026-11-12T024856Z.json`). Dos cifras de este documento quedaron cortas al
+re-medir: la forma legal más cara no son los paréntesis (716 frames) sino las llamadas anidadas
+(781 en todo el camino), y el hueco no era solo del frontend, también del validador de IR y de los
+emisores. `tools/z2_guard_probe.py` mide con `sys.setrecursionlimit` desde fuera, así que con la
+reserva puesta sus C3 y C8 ya no miden lo que medían: es instrumento del estado anterior, igual
+que `z2_depth_probe.py` lo fue de la guarda. Decisión y límites: `docs/decisions/Z2B_PILA_PROPIA.md`.
