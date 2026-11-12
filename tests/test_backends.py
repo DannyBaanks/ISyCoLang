@@ -106,9 +106,13 @@ class ContenidoNoEtiqueta(unittest.TestCase):
         self.assertNotIn("emit_array", features_of(compile_ir(by_name("033_array_copy")["program"])))
 
     def test_el_unsupported_dice_la_capacidad_exacta(self):
-        self.assertEqual(missing_features(AVAILABLE["cobol"], por_numero("441")["program"]),
+        # `registry()` y no `AVAILABLE`: lo que se lee es la declaración estática de
+        # capacidades, que no invoca a `cobc`. Con `AVAILABLE` este test moría por
+        # `KeyError` sin el toolchain y bajo `ISYCO_TEST_BACKENDS=c,rust`.
+        cobol = registry()["cobol"]
+        self.assertEqual(missing_features(cobol, por_numero("441")["program"]),
                          ["emit_array"])
-        self.assertEqual(missing_features(AVAILABLE["cobol"], by_name("253_emit_array")["program"]),
+        self.assertEqual(missing_features(cobol, by_name("253_emit_array")["program"]),
                          ["emit_array"])
 
     @unittest.skipUnless("cobol" in AVAILABLE, "no hay cobc")
