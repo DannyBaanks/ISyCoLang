@@ -11,8 +11,8 @@ declarar la capacidad que no soporta.
 `decimal` / GnuCOBOL.
 
 **Estado (12 de noviembre de 2026):** `EXECUTABLE` dentro de los dominios y corpus medidos. Las
-especificaciones v0.1–v0.4 están congeladas; el engine ya implementa decisiones de v0.5, pero
-`spec/CORE_v0.5.md` sigue en **BORRADOR**, no es una especificación congelada. No hay aquí una
+especificaciones v0.1–v0.5 están congeladas (`spec/CORE_v0.5.md` desde el 12 de noviembre de
+2026, con sus `NOT_DEMONSTRATED` escritos en §12). No hay aquí una
 afirmación de soporte universal ni de paridad fuera de los casos medidos.
 
 ## Acceso, licencia y respaldo
@@ -197,8 +197,8 @@ con 290 subtests** —los ocho de `tests/test_depth.py` están dentro—, en **1
 y **214,1 s** con `pytest`, con la caché `build/` llena. El rango que registra [GUIA.md](GUIA.md)
 sobre las corridas de `unittest` es de 186,5 a 491,1 s en dieciséis medidas; el recuento y la
 duración del histórico están atados al árbol y a la toolchain de cada corrida, así que no se citan
-aquí como cifra de hoy. **Recuento más reciente, 2026-11-12 sobre `5337226`: 241 tests, `OK`, en
-220,5 s con `unittest`**, medido en un contenedor de 4 núcleos (rustc 1.97.0) y no en el host de
+aquí como cifra de hoy. **Recuento más reciente, 2026-11-12 sobre el commit que congela v0.5: 245 tests, `OK`, en
+182,0 s con `unittest`** (241 en 220,5 s sobre `5337226` el mismo día, antes de `test_spec_frozen.py`), medido en un contenedor de 4 núcleos (rustc 1.97.0) y no en el host de
 las medidas anteriores, así que no entra en ese rango.
 **La existencia de esos tests no significa que se hayan ejecutado en esta revisión del README.**
 Los gates que generan recibos escriben archivos nuevos en `evidence/` y actualizan sus listas
@@ -218,7 +218,7 @@ evidence/inventory/                salidas del inventario y de toolchains
 spec/CORE.md                       semántica v0.1 congelada (+ ERRATA_v0.1.md)
 spec/CORE_v0.2.md … CORE_v0.4.md   cambios congelados de v0.2, v0.3 (str<N>, structs) y v0.4 (módulos)
 spec/CORE_v0.5_propuesta.md        propuesta V1–V7 (2026-10-30) con sus correcciones fechadas
-spec/CORE_v0.5.md                  texto normativo de v0.5 — BORRADOR, sin congelar ni sellar
+spec/CORE_v0.5.md                  texto normativo de v0.5 — FROZEN v0.5 (2026-11-12), sellado
 spec/IR.md                         forma de ISY-IR v0.1 y v0.2 (lo que reciben los backends)
 GUIA.md                            guía para personas: escribir, correr y leer un resultado
 spec/BACKEND.md                    contrato ISY_BACKEND/1 (capacidades, protocolo, conformidad, costo)
@@ -275,7 +275,7 @@ tools/v05_gate_f24_probe.py        gate F2.4, ítems 4 y 6: criba a cabecera 0.5
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # suite completa: 241 tests el 2026-11-12 (221 el 2026-11-04)
+python3 -m unittest discover -s tests -v       # suite completa: 245 tests el 2026-11-12 (221 el 2026-11-04)
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)

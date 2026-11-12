@@ -1,6 +1,6 @@
 # spec/
 
-Los cuatro núcleos congelados son los que están en `SHA256SUMS.txt`; lo demás se lee
+Los cinco núcleos congelados son los que están en `SHA256SUMS.txt`; lo demás se lee
 pero no está sellado, y nada de aquí define la semántica ejecutada — esa es el
 intérprete de referencia (`AGENTS.md` §4).
 
@@ -12,11 +12,10 @@ intérprete de referencia (`AGENTS.md` §4).
 - `CORE_v0.5_propuesta.md`: `PROPUESTA` (2026-10-30) — las siete decisiones numeradas
   V1–V7 con opciones, recomendación y las preguntas [P]. Con sus correcciones fechadas
   (§7 y §8), que es donde se midió que «aritmética de capacidades» no hacía falta.
-- `CORE_v0.5.md`: `BORRADOR` (2026-11-01) — el texto normativo de V1–V7 ya implementado,
-  con las aristas medidas y los sitios del código donde vive cada regla. **No congelado**:
-  no entra en `SHA256SUMS.txt` hasta que Danny diga. Revisado para congelar el 2026-11-12:
-  P4, N1, N2, Z2 y Z3 están cerradas y §11 lista lo que falta, que es solo su aprobación
-  (Z1 sigue abierta como política de toolchain y no bloquea).
+- `CORE_v0.5.md`: `for`, `len` de arreglos, `str` sin capacidad, capacidades por contenido y
+  las cotas P4, Z2 y Z3 (FROZEN v0.5, 2026-11-12; V1–V7). Conserva las correcciones fechadas
+  de cuando fue borrador y la tabla de lo que sigue `NOT_DEMONSTRATED` (§12). Z1 queda
+  abierta como política de toolchain.
 - `ERRATA_v0.1.md`: interpretaciones de v0.1 (resueltas por v0.2).
 - `IR.md`: forma de ISY-IR — v0.1 y, desde CORE v0.3, v0.2 (§9). Normativa para backends.
 - `BACKEND.md`: contrato `ISY_BACKEND/1` (F5): qué recibe y qué entrega un backend, cómo

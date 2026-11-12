@@ -130,7 +130,7 @@ aprobados por Danny el 2026-10-29.
 sin cambiar ningún resultado anterior; IR y los tres backends nativos iguales a
 la referencia en el corpus completo.
 
-#### F2.4 — Core v0.5: `for`, `len` de arreglos, `str` sin capacidad  `[PROPUESTA 2026-10-30 — bloqueada por decisión de Danny, no por código]`
+#### F2.4 — Core v0.5: `for`, `len` de arreglos, `str` sin capacidad  `[PASS 2026-11-12: spec/CORE_v0.5.md FROZEN v0.5; referencia 228/228; fue PROPUESTA desde 2026-10-30]`
 
 Nace del dogfood (`docs/DOGFOOD_2026-10-30.md`): los cinco programas reales midieron
 qué no se puede escribir. `spec/CORE_v0.5_propuesta.md` convierte eso en siete
@@ -441,6 +441,14 @@ que falsifica V7.
 > se supera al congelar (`322` ya estaba en `SUPERSEDED.json`). Lista completa en
 > `spec/CORE_v0.5.md` §11, fila «congelar». **No se congeló:** el estado sigue `BORRADOR` y el
 > archivo sigue fuera de `spec/SHA256SUMS.txt`.
+
+> **CORE v0.5 congelado el 2026-11-12, por orden de Danny** con la lista anterior delante.
+> `spec/CORE_v0.5.md` pasa a `FROZEN v0.5` y su hash entra en `spec/SHA256SUMS.txt`; desde hoy
+> no se edita. Quedan ratificados los 64 niveles de Z2 y Z3 (con el `else if` contando uno) y
+> aceptada la desviación del ítem 4 del gate. Z1 sigue abierta como política de toolchain. El
+> lote de gates vigente es el de 228 sobre `1cb56ce`: entre ese commit y el congelado no cambió
+> `isyco/`, solo documentos, dos herramientas y una prueba. `tests/test_spec_frozen.py` verifica
+> los cinco hashes en cada corrida.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 
