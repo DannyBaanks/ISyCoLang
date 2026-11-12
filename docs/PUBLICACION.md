@@ -11,7 +11,8 @@
 > del documento se conserva como quedó el 2026-11-03/04: describe el estado previo y sigue siendo
 > el inventario válido de qué se expuso. Las dos salidas siguen existiendo, con un coste nuevo:
 > reescribir la historia ya no evita la exposición de lo que estuvo público (clones, forks y
-> cachés), solo la reduce hacia adelante. Sigue sin licencia.
+> cachés), solo la reduce hacia adelante. Licencia desde el 2026-11-12: FSL-1.1-ALv2
+> (`LICENSE.md`); las menciones a «sin licencia» de más abajo son del estado previo.
 
 Este documento existe porque se pidió empujar `eb4f0af` y abrir la PR del pase de docs.
 Al mirar qué se iba con el push salió que la historia del repo lleva información
