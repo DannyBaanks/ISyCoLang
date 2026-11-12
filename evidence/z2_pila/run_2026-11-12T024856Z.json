@@ -1,0 +1,569 @@
+{
+  "schema": "isycolang.z2_pila_probe/1",
+  "generated_utc": "2026-11-12T024856Z",
+  "git_head": "4917258cacff21fe084ccdc93fde5ef8f48d3e4f",
+  "arbol_sucio_codigo": false,
+  "veredicto_arbol": "RELEASE_GATE",
+  "python": "3.13.18",
+  "cota_nombrada": 64,
+  "frames_por_nivel": 32,
+  "presupuesto_frontend": 2048,
+  "aire_del_llamante": 40,
+  "llamantes": [
+    0,
+    300,
+    3000
+  ],
+  "fuentes_sha256": {
+    "bloques_676": "2530b765f29b45d5ca85f65f8b152f14caf6fe9a45fc722bb3e861a6cc1b3b59",
+    "bloques_677": "810d66373d8beea2319a431a46ed2f12d06f0fc1b106445294848db41c265838",
+    "ejecucion_recursiva_200": "25233a2fa44f46d24861d39858e812fc4ef37a0dd4b4061480f32892575f0bb6",
+    "pasa_cadena_65": "d9b28437c2f01bbbfb9d26e380c2b0f6782a7ecd088f452cb6723c6cf4b5104e",
+    "pasa_llamadas_64": "2b1454eb7d4ad88f098fc3eaba2f35f00bd8779f91d6ebf556fa9d8e735f9c9c",
+    "pasa_parentesis_64": "b57a5981db155498ee795c79f0e7bfd06a57e96b1065ceca2d1f8d13fd035463",
+    "pasa_pelada_64": "06add8b9bf0f756a74a035837db14870929bcb234c65ad77d57a58b9d5a6b3f1",
+    "pasa_prefijo_65": "8d79447f31e1002f6b0a4f4b3a94a6a721583e4af8d06daa0a797deec7c42ed8",
+    "tope_cadena_64": "963bd0c0d92092866c4fa801a37c50f2e2cab787a29f2e8bf09ab38d5be647c9",
+    "tope_llamadas_63": "a7faba5ed7423af8166669b6dc41bf814534143b562926e28f88933da02b3184",
+    "tope_parentesis_63": "7c392367c9192708717fd94bfafdead1369159793f3560a469132d4d8e96fa47",
+    "tope_pelada_63": "aaac89342349fa3f049010f7b7c247528d08bf0528a6d9f0166208e2f7471b69",
+    "tope_prefijo_64": "7103d4addcbfa71ece5098c53cd52b4e378663848195b3cd036a4312c717e1da"
+  },
+  "continuidad": {
+    "sonda_anterior": "tools/z2_guard_probe.py",
+    "recibo_anterior": "evidence/z2_guard/run_2026-11-04T001913Z.json",
+    "decision": "docs/decisions/Z2B_PILA_PROPIA.md"
+  },
+  "claims": [
+    {
+      "id": "P1",
+      "afirmacion": "el fuente del tope legal (64 niveles) baja, se valida, se emite y ejecuta por las dos rutas con 0, 300, 3000 frames de un llamante que llega con 40 de aire, en las cinco caras",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "parentesis": {
+          "0": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          }
+        },
+        "prefijo": {
+          "0": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          }
+        },
+        "cadena": {
+          "0": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          }
+        },
+        "pelada": {
+          "0": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          }
+        },
+        "llamadas": {
+          "0": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "HALTED",
+            "code": null,
+            "via_ir": "HALTED",
+            "emitidos": [
+              "c",
+              "cobol",
+              "pydecimal",
+              "rust",
+              "zig"
+            ],
+            "limite_restaurado": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P2",
+      "afirmacion": "el nivel 65 sigue siendo `INVALID_PROGRAM`/`SPEC_LIMIT` con esos mismos llamantes: la reserva no mueve el borde del idioma",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "parentesis": {
+          "0": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          }
+        },
+        "prefijo": {
+          "0": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          }
+        },
+        "cadena": {
+          "0": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          }
+        },
+        "pelada": {
+          "0": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          }
+        },
+        "llamadas": {
+          "0": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "300": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          },
+          "3000": {
+            "resultado": "OK",
+            "status": "INVALID_PROGRAM",
+            "code": "SPEC_LIMIT",
+            "emits": [],
+            "limite_restaurado": true
+          }
+        }
+      }
+    },
+    {
+      "id": "P3",
+      "afirmacion": "sabotaje: con el presupuesto en 0 y 300 frames del llamante vuelve el `RecursionError` —en el frontend para las cinco caras y, sobre la cadena izquierda, en el censo de capacidades y en los cinco emisores—; con la reserva puesta los mismos once pasan. Es la reserva la que lo consigue",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "frontend": {
+          "parentesis": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "prefijo": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "cadena": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "pelada": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "llamadas": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          }
+        },
+        "recorridos_de_la_ir": {
+          "features_of": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "c": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "rust": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "zig": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "pydecimal": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          },
+          "cobol": {
+            "sin_reserva": "RecursionError",
+            "con_reserva": "OK"
+          }
+        }
+      }
+    },
+    {
+      "id": "P4",
+      "afirmacion": "la cara legal más cara es `llamadas` y gasta 781 frames en todo el camino (12.2 por nivel): menos de la mitad del presupuesto de 2048",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "todo_el_camino": {
+          "parentesis": 718,
+          "prefijo": 150,
+          "cadena": 205,
+          "pelada": 288,
+          "llamadas": 781
+        },
+        "recorridos_de_la_ir_sobre_cadena": {
+          "features_of": 72,
+          "c": 139,
+          "rust": 138,
+          "zig": 138,
+          "pydecimal": 139,
+          "cobol": 139
+        },
+        "presupuesto": 2048,
+        "frames_por_nivel_medido": 12.2
+      }
+    },
+    {
+      "id": "P5",
+      "afirmacion": "el límite de recursión del llamante queda como estaba, salga el paquete bien, por rechazo del idioma o por `RecursionError`",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "sale_bien": {
+          "resultado": "OK",
+          "status": "HALTED",
+          "code": null,
+          "via_ir": "HALTED",
+          "emitidos": [
+            "c",
+            "cobol",
+            "pydecimal",
+            "rust",
+            "zig"
+          ],
+          "limite_restaurado": true
+        },
+        "sale_por_spec_limit": {
+          "resultado": "OK",
+          "status": "INVALID_PROGRAM",
+          "code": "SPEC_LIMIT",
+          "emits": [],
+          "limite_restaurado": true
+        },
+        "sale_por_recursion_error": {
+          "resultado": "RecursionError",
+          "limite_restaurado": true
+        }
+      }
+    },
+    {
+      "id": "P6",
+      "afirmacion": "la ejecución también cuenta desde el llamante: un programa que recursiona 200 veces da lo mismo con pila limpia y con 14000 frames encima —más que el `50 * max_call_depth + 1000` = 13800 que antes era el límite absoluto—, y contando en absoluto (sabotaje) muere",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "llamante": 14000,
+        "limite_absoluto_anterior": 13800,
+        "limpio": {
+          "resultado": "OK",
+          "status": "HALTED",
+          "code": null,
+          "emits": [
+            "200"
+          ],
+          "limite_restaurado": true
+        },
+        "hondo": {
+          "resultado": "OK",
+          "status": "HALTED",
+          "code": null,
+          "emits": [
+            "200"
+          ],
+          "limite_restaurado": true
+        },
+        "hondo_contando_en_absoluto": {
+          "resultado": "RecursionError",
+          "limite_restaurado": true
+        }
+      }
+    },
+    {
+      "id": "P7",
+      "afirmacion": "el caso exacto de C8 —63 pares de paréntesis, límite de fábrica 1000, 300 frames del llamante— era `RecursionError` en el recibo de la guarda y hoy baja",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "recibo": "evidence/z2_guard/run_2026-11-04T001913Z.json",
+        "antes": {
+          "0": "OK",
+          "300": "RecursionError"
+        },
+        "ahora": {
+          "0": "OK",
+          "300": "OK"
+        }
+      }
+    },
+    {
+      "id": "P8",
+      "afirmacion": "LÍMITE, medido: el anidamiento de **sentencias** no tiene cota nombrada. 676 bloques `if` anidados bajan y 677 mueren por `RecursionError`; el borde ya no se mueve con el llamante (igual con 300 frames) pero lo pone el presupuesto y no el idioma (sin reserva y con el límite de fábrica: 324/325)",
+      "estado": "DEMONSTRADO",
+      "observado": {
+        "llamante_0": {
+          "ok": 676,
+          "fallo": 677,
+          "señal_ok": "HALTED",
+          "señal_fallo": "RecursionError"
+        },
+        "llamante_300": {
+          "ok": 676,
+          "fallo": 677,
+          "señal_ok": "HALTED",
+          "señal_fallo": "RecursionError"
+        },
+        "llamante_0_sin_reserva": {
+          "ok": 324,
+          "fallo": 325,
+          "señal_ok": "HALTED",
+          "señal_fallo": "RecursionError"
+        }
+      }
+    }
+  ],
+  "veredicto": "DEMONSTRADO"
+}
