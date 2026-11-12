@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .pila import con_pila
 from .ir import SCHEMA_V2, SCHEMAS, IRTypeError, ty_from_json
 from .types import (INT_ALIASES, U8, ArrT, BoolT, DecT, IntT, StrT, StructT, is_numeric,
                     is_scalar, parse_canonical)
@@ -398,6 +399,7 @@ def _always_returns(stmts) -> bool:
     return False
 
 
+@con_pila          # Z2-b: lo legal cabe con cualquier pila del llamante (isyco/pila.py)
 def validate(module) -> None:
     """Lanza IRInvalid con diagnósticos si el módulo no es ISY-IR v0.1/v0.2 válido."""
     Validator(module).run()

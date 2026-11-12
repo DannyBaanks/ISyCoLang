@@ -25,6 +25,7 @@ import subprocess
 from pathlib import Path
 
 from ..ir import ty_from_json
+from ..pila import con_pila
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 from .base import ALL_FEATURES, Backend, fn_ident, type_ident
 
@@ -926,6 +927,7 @@ class ZigBackend(Backend):
             return None
         return "zig " + subprocess.run(["zig", "version"], capture_output=True, text=True).stdout.strip()
 
+    @con_pila
     def emit(self, module: dict, sabotage: str | None = None) -> str:
         return ZigEmitter(module, sabotage).emit()
 

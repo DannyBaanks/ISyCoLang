@@ -28,6 +28,7 @@ from ..source import program_sha256
 from ..interp import run as run_reference
 from ..ir import ty_from_json
 from ..ir_interp import compile_ir
+from ..pila import con_pila
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 
 BUILD_ROOT = Path(__file__).resolve().parents[2] / "build"
@@ -109,6 +110,7 @@ def _type_features(t, out: set) -> None:
             _type_features(ft, out)
 
 
+@con_pila          # Z2-b: lo legal cabe con cualquier pila del llamante (isyco/pila.py)
 def features_of(module: dict) -> set[str]:
     """PROGRAM_REQUIRES: lo que ESTE programa usa, no lo que su cabecera permite.
 

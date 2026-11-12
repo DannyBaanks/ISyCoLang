@@ -11,6 +11,7 @@ import dataclasses
 from . import ast as A
 from . import specialize as spec
 from .errors import InvalidProgram
+from .pila import con_pila
 from .types import (INT_ALIASES, MAX_STR, MAX_VALUE_SIZE, U8, ArrT, BoolT, ContextStrT, DecT,
                     IntT, NamedT, StrT, StructT, is_numeric, is_scalar, type_size)
 from .versions import has
@@ -618,5 +619,6 @@ class Checker:
         return self.specs[name], name
 
 
+@con_pila          # Z2-b: lo legal cabe con cualquier pila del llamante (isyco/pila.py)
 def check(program: A.Program) -> None:
     Checker(program).check()

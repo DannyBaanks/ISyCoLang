@@ -21,6 +21,7 @@ from pathlib import Path
 
 from .base import ALL_FEATURES, Backend, fn_ident
 from ..ir import ty_from_json
+from ..pila import con_pila
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 
 SABOTAGES = ("half_even_as_half_up", "div_floor", "str_concat_truncates")
@@ -675,6 +676,7 @@ class PyDecimalBackend(Backend):
         line = (proc.stdout + proc.stderr).strip().splitlines()[0]
         return f"{py}: {line}"
 
+    @con_pila
     def emit(self, module: dict, sabotage: str | None = None) -> str:
         return emit_py(module, sabotage)
 

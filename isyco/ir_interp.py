@@ -8,7 +8,6 @@ verificada aparte contra el módulo `decimal`.
 from __future__ import annotations
 
 import hashlib
-import sys
 import time
 from fractions import Fraction
 
@@ -17,6 +16,7 @@ from .interp import DEFAULT_LIMITS, TRACE_LEVELS, canonical_json, load, source_m
 from .source import program_sha256
 from .ir import ir_hash, lower, ty_from_json
 from .ir_validate import validate
+from .pila import reserva
 from .types import (IntT, StrT, allowed_char, canonical, canonical_text, cast, dec_fit, int_fit,
                     int_trunc_div, parse_canonical, round_scaled)
 
@@ -342,12 +342,9 @@ def run_ir(module: dict, program_sha256: str, inputs: list, limits: dict | None 
                 raise InvalidProgram("BAD_INPUT", main.at, f"{text!r}")
             args.append(value)
         interp = IRInterpreter(module, lim, trace, timeout_ms)
-        old_limit = sys.getrecursionlimit()
-        sys.setrecursionlimit(max(old_limit, 50 * lim["max_call_depth"] + 1000))
-        try:
+        # Contado desde el llamante (isyco/pila.py): la pila heredada no decide el resultado.
+        with reserva(50 * lim["max_call_depth"] + 1000):
             value = interp.call(interp.fns["main"], args, main.at)
-        finally:
-            sys.setrecursionlimit(old_limit)
         if main.ret is not None:
             result["return"] = canonical_text(value, main.ret)
     except IsyError as err:
