@@ -11,6 +11,7 @@ import dataclasses
 from . import ast as A
 from . import specialize as spec
 from .errors import InvalidProgram
+from .pila import con_pila
 from .types import (INT_ALIASES, MAX_STR, MAX_VALUE_SIZE, U8, ArrT, BoolT, ContextStrT, DecT,
                     IntT, NamedT, StrT, StructT, is_numeric, is_scalar, type_size)
 from .versions import has
@@ -105,6 +106,30 @@ def expr_depth(program: A.Program) -> tuple[int, str]:
     return mejor, donde
 
 
+def stmt_depth(program: A.Program) -> tuple[int, str]:
+    """Cadena más larga de sentencias de control (`if`, `while`) y el `at` de la más honda.
+
+    Iterativo por la misma razón que `expr_depth`. Cuenta lo mismo que `Parser.control`: un
+    nivel por `if` o `while` que encierra, y el `if` de un `else if` es un nivel más.
+    """
+    mejor, donde = 0, "1:1"
+    pila: list = [(fn.body, 0) for fn in program.fns.values()]
+    while pila:
+        nodo, d = pila.pop()
+        if isinstance(nodo, A.Block):
+            pila.extend((s, d) for s in nodo.stmts)
+        elif isinstance(nodo, (A.If, A.While)):
+            if d + 1 > mejor:
+                mejor, donde = d + 1, nodo.at
+            if isinstance(nodo, A.While):
+                pila.append((nodo.body, d + 1))
+            else:
+                pila.append((nodo.then, d + 1))
+                if nodo.els is not None:
+                    pila.append((nodo.els, d + 1))     # Block o el `if` de un `else if`
+    return mejor, donde
+
+
 class Checker:
     def __init__(self, program: A.Program):
         self.program = program
@@ -127,6 +152,11 @@ class Checker:
             raise InvalidProgram("SPEC_LIMIT", donde,
                                  f"una expresión anida {hondo} niveles y la cota es "
                                  f"{A.MAX_EXPR_DEPTH} (CORE v0.5 §7)")
+        hondo, donde = stmt_depth(self.program)          # Z3: la misma guarda, el otro eje
+        if hondo > A.MAX_STMT_DEPTH:
+            raise InvalidProgram("SPEC_LIMIT", donde,
+                                 f"una sentencia de control anida {hondo} niveles y la cota es "
+                                 f"{A.MAX_STMT_DEPTH} (CORE v0.5 §7)")
         if self.v03:
             self.check_structs()
         if "main" not in self.program.fns:
@@ -618,5 +648,6 @@ class Checker:
         return self.specs[name], name
 
 
+@con_pila          # Z2-b: lo legal cabe con cualquier pila del llamante (isyco/pila.py)
 def check(program: A.Program) -> None:
     Checker(program).check()

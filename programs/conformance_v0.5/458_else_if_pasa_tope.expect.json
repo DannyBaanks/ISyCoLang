@@ -1,0 +1,12 @@
+{
+  "claim": "Z3: una cadena de 65 ramas if/else-if (nivel 65) es INVALID_PROGRAM/SPEC_LIMIT",
+  "input": [
+    "64"
+  ],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SPEC_LIMIT",
+    "emits": [],
+    "return": null
+  }
+}

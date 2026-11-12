@@ -85,6 +85,23 @@ raro deja recibo propio (`evidence/backends/gate_2026-11-02T235456Z.json`, `verd
 Las cuatro altas anteriores siguen valiendo caso por caso —ningún `expected` ni hash congelado
 se reescribió.
 
+**Alta de los casos `455`–`458` (2026-11-12, Z3).** La cota de anidamiento de **sentencias de
+control** (CORE v0.5 §7: 64 niveles, `ast.MAX_STMT_DEPTH`) entra con dos pares
+`al_tope`/`pasa_tope`, y los 58 del directorio coinciden con su `expected`. Ningún `expected` ni
+hash congelado anterior se reescribió.
+
+| caso | cara | nivel | quién lo corta | `expected` |
+|---|---|---|---|---|
+| `455_if_anidado_al_tope` | 64 `if` uno dentro de otro | 64 | — | `HALTED`, emite `1` desde el fondo |
+| `456_if_anidado_pasa_tope` | 65 `if` | 65 | `Parser.control` | `INVALID_PROGRAM(SPEC_LIMIT)` |
+| `457_else_if_al_tope` | cadena de 64 ramas `if`/`else if`, entrada `64` | 64 | — | `HALTED`, emite `64` (la última rama) |
+| `458_else_if_pasa_tope` | 65 ramas | 65 | `Parser.control` | `INVALID_PROGRAM(SPEC_LIMIT)` |
+
+`457`/`458` existen porque esa cara no se ve en el fuente: una cadena `else if` se lee plana, pero
+cada eslabón es un `if` dentro del `else` del anterior y cuenta un nivel. Las caras `while` y `for`
+no entran al corpus —mismo contador, misma guarda— y quedan en
+`tests/test_depth.py::CotaDeSentencias`. Decisión: `docs/decisions/Z3_MAX_STMT_DEPTH.md`.
+
 **Alta de los casos `449`–`454` (2026-11-03, Z2).** La cota de anidamiento de una expresión
 (CORE v0.5 §7: 64 niveles) entra con tres pares `al_tope`/`pasa_tope`, uno por cada cara del
 anidar, y los 54 del directorio coinciden con su `expected` —medido en este árbol, con la

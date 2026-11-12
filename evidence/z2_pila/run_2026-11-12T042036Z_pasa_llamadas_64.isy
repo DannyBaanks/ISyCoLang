@@ -1,0 +1,11 @@
+isyco 0.5
+
+fn f(a: i64) -> i64 {
+    return a;
+}
+
+fn main() -> i64 !emit {
+    let x: i64 = f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(f(1))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
+    emit x;
+    return x;
+}

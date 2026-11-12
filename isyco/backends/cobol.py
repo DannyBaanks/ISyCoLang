@@ -33,6 +33,7 @@ from pathlib import Path
 
 from .base import ALL_FEATURES, V03_FEATURES, Backend
 from ..ir import ty_from_json
+from ..pila import con_pila
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 
 SABOTAGES = ("half_even_as_half_up", "div_floor")
@@ -1515,6 +1516,7 @@ class CobolBackend(Backend):
                                text=True).stdout.split("\n")[0]
         return f"cobc: {first}"
 
+    @con_pila
     def emit(self, module: dict, sabotage: str | None = None) -> str:
         return emit_cobol(module, sabotage)
 

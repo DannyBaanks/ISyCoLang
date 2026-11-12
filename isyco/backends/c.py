@@ -36,6 +36,7 @@ import subprocess
 from pathlib import Path
 
 from ..ir import ty_from_json
+from ..pila import con_pila
 from ..types import ArrT, BoolT, DecT, IntT, StrT, StructT, parse_canonical
 from .base import ALL_FEATURES, Backend, fn_ident, type_ident
 
@@ -808,6 +809,7 @@ class CBackend(Backend):
         first = subprocess.run([cc, "--version"], capture_output=True, text=True).stdout.split("\n")[0]
         return f"{cc}: {first}"
 
+    @con_pila
     def emit(self, module: dict, sabotage: str | None = None) -> str:
         return emit_c(module, sabotage)
 

@@ -1,0 +1,13 @@
+isyco 0.5
+
+fn baja(n: i64) -> i64 {
+    if n == 0 {
+        return 0;
+    }
+    return 1 + baja(n - 1);
+}
+
+fn main() -> i64 !emit {
+    emit baja(200);
+    return 0;
+}

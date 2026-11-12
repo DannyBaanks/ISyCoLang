@@ -1,0 +1,12 @@
+{
+  "claim": "Z3: 64 if anidados (nivel 64) se aceptan, bajan a la IR y el emit del fondo se ejecuta",
+  "input": [],
+  "expected": {
+    "status": "HALTED",
+    "code": null,
+    "emits": [
+      "1"
+    ],
+    "return": "0"
+  }
+}

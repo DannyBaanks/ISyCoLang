@@ -1,0 +1,10 @@
+{
+  "claim": "Z3: 65 if anidados (nivel 65) son INVALID_PROGRAM/SPEC_LIMIT",
+  "input": [],
+  "expected": {
+    "status": "INVALID_PROGRAM",
+    "code": "SPEC_LIMIT",
+    "emits": [],
+    "return": null
+  }
+}

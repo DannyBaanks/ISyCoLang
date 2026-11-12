@@ -103,17 +103,21 @@ los programas posibles.
 
 | Gate / alcance | Resultado registrado | Recibo |
 |---|---|---|
-| F2 · referencia vs expected | **224/224** casos de los corpus v0.1–v0.5 | [F2](evidence/conformance/run_2026-11-03T232115Z.json) |
-| F3 · ISY-IR vs referencia | **448/448** comparaciones iguales; **152** programas bajados a IR (otros rechazos se cotejan como rechazo) | [F3](evidence/ir/gate_2026-11-03T232115Z.json) |
-| F4 · C en gcc/clang, normal y sanitizado | Tres vías (expected ↔ referencia ↔ binario) **sobre los 224** casos en cada una de las cuatro combinaciones; 0 diferencias reportadas y controles saboteados detectados | [F4](evidence/c/gate_2026-11-03T232116Z.json) |
-| F5 · C, Rust, Zig, pydecimal | **224/224** por backend; **8 484** corridas diferenciales numéricas y 1 270 de strings por backend, sin diferencias reportadas | [F5](evidence/backends/gate_2026-11-03T232750Z.json) |
-| F5 · COBOL en su dominio numérico | **153/224**, con **71 `UNSUPPORTED`** explícitos, 0 discrepancias reportadas y **8 484** corridas diferenciales numéricas sin diferencias | [F5](evidence/backends/gate_2026-11-03T232750Z.json) |
+| F2 · referencia vs expected | **228/228** casos de los corpus v0.1–v0.5 | [F2](evidence/conformance/run_2026-11-12T042323Z.json) |
+| F3 · ISY-IR vs referencia | **456/456** comparaciones iguales; **154** programas bajados a IR (otros rechazos se cotejan como rechazo) | [F3](evidence/ir/gate_2026-11-12T042323Z.json) |
+| F4 · C en gcc/clang, normal y sanitizado | Tres vías (expected ↔ referencia ↔ binario) **sobre los 228** casos en cada una de las cuatro combinaciones; 0 diferencias reportadas y controles saboteados detectados | [F4](evidence/c/gate_2026-11-12T042330Z.json) |
+| F5 · C, Rust, Zig, pydecimal | **228/228** por backend; **8 484** corridas diferenciales numéricas y 1 270 de strings por backend, sin diferencias reportadas | [F5](evidence/backends/gate_2026-11-12T042934Z.json) |
+| F5 · COBOL en su dominio numérico | **157/228**, con **71 `UNSUPPORTED`** explícitos, 0 discrepancias reportadas y **8 484** corridas diferenciales numéricas sin diferencias | [F5](evidence/backends/gate_2026-11-12T042934Z.json) |
 
-**Importante:** los cuatro recibos de arriba son **una sola corrida en lote** sobre el árbol
-commiteado `7022ae4` y los cuatro dicen `RELEASE_GATE`. El gate F5 de este lote usó **los 224
+**Importante:** los cuatro recibos de arriba son **un solo lote** sobre el árbol commiteado
+`1cb56ce` (2026-11-12, con las cotas Z3 y la reserva de pila Z2-b dentro) y los cuatro dicen
+`RELEASE_GATE`. **Se midieron en un contenedor** (gcc 13.3.0, clang, zig 0.16.0, GnuCOBOL 3.1.2,
+Python 3.13.18 y **rustc 1.97.0**), no en el host de los lotes anteriores (rustc 1.98.1); el lote
+previo, sobre `7022ae4` y con 224 casos, sigue en `evidence/` y en la
+[matriz](docs/EVIDENCE_MATRIX.md). El gate F5 de este lote usó **los 228
 casos del corpus, sin `--extra-case`**; el caso raro que cerró P4 por el lado del compilador sigue
 fuera del corpus formal y deja recibo propio. Una coincidencia de rechazo del **frontend** (por
-ejemplo `INVALID_PROGRAM/SPEC_LIMIT`) puede contar como caso conforme: **224/224 no significa 224
+ejemplo `INVALID_PROGRAM/SPEC_LIMIT`) puede contar como caso conforme: **228/228 no significa 228
 programas compilados en binarios**. `UNSUPPORTED` es el rechazo previsto fuera del dominio de
 COBOL, **no** un caso aprobado como ejecución equivalente. Los gates incluyen controles con fallos
 inyectados y `does_the_work`, pero eso valida el alcance de sus pruebas, no todas las entradas
@@ -134,7 +138,21 @@ conservan afirmaciones no demostradas.
    200, la cadena de paréntesis moría por `RecursionError` en 89 pares con pila limpia y en 62 con
    300 frames del llamante encima, y el fuente del tope legal sigue reventando con 300 frames
    aunque la guarda esté puesta
-   ([sonda Z2, `RELEASE_GATE`](evidence/z2_guard/run_2026-11-04T001913Z.json), C8). Los llamantes
+   ([sonda Z2, `RELEASE_GATE`](evidence/z2_guard/run_2026-11-04T001913Z.json), C8).
+   **Cerrado el 2026-11-12 (Z2-b):** `isyco/pila.py` reserva la pila del paquete contada desde el
+   llamante —2048 frames para todo recorrido acotado por la cota— y el tope legal baja, se valida,
+   se emite y ejecuta con 0, 300 y 3 000 frames encima
+   ([sonda Z2-b, `RELEASE_GATE`](evidence/z2_pila/run_2026-11-12T024856Z.json), P1–P7;
+   [docs/decisions/Z2B_PILA_PROPIA.md](docs/decisions/Z2B_PILA_PROPIA.md)). Lo que sigue abierto es
+   **Z3**, que ese mismo recibo dejó medida —el anidamiento de *sentencias* no tenía cota: 676
+   bloques `if` bajaban y 677 daban `RecursionError`—, **se cerró también el 2026-11-12**:
+   `ast.MAX_STMT_DEPTH = 64`, el nivel 65 de sentencias de control es `SPEC_LIMIT`, y un
+   `else if` cuenta un nivel (casos `455`–`458`;
+   [docs/decisions/Z3_MAX_STMT_DEPTH.md](docs/decisions/Z3_MAX_STMT_DEPTH.md);
+   [sonda, P8–P12](evidence/z2_pila/run_2026-11-12T042036Z.json)). Con las dos cotas la pila de
+   la ejecución quedó acotada por llamada. Lo no demostrado: que 64 sea el número correcto para
+   cadenas `else if`, y que los binarios compilados aguanten la recursión del peor programa
+   (se midió la referencia). Las cifras que siguen en este punto son del estado anterior. Los llamantes
    reales del paquete llegan con 6 y 10 frames y la forma legal más cara pide 716 de los 999
    útiles. Las
    fronteras de la [sonda pre-decisión](evidence/z2_depth/run_2026-11-03T074629Z.json) (241/242 y
@@ -231,6 +249,7 @@ tools/f5_harness_probe.py          mide la guarda del arnés: el zig que rompe s
 tools/z1_ceiling_probe.py          techo de comptime de Zig (Z1): cuota, sabotajes y controles
 tools/z2_depth_probe.py            instrumento PRE-decisión de Z2: las fronteras sin cota (preservado)
 tools/z2_guard_probe.py            Z2 después de la guarda: la cota, su precio en frames y su límite
+tools/z2_pila_probe.py             Z2-b y Z3: la pila del llamante ya no decide; la cota de sentencias
 ```
 
 ### Gates y comandos avanzados
@@ -254,6 +273,7 @@ python3 tools/z1_ceiling_probe.py --write          # …y sella la frontera de Z
 python3 tools/z2_guard_probe.py                    # la cota Z2 en vigor: quién la corta y qué cuesta
 python3 tools/z2_guard_probe.py --write            # …y sella el recibo del después (evidence/z2_guard/)
 python3 tools/z2_depth_probe.py --write            # instrumento PRE-decisión: mide fuentes ya rechazadas
+python3 tools/z2_pila_probe.py --write             # Z2-b y Z3: reserva de pila, cota de sentencias, sabotajes
 ```
 
 ### Relación con el monorepo

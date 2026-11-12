@@ -9,6 +9,13 @@ from dataclasses import dataclass, field
 #: suma izquierda de k términos anida k niveles sin que el parser baje ni un frame).
 MAX_EXPR_DEPTH = 64
 
+#: Cota Z3 (CORE v0.5 §7): niveles máximos de anidamiento de **sentencias de control**. Un nivel
+#: es un `if` o un `while` (el `for` es azúcar de `while`) en la cadena que encierra a una
+#: sentencia; un `else if` cuenta como un nivel más porque es un `if` dentro del `else`, aunque
+#: en el fuente se lea plano. Igual que Z2, se mide en el parser (que es quien recursiona) y en
+#: el checker (sobre el AST, iterativo).
+MAX_STMT_DEPTH = 64
+
 
 @dataclass
 class Expr:

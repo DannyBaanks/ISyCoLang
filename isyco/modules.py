@@ -18,11 +18,13 @@ from . import ast as A
 from .errors import InvalidProgram
 from .lexer import decode, header_version, tokenize
 from .parser import parse
+from .pila import con_pila
 from .source import Bundle
 from .types import ArrT, NamedT
 from .versions import has
 
 
+@con_pila          # Z2-b: lo legal cabe con cualquier pila del llamante (isyco/pila.py)
 def load_program(source) -> A.Program:
     """bytes o Bundle -> Program enlazado (sin chequear tipos todavía)."""
     if not isinstance(source, Bundle):

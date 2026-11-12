@@ -1,0 +1,136 @@
+isyco 0.5
+
+fn main() -> i64 !emit {
+    let x: i64 = 1;
+    let a: [i64; 1] = [1];
+    if true {
+        if true {
+            if true {
+                if true {
+                    if true {
+                        if true {
+                            if true {
+                                if true {
+                                    if true {
+                                        if true {
+                                            if true {
+                                                if true {
+                                                    if true {
+                                                        if true {
+                                                            if true {
+                                                                if true {
+                                                                    if true {
+                                                                        if true {
+                                                                            if true {
+                                                                                if true {
+                                                                                    if true {
+                                                                                        if true {
+                                                                                            if true {
+                                                                                                if true {
+                                                                                                    if true {
+                                                                                                        if true {
+                                                                                                            if true {
+                                                                                                                if true {
+                                                                                                                    if true {
+                                                                                                                        if true {
+                                                                                                                            if true {
+                                                                                                                                if true {
+                                                                                                                                    if true {
+                                                                                                                                        if true {
+                                                                                                                                            if true {
+                                                                                                                                                if true {
+                                                                                                                                                    if true {
+                                                                                                                                                        if true {
+                                                                                                                                                            if true {
+                                                                                                                                                                if true {
+                                                                                                                                                                    if true {
+                                                                                                                                                                        if true {
+                                                                                                                                                                            if true {
+                                                                                                                                                                                if true {
+                                                                                                                                                                                    if true {
+                                                                                                                                                                                        if true {
+                                                                                                                                                                                            if true {
+                                                                                                                                                                                                if true {
+                                                                                                                                                                                                    if true {
+                                                                                                                                                                                                        if true {
+                                                                                                                                                                                                            if true {
+                                                                                                                                                                                                                if true {
+                                                                                                                                                                                                                    if true {
+                                                                                                                                                                                                                        if true {
+                                                                                                                                                                                                                            if true {
+                                                                                                                                                                                                                                if true {
+                                                                                                                                                                                                                                    if true {
+                                                                                                                                                                                                                                        if true {
+                                                                                                                                                                                                                                            if true {
+                                                                                                                                                                                                                                                if true {
+                                                                                                                                                                                                                                                    if true {
+                                                                                                                                                                                                                                                        if true {
+                                                                                                                                                                                                                                                            if true {
+                                                                                                                                                                                                                                                                if true {
+                                                                                                                                                                                                                                                                    emit x;
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                }
+                                                                                                                                                                                            }
+                                                                                                                                                                                        }
+                                                                                                                                                                                    }
+                                                                                                                                                                                }
+                                                                                                                                                                            }
+                                                                                                                                                                        }
+                                                                                                                                                                    }
+                                                                                                                                                                }
+                                                                                                                                                            }
+                                                                                                                                                        }
+                                                                                                                                                    }
+                                                                                                                                                }
+                                                                                                                                            }
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}

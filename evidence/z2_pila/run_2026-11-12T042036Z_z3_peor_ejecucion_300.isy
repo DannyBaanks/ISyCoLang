@@ -1,0 +1,143 @@
+isyco 0.5
+
+fn id(a: i64) -> i64 {
+    return a;
+}
+
+fn baja(n: i64) -> i64 {
+    if n > 0 {
+        if n > 0 {
+            if n > 0 {
+                if n > 0 {
+                    if n > 0 {
+                        if n > 0 {
+                            if n > 0 {
+                                if n > 0 {
+                                    if n > 0 {
+                                        if n > 0 {
+                                            if n > 0 {
+                                                if n > 0 {
+                                                    if n > 0 {
+                                                        if n > 0 {
+                                                            if n > 0 {
+                                                                if n > 0 {
+                                                                    if n > 0 {
+                                                                        if n > 0 {
+                                                                            if n > 0 {
+                                                                                if n > 0 {
+                                                                                    if n > 0 {
+                                                                                        if n > 0 {
+                                                                                            if n > 0 {
+                                                                                                if n > 0 {
+                                                                                                    if n > 0 {
+                                                                                                        if n > 0 {
+                                                                                                            if n > 0 {
+                                                                                                                if n > 0 {
+                                                                                                                    if n > 0 {
+                                                                                                                        if n > 0 {
+                                                                                                                            if n > 0 {
+                                                                                                                                if n > 0 {
+                                                                                                                                    if n > 0 {
+                                                                                                                                        if n > 0 {
+                                                                                                                                            if n > 0 {
+                                                                                                                                                if n > 0 {
+                                                                                                                                                    if n > 0 {
+                                                                                                                                                        if n > 0 {
+                                                                                                                                                            if n > 0 {
+                                                                                                                                                                if n > 0 {
+                                                                                                                                                                    if n > 0 {
+                                                                                                                                                                        if n > 0 {
+                                                                                                                                                                            if n > 0 {
+                                                                                                                                                                                if n > 0 {
+                                                                                                                                                                                    if n > 0 {
+                                                                                                                                                                                        if n > 0 {
+                                                                                                                                                                                            if n > 0 {
+                                                                                                                                                                                                if n > 0 {
+                                                                                                                                                                                                    if n > 0 {
+                                                                                                                                                                                                        if n > 0 {
+                                                                                                                                                                                                            if n > 0 {
+                                                                                                                                                                                                                if n > 0 {
+                                                                                                                                                                                                                    if n > 0 {
+                                                                                                                                                                                                                        if n > 0 {
+                                                                                                                                                                                                                            if n > 0 {
+                                                                                                                                                                                                                                if n > 0 {
+                                                                                                                                                                                                                                    if n > 0 {
+                                                                                                                                                                                                                                        if n > 0 {
+                                                                                                                                                                                                                                            if n > 0 {
+                                                                                                                                                                                                                                                if n > 0 {
+                                                                                                                                                                                                                                                    if n > 0 {
+                                                                                                                                                                                                                                                        if n > 0 {
+                                                                                                                                                                                                                                                            if n > 0 {
+                                                                                                                                                                                                                                                                if n > 0 {
+                                                                                                                                                                                                                                                                    return 1 + id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(id(baja(n - 1)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                }
+                                                                                                                                                                                            }
+                                                                                                                                                                                        }
+                                                                                                                                                                                    }
+                                                                                                                                                                                }
+                                                                                                                                                                            }
+                                                                                                                                                                        }
+                                                                                                                                                                    }
+                                                                                                                                                                }
+                                                                                                                                                            }
+                                                                                                                                                        }
+                                                                                                                                                    }
+                                                                                                                                                }
+                                                                                                                                            }
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+fn main() -> i64 !emit {
+    emit baja(300);
+    return 0;
+}

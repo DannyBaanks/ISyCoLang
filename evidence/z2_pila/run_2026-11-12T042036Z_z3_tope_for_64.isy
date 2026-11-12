@@ -1,0 +1,136 @@
+isyco 0.5
+
+fn main() -> i64 !emit {
+    let x: i64 = 1;
+    let a: [i64; 1] = [1];
+    for v0 in a {
+        for v1 in a {
+            for v2 in a {
+                for v3 in a {
+                    for v4 in a {
+                        for v5 in a {
+                            for v6 in a {
+                                for v7 in a {
+                                    for v8 in a {
+                                        for v9 in a {
+                                            for v10 in a {
+                                                for v11 in a {
+                                                    for v12 in a {
+                                                        for v13 in a {
+                                                            for v14 in a {
+                                                                for v15 in a {
+                                                                    for v16 in a {
+                                                                        for v17 in a {
+                                                                            for v18 in a {
+                                                                                for v19 in a {
+                                                                                    for v20 in a {
+                                                                                        for v21 in a {
+                                                                                            for v22 in a {
+                                                                                                for v23 in a {
+                                                                                                    for v24 in a {
+                                                                                                        for v25 in a {
+                                                                                                            for v26 in a {
+                                                                                                                for v27 in a {
+                                                                                                                    for v28 in a {
+                                                                                                                        for v29 in a {
+                                                                                                                            for v30 in a {
+                                                                                                                                for v31 in a {
+                                                                                                                                    for v32 in a {
+                                                                                                                                        for v33 in a {
+                                                                                                                                            for v34 in a {
+                                                                                                                                                for v35 in a {
+                                                                                                                                                    for v36 in a {
+                                                                                                                                                        for v37 in a {
+                                                                                                                                                            for v38 in a {
+                                                                                                                                                                for v39 in a {
+                                                                                                                                                                    for v40 in a {
+                                                                                                                                                                        for v41 in a {
+                                                                                                                                                                            for v42 in a {
+                                                                                                                                                                                for v43 in a {
+                                                                                                                                                                                    for v44 in a {
+                                                                                                                                                                                        for v45 in a {
+                                                                                                                                                                                            for v46 in a {
+                                                                                                                                                                                                for v47 in a {
+                                                                                                                                                                                                    for v48 in a {
+                                                                                                                                                                                                        for v49 in a {
+                                                                                                                                                                                                            for v50 in a {
+                                                                                                                                                                                                                for v51 in a {
+                                                                                                                                                                                                                    for v52 in a {
+                                                                                                                                                                                                                        for v53 in a {
+                                                                                                                                                                                                                            for v54 in a {
+                                                                                                                                                                                                                                for v55 in a {
+                                                                                                                                                                                                                                    for v56 in a {
+                                                                                                                                                                                                                                        for v57 in a {
+                                                                                                                                                                                                                                            for v58 in a {
+                                                                                                                                                                                                                                                for v59 in a {
+                                                                                                                                                                                                                                                    for v60 in a {
+                                                                                                                                                                                                                                                        for v61 in a {
+                                                                                                                                                                                                                                                            for v62 in a {
+                                                                                                                                                                                                                                                                for v63 in a {
+                                                                                                                                                                                                                                                                    emit x;
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                }
+                                                                                                                                                                                            }
+                                                                                                                                                                                        }
+                                                                                                                                                                                    }
+                                                                                                                                                                                }
+                                                                                                                                                                            }
+                                                                                                                                                                        }
+                                                                                                                                                                    }
+                                                                                                                                                                }
+                                                                                                                                                            }
+                                                                                                                                                        }
+                                                                                                                                                    }
+                                                                                                                                                }
+                                                                                                                                            }
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}

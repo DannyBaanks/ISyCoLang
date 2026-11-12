@@ -400,6 +400,34 @@ que falsifica V7.
 > fuente del tope legal todavía muere si quien llama trae mucha pila. Las salidas (b) —quitar la
 > recursión de enmedio— y (c) —envolver las cinco bajadas de gate— no se hicieron. Decisión:
 > `docs/decisions/Z2_MAX_EXPR_DEPTH.md`.
+>
+> **Z2-b (2026-11-12): la limitación de arriba se cerró, y abrió Z3.** `isyco/pila.py` reserva la
+> pila del paquete contada **desde el llamante** —32 frames por nivel de la cota, 2048— en todo lo
+> que recorre un árbol acotado por ella: `load_program`, `check`, `lower`, `validate`,
+> `features_of` y los cinco emisores; la ejecución pide lo de siempre, ahora también relativo. El
+> tope legal de cinco caras baja, se valida, se emite y ejecuta con 0, 300 y 3 000 frames de un
+> llamante que llega con 40 de aire, y el caso exacto de C8 hoy pasa
+> (`evidence/z2_pila/run_2026-11-12T024856Z.json`, `RELEASE_GATE` sobre `4917258`, P1–P8;
+> `tests/test_depth.py::LoLegalCabe`, 7 tests con tres sabotajes). Medir corrigió dos cosas de Z2:
+> el hueco también era del validador de IR y de los emisores, y la forma legal más cara son las
+> llamadas anidadas (781 frames), no los paréntesis (716). **Z3 queda abierta y es de Danny:** el
+> anidamiento de *sentencias* no tiene cota —676 bloques `if` bajan, 677 dan `RecursionError`— y
+> ese borde lo pone hoy el presupuesto, no el idioma. No se re-corrieron los gates F2–F5: la
+> reserva no cambia qué se emite ni qué se ejecuta. Decisión: `docs/decisions/Z2B_PILA_PROPIA.md`.
+>
+> **Z3 cerrada el 2026-11-12 —cota nombrada, pedida por Danny «igual que Z2».**
+> `ast.MAX_STMT_DEPTH = 64`: un nivel es un `if` o un `while` (el `for` es azúcar) en la cadena
+> que encierra, y un `else if` cuenta un nivel más. El nivel 65 es `INVALID_PROGRAM`/`SPEC_LIMIT`
+> en `Parser.control` y en `Checker.check`. Cuatro casos fijan los bordes —`455`–`458`—, el
+> corpus v0.5 pasa de 54 a **58** y el gate de 224 a **228**. El número, qué cuenta como nivel
+> y el presupuesto son propuesta del implementador con el censo delante (la población anida 4).
+> Arrastró un arreglo de la referencia: `50 * max_call_depth + 1000` no acotaba nada —una
+> llamada recursiva dentro de 60 `if` moría por `RecursionError` dentro de `max_call_depth`— y
+> con las dos cotas el presupuesto de ejecución sale de ellas (512 frames por llamada); el peor
+> programa legal construido recursiona 250 veces por las dos rutas. Sello: `evidence/z2_pila/run_2026-11-12T042036Z.json`
+> (`RELEASE_GATE` sobre `ec22d57`, P1–P12). Decisión:
+> `docs/decisions/Z3_MAX_STMT_DEPTH.md`. Los cuatro gates se re-corrieron con los 228 casos, en
+> contenedor y no en el host de los lotes anteriores.
 
 ### F3 — IR canónica  `[PASS 2026-10-28: spec/IR.md; 40 programas válidos bajados a IR, 116/116 comparaciones iguales (los 18 inválidos no producen IR)]`
 

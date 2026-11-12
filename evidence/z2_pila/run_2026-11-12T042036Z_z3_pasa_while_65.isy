@@ -1,0 +1,203 @@
+isyco 0.5
+
+fn main() -> i64 !emit {
+    let x: i64 = 1;
+    let a: [i64; 1] = [1];
+    while true {
+        while true {
+            while true {
+                while true {
+                    while true {
+                        while true {
+                            while true {
+                                while true {
+                                    while true {
+                                        while true {
+                                            while true {
+                                                while true {
+                                                    while true {
+                                                        while true {
+                                                            while true {
+                                                                while true {
+                                                                    while true {
+                                                                        while true {
+                                                                            while true {
+                                                                                while true {
+                                                                                    while true {
+                                                                                        while true {
+                                                                                            while true {
+                                                                                                while true {
+                                                                                                    while true {
+                                                                                                        while true {
+                                                                                                            while true {
+                                                                                                                while true {
+                                                                                                                    while true {
+                                                                                                                        while true {
+                                                                                                                            while true {
+                                                                                                                                while true {
+                                                                                                                                    while true {
+                                                                                                                                        while true {
+                                                                                                                                            while true {
+                                                                                                                                                while true {
+                                                                                                                                                    while true {
+                                                                                                                                                        while true {
+                                                                                                                                                            while true {
+                                                                                                                                                                while true {
+                                                                                                                                                                    while true {
+                                                                                                                                                                        while true {
+                                                                                                                                                                            while true {
+                                                                                                                                                                                while true {
+                                                                                                                                                                                    while true {
+                                                                                                                                                                                        while true {
+                                                                                                                                                                                            while true {
+                                                                                                                                                                                                while true {
+                                                                                                                                                                                                    while true {
+                                                                                                                                                                                                        while true {
+                                                                                                                                                                                                            while true {
+                                                                                                                                                                                                                while true {
+                                                                                                                                                                                                                    while true {
+                                                                                                                                                                                                                        while true {
+                                                                                                                                                                                                                            while true {
+                                                                                                                                                                                                                                while true {
+                                                                                                                                                                                                                                    while true {
+                                                                                                                                                                                                                                        while true {
+                                                                                                                                                                                                                                            while true {
+                                                                                                                                                                                                                                                while true {
+                                                                                                                                                                                                                                                    while true {
+                                                                                                                                                                                                                                                        while true {
+                                                                                                                                                                                                                                                            while true {
+                                                                                                                                                                                                                                                                while true {
+                                                                                                                                                                                                                                                                    while true {
+                                                                                                                                                                                                                                                                        emit x;
+                                                                                                                                                                                                                                                                        break;
+                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                    break;
+                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                break;
+                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                            break;
+                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                        break;
+                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                    break;
+                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                break;
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                            break;
+                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                        break;
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                    break;
+                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                break;
+                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                            break;
+                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                        break;
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                    break;
+                                                                                                                                                                                                                }
+                                                                                                                                                                                                                break;
+                                                                                                                                                                                                            }
+                                                                                                                                                                                                            break;
+                                                                                                                                                                                                        }
+                                                                                                                                                                                                        break;
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                    break;
+                                                                                                                                                                                                }
+                                                                                                                                                                                                break;
+                                                                                                                                                                                            }
+                                                                                                                                                                                            break;
+                                                                                                                                                                                        }
+                                                                                                                                                                                        break;
+                                                                                                                                                                                    }
+                                                                                                                                                                                    break;
+                                                                                                                                                                                }
+                                                                                                                                                                                break;
+                                                                                                                                                                            }
+                                                                                                                                                                            break;
+                                                                                                                                                                        }
+                                                                                                                                                                        break;
+                                                                                                                                                                    }
+                                                                                                                                                                    break;
+                                                                                                                                                                }
+                                                                                                                                                                break;
+                                                                                                                                                            }
+                                                                                                                                                            break;
+                                                                                                                                                        }
+                                                                                                                                                        break;
+                                                                                                                                                    }
+                                                                                                                                                    break;
+                                                                                                                                                }
+                                                                                                                                                break;
+                                                                                                                                            }
+                                                                                                                                            break;
+                                                                                                                                        }
+                                                                                                                                        break;
+                                                                                                                                    }
+                                                                                                                                    break;
+                                                                                                                                }
+                                                                                                                                break;
+                                                                                                                            }
+                                                                                                                            break;
+                                                                                                                        }
+                                                                                                                        break;
+                                                                                                                    }
+                                                                                                                    break;
+                                                                                                                }
+                                                                                                                break;
+                                                                                                            }
+                                                                                                            break;
+                                                                                                        }
+                                                                                                        break;
+                                                                                                    }
+                                                                                                    break;
+                                                                                                }
+                                                                                                break;
+                                                                                            }
+                                                                                            break;
+                                                                                        }
+                                                                                        break;
+                                                                                    }
+                                                                                    break;
+                                                                                }
+                                                                                break;
+                                                                            }
+                                                                            break;
+                                                                        }
+                                                                        break;
+                                                                    }
+                                                                    break;
+                                                                }
+                                                                break;
+                                                            }
+                                                            break;
+                                                        }
+                                                        break;
+                                                    }
+                                                    break;
+                                                }
+                                                break;
+                                            }
+                                            break;
+                                        }
+                                        break;
+                                    }
+                                    break;
+                                }
+                                break;
+                            }
+                            break;
+                        }
+                        break;
+                    }
+                    break;
+                }
+                break;
+            }
+            break;
+        }
+        break;
+    }
+    return 0;
+}

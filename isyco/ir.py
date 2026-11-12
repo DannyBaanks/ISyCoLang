@@ -17,6 +17,7 @@ import hashlib
 import json
 
 from . import ast as A
+from .pila import con_pila
 from .types import ArrT, BoolT, DecT, IntT, StrT, StructT, canonical
 from .versions import has
 
@@ -224,6 +225,7 @@ class _FnLowering:
         return node
 
 
+@con_pila          # Z2-b: lo legal cabe con cualquier pila del llamante (isyco/pila.py)
 def lower(program: A.Program, source_sha256: str) -> dict:
     """Programa ya chequeado -> módulo ISY-IR (dict JSON)."""
     schema = SCHEMA_V2 if has(program.version, "v03") else SCHEMA   # lo que trae v0.3+
