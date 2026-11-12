@@ -10,36 +10,40 @@ declarar la capacidad que no soporta.
 `.isy` → lexer/parser → tipos y efectos → ISY-IR → intérprete IR / C / Rust / Zig / Python
 `decimal` / GnuCOBOL.
 
-**Estado (3 de noviembre de 2026):** `EXECUTABLE` dentro de los dominios y corpus medidos. Las
+**Estado (12 de noviembre de 2026):** `EXECUTABLE` dentro de los dominios y corpus medidos. Las
 especificaciones v0.1–v0.4 están congeladas; el engine ya implementa decisiones de v0.5, pero
 `spec/CORE_v0.5.md` sigue en **BORRADOR**, no es una especificación congelada. No hay aquí una
 afirmación de soporte universal ni de paridad fuera de los casos medidos.
 
-## Acceso y respaldo
+## Acceso, licencia y respaldo
 
-Repositorio **privado** (decisión de Danny, 2026-10-28), sin licencia publicada ni
-autorización de distribución pública. Desde 2026-11-03 tiene un remoto **privado**
-`DannyBaanks/ISyCoLang`, al que se empuja `main` con `git push origin main`; no
-existe remoto público y ninguno se crea sin pedido explícito de Danny.
+Repositorio **público** desde el 2026-11-12 (decisión de Danny):
+[`DannyBaanks/ISyCoLang`](https://github.com/DannyBaanks/ISyCoLang). Fue privado del 2026-10-28
+al 2026-11-12.
 
-Respaldo que no depende del remoto: un bundle con la historia completa, escrito
-**fuera** del repo y verificado después.
+**Sin licencia publicada.** Que el código sea visible no concede permiso de uso, copia,
+modificación ni redistribución: mientras no haya un archivo `LICENSE`, todos los derechos quedan
+reservados por su autor. Si quieres usarlo, pregunta antes.
+
+**Lo que se publicó tal cual.** La limpieza previa que pedía el estándar §21 no se aplicó: la
+historia conserva la metadata de autor de sus commits y cinco recibos sellados conservan rutas del
+host donde se midieron. Está inventariado en [docs/PUBLICACION.md](docs/PUBLICACION.md), con las
+dos salidas posibles y lo que cuesta cada una. Ni se reescribe la evidencia sellada ni se reordena
+la historia para que este README luzca mejor: limpiar los recibos rompería su sello y los
+`git_head` que citan dejarían de resolver.
+
+Respaldo que no depende del remoto: un bundle con la historia completa, escrito **fuera** del
+repo y verificado después.
 
 ```bash
 git bundle create ../ISyCoLang-<fecha>.bundle --all
 git bundle verify ../ISyCoLang-<fecha>.bundle
 ```
 
-Antes de cualquier cambio de visibilidad falta resolver la separación público /
-privado del estándar §21; está medida en [docs/PUBLICACION.md](docs/PUBLICACION.md).
-Ni reescribir la evidencia sellada ni reordenar la historia para que este README
-luzca mejor: limpiar los recibos rompería su sello y los `git_head` que citan
-dejarían de resolver.
-
 ## Respuestas rápidas (estándar §16)
 
 El estándar pide que un lenguaje público responda diez preguntas en menos de 90
-segundos; se responde aquí porque es el checklist previo a publicar. Cada cifra es
+segundos; se responde aquí. Cada cifra es
 la del recibo más nuevo, no una corrida hecha para esta revisión.
 
 | pregunta | respuesta hoy |
@@ -50,7 +54,7 @@ la del recibo más nuevo, no una corrida hecha para esta revisión.
 | ¿Cómo ejecuto un programa? | `python3 -m isyco run precio.isy --input '["19.99","3"]'`, y `--via c` (u otro backend) para la ruta compilada. |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia y CLI) y `isyco/backends/` (los ejecutores). |
 | ¿Qué está demostrado? | Los gates F2–F5 sobre los corpus v0.1–v0.5, en la tabla «Resultados respaldados por recibos». |
-| ¿Qué NO está demostrado? | Soporte universal, paridad fuera de los casos medidos, ventaja de rendimiento, v0.5 como estándar congelado y cualquier límite normativo de profundidad. La claim table vive en `ROADMAP.md` §6. |
+| ¿Qué NO está demostrado? | Soporte universal, paridad fuera de los casos medidos, ventaja de rendimiento, v0.5 como estándar congelado, y que las cotas de anidamiento (64 niveles de expresión y 64 de sentencias de control) sean los números óptimos. La claim table vive en `ROADMAP.md` §6. |
 | ¿Tests? | `python3 -m unittest discover -s tests -v`. |
 | ¿Evidencia? | `evidence/`, inventariada en [docs/EVIDENCE_MATRIX.md](docs/EVIDENCE_MATRIX.md). |
 | ¿Límites conocidos? | La sección «Límites conocidos y trabajo pendiente» y `docs/FEASIBILITY_2026-10-28.md` §12. |
@@ -167,8 +171,9 @@ conservan afirmaciones no demostradas.
    general de rendimiento ni equivalencia formal universal.
 4. **v0.5 todavía en borrador.** Implementar decisiones y pasar gates no equivale a congelar el
    texto normativo.
-5. **Publicación pendiente:** el historial y algunos recibos contienen datos del host o metadata
-   de autor. El repositorio permanece privado; ver `docs/PUBLICACION.md`.
+5. **Publicado sin la limpieza de §21 (2026-11-12):** el historial y cinco recibos contienen
+   metadata de autor o rutas del host, y ahora son públicos. Sigue sin licencia. Qué hay, dónde y
+   qué salidas quedan: `docs/PUBLICACION.md`.
 
 ## Cómo verificar sin confundir evidencia con tests nuevos
 
@@ -183,7 +188,9 @@ con 290 subtests** —los ocho de `tests/test_depth.py` están dentro—, en **1
 y **214,1 s** con `pytest`, con la caché `build/` llena. El rango que registra [GUIA.md](GUIA.md)
 sobre las corridas de `unittest` es de 186,5 a 491,1 s en dieciséis medidas; el recuento y la
 duración del histórico están atados al árbol y a la toolchain de cada corrida, así que no se citan
-aquí como cifra de hoy.
+aquí como cifra de hoy. **Recuento más reciente, 2026-11-12 sobre `5337226`: 241 tests, `OK`, en
+220,5 s con `unittest`**, medido en un contenedor de 4 núcleos (rustc 1.97.0) y no en el host de
+las medidas anteriores, así que no entra en ese rango.
 **La existencia de esos tests no significa que se hayan ejecutado en esta revisión del README.**
 Los gates que generan recibos escriben archivos nuevos en `evidence/` y actualizan sus listas
 SHA-256: ejecutarlos deliberadamente y con el árbol controlado; para ensayos, usar
@@ -210,7 +217,7 @@ docs/decisions/                    decisiones registradas (p. ej. no reusar Code
 docs/OPEN_QUESTIONS_P1_P4.md       qué respondieron P1–P4 —P4 cerrada 2026-11-02— y qué abrió: Z1 y Z2
 docs/EVIDENCE_MATRIX.md            qué está sellado, con qué árbol, y qué afirmación no tiene recibo
 docs/BACKEND_C.md                  backend C: garantías, protocolo, límites
-docs/PUBLICACION.md                qué información sensible lleva la historia y qué falta antes de publicar
+docs/PUBLICACION.md                qué información sensible lleva la historia, ya pública, y qué salidas quedan
 isyco/backends/base.py             driver común: validación, capacidades, caché, ejecución
 isyco/backends/c.py                ISY-IR -> C -> binario nativo
 isyco/backends/rust.py             ISY-IR -> Rust -> binario nativo
@@ -257,7 +264,7 @@ tools/z2_pila_probe.py             Z2-b y Z3: la pila del llamante ya no decide;
 ```bash
 sha256sum -c docs/origin/SHA256SUMS.txt
 python3 tools/inventory_assembly.py            # escribe un JSON nuevo con timestamp
-python3 -m unittest discover -s tests -v       # suite completa: 221 tests (290 subtests) el 2026-11-04
+python3 -m unittest discover -s tests -v       # suite completa: 241 tests el 2026-11-12 (221 el 2026-11-04)
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)

@@ -11,12 +11,11 @@
    `workspace/assembly`.
 7. Evidencia nueva → `evidence/<tema>/` con archivo nuevo por corrida (nunca
    sobrescribir) y su SHA-256.
-8. Repo **privado** (decisión de Danny, 2026-10-28), con remoto **privado**
-   `DannyBaanks/ISyCoLang` desde 2026-11-03 (pedido por Danny; el remoto creado el
-   2026-10-28 se borró a su pedido). Sin remoto público: no publicar contenido ni
-   cambiar la visibilidad sin que Danny lo pida. La limpieza que pide el estándar
-   §21 está **abierta** y medida en `docs/PUBLICACION.md`: el correo personal en la
-   metadata de los 131 commits, y rutas de workstation en 19 líneas de cinco
-   recibos fijados por su `SHA256SUMS.txt` —limpiarlos rompe el sello, y reescribir
-   la historia deja de resolver los `git_head` que citan los recibos—. Antes de
-   cualquier publicación hay que elegir una de las dos salidas de ese documento.
+8. Repo **público** desde 2026-11-12 (decisión de Danny; fue privado del 2026-10-28 al
+   2026-11-12, con remoto privado `DannyBaanks/ISyCoLang` desde 2026-11-03). **Sin
+   licencia**: no añadir una ni cambiar la visibilidad sin que Danny lo pida. Se publicó
+   sin aplicar la limpieza que pide el estándar §21, medida en `docs/PUBLICACION.md`: el
+   correo personal en la metadata de commits y rutas de workstation en 19 líneas de cinco
+   recibos fijados por su `SHA256SUMS.txt` —limpiarlos rompe el sello, y reescribir la
+   historia deja de resolver los `git_head` que citan los recibos—. Todo lo que se empuja
+   es público: no añadir datos personales, rutas del host ni secretos.
