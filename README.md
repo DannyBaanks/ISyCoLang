@@ -266,6 +266,7 @@ tools/z1_ceiling_probe.py          techo de comptime de Zig (Z1): cuota, sabotaj
 tools/z2_depth_probe.py            instrumento PRE-decisión de Z2: las fronteras sin cota (preservado)
 tools/z2_guard_probe.py            Z2 después de la guarda: la cota, su precio en frames y su límite
 tools/z2_pila_probe.py             Z2-b y Z3: la pila del llamante ya no decide; la cota de sentencias
+tools/lote_diff.py                 coteja dos lotes de gates hoja por hoja (no regresión entre recibos)
 ```
 
 ### Gates y comandos avanzados
@@ -290,6 +291,7 @@ python3 tools/z2_guard_probe.py                    # la cota Z2 en vigor: quién
 python3 tools/z2_guard_probe.py --write            # …y sella el recibo del después (evidence/z2_guard/)
 python3 tools/z2_depth_probe.py --write            # instrumento PRE-decisión: mide fuentes ya rechazadas
 python3 tools/z2_pila_probe.py --write             # Z2-b y Z3: reserva de pila, cota de sentencias, sabotajes
+python3 tools/lote_diff.py --viejo F2,F3,F4,F5 --nuevo F2,F3,F4,F5 --write   # sellos de los dos lotes
 ```
 
 ### Relación con el monorepo
