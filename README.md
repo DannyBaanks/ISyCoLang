@@ -120,6 +120,7 @@ los programas posibles.
 | F3 · ISY-IR vs referencia | **456/456** comparaciones iguales; **154** programas bajados a IR (otros rechazos se cotejan como rechazo) | [F3](evidence/ir/gate_2026-11-12T042323Z.json) |
 | F4 · C en gcc/clang, normal y sanitizado | Tres vías (expected ↔ referencia ↔ binario) **sobre los 228** casos en cada una de las cuatro combinaciones; 0 diferencias reportadas y controles saboteados detectados | [F4](evidence/c/gate_2026-11-12T042330Z.json) |
 | F5 · C, Rust, Zig, pydecimal | **228/228** por backend; **8 484** corridas diferenciales numéricas y 1 270 de strings por backend, sin diferencias reportadas | [F5](evidence/backends/gate_2026-11-12T042934Z.json) |
+| F5 · Go con `math/big` | **228/228**  **8 484** corridas numéricas y **1 270** de strings sin diferencias; tres sabotajes detectados | [Gate Go](evidence/backends/gate_2026-11-25T004354Z.json) |
 | F5 · COBOL en su dominio numérico | **157/228**, con **71 `UNSUPPORTED`** explícitos, 0 discrepancias reportadas y **8 484** corridas diferenciales numéricas sin diferencias | [F5](evidence/backends/gate_2026-11-12T042934Z.json) |
 
 **Importante:** los cuatro recibos de arriba son **un solo lote** sobre el árbol commiteado

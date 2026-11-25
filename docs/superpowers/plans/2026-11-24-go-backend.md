@@ -1,6 +1,6 @@
 # Go Backend Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Compilar ISyCoLang a Go mediante ISY_BACKEND/1 con todas las capacidades actuales.
 **Architecture:** Emisor independiente desde IR validada, runtime Go con math/big y contexto explícito. Driver y frontend existentes.
@@ -27,20 +27,20 @@
 - [x] Ejecutar unittest y observar el fallo.
 - [x] Implementar runtime y emisión de todos los nodos IR, tipos, casts, límites y sabotajes.
 - [x] Probar corpus existente y fixtures de aliasing/evaluación/índices/JSON.
-- [ ] Commit con rutas explícitas.
+- [x] Commit con rutas explícitas.
 
 ### Task 2: Integración y prueba completa
 **Files:** Modify isyco/backends/__init__.py, isyco/__main__.py; evidence/backends/ nuevos recibos.
 **Interfaces:** registry()['go']; CLI --via go; gate común tools/backend_gate.py --only go.
 - [x] Registrar backend y actualizar ayuda.
-- [ ] Ejecutar gate completo con diferenciales y sabotajes; exigir PASS sin harness failures.
-- [ ] Ejecutar suite del proyecto; inspeccionar código generado y diff.
-- [ ] Commit con rutas explícitas.
+- [x] Ejecutar gate completo con diferenciales y sabotajes; exigir PASS sin harness failures.
+- [x] Ejecutar suite del proyecto; inspeccionar código generado y diff.
+- [x] Commit con rutas explícitas.
 
 ### Task 3: Entrega
 **Files:** README.md, GUIA.md, spec/BACKEND.md, ROADMAP.md y docs/BACKEND_GO.md.
 **Interfaces:** Comandos reales y enlaces a evidencia.
 - [x] Ejecutar ejemplo CLI y documentar su salida real.
 - [x] Documentar arquitectura, requisitos y límites medidos sin claims de velocidad.
-- [ ] Revisar implementación completa, corregir hallazgos importantes y verificar.
-- [ ] Commit con rutas explícitas; dejar rama local sin push.
+- [x] Revisar implementación completa, corregir hallazgos importantes y verificar.
+- [x] Commit con rutas explícitas; dejar rama local sin push.

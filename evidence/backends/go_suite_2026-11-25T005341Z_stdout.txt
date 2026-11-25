@@ -1,0 +1,334 @@
+test_run_via_c (test_backend_c.Cli.test_run_via_c) ... ok
+test_boundary_values_all_numeric_types (test_backend_c.Differential.test_boundary_values_all_numeric_types) ... ok
+test_difftest_detects_sabotage (test_backend_c.Sabotage.test_difftest_detects_sabotage) ... ok
+test_floor_division_sabotage_detected (test_backend_c.Sabotage.test_floor_division_sabotage_detected) ... ok
+test_half_even_tie_sabotage_detected (test_backend_c.Sabotage.test_half_even_tie_sabotage_detected) ... ok
+test_str_truncation_sabotage_detected (test_backend_c.Sabotage.test_str_truncation_sabotage_detected)
+CORE v0.3 S3: un C que corta en vez de OVERFLOW falla el corpus y el diferencial. ... ok
+test_expected_vs_reference (test_backend_c.ThreeWay.test_expected_vs_reference) ... ok
+test_native_actually_ran (test_backend_c.ThreeWay.test_native_actually_ran)
+Los programas válidos pasan por el binario: deben reportar pasos > 0. ... ok
+test_reference_vs_native (test_backend_c.ThreeWay.test_reference_vs_native) ... ok
+test_large_unsigned_index_is_checked_before_machine_conversion (test_backend_go.GoBackendTests.test_large_unsigned_index_is_checked_before_machine_conversion) ... ok
+test_left_operand_error_precedes_later_call (test_backend_go.GoBackendTests.test_left_operand_error_precedes_later_call) ... ok
+test_numeric_leaves_and_nested_aggregates_copy_by_value (test_backend_go.GoBackendTests.test_numeric_leaves_and_nested_aggregates_copy_by_value) ... ok
+test_registered_backend_executes_corpus_against_expected_and_reference (test_backend_go.GoBackendTests.test_registered_backend_executes_corpus_against_expected_and_reference) ... ok
+test_native_via_matches_reference (test_backends.Cli.test_native_via_matches_reference) ... ok
+test_corpus (test_backends.Conformance_c.test_corpus) ... skipped 'toolchain de c no instalado'
+test_cost_is_measured_and_not_compared (test_backends.Conformance_c.test_cost_is_measured_and_not_compared) ... skipped 'toolchain de c no instalado'
+test_difftest_sample (test_backends.Conformance_c.test_difftest_sample) ... skipped 'toolchain de c no instalado'
+test_engine_does_the_work (test_backends.Conformance_c.test_engine_does_the_work) ... skipped 'toolchain de c no instalado'
+test_sabotages_detected (test_backends.Conformance_c.test_sabotages_detected) ... skipped 'toolchain de c no instalado'
+test_corpus (test_backends.Conformance_cobol.test_corpus) ... skipped 'toolchain de cobol no instalado'
+test_cost_is_measured_and_not_compared (test_backends.Conformance_cobol.test_cost_is_measured_and_not_compared) ... skipped 'toolchain de cobol no instalado'
+test_difftest_sample (test_backends.Conformance_cobol.test_difftest_sample) ... skipped 'toolchain de cobol no instalado'
+test_engine_does_the_work (test_backends.Conformance_cobol.test_engine_does_the_work) ... skipped 'toolchain de cobol no instalado'
+test_sabotages_detected (test_backends.Conformance_cobol.test_sabotages_detected) ... skipped 'toolchain de cobol no instalado'
+test_corpus (test_backends.Conformance_pydecimal.test_corpus) ... skipped 'toolchain de pydecimal no instalado'
+test_cost_is_measured_and_not_compared (test_backends.Conformance_pydecimal.test_cost_is_measured_and_not_compared) ... skipped 'toolchain de pydecimal no instalado'
+test_difftest_sample (test_backends.Conformance_pydecimal.test_difftest_sample) ... skipped 'toolchain de pydecimal no instalado'
+test_engine_does_the_work (test_backends.Conformance_pydecimal.test_engine_does_the_work) ... skipped 'toolchain de pydecimal no instalado'
+test_sabotages_detected (test_backends.Conformance_pydecimal.test_sabotages_detected) ... skipped 'toolchain de pydecimal no instalado'
+test_corpus (test_backends.Conformance_rust.test_corpus) ... skipped 'toolchain de rust no instalado'
+test_cost_is_measured_and_not_compared (test_backends.Conformance_rust.test_cost_is_measured_and_not_compared) ... skipped 'toolchain de rust no instalado'
+test_difftest_sample (test_backends.Conformance_rust.test_difftest_sample) ... skipped 'toolchain de rust no instalado'
+test_engine_does_the_work (test_backends.Conformance_rust.test_engine_does_the_work) ... skipped 'toolchain de rust no instalado'
+test_sabotages_detected (test_backends.Conformance_rust.test_sabotages_detected) ... skipped 'toolchain de rust no instalado'
+test_corpus (test_backends.Conformance_zig.test_corpus) ... skipped 'toolchain de zig no instalado'
+test_cost_is_measured_and_not_compared (test_backends.Conformance_zig.test_cost_is_measured_and_not_compared) ... skipped 'toolchain de zig no instalado'
+test_difftest_sample (test_backends.Conformance_zig.test_difftest_sample) ... skipped 'toolchain de zig no instalado'
+test_engine_does_the_work (test_backends.Conformance_zig.test_engine_does_the_work) ... skipped 'toolchain de zig no instalado'
+test_sabotages_detected (test_backends.Conformance_zig.test_sabotages_detected) ... skipped 'toolchain de zig no instalado'
+test_cobol_ejecuta_lo_que_el_contenido_permite (test_backends.ContenidoNoEtiqueta.test_cobol_ejecuta_lo_que_el_contenido_permite)
+Canario D: los cuatro casos que la etiqueta bloqueaba se ejecutan y coinciden. ... skipped 'no hay cobc'
+test_el_unsupported_dice_la_capacidad_exacta (test_backends.ContenidoNoEtiqueta.test_el_unsupported_dice_la_capacidad_exacta) ... ok
+test_emitir_arreglo_pide_emit_array_no_ir02 (test_backends.ContenidoNoEtiqueta.test_emitir_arreglo_pide_emit_array_no_ir02) ... ok
+test_la_etiqueta_no_es_una_capacidad (test_backends.ContenidoNoEtiqueta.test_la_etiqueta_no_es_una_capacidad) ... ok
+test_llamada_void_en_sentencia_compila (test_backends.ContenidoNoEtiqueta.test_llamada_void_en_sentencia_compila)
+La forma que 327 expuso: antes el proemio escribía en un hueco que solo se ... skipped 'no hay cobc'
+test_sesenta_por_etiqueta_cuarenta_y_seis_por_contenido (test_backends.ContenidoNoEtiqueta.test_sesenta_por_etiqueta_cuarenta_y_seis_por_contenido)
+La separación es medible en el corpus congelado, no una declaración. ... ok
+test_un_tipo_0_2_si_la_requiere (test_backends.ContenidoNoEtiqueta.test_un_tipo_0_2_si_la_requiere) ... ok
+test_cada_ancho_se_instancia_una_vez_y_el_codigo_generado_no_usa_isystr (test_backends.CuotaYAliasZig.test_cada_ancho_se_instancia_una_vez_y_el_codigo_generado_no_usa_isystr) ... skipped 'zig no instalado'
+test_el_programa_fronteira_ejecuta_como_la_referencia (test_backends.CuotaYAliasZig.test_el_programa_fronteira_ejecuta_como_la_referencia)
+1024 sitios: fuera de la cuota del emisor Zig revienta su presupuesto de fábrica ... skipped 'zig no instalado'
+test_la_cuota_vale_mil_mas_ocho_por_sitio_y_vive_en_el_cuerpo (test_backends.CuotaYAliasZig.test_la_cuota_vale_mil_mas_ocho_por_sitio_y_vive_en_el_cuerpo) ... skipped 'zig no instalado'
+test_un_programa_sin_str_no_lleva_cuota_ni_alias (test_backends.CuotaYAliasZig.test_un_programa_sin_str_no_lleva_cuota_ni_alias) ... skipped 'zig no instalado'
+test_every_valid_program_needs_only_known_features (test_backends.Features.test_every_valid_program_needs_only_known_features) ... ok
+test_features_of_examples (test_backends.Features.test_features_of_examples) ... ok
+test_every_sabotage_has_witnesses (test_backends.Registry.test_every_sabotage_has_witnesses) ... ok
+test_wave_one_registered (test_backends.Registry.test_wave_one_registered) ... ok
+test_every_registered_backend_is_testable (test_backends.Toolchains.test_every_registered_backend_is_testable) ... ok
+test_el_tope_llega_igual_a_los_cinco_backends (test_backends.TopeFrontend.test_el_tope_llega_igual_a_los_cinco_backends) ... ok
+test_la_salida_de_447_es_la_de_la_cli (test_backends.TopeFrontend.test_la_salida_de_447_es_la_de_la_cli)
+El mismo rechazo por la puerta de la CLI: `INVALID_PROGRAM` con `SPEC_LIMIT` y ... ok
+test_los_dieciseis_clones_ejecutan_igual_que_la_referencia (test_backends.TopeFrontend.test_los_dieciseis_clones_ejecutan_igual_que_la_referencia)
+`448` sí baja a la IR: los backends que implementan `str` lo ejecutan igual ... ok
+test_missing_feature_is_unsupported_never_approximated (test_backends.Unsupported.test_missing_feature_is_unsupported_never_approximated) ... skipped 'no hay compilador de C'
+test_el_borde_es_exclusivo_en_las_cuatro_caras (test_depth.CotaDeSentencias.test_el_borde_es_exclusivo_en_las_cuatro_caras) ... ok
+test_el_checker_rechaza_aunque_el_parser_no_haya_contado (test_depth.CotaDeSentencias.test_el_checker_rechaza_aunque_el_parser_no_haya_contado)
+Segunda guarda: un AST que no pasó por `Parser.control` se corta igual. ... ok
+test_el_parser_y_el_ast_cuentan_lo_mismo (test_depth.CotaDeSentencias.test_el_parser_y_el_ast_cuentan_lo_mismo) ... ok
+test_la_constante_es_un_literal_del_spec (test_depth.CotaDeSentencias.test_la_constante_es_un_literal_del_spec) ... ok
+test_las_dos_cotas_al_tope_recorren_todo_el_camino (test_depth.CotaDeSentencias.test_las_dos_cotas_al_tope_recorren_todo_el_camino)
+Lo más hondo que el idioma acepta: expresión al tope dentro de sentencias al tope. ... ok
+test_los_niveles_se_suman_entre_formas_distintas (test_depth.CotaDeSentencias.test_los_niveles_se_suman_entre_formas_distintas) ... ok
+test_mover_la_constante_mueve_el_borde (test_depth.CotaDeSentencias.test_mover_la_constante_mueve_el_borde)
+Sabotaje en las dos direcciones, como en Z2. ... ok
+test_un_llamante_hondo_sigue_obteniendo_spec_limit (test_depth.CotaDeSentencias.test_un_llamante_hondo_sigue_obteniendo_spec_limit) ... ok
+test_el_borde_es_exclusivo_por_debajo (test_depth.CotaNombrada.test_el_borde_es_exclusivo_por_debajo)
+Único instrumento del off-by-one: `>` y no `>=`. Nivel N se acepta, N+1 no. ... ok
+test_la_constante_es_un_literal_del_spec (test_depth.CotaNombrada.test_la_constante_es_un_literal_del_spec) ... ok
+test_las_tres_caras_llegan_al_mismo_nivel (test_depth.CotaNombrada.test_las_tres_caras_llegan_al_mismo_nivel)
+La cota es de niveles de expresión, no de una forma concreta del fuente. ... ok
+test_bajar_la_cota_rechaza_lo_que_hoy_es_legal (test_depth.EsLaGuardaLoQueRechaza.test_bajar_la_cota_rechaza_lo_que_hoy_es_legal) ... ok
+test_subir_la_cota_devuelve_la_aceptacion (test_depth.EsLaGuardaLoQueRechaza.test_subir_la_cota_devuelve_la_aceptacion) ... ok
+test_el_limite_de_llamadas_lo_sigue_poniendo_el_idioma (test_depth.LaEjecucionCabe.test_el_limite_de_llamadas_lo_sigue_poniendo_el_idioma) ... ok
+test_el_peor_programa_esta_en_las_dos_cotas (test_depth.LaEjecucionCabe.test_el_peor_programa_esta_en_las_dos_cotas) ... ok
+test_el_peor_programa_legal_recursiona_hasta_el_limite (test_depth.LaEjecucionCabe.test_el_peor_programa_legal_recursiona_hasta_el_limite)
+Antes: `RecursionError` con la llamada dentro de 60 `if`, muy por debajo de 256. ... ok
+test_el_presupuesto_dobla_el_coste_medido_por_llamada (test_depth.LaEjecucionCabe.test_el_presupuesto_dobla_el_coste_medido_por_llamada) ... ok
+test_sin_el_presupuesto_por_nivel_vuelve_el_muro (test_depth.LaEjecucionCabe.test_sin_el_presupuesto_por_nivel_vuelve_el_muro) ... ok
+test_la_guarda_no_agota_la_pila_que_mide (test_depth.LaGuardaGanaAlAnfitrion.test_la_guarda_no_agota_la_pila_que_mide) ... ok
+test_un_llamante_hondo_sigue_obteniendo_spec_limit (test_depth.LaGuardaGanaAlAnfitrion.test_un_llamante_hondo_sigue_obteniendo_spec_limit) ... ok
+test_toda_fuente_del_repo_cabe_bajo_la_cota (test_depth.LaPoblacionQuedaDebajo.test_toda_fuente_del_repo_cabe_bajo_la_cota)
+Se miden los programas que la spec acepta; los rechazos a propósito no tienen AST. ... ok
+test_el_limite_del_llamante_queda_como_estaba (test_depth.LoLegalCabe.test_el_limite_del_llamante_queda_como_estaba) ... ok
+test_el_presupuesto_dobla_el_coste_medido (test_depth.LoLegalCabe.test_el_presupuesto_dobla_el_coste_medido)
+La holgura no es fe: la cara más cara gasta menos de la mitad de lo reservado. ... ok
+test_el_rechazo_sigue_siendo_del_idioma_con_cualquier_llamante (test_depth.LoLegalCabe.test_el_rechazo_sigue_siendo_del_idioma_con_cualquier_llamante) ... ok
+test_el_tope_legal_recorre_todo_el_camino_con_cualquier_llamante (test_depth.LoLegalCabe.test_el_tope_legal_recorre_todo_el_camino_con_cualquier_llamante) ... ok
+test_el_validador_y_los_emisores_tambien_dependian_del_llamante (test_depth.LoLegalCabe.test_el_validador_y_los_emisores_tambien_dependian_del_llamante)
+El hueco no era solo del frontend: la IR es un árbol y sus recorridos bajan frames. ... ok
+test_la_ejecucion_tambien_cuenta_desde_el_llamante (test_depth.LoLegalCabe.test_la_ejecucion_tambien_cuenta_desde_el_llamante)
+El presupuesto de ejecución era absoluto: un llamante más hondo que él lo anulaba. ... ok
+test_sin_la_reserva_vuelve_el_muro_del_anfitrion (test_depth.LoLegalCabe.test_sin_la_reserva_vuelve_el_muro_del_anfitrion)
+Sabotaje: con presupuesto 0 el tope legal muere con 300 frames, como medía C8. ... ok
+test_backend_figures (test_evidence.DocsMatchLatestEvidence.test_backend_figures) ... ok
+test_c_gate_figure (test_evidence.DocsMatchLatestEvidence.test_c_gate_figure) ... ok
+test_conformance_figure (test_evidence.DocsMatchLatestEvidence.test_conformance_figure) ... ok
+test_ir_figure (test_evidence.DocsMatchLatestEvidence.test_ir_figure) ... ok
+test_every_dir_has_sums_and_lists_every_file (test_evidence.EvidenceIntegrity.test_every_dir_has_sums_and_lists_every_file) ... ok
+test_every_listed_hash_matches (test_evidence.EvidenceIntegrity.test_every_listed_hash_matches) ... ok
+test_cinco_intentos_sobre_la_mesma_fuente_una_invocacion (test_harness.CacheNegativa.test_cinco_intentos_sobre_la_mesma_fuente_una_invocacion) ... ok
+test_otra_fuente_u_otra_instancia_si_vuelven_al_compilador (test_harness.CacheNegativa.test_otra_fuente_u_otra_instancia_si_vuelven_al_compilador) ... ok
+test_detalle_toma_la_linea_error_y_la_recorta (test_harness.Clasificador.test_detalle_toma_la_linea_error_y_la_recorta) ... ok
+test_el_rechazo_del_frontend_se_propaga (test_harness.Clasificador.test_el_rechazo_del_frontend_se_propaga) ... ok
+test_la_fila_conserva_las_coordenadas_del_contexto (test_harness.Clasificador.test_la_fila_conserva_las_coordenadas_del_contexto) ... ok
+test_resultado_normal_no_deja_fila (test_harness.Clasificador.test_resultado_normal_no_deja_fila) ... ok
+test_toolchain_roto_deja_fila_con_su_clave_de_build (test_harness.Clasificador.test_toolchain_roto_deja_fila_con_su_clave_de_build) ... ok
+test_una_excepcion_del_arnes_es_harness_internal (test_harness.Clasificador.test_una_excepcion_del_arnes_es_harness_internal) ... ok
+test_un_crash_aborta_ese_tipo_y_deja_correr_el_siguiente (test_harness.Diferencial.test_un_crash_aborta_ese_tipo_y_deja_correr_el_siguiente) ... ok
+test_only_preserves_other_backends_previous_evidence (test_harness.PartialGate.test_only_preserves_other_backends_previous_evidence)
+An unselected backend must not overwrite its last measured result. ... [a] test
+ok
+test_conforme_con_todas_las_piernas_limpias (test_harness.Pliegue.test_conforme_con_todas_las_piernas_limpias) ... ok
+test_incompleto_o_sabotaje_sin_deteccion_no_es_conforme (test_harness.Pliegue.test_incompleto_o_sabotaje_sin_deteccion_no_es_conforme) ... ok
+test_pierna_no_corrida_no_es_un_cero (test_harness.Pliegue.test_pierna_no_corrida_no_es_un_cero) ... ok
+test_piernas_que_no_existen_en_ese_backend_no_lo_enrojecen (test_harness.Pliegue.test_piernas_que_no_existen_en_ese_backend_no_lo_enrojecen) ... ok
+test_una_fila_de_arnes_en_cualquier_pierna_vuelve_no_conforme (test_harness.Pliegue.test_una_fila_de_arnes_en_cualquier_pierna_vuelve_no_conforme) ... ok
+test_un_crash_no_puede_blanquearse_como_deteccion_de_sabotaje (test_harness.SabotajeConCrash.test_un_crash_no_puede_blanquearse_como_deteccion_de_sabotaje) ... ok
+test_ir_command_prints_canonical_ir (test_ir.Cli.test_ir_command_prints_canonical_ir) ... ok
+test_run_via_ir_flag (test_ir.Cli.test_run_via_ir_flag) ... ok
+test_corpus_equal_results_and_traces (test_ir.Gate.test_corpus_equal_results_and_traces) ... ok
+test_extra_programs (test_ir.Gate.test_extra_programs) ... ok
+test_extra_programs_with_tight_limits (test_ir.Gate.test_extra_programs_with_tight_limits) ... ok
+test_lowering_is_deterministic (test_ir.Identity.test_lowering_is_deterministic) ... ok
+test_semantic_hash_ignores_layout (test_ir.Identity.test_semantic_hash_ignores_layout) ... ok
+test_semantic_hash_sees_semantics (test_ir.Identity.test_semantic_hash_sees_semantics) ... ok
+test_bad_type_parameters (test_ir.ValidatorRejects.test_bad_type_parameters) ... ok
+test_break_outside_loop (test_ir.ValidatorRejects.test_break_outside_loop) ... ok
+test_extra_field (test_ir.ValidatorRejects.test_extra_field) ... ok
+test_local_out_of_range (test_ir.ValidatorRejects.test_local_out_of_range) ... ok
+test_missing_return (test_ir.ValidatorRejects.test_missing_return) ... ok
+test_non_canonical_const (test_ir.ValidatorRejects.test_non_canonical_const) ... ok
+test_type_lie (test_ir.ValidatorRejects.test_type_lie) ... ok
+test_undeclared_effect (test_ir.ValidatorRejects.test_undeclared_effect) ... ok
+test_unknown_expression_kind (test_ir.ValidatorRejects.test_unknown_expression_kind) ... ok
+test_unknown_function (test_ir.ValidatorRejects.test_unknown_function) ... ok
+test_wrong_schema (test_ir.ValidatorRejects.test_wrong_schema) ... ok
+test_concat_of_number (test_ir.ValidatorRejectsV2.test_concat_of_number) ... ok
+test_explicit_widen_node (test_ir.ValidatorRejectsV2.test_explicit_widen_node) ... ok
+test_set_path_index_on_struct (test_ir.ValidatorRejectsV2.test_set_path_index_on_struct) ... ok
+test_struct_literal_missing_field (test_ir.ValidatorRejectsV2.test_struct_literal_missing_field) ... ok
+test_unknown_field (test_ir.ValidatorRejectsV2.test_unknown_field) ... ok
+test_v2_types_rejected_under_v01_schema (test_ir.ValidatorRejectsV2.test_v2_types_rejected_under_v01_schema) ... ok
+test_widen_that_narrows (test_ir.ValidatorRejectsV2.test_widen_that_narrows) ... ok
+test_bundle_reads_nested_modules (test_modules.Cli.test_bundle_reads_nested_modules) ... ok
+test_runs_main_with_modules_from_any_cwd (test_modules.Cli.test_runs_main_with_modules_from_any_cwd) ... ok
+test_plain_names_unchanged (test_modules.Identifiers.test_plain_names_unchanged)
+v0.1–v0.3 generan el mismo código que antes: `f_<nombre>`. ... ok
+test_qualified_names_are_injective (test_modules.Identifiers.test_qualified_names_are_injective)
+P7: nombres con punto que un reemplazo ingenuo (`.` -> `__`) confundiría. ... ok
+test_ignoring_pub_is_detected (test_modules.Sabotage.test_ignoring_pub_is_detected)
+M2: un enlazador que no revisa `pub` debe romper el corpus. ... ok
+test_cli_exit_code_and_json (test_reference.Cli.test_cli_exit_code_and_json) ... ok
+test_corpus_frozen (test_reference.Conformance.test_corpus_frozen) ... ok
+test_corpus_passes (test_reference.Conformance.test_corpus_passes) ... ok
+test_determinism (test_reference.Conformance.test_determinism) ... ok
+test_superseded_cases_are_explicit (test_reference.Conformance.test_superseded_cases_are_explicit)
+Solo los casos listados en SUPERSEDED.json cambian de expected, y lo dicen. ... ok
+test_result_comes_from_execution (test_reference.EngineDoesTheWork.test_result_comes_from_execution) ... ok
+test_exact_mode (test_reference.RoundingOracle.test_exact_mode) ... ok
+test_matches_decimal_module (test_reference.RoundingOracle.test_matches_decimal_module) ... ok
+test_wrap_matches_twos_complement (test_reference.RoundingOracle.test_wrap_matches_twos_complement) ... ok
+test_bajar_el_tope_a_uno_rompe_el_corpus (test_reference.Sabotage.test_bajar_el_tope_a_uno_rompe_el_corpus)
+P4 discriminado por la unidad: con tope 1 cae `411` (dos resoluciones de `pad`) y ... ok
+test_el_tope_de_especializaciones_se_desactiva (test_reference.Sabotage.test_el_tope_de_especializaciones_se_desactiva)
+P4: con el tope prácticamente fuera de juego, `447` tiene que quedar legal. ... ok
+test_half_even_becomes_half_up (test_reference.Sabotage.test_half_even_becomes_half_up) ... ok
+test_len_de_str_se_hace_estatico (test_reference.Sabotage.test_len_de_str_se_hace_estatico)
+N1: plegar `len` de un `str` a su capacidad, como V1 hace con los arreglos. ... ok
+test_step_limit_off_by_one (test_reference.Sabotage.test_step_limit_off_by_one) ... ok
+test_str_overflow_truncates (test_reference.Sabotage.test_str_overflow_truncates)
+S3: truncar en silencio en vez de OVERFLOW. ... ok
+test_structs_shared_instead_of_copied (test_reference.Sabotage.test_structs_shared_instead_of_copied)
+Aliasing: si asignar un struct no copiara, el corpus v0.3 debe notarlo. ... ok
+test_trunc_division_becomes_floor (test_reference.Sabotage.test_trunc_division_becomes_floor) ... ok
+test_wrap_becomes_sat (test_reference.Sabotage.test_wrap_becomes_sat) ... ok
+test_cada_nucleo_coincide_con_su_sello (test_spec_frozen.SpecCongelada.test_cada_nucleo_coincide_con_su_sello) ... ok
+test_cada_nucleo_dice_frozen (test_spec_frozen.SpecCongelada.test_cada_nucleo_dice_frozen) ... ok
+test_estan_los_cinco_y_ninguno_mas (test_spec_frozen.SpecCongelada.test_estan_los_cinco_y_ninguno_mas) ... ok
+test_hay_un_nucleo_por_version_admitida (test_spec_frozen.SpecCongelada.test_hay_un_nucleo_por_version_admitida) ... ok
+test_definicion_sin_llamadas_se_descarta (test_specialize.Especializacion.test_definicion_sin_llamadas_se_descarta) ... ok
+test_dos_anchos_de_una_sola_definicion (test_specialize.Especializacion.test_dos_anchos_de_una_sola_definicion) ... ok
+test_dos_parametros_pelados_es_duplicado_en_posicional (test_specialize.Especializacion.test_dos_parametros_pelados_es_duplicado_en_posicional) ... ok
+test_invertir_las_llamadas_no_contamina (test_specialize.Especializacion.test_invertir_las_llamadas_no_contamina)
+Canario F: los dos órdenes dan los mismos valores, cada copia ve su ancho. ... ok
+test_la_copia_y_el_original_no_comparten_nada (test_specialize.Especializacion.test_la_copia_y_el_original_no_comparten_nada) ... ok
+test_propagacion_transitiva (test_specialize.Especializacion.test_propagacion_transitiva)
+`envia` pelado llama a `copia` pelado: las dos cadenas se resuelven solas. ... ok
+test_recursion_se_instancia_una_vez_por_ancho (test_specialize.Especializacion.test_recursion_se_instancia_una_vez_por_ancho) ... ok
+test_argumento_que_no_es_str_se_rechaza (test_specialize.FailClosed.test_argumento_que_no_es_str_se_rechaza) ... ok
+test_capacidad_que_el_cuerpo_no_acepta_es_estatico (test_specialize.FailClosed.test_capacidad_que_el_cuerpo_no_acepta_es_estatico)
+422: `let t: str<4> = s` con s instanciado en str<5> se rechaza antes de correr. ... ok
+test_contextual_nunca_llega_a_medirse_ni_bajarse (test_specialize.FailClosed.test_contextual_nunca_llega_a_medirse_ni_bajarse) ... ok
+test_el_desborda_es_error_nunca_truncado (test_specialize.FailClosed.test_el_desborda_es_error_nunca_truncado)
+418: 8 + 16 bytes en str<16> termina en ERROR(OVERFLOW) con cero salidas. ... ok
+test_main_pelado_no_se_le_inventa_capacidad (test_specialize.FailClosed.test_main_pelado_no_se_le_inventa_capacidad) ... ok
+test_el_gemelo_no_es_igual_a_una_sola_capacidad_fija (test_specialize.Gemelo.test_el_gemelo_no_es_igual_a_una_sola_capacidad_fija)
+Una sola definición con un ancho fijo NO sirve para dos anchos: por eso V6. ... ok
+test_gemelos_mismo_resultado_y_mismos_pasos (test_specialize.Gemelo.test_gemelos_mismo_resultado_y_mismos_pasos) ... ok
+test_sin_capacidades_nulas_en_los_locales (test_specialize.NingunCentinela.test_sin_capacidades_nulas_en_los_locales) ... ok
+test_todas_las_capacidades_de_la_ir_estan_acotadas (test_specialize.NingunCentinela.test_todas_las_capacidades_de_la_ir_estan_acotadas) ... ok
+test_espejo_de_representacion (test_specialize.Nombres.test_espejo_de_representacion) ... ok
+test_espejo_del_nombre (test_specialize.Nombres.test_espejo_del_nombre) ... ok
+test_inyectivo_entre_resoluciones (test_specialize.Nombres.test_inyectivo_entre_resoluciones)
+Para una misma base, dos resoluciones distintas nunca comparten nombre. ... ok
+test_un_fuente_no_puede_imitar_una_clave (test_specialize.Nombres.test_un_fuente_no_puede_imitar_una_clave)
+La clave añade segmentos numéricos; un nombre fuente no puede empezar en dígito. ... ok
+test_parametro_en_0_5_es_capacidad_diferida (test_specialize.ReglaDePosicion.test_parametro_en_0_5_es_capacidad_diferida) ... ok
+test_pelado_rechazado_en_0_4 (test_specialize.ReglaDePosicion.test_pelado_rechazado_en_0_4)
+La cabecera manda: V6/V6-bis no relajan ninguna 0.1–0.4 (propuesta §2). ... ok
+test_pelado_rechazado_fuera_del_parametro_y_del_retorno (test_specialize.ReglaDePosicion.test_pelado_rechazado_fuera_del_parametro_y_del_retorno) ... ok
+test_retorno_pelado_es_un_molde_y_no_un_rechazo (test_specialize.ReglaDePosicion.test_retorno_pelado_es_un_molde_y_no_un_rechazo)
+V6-bis: sin llamada que fije la expectativa no hay copia, y la definición ... ok
+test_desborde_es_overflow_y_no_emite (test_specialize.RetornoPelado.test_desborde_es_overflow_y_no_emite) ... ok
+test_dos_expectativas_son_dos_copias (test_specialize.RetornoPelado.test_dos_expectativas_son_dos_copias) ... ok
+test_el_ciclo_expectativa_parametro_pelado_se_rechaza (test_specialize.RetornoPelado.test_el_ciclo_expectativa_parametro_pelado_se_rechaza) ... ok
+test_el_gemelo_escrito_a_mano_cuesta_dos_funciones (test_specialize.RetornoPelado.test_el_gemelo_escrito_a_mano_cuesta_dos_funciones)
+Misma forma (let + emit) y mismo resultado con anchos fijos: el azúcar no ... ok
+test_estatico_mas_grande_que_la_expectativa (test_specialize.RetornoPelado.test_estatico_mas_grande_que_la_expectativa) ... ok
+test_la_clave_lleva_las_dos_orillas (test_specialize.RetornoPelado.test_la_clave_lleva_las_dos_orillas)
+El ancho del parámetro viene de stdin y el del retorno del `let`. ... ok
+test_main_y_la_cabecera_v04 (test_specialize.RetornoPelado.test_main_y_la_cabecera_v04) ... ok
+test_sin_expectativa_no_hay_ancho_por_defecto (test_specialize.RetornoPelado.test_sin_expectativa_no_hay_ancho_por_defecto) ... ok
+test_transmision_de_expectativa (test_specialize.RetornoPelado.test_transmision_de_expectativa) ... ok
+test_un_cast_fija_la_expectativa (test_specialize.RetornoPelado.test_un_cast_fija_la_expectativa) ... ok
+test_255_resoluciones_son_legales (test_specialize.TopePorDefinicion.test_255_resoluciones_son_legales) ... ok
+test_256_es_el_ultimo_legal (test_specialize.TopePorDefinicion.test_256_es_el_ultimo_legal)
+Único instrumento del off-by-one: `>` y no `>=`. Ningún sabotaje de corpus lo ve, ... ok
+test_257_es_spec_limit (test_specialize.TopePorDefinicion.test_257_es_spec_limit) ... ok
+test_dos_ranuras_multiplicativas_consumen_una_sola_vez (test_specialize.TopePorDefinicion.test_dos_ranuras_multiplicativas_consumen_una_sola_vez)
+La forma que justifica la granularidad: 2 ranuras × 4 anchos = 16 copias de UNA ... ok
+test_el_conteo_es_por_definicion_no_por_programa (test_specialize.TopePorDefinicion.test_el_conteo_es_por_definicion_no_por_programa)
+Dos definiciones con 200 copias cada una suman 400 resoluciones y son legales; ... ok
+test_la_constante_es_un_literal_del_spec (test_specialize.TopePorDefinicion.test_la_constante_es_un_literal_del_spec) ... ok
+test_la_copia_nunca_es_definicion_contada (test_specialize.TopePorDefinicion.test_la_copia_nunca_es_definicion_contada)
+`cuenta` se resuelve en dos anchos; sus copias (`cuenta.4`, `cuenta.1`) llaman a ... ok
+test_la_identidad_contada_es_calificada_por_modulo (test_specialize.TopePorDefinicion.test_la_identidad_contada_es_calificada_por_modulo)
+La llave es la identidad del enlace, ya módulo-calificada: se cuenta `util.marca`, ... ok
+test_un_programa_04_no_puede_llegar_al_tope (test_specialize.TopePorDefinicion.test_un_programa_04_no_puede_llegar_al_tope)
+No hace falta gating nuevo: sin 0.5 el `str` pelado muere en el parser (§7), así ... ok
+test_break_fuera_del_for_sigue_prohibido (test_v05_core.ForAzucar.test_break_fuera_del_for_sigue_prohibido) ... ok
+test_cobol_rechaza_402_por_contenido_no_por_el_for (test_v05_core.ForAzucar.test_cobol_rechaza_402_por_contenido_no_por_el_for)
+El único UNSUPPORTED de V2 es la regla de V7: a COBOL le falta el contenido ... skipped 'no hay cobc'
+test_dos_for_seguidos_reutilizan_el_nombre (test_v05_core.ForAzucar.test_dos_for_seguidos_reutilizan_el_nombre)
+El índice sintético es distinto en cada `for`, y `x` muere con su cuerpo. ... ok
+test_el_control_negativo_sigue_siendo_negativo (test_v05_core.ForAzucar.test_el_control_negativo_sigue_siendo_negativo)
+El incremento abajo —la forma intuitiva— no es un gemelo: el `continue` salta el ... ok
+test_el_for_gasta_los_pasos_del_while_gemelo (test_v05_core.ForAzucar.test_el_for_gasta_los_pasos_del_while_gemelo)
+Misma salida y mismos pasos que la forma larga: el azúcar no es una operación. ... ok
+test_el_for_no_pide_ninguna_capacidad_nueva (test_v05_core.ForAzucar.test_el_for_no_pide_ninguna_capacidad_nueva)
+V2 es frontend puro: lo que exige el `for` es lo mismo que exige su `while`. ... ok
+test_for_anidado (test_v05_core.ForAzucar.test_for_anidado) ... ok
+test_for_coincide_con_su_expected (test_v05_core.ForAzucar.test_for_coincide_con_su_expected)
+Los cuatro casos del corpus contra su expected, escrito a mano el 2026-10-30. ... ok
+test_for_en_versions_anteriores_sigue_rechazado (test_v05_core.ForAzucar.test_for_en_versions_anteriores_sigue_rechazado)
+No regresión: antes de 0.5 el azúcar no existe y la fuente se rechaza igual. ... ok
+test_for_es_reservada_solo_desde_05 (test_v05_core.ForAzucar.test_for_es_reservada_solo_desde_05)
+En 0.4 `for` sigue siendo un nombre normal; en 0.5 ya no se puede declarar. ... ok
+test_for_no_acepta_una_expresion (test_v05_core.ForAzucar.test_for_no_acepta_una_expresion)
+P2, medido: la cota y el índice evalúan el lugar dos veces, así que se rechaza ... ok
+test_for_sobre_un_campo (test_v05_core.ForAzucar.test_for_sobre_un_campo)
+El lugar puede estar calificado por un campo: `for n in c.cosas`. ... ok
+test_in_sigue_siendo_contextual (test_v05_core.ForAzucar.test_in_sigue_siendo_contextual)
+V3: `in` no se reserva. Aquí es a la vez una variable y el separador del `for`. ... ok
+test_la_ir_del_for_es_la_ir_del_gemelo (test_v05_core.ForAzucar.test_la_ir_del_for_es_la_ir_del_gemelo)
+El azúcar no introduce forma nueva. Este control cazó que construir `-1` con ... ok
+test_la_traza_stmt_es_la_traza_del_gemelo (test_v05_core.ForAzucar.test_la_traza_stmt_es_la_traza_del_gemelo)
+La cola del ítem 2 del gate: no solo los pasos, la traza `stmt` evento por evento. ... ok
+test_la_variable_del_for_no_sale_del_bucle (test_v05_core.ForAzucar.test_la_variable_del_for_no_sale_del_bucle) ... ok
+test_los_canones_coinciden_en_cada_backend (test_v05_core.ForAzucar.test_los_canones_coinciden_en_cada_backend)
+Diferencial de V2: referencia == expected == cada backend instalado, pasos incluidos. ... ok
+test_return_dentro_del_for_vale_lo_que_en_el_while (test_v05_core.ForAzucar.test_return_dentro_del_for_vale_lo_que_en_el_while)
+`always_returns` no conoce el `for`: un `return` en el cuerpo no garantiza nada. ... ok
+test_arreglo_de_cadenas_anida_los_dos_azucares (test_v05_core.ForSobreStr.test_arreglo_de_cadenas_anida_los_dos_azucares)
+`for s in ss { for c in s { … } }`: el lugar del interior es un elemento de arreglo. ... ok
+test_cobol_rechaza_los_tres_por_contenido_no_por_el_for (test_v05_core.ForSobreStr.test_cobol_rechaza_los_tres_por_contenido_no_por_el_for)
+El UNSUPPORTED de N1 es la regla de V7: a COBOL le falta `str`, no el azúcar. ... skipped 'no hay cobc'
+test_con_cabecera_04_el_for_sobre_str_se_rechaza (test_v05_core.ForSobreStr.test_con_cabecera_04_el_for_sobre_str_se_rechaza)
+No regresión: `for` es reservada solo desde 0.5 (V3), también sobre un `str`. ... ok
+test_el_lugar_puede_ser_un_campo (test_v05_core.ForSobreStr.test_el_lugar_puede_ser_un_campo) ... ok
+test_es_copia_y_ademas_el_lugar_no_se_puede_escribir (test_v05_core.ForSobreStr.test_es_copia_y_ademas_el_lugar_no_se_puede_escribir)
+Los dos filos de «`c` es copia» (§4.4), medidos el 2026-11-02 01:31 UTC. ... ok
+test_for_sobre_un_indice_de_str_sigue_sin_ser_lugar (test_v05_core.ForSobreStr.test_for_sobre_un_indice_de_str_sigue_sin_ser_lugar) ... ok
+test_la_cadena_vacia_no_da_vueltas (test_v05_core.ForSobreStr.test_la_cadena_vacia_no_da_vueltas) ... ok
+test_la_cota_es_la_longitud_no_la_capacidad (test_v05_core.ForSobreStr.test_la_cota_es_la_longitud_no_la_capacidad)
+El corazón de N1: con `"hola"`, `str<4>`, `str<8>` y `str<16>` dan los mismos 4 bytes. ... ok
+test_la_variable_es_u8 (test_v05_core.ForSobreStr.test_la_variable_es_u8)
+`c` es `u8`: sumarla a un `i64` sin cast es `TYPE_MISMATCH`; con `as i64` cierra 420. ... ok
+test_la_variable_no_escapa_del_bucle (test_v05_core.ForSobreStr.test_la_variable_no_escapa_del_bucle) ... ok
+test_los_tres_casos_coinciden_con_su_expected (test_v05_core.ForSobreStr.test_los_tres_casos_coinciden_con_su_expected)
+El expected de `444`–`446` está transcrito de la regla, no del stdout. ... ok
+test_poner_la_capacidad_como_cota_rompe_igual_que_en_el_gemelo (test_v05_core.ForSobreStr.test_poner_la_capacidad_como_cota_rompe_igual_que_en_el_gemelo)
+Control de la regla: el `while` escrito a mano con `8` en vez de `len(s)` recorre los ... ok
+test_arreglo_de_structs_tambien (test_v05_core.LenArreglo.test_arreglo_de_structs_tambien) ... ok
+test_dentro_de_un_literal_de_struct (test_v05_core.LenArreglo.test_dentro_de_un_literal_de_struct)
+El reemplazo camina también las tuplas (nombre, expr, at) de un literal de struct. ... ok
+test_en_versions_anteriores_sigue_rechazado (test_v05_core.LenArreglo.test_en_versions_anteriores_sigue_rechazado)
+No regresión: el mismo cuerpo con cabecera vieja sigue siendo INVALID_PROGRAM. ... ok
+test_es_estatico_no_cuenta_paso (test_v05_core.LenArreglo.test_es_estatico_no_cuenta_paso)
+El gemelo con el 6 escrito a mano da exactamente los mismos pasos (medido). ... ok
+test_la_ir_no_lleva_nodo_len_de_arreglo (test_v05_core.LenArreglo.test_la_ir_no_lleva_nodo_len_de_arreglo)
+El `len` desaparece del AST antes de bajar: la IR lleva un `const`, no un `len`. ... ok
+test_len_de_arreglo_devuelve_su_capacidad (test_v05_core.LenArreglo.test_len_de_arreglo_devuelve_su_capacidad) ... ok
+test_len_de_arreglo_no_pide_ninguna_capacidad_nueva (test_v05_core.LenArreglo.test_len_de_arreglo_no_pide_ninguna_capacidad_nueva)
+V1 es frontend puro: `features_of` no gana átomo con los canarios. ... ok
+test_len_de_str_sigue_siendo_operacion (test_v05_core.LenArreglo.test_len_de_str_sigue_siendo_operacion)
+Lo que no se tocó: `len(s)` de v0.3 §2.4 baja a su nodo y su tipo es i64. ... ok
+test_los_canones_coinciden_en_cada_backend (test_v05_core.LenArreglo.test_los_canones_coinciden_en_cada_backend)
+Diferencial de V1: referencia == expected == cada backend instalado, pasos incluidos. ... ok
+test_no_se_estrecha_solo (test_v05_core.LenArreglo.test_no_se_estrecha_solo)
+`len` es i64 (coherencia con `len(s)`); un i8 sigue siendo TYPE_MISMATCH. ... ok
+test_0_5_es_valida (test_versions.Cabecera.test_0_5_es_valida) ... ok
+test_version_desconocida_es_syntax (test_versions.Cabecera.test_version_desconocida_es_syntax) ... ok
+test_el_frontend_pregunta_al_predicado (test_versions.NoHayLiteralesSueltos.test_el_frontend_pregunta_al_predicado) ... ok
+test_una_version_nueva_trae_las_anteriores (test_versions.VersionFamily.test_una_version_nueva_trae_las_anteriores) ... ok
+test_version_no_soportada_no_trae_nada (test_versions.VersionFamily.test_version_no_soportada_no_trae_nada) ... ok
+
+----------------------------------------------------------------------
+Ran 250 tests in 92.187s
+
+OK (skipped=34)
+{"out": "unused", "verdict": "PASS", "sha256": "unused", "sumados": 0}

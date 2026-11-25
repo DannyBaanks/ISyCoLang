@@ -507,6 +507,7 @@ core vigente por el contrato ISY_BACKEND/1, incluida la aritmética decimal como
 enteros escalados, agregados por valor y los tres sabotajes existentes.
 La semántica y la IR no cambian. Esta incorporación de la ola 5 no declara
 terminadas las olas 3 y 4 ni añade sus capacidades científicas/declarativas.
+Gate Go PASS: [gate_2026-11-25T004354Z.json](evidence/backends/gate_2026-11-25T004354Z.json).
 Diseño, límites y validación: [docs/BACKEND_GO.md](docs/BACKEND_GO.md).
 
 ### F6 — Carrera de backends y selección por función
