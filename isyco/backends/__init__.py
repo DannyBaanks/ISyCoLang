@@ -9,7 +9,8 @@ def registry() -> dict:
     from .zig import BACKEND as ZIG
     from .pydecimal import BACKEND as PYDECIMAL
     from .cobol import BACKEND as COBOL
-    return {b.name: b for b in (C, RUST, ZIG, PYDECIMAL, COBOL)}
+    from .go import BACKEND as GO
+    return {b.name: b for b in (C, RUST, ZIG, PYDECIMAL, COBOL, GO)}
 
 
 def available() -> dict:
