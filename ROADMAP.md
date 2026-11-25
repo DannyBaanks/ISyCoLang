@@ -500,6 +500,16 @@ Orden propuesto de backends (por toolchain presente y valor distinto):
 subconjunto; un backend que "pasa" sin ejecutar (stub) es detectado por
 `test_engine_does_the_work`.
 
+#### Go — backend completo (2026-11-24)
+
+Danny eligió el backend completo con `math/big`. Implementa las capacidades del
+core vigente por el contrato ISY_BACKEND/1, incluida la aritmética decimal como
+enteros escalados, agregados por valor y los tres sabotajes existentes.
+La semántica y la IR no cambian. Esta incorporación de la ola 5 no declara
+terminadas las olas 3 y 4 ni añade sus capacidades científicas/declarativas.
+Gate Go PASS: [gate_2026-11-25T004354Z.json](evidence/backends/gate_2026-11-25T004354Z.json).
+Diseño, límites y validación: [docs/BACKEND_GO.md](docs/BACKEND_GO.md).
+
 ### F6 — Carrera de backends y selección por función
 
 - Cada función puede pedir un contrato (`@numeric(decimal<18,2,half_even>)`,
@@ -613,7 +623,7 @@ Correcciones al V0 que este carril adopta:
 | El corpus detecta un enlazador que ignora `pub` | DEMONSTRATED (mutación: 304 y 305 fallan) | `tests/test_modules.py::Sabotage` |
 | La suite detecta un backend C saboteado | DEMONSTRATED (2 sabotajes, corpus y diferencial) | `evidence/c/` |
 | La suite detecta un backend Rust o Zig saboteado | DEMONSTRATED (2026-10-29): los mismos 2 sabotajes que C; cada uno falla corpus (3 y 2 casos) y diferencial (12 y 53 diferencias), igual en los tres backends | `evidence/backends/gate_2026-10-29T055122Z.json`, `tests/test_backends.py` |
-| Backends de las olas 2–6 de F5 (Fortran, Prolog/z3, Go/Java/…, esolangs; `pydecimal` y COBOL ya están PASS) | Fortran, Prolog/z3, Go/Java/…, esolangs: NOT_DEMONSTRATED (no implementados) | — |
+| Backends de las olas 2–6 de F5 (Fortran, Prolog/z3, Go/Java/…, esolangs; `pydecimal` y COBOL ya están PASS) | Fortran, Prolog/z3, Java/…, esolangs: NOT_DEMONSTRATED (no implementados). Go incorporado el 2026-11-24; ver docs/BACKEND_GO.md | — |
 | El contrato acepta un backend cuyo sustrato NO es nativo (Python 3 + `decimal`) con el mismo resultado que la referencia | DEMONSTRATED (2026-10-30): 170/170, 8 484 corridas del diferencial y 1 270 de strings sin diferencias; los 3 sabotajes detectados; todos los redondeos decididos por la división y `quantize` de CPython (la referencia usa enteros escalados), coste medido aparte (RSS de intérprete, ~14 MB) | `evidence/backends/gate_2026-10-30T074904Z.json`, `isyco/backends/pydecimal.py` |
 | El contrato acepta GnuCOBOL 3.1.2 (sin argv, zoned decimal nativo) con el mismo resultado que la referencia | DEMONSTRATED (2026-10-30): 113/170 con 57 UNSUPPORTED declarados (str/struct), 8 484 corridas del diferencial sin diferencias, 2 sabotajes detectados; hallazgos del sustrato: un punto cierra todos los ámbitos abiertos, una etiqueta de párrafo no puede ir dentro de un IF, ORD/CHAR son 1-based, el argumento de llamada debe ser ítem (lvalue) y una FUNCTION-ID recursiva no propaga su valor (las funciones IR se compilan como subprogramas `IS RECURSIVE` invocados con CALL y resultado por referencia) | `evidence/backends/gate_2026-10-30T211143Z.json`, `isyco/backends/cobol.py` |
 | El contrato de backend reporta costo medido (pared, CPU, pico de memoria del binario, compilación) | DEMONSTRATED (2026-10-29), informativo y no comparado; pico de memoria por GNU time (el rusage de un hijo de Python mide al intérprete) | `spec/BACKEND.md` §3.1, `evidence/backends/gate_2026-10-29T055122Z.json` |

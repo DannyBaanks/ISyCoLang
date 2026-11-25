@@ -199,7 +199,7 @@ class Registry(unittest.TestCase):
         # Ola 1: C, Rust, Zig (F5). Ola 2: pydecimal (ROADMAP F5, "decimal de
         # punto fijo verificable"). El nombre del test es de la ola 1; el
         # registro hereda backends a medida que se cierra cada ola.
-        self.assertEqual(set(registry()), {"c", "cobol", "pydecimal", "rust", "zig"})
+        self.assertEqual(set(registry()), {"c", "cobol", "go", "pydecimal", "rust", "zig"})
 
 
 class Toolchains(unittest.TestCase):
@@ -255,7 +255,7 @@ class TopeFrontend(unittest.TestCase):
                 self.assertFalse(got.get("backend_stderr"), nombre)
 
     def test_los_dieciseis_clones_ejecutan_igual_que_la_referencia(self):
-        """`448` sí baja a la IR: los cuatro backends que implementan `str` lo ejecutan igual
+        """`448` sí baja a la IR: los backends que implementan `str` lo ejecutan igual
         que la referencia; COBOL responde `UNSUPPORTED` nombrando la capacidad que le falta."""
         case = by_name("448_dieciseis_clones_por_definicion")
         ref, _ = run(case["program"], case["input"], case.get("limits"))
@@ -274,10 +274,9 @@ class TopeFrontend(unittest.TestCase):
                     with_str.append(nombre)
                     self.assertEqual({k: got.get(k) for k in KEYS}, want, nombre)
                     self.assertFalse(got.get("backend_stderr"), nombre)
-        esperados = sorted(n for n in ("c", "pydecimal", "rust", "zig") if n in AVAILABLE)
+        esperados = sorted(n for n in ("c", "go", "pydecimal", "rust", "zig") if n in AVAILABLE)
         self.assertEqual(sorted(with_str), esperados,
-                         "cada backend `str` presente ejecuta 448; con los cinco "
-                         "instalados la lista es cuatro")
+                         "cada backend con soporte de str presente ejecuta 448")
         if "cobol" in AVAILABLE:
             self.assertNotIn("cobol", with_str)
 

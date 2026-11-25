@@ -1,0 +1,8 @@
+[go] go: go version go1.23.1 linux/amd64
+  corpus: 228/228 (unsupported 0, fallas 0, arnés 0)
+  difftest: 8484 corridas, 0 diferencias, 0 filas del arnés
+  difftest str: 1270 corridas, 0 diferencias, 0 filas del arnés
+  engine hace el trabajo: True
+  sabotaje half_even_as_half_up: detectado=True (corpus 3, diferencial 12, arnés 0)
+  sabotaje div_floor: detectado=True (corpus 2, diferencial 53, arnés 0)
+  sabotaje str_concat_truncates: detectado=True (corpus 3, diferencial 0, arnés 0)

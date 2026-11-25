@@ -1,0 +1,15 @@
+{
+  "schema": "isycolang.go_suite/1",
+  "generated_utc": "2026-11-25T005341Z",
+  "git_head": "ab038130d83ef48312e20c2a5ffd370caae31644",
+  "command": "ISYCO_TEST_BACKENDS=go python3 -m unittest discover -s tests -v",
+  "python": "3.12.3",
+  "exit_code": 0,
+  "tests_run": 250,
+  "skipped": 34,
+  "verdict": "PASS",
+  "scope": "Full unittest discovery, dynamic backend matrix focused on Go; existing direct C tests also execute. Other matrix backends explicitly skipped.",
+  "stdout_file": "go_suite_2026-11-25T005341Z_stdout.txt",
+  "stdout_sha256": "5bde02e5f86ca26a0f0332f97c9639a04079cc103895f1e82eb819f2de68f3cd",
+  "go_backend_sha256": "e9cb1c763bb02c72bdfb0054568b915821aac6edcf2dcc3b699400d31e6a90d4"
+}

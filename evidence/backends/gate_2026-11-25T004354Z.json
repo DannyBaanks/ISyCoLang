@@ -1,0 +1,130 @@
+{
+  "schema": "isycolang.backend_gate/1",
+  "pairs_per_op": 8,
+  "git_head": "926c63f0a263939c4a4b155445c313cdca744e86",
+  "arbol_sucio_codigo": false,
+  "veredicto_arbol": "RELEASE_GATE",
+  "harness": {
+    "guarda": "isyco.harness/1",
+    "codigos": [
+      "TOOLCHAIN_BUILD_FAIL",
+      "HARNESS_INTERNAL"
+    ],
+    "capas": [
+      "caso",
+      "pierna",
+      "corrida"
+    ]
+  },
+  "registered": [
+    "c",
+    "cobol",
+    "go",
+    "pydecimal",
+    "rust",
+    "zig"
+  ],
+  "backends": {
+    "go": {
+      "toolchain": "go: go version go1.23.1 linux/amd64",
+      "features": [
+        "arrays",
+        "bool",
+        "calls",
+        "dec",
+        "dec:down",
+        "dec:exact",
+        "dec:half_even",
+        "dec:half_up",
+        "emit",
+        "emit_array",
+        "int16",
+        "int32",
+        "int64",
+        "int8",
+        "ir0.2",
+        "ovf:sat",
+        "ovf:trap",
+        "ovf:wrap",
+        "recursion",
+        "str",
+        "struct",
+        "unsigned",
+        "while"
+      ],
+      "completado": true,
+      "corpus": {
+        "cases": 228,
+        "passed": 228,
+        "unsupported": [],
+        "failures": [],
+        "cost": {
+          "runs_measured": 150,
+          "wall_ms_total": 2267.743,
+          "user_ms_total": 123.635,
+          "sys_ms_total": 721.587,
+          "max_rss_kb_max": 9532,
+          "rss_measured_runs": 150
+        },
+        "harness": [],
+        "no_medidos": 0
+      },
+      "difftest": {
+        "runs": 8484,
+        "seed": 20261028,
+        "diff_count": 0,
+        "diffs": [],
+        "harness": [],
+        "types_aborted": [],
+        "omitted": 0
+      },
+      "does_the_work": {
+        "leaked_outputs": [],
+        "other_input_emits": [
+          "8.22",
+          "16.44",
+          "24.66"
+        ],
+        "harness": [],
+        "ok": true
+      },
+      "sabotage": {
+        "half_even_as_half_up": {
+          "corpus_failures": 3,
+          "difftest_diffs": 12,
+          "detected": true,
+          "harness": [],
+          "difftest_str_diffs": 0
+        },
+        "div_floor": {
+          "corpus_failures": 2,
+          "difftest_diffs": 53,
+          "detected": true,
+          "harness": [],
+          "difftest_str_diffs": 0
+        },
+        "str_concat_truncates": {
+          "corpus_failures": 3,
+          "difftest_diffs": 0,
+          "detected": true,
+          "harness": [],
+          "difftest_str_diffs": 15
+        }
+      },
+      "conformant": true,
+      "seleccionado": true,
+      "difftest_str": {
+        "runs": 1270,
+        "seed": 20261029,
+        "diff_count": 0,
+        "diffs": [],
+        "harness": [],
+        "omitted": 0,
+        "aborted": false
+      }
+    }
+  },
+  "generated_utc": "2026-11-25T004354Z",
+  "missing_toolchains": [],
+  "verdict": "PASS"
+}

@@ -219,5 +219,34 @@ class SabotajeConCrash(unittest.TestCase):
                          {"corpus", "difftest"})         # las dos piernas del sabotaje
 
 
+
+
+class PartialGate(unittest.TestCase):
+    def test_only_preserves_other_backends_previous_evidence(self):
+        """An unselected backend must not overwrite its last measured result."""
+        from unittest.mock import patch
+        from types import SimpleNamespace
+        captured = {}
+        def seal(report, *args):
+            captured.update(report)
+            return {"out": "unused", "sha256": "unused", "sumados": 0}
+        def execute(report, backend, cases, args):
+            report["backends"][backend.name]["conformant"] = True
+            return True
+        a = SimpleNamespace(name="a", toolchain=lambda: "test", features=set())
+        b = SimpleNamespace(name="b", toolchain=lambda: "test", features=set())
+        with patch.object(sys, "argv", ["backend_gate", "--only", "a"]), \
+                patch.object(backend_gate, "available", return_value={"a": a, "b": b}), \
+                patch.object(backend_gate, "registry", return_value={"a": a, "b": b}), \
+                patch.object(backend_gate, "load_all", return_value=[]), \
+                patch.object(backend_gate, "correr_backend", side_effect=execute), \
+                patch.object(_gate, "sellar", side_effect=seal), \
+                patch.object(_gate, "captura_stdout") as output:
+            output.return_value.__enter__.return_value = SimpleNamespace(texto="")
+            self.assertEqual(backend_gate.main(), 0)
+        self.assertEqual(set(captured["backends"]), {"a"})
+        self.assertEqual(set(captured["registered"]), {"a", "b"})
+
+
 if __name__ == "__main__":
     unittest.main()

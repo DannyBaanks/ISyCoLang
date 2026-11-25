@@ -189,10 +189,10 @@ def esqueleto(nombre: str, backend, version: str, seleccionado: bool = True) -> 
     suite quedaría verde sobre una corrida abortada. Las piernas sin correr se escriben
     `{"not_run": true}` y SIN campos numéricos: un `diff_count: 0` pasaría la aserción.
 
-    `seleccionado` separa las dos cosas que antes se confundían: `--only c` deja a los demás
-    marcados como «hoy no tocaba correrlos» (un gate parcial sigue pudiendo decir PASS, que
-    es el uso declarado de la bandera), mientras que un backend seleccionado que no terminó
-    fuerza FAIL.
+    `seleccionado` conserva la forma de los recibos anteriores. Las corridas parciales
+    solo incluyen los backends seleccionados: una fila no medida no debe reemplazar la
+    última evidencia válida de otro backend al plegar recibos con `newest.update`.
+    Un backend seleccionado que no terminó sigue forzando FAIL.
     """
     return {"toolchain": version, "features": sorted(backend.features), "completado": False,
             "corpus": {"not_run": True}, "difftest": {"not_run": True},
@@ -323,6 +323,8 @@ def main() -> int:
                 copia.write_bytes(fuente)
             todos = available()
             for nombre, backend in todos.items():
+                if only and nombre not in only:
+                    continue
                 report["backends"][nombre] = esqueleto(
                     nombre, backend, backend.toolchain() or "?",
                     seleccionado=not only or nombre in only)
