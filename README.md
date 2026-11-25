@@ -8,7 +8,7 @@ backends. Un backend no decide qué significa el programa: debe reproducir el co
 declarar la capacidad que no soporta.
 
 `.isy` → lexer/parser → tipos y efectos → ISY-IR → intérprete IR / C / Rust / Zig / Python
-`decimal` / GnuCOBOL.
+`decimal` / GnuCOBOL / Go.
 
 **Estado (12 de noviembre de 2026):** `EXECUTABLE` dentro de los dominios y corpus medidos. Las
 especificaciones v0.1–v0.5 están congeladas (`spec/CORE_v0.5.md` desde el 12 de noviembre de
@@ -58,7 +58,7 @@ la del recibo más nuevo, no una corrida hecha para esta revisión.
 | pregunta | respuesta hoy |
 |---|---|
 | ¿Qué es? | Un lenguaje pequeño con semántica propia, con varios backends que compiten por implementarla por contrato. |
-| ¿Qué lo hace distinto? | La semántica la fija el intérprete de referencia; C, Rust, Zig, `decimal` y GnuCOBOL no deciden qué significa el programa. |
+| ¿Qué lo hace distinto? | La semántica la fija el intérprete de referencia; C, Rust, Zig, `decimal`, GnuCOBOL y Go no deciden qué significa el programa. |
 | ¿Formato? | `.isy` en UTF-8; la cabecera `isyco 0.1` … `isyco 0.5` elige las reglas, con v0.5 en borrador. |
 | ¿Cómo ejecuto un programa? | `python3 -m isyco run precio.isy --input '["19.99","3"]'`, y `--via c` (u otro backend) para la ruta compilada. |
 | ¿Dónde vive el engine? | `isyco/` (intérprete de referencia y CLI) y `isyco/backends/` (los ejecutores). |
@@ -83,10 +83,10 @@ ejemplo, la guía registra `status=HALTED`, emisiones `23.19`, `46.38`, `69.57`,
 El segundo imprime ISY-IR; el tercero compila y ejecuta mediante C, siempre que el toolchain esté
 instalado.
 
-También puedes usar `--via ir`, `--via rust`, `--via zig`, `--via pydecimal` o `--via cobol`. **No
+También puedes usar `--via ir`, `--via rust`, `--via zig`, `--via pydecimal`, `--via cobol` o `--via go`. **No
 todos los backends implementan todas las capacidades:** cuando el programa requiere una capacidad
 ausente, el contrato exige `UNSUPPORTED`, no una simulación silenciosa. La ruta por COBOL necesita
-GnuCOBOL, la ruta Zig necesita Zig, etc.; no se proporciona aquí un instalador de toolchains.
+GnuCOBOL, Go requiere `go` en PATH, la ruta Zig necesita Zig, etc.; no se proporciona aquí un instalador de toolchains.
 
 **Para aprender la sintaxis y los resultados:** [GUIA.md](GUIA.md). **Semántica:**
 [spec/](spec/README.md). **Contrato de backends:** [spec/BACKEND.md](spec/BACKEND.md).
@@ -231,6 +231,7 @@ isyco/backends/base.py             driver común: validación, capacidades, cach
 isyco/backends/c.py                ISY-IR -> C -> binario nativo
 isyco/backends/rust.py             ISY-IR -> Rust -> binario nativo
 isyco/backends/zig.py              ISY-IR -> Zig -> binario nativo
+isyco/backends/go.py               ISY-IR -> Go con math/big -> binario nativo
 isyco/backends/cobol.py            ISY-IR -> GnuCOBOL -> binario nativo (núcleo numérico)
 isyco/backends/pydecimal.py        ISY-IR -> Python 3 con `decimal` (ola 2: otro sustrato, mismo contrato)
 isyco/versions.py                  única fuente de la versión: SUPPORTED, INTRODUCED, has()
@@ -279,7 +280,7 @@ python3 -m unittest discover -s tests -v       # suite completa: 245 tests el 20
 python3 -m isyco ir programa.isy               # ISY-IR canónica
 python3 tools/ir_gate.py                       # gate F3 + evidencia nueva
 python3 tools/c_gate.py                        # gate F4 + evidencia nueva (varios minutos)
-python3 tools/backend_gate.py                  # gate F5: C, Rust, Zig, pydecimal y cobol + evidencia nueva
+python3 tools/backend_gate.py                  # gate F5 de los backends instalados + evidencia nueva
 python3 tools/backend_gate.py --extra-case caso.isy   # …y un caso fuera del corpus
 python3 tools/f5_harness_probe.py              # mide la guarda del arnés (--write sella)
 python3 tools/run_conformance.py               # corpus + evidencia nueva

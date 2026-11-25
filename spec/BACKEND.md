@@ -159,6 +159,11 @@ instalado y guarda la evidencia en `evidence/backends/`.
 | `pydecimal` | python3 (CPython) | todas | ola 2: los `dec` son `decimal.Decimal`; cada redondeo lo deciden la división y `quantize` de CPython (`isy_rdiv`), no enteros escalados; el "binario" es el fuente con shebang (`py_compile` solo valida) y su RSS es el de un intérprete (~13 MB) |
 | `cobol` | cobc (GnuCOBOL 3.1.2) | núcleo numérico v0.1: `str`, `struct` y `emit_array` responden UNSUPPORTED; un programa `isy-ir/0.2` que no los usa sí se ejecuta (V7) | ola 2: zoned decimal nativo con `ISY-RDIV`; entrada por STDIN en hexadecimal (cobc no expone argv); cada función IR es un subprograma `IS RECURSIVE` con `CALL` y resultado por referencia; el hueco del resultado existe también en funciones `void` porque el proemio y el epílogo cuentan profundidad ahí; `DIVIDE … REMAINDER` trunca hacia cero como la referencia |
 
+Backend añadido el 2026-11-24: `go` (Go 1.23.1 verificado), todas las
+capacidades actuales, `math/big` exacto con enteros escalados para decimal,
+arreglos y structs por valor y tres sabotajes. Implementación y límites:
+[docs/BACKEND_GO.md](../docs/BACKEND_GO.md).
+
 ### 6.1 Límites del backend COBOL
 
 - **Transporte por STDIN hexadecimal.** Cada argumento se decodifica en

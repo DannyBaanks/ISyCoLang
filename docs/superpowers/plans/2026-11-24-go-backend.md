@@ -23,16 +23,16 @@
 ### Task 1: Emisor y runtime
 **Files:** Create isyco/backends/go.py; tests/test_backend_go.py.
 **Interfaces:** GoBackend.emit(module, sabotage=None) -> str; compile_cmd(source,binary,extra_flags) -> list; BACKEND.run mantiene contrato existente.
-- [ ] Escribir test de registro/ejecución que falle por backend ausente.
-- [ ] Ejecutar unittest y observar el fallo.
-- [ ] Implementar runtime y emisión de todos los nodos IR, tipos, casts, límites y sabotajes.
-- [ ] Probar corpus existente y fixtures de aliasing/evaluación/índices/JSON.
+- [x] Escribir test de registro/ejecución que falle por backend ausente.
+- [x] Ejecutar unittest y observar el fallo.
+- [x] Implementar runtime y emisión de todos los nodos IR, tipos, casts, límites y sabotajes.
+- [x] Probar corpus existente y fixtures de aliasing/evaluación/índices/JSON.
 - [ ] Commit con rutas explícitas.
 
 ### Task 2: Integración y prueba completa
 **Files:** Modify isyco/backends/__init__.py, isyco/__main__.py; evidence/backends/ nuevos recibos.
 **Interfaces:** registry()['go']; CLI --via go; gate común tools/backend_gate.py --only go.
-- [ ] Registrar backend y actualizar ayuda.
+- [x] Registrar backend y actualizar ayuda.
 - [ ] Ejecutar gate completo con diferenciales y sabotajes; exigir PASS sin harness failures.
 - [ ] Ejecutar suite del proyecto; inspeccionar código generado y diff.
 - [ ] Commit con rutas explícitas.
@@ -40,7 +40,7 @@
 ### Task 3: Entrega
 **Files:** README.md, GUIA.md, spec/BACKEND.md, ROADMAP.md y docs/BACKEND_GO.md.
 **Interfaces:** Comandos reales y enlaces a evidencia.
-- [ ] Ejecutar ejemplo CLI y documentar su salida real.
-- [ ] Documentar arquitectura, requisitos y límites medidos sin claims de velocidad.
+- [x] Ejecutar ejemplo CLI y documentar su salida real.
+- [x] Documentar arquitectura, requisitos y límites medidos sin claims de velocidad.
 - [ ] Revisar implementación completa, corregir hallazgos importantes y verificar.
 - [ ] Commit con rutas explícitas; dejar rama local sin push.

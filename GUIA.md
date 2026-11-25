@@ -92,7 +92,7 @@ python3 -m isyco run ticket.isy --input '["Danny", {"nombre":"Mezcal","precio":"
   En la condición de un `if`/`while`, un literal de struct va entre paréntesis.
 - En la entrada, un struct es un objeto JSON; `emit` de un struct o arreglo
   saca JSON en una línea.
-- v0.3 corre con los seis ejecutores: `ast`, `ir`, `c`, `rust`, `zig` y `pydecimal`.
+- v0.3 corre con `ast`, `ir`, `c`, `rust`, `zig`, `pydecimal` y `go`.
 
 ## 2c. Módulos (`isyco 0.4`)
 
@@ -117,7 +117,7 @@ python3 -m isyco run proyecto/main.isy          # return "42"; el resultado list
 - Sin imports circulares (`IMPORT_CYCLE`); todos los archivos deben ser `isyco 0.4`.
 - Ninguna variable o función puede llamarse como un módulo importado.
 - Un error dentro de un módulo dice el archivo: `at: "util.isy:2:38"`.
-- Los seis ejecutores (`ast`, `ir`, `c`, `rust`, `zig`, `pydecimal`) corren programas con módulos.
+- Los ejecutores `ast`, `ir`, `c`, `rust`, `zig`, `pydecimal` y `go` corren programas con módulos.
 
 ## 2d. Recorrer un arreglo (`isyco 0.5`)
 
@@ -153,10 +153,11 @@ fn total(item: [dec<8,2>; 3]) -> dec<8,2> {
 | `ir` | intérprete de la IR canónica (lo que reciben los backends) |
 | `c`, `rust`, `zig` | compila a binario nativo y lo corre |
 | `pydecimal` | genera un programa Python 3 (con el módulo `decimal`) y lo corre |
+| `go` | genera Go con aritmética exacta (`math/big`), compila con `go build` y ejecuta el binario |
 | `cobol` | compila con GnuCOBOL y lo corre; solo el núcleo numérico v0.1 (`str`/`struct` responden `UNSUPPORTED`) |
 
 Los ejecutores dan el mismo `status`/`emits`/`return`/`steps` dentro de su dominio
-declarado (`cobol` cubre el núcleo numérico; `c`, `rust`, `zig` y `pydecimal`,
+declarado (`cobol` cubre el núcleo numérico; `c`, `rust`, `zig`, `pydecimal` y `go`,
 todo). Eso es lo que prueban los tests. Los compilados agregan `cost`: tiempo,
 CPU, pico de memoria y tiempo de compilación (`null` si el binario ya estaba en
 `build/`). La primera corrida en Zig tarda unos segundos en compilar.
@@ -247,3 +248,31 @@ hasheable.
 - `spec/` — semántica (`CORE*.md`), IR (`IR.md`), contrato de backend (`BACKEND.md`).
 - `programs/conformance*/` — ejemplos con su resultado esperado escrito a mano.
 - `ROADMAP.md` §6 — qué está demostrado y qué no.
+
+
+## Go: compilar y ejecutar con aritmética exacta
+
+```bash
+python3 -m isyco run precio.isy --via go --input '["19.99","3"]'
+```
+
+Regla: el resultado debe conservar la semántica de la referencia; Go no cambia
+los tipos ni las reglas numéricas. Requiere `go` en PATH. Primera ejecución:
+compila y guarda el binario en `build/go/`; las siguientes reutilizan la caché.
+
+Salida real del ejemplo anterior, ejecutado el 2026-11-24 con Go 1.23.1:
+
+```json
+{"backend":"go","code":null,"cost":{"compile_ms":151.27,"max_rss_kb":2360,"sys_ms":3.258,"user_ms":0.0,"wall_ms":3.9},"emits":["23.19","46.38","69.57"],"input_sha256":"f00622418d9cdc82554cd791a74c4866c8c8a6f3d94057fa3b149796f7e31ad5","limits":{"max_call_depth":256,"max_emits":100000,"max_steps":1000000},"program_sha256":"08867847f871b7096e3bebb2a39d685f3b2a79398be07847870db6ba7e9cc6aa","return":"69.57","schema":"isyco.result/0.1","status":"HALTED","steps":24}
+```
+
+`HALTED` significa que terminó; `emits` contiene las tres sumas y `return` el
+total. `steps` cuenta pasos del lenguaje; los campos `cost` son mediciones que
+varían entre corridas. `compile_ms: null` indica un acierto de caché. Los errores y
+límites se leen igual que con los demás backends (tabla de estados de esta guía).
+
+Go cubre enteros, decimales, strings, structs, arreglos, módulos y el core v0.5.
+No produce trazas; para inspeccionar la ejecución usa `--via ast` o `--via ir`.
+Si no encuentra `go`, instala el toolchain y verifica `go version` antes de
+reintentar. No edites el fuente de `build/go/`: es generado; modifica el `.isy`.
+Detalles: [BACKEND_GO.md](docs/BACKEND_GO.md).

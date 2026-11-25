@@ -1,0 +1,42 @@
+# Backend Go
+
+`python3 -m isyco run precio.isy --via go --input '["19.99","3"]'`
+
+Requiere Python 3 y `go` en PATH. Verificado con Go 1.23.1 en Linux amd64.
+El emisor `isyco/backends/go.py` recibe la misma ISY-IR validada que los otros
+backends y genera un archivo Go autónomo, compilado con `go build`. Solo usa la
+biblioteca estándar; el ejecutable no necesita Python ni el repo para calcular.
+La CLI sí usa Python para el frontend, la validación de entradas y el driver.
+
+## Representación y contratos
+
+- Enteros y decimales: `*big.Int` tratados como valores inmutables. Cada suma,
+  resta, producto, división o negación tiene un receptor nuevo. No hay operaciones
+  de punto flotante. Los decimales son enteros escalados y se redondean una vez.
+- Los cuatro modos decimales y `trap`/`wrap`/`sat` se aplican al resultado exacto;
+  incluso `u64*u64` conserva todos los bits intermedios antes del ajuste.
+- Arreglos Go `[N]T` y structs se copian por valor. Las hojas numéricas pueden
+  compartir punteros porque el runtime nunca los muta. La igualdad numérica usa
+  `Cmp`, no identidad de punteros; la igualdad de agregados es recursiva.
+- `string` representa ASCII inmutable; se controla la capacidad declarada al
+  convertir, ensanchar, concatenar y cortar. Los índices se comprueban como
+  `big.Int` antes de reducirlos a índices de máquina.
+- Pasos, profundidad y emits viajan en un contexto explícito. El protocolo E/R/X
+  conserva salida parcial ante errores. Los agregados usan JSON compacto con
+  escalares canónicos como strings y campos en orden de declaración.
+- Las expresiones que pueden fallar se materializan en temporales en orden de
+  evaluación. `and`/`or` usan ramas para conservar cortocircuito.
+
+## Pruebas y límites
+
+El gate común es `python3 tools/backend_gate.py --only go`. Compara el corpus,
+los diferenciales numéricos y de strings, la prueba de trabajo real y los tres
+sabotajes (`half_even_as_half_up`, `div_floor`, `str_concat_truncates`).
+Los tests propios viven en `tests/test_backend_go.py`.
+
+No produce trazas del runtime. Las capacidades declaradas cubren el core actual;
+no añade concurrencia ni interoperabilidad con paquetes Go al lenguaje fuente.
+El GC, el runtime y las asignaciones de `math/big` tienen costo: ventaja de
+velocidad/memoria frente a otros backends, otras versiones de Go y otros sistemas
+operativos son NOT_DEMONSTRATED. Los límites de recursos físicos y del compilador
+siguen existiendo; un fallo del toolchain pertenece al arnés, no al programa.

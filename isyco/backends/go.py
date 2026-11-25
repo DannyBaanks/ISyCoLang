@@ -509,7 +509,7 @@ class GoBackend(Backend):
         if not compiler:
             return None
         proc = subprocess.run([compiler, "version"], capture_output=True, text=True)
-        return f"{compiler}: {proc.stdout.strip()}" if proc.returncode == 0 else None
+        return f"go: {proc.stdout.strip()}" if proc.returncode == 0 else None
 
     @con_pila
     def emit(self, module: dict, sabotage: str | None = None) -> str:

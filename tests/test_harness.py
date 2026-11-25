@@ -219,8 +219,6 @@ class SabotajeConCrash(unittest.TestCase):
                          {"corpus", "difftest"})         # las dos piernas del sabotaje
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class PartialGate(unittest.TestCase):
@@ -248,3 +246,7 @@ class PartialGate(unittest.TestCase):
             self.assertEqual(backend_gate.main(), 0)
         self.assertEqual(set(captured["backends"]), {"a"})
         self.assertEqual(set(captured["registered"]), {"a", "b"})
+
+
+if __name__ == "__main__":
+    unittest.main()
